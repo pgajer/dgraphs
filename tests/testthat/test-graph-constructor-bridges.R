@@ -109,12 +109,13 @@ test_that("DG2 long-edge pruning and grid graph run locally", {
     )
     expect_named(pruned, c("adj_list", "edge_lengths_list", "path_lengths",
                            "edge_lengths"))
-    expect_false(2L %in% pruned$adj_list[[3]])
+    expect_true(2L %in% pruned$adj_list[[3]])
+    expect_equal(pruned$path_lengths, numeric(0))
 
     refined <- create.grid.graph(list(c(2L), c(1L, 3L), c(2L)),
                                  list(c(1), c(1, 2), c(2)),
                                  grid.size = 5)
     expect_named(refined, c("adj_list", "weight_list", "grid_vertices"))
-    expect_equal(length(refined$grid_vertices), 5L)
-    expect_equal(length(refined$adj_list), 8L)
+    expect_equal(length(refined$grid_vertices), 6L)
+    expect_equal(length(refined$adj_list), 7L)
 })

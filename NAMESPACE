@@ -1,3 +1,4 @@
+useDynLib(dgraphs, .registration = TRUE)
 export(adjlist.to.igraph)
 export(as_igraph)
 export(compute.graph.distance)

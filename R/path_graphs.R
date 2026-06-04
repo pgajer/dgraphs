@@ -16,80 +16,12 @@ shortest.path <- function(graph, edge.lengths, vertices) {
         stop("'vertices' must contain valid 1-based vertex indices.",
              call. = FALSE)
     }
-    vertices <- as.integer(vertices)
-    out <- matrix(Inf, nrow = length(vertices), ncol = length(vertices))
-    for (a in seq_along(vertices)) {
-        d <- .dgraphs.dijkstra(graph, edge.lengths, vertices[[a]])
-        out[a, ] <- d[vertices]
-    }
-    out
-}
-
-.dgraphs.dijkstra <- function(graph, edge.lengths, start, banned.edge = NULL) {
-    n <- length(graph)
-    dist <- rep(Inf, n)
-    visited <- rep(FALSE, n)
-    dist[[start]] <- 0
-    repeat {
-        available <- which(!visited)
-        if (length(available) == 0L) break
-        v <- available[which.min(dist[available])]
-        if (!is.finite(dist[[v]])) break
-        visited[[v]] <- TRUE
-        for (k in seq_along(graph[[v]])) {
-            u <- graph[[v]][[k]]
-            if (!is.null(banned.edge) &&
-                ((v == banned.edge[[1L]] && u == banned.edge[[2L]]) ||
-                 (v == banned.edge[[2L]] && u == banned.edge[[1L]]))) {
-                next
-            }
-            if (!visited[[u]]) {
-                dist[[u]] <- min(dist[[u]], dist[[v]] + edge.lengths[[v]][[k]])
-            }
-        }
-    }
-    dist
-}
-
-.dgraphs.shortest.path.with.hops <- function(graph, edge.lengths, start, h) {
-    n <- length(graph)
-    dist <- rep(Inf, n)
-    hops <- rep(.Machine$integer.max, n)
-    parent <- rep(NA_integer_, n)
-    dist[[start]] <- 0
-    hops[[start]] <- 0L
-    queue <- start
-    while (length(queue) > 0L) {
-        v <- queue[[1L]]
-        queue <- queue[-1L]
-        if (hops[[v]] >= h) next
-        for (k in seq_along(graph[[v]])) {
-            u <- graph[[v]][[k]]
-            proposed.dist <- dist[[v]] + edge.lengths[[v]][[k]]
-            proposed.hops <- hops[[v]] + 1L
-            if (proposed.hops <= h &&
-                (proposed.dist < dist[[u]] ||
-                 (isTRUE(all.equal(proposed.dist, dist[[u]])) &&
-                  proposed.hops < hops[[u]]))) {
-                dist[[u]] <- proposed.dist
-                hops[[u]] <- proposed.hops
-                parent[[u]] <- v
-                queue <- unique(c(queue, u))
-            }
-        }
-    }
-    list(dist = dist, hops = hops, parent = parent)
-}
-
-.dgraphs.reconstruct.path <- function(parent, start, target) {
-    path <- target
-    current <- target
-    while (!is.na(parent[[current]]) && current != start) {
-        current <- parent[[current]]
-        path <- c(current, path)
-    }
-    if (path[[1L]] != start) return(integer(0))
-    as.integer(path)
+    graph.0based <- lapply(graph, function(x) as.integer(x - 1L))
+    .Call("S_shortest_path",
+          graph.0based,
+          edge.lengths,
+          as.integer(vertices - 1L),
+          PACKAGE = "dgraphs")
 }
 
 #' Create a Path Graph with Limited Hop Distance
@@ -108,33 +40,17 @@ create.path.graph <- function(graph, edge.lengths, h) {
     if (length(h) != 1L || is.na(h) || h < 1L) {
         stop("'h' must be a positive integer.", call. = FALSE)
     }
-    n <- length(graph)
-    adj.list <- vector("list", n)
-    edge.length.list <- vector("list", n)
-    hop.list <- vector("list", n)
-    sp.i <- integer(0)
-    sp.j <- integer(0)
-    sp.paths <- list()
-
-    for (start in seq_len(n)) {
-        res <- .dgraphs.shortest.path.with.hops(graph, edge.lengths, start, h)
-        reachable <- which(seq_len(n) != start & res$hops <= h)
-        adj.list[[start]] <- as.integer(reachable)
-        edge.length.list[[start]] <- as.numeric(res$dist[reachable])
-        hop.list[[start]] <- as.integer(res$hops[reachable])
-        for (target in reachable[reachable > start]) {
-            sp.i <- c(sp.i, start)
-            sp.j <- c(sp.j, target)
-            sp.paths[[length(sp.paths) + 1L]] <-
-                .dgraphs.reconstruct.path(res$parent, start, target)
-        }
-    }
-
+    graph.0based <- lapply(graph, function(x) as.integer(x - 1L))
+    res <- .Call("S_create_path_graph_plus",
+                 graph.0based,
+                 edge.lengths,
+                 h,
+                 PACKAGE = "dgraphs")
     new.path.graph(
-        adj.list = adj.list,
-        edge.length.list = edge.length.list,
-        hop.list = hop.list,
-        shortest.paths = list(i = sp.i, j = sp.j, paths = sp.paths)
+        adj.list = res$adj_list,
+        edge.length.list = res$edge_length_list,
+        hop.list = res$hop_list,
+        shortest.paths = res$shortest_paths
     )
 }
 
@@ -177,7 +93,11 @@ get.shortest.path <- function(pg, from, to) {
     if (length(idx) == 0L) return(NULL)
     path <- pg$shortest.paths$paths[[idx[[1L]]]]
     edge.idx <- which(pg$adj.list[[from]] == to)
-    path.length <- if (length(edge.idx)) pg$edge.length.list[[from]][[edge.idx[[1L]]]] else NA_real_
+    path.length <- if (length(edge.idx)) {
+        pg$edge.length.list[[from]][[edge.idx[[1L]]]]
+    } else {
+        NA_real_
+    }
     list(path = path, length = path.length, hops = length(path) - 1L)
 }
 
@@ -217,15 +137,28 @@ summary.path.graph <- function(object, ...) {
 #'
 #' @export
 create.path.graph.series <- function(graph, edge.lengths, h.values) {
+    graph <- .dgraphs.validate.adj.list(graph)
+    edge.lengths <- .dgraphs.validate.weight.list(graph, edge.lengths)
     if (!is.numeric(h.values) || length(h.values) == 0L || any(h.values < 1)) {
         stop("'h.values' must contain positive hop limits.", call. = FALSE)
     }
     h.values <- sort(unique(as.integer(h.values)))
-    out <- lapply(h.values, function(h) {
-        pg <- create.path.graph(graph, edge.lengths, h)
-        attr(pg, "h") <- h
-        pg
-    })
+    graph.0based <- lapply(graph, function(x) as.integer(x - 1L))
+    res <- .Call("S_create_path_graph_series",
+                 graph.0based,
+                 edge.lengths,
+                 as.integer(h.values),
+                 PACKAGE = "dgraphs")
+    out <- mapply(function(pg, h) {
+        pg.obj <- new.path.graph(
+            adj.list = pg$adj_list,
+            edge.length.list = pg$edge_length_list,
+            hop.list = pg$hop_list,
+            shortest.paths = pg$shortest_paths
+        )
+        attr(pg.obj, "h") <- h
+        pg.obj
+    }, res, h.values, SIMPLIFY = FALSE)
     names(out) <- paste0("h_", h.values)
     class(out) <- "path.graph.series"
     out

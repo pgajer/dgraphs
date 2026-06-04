@@ -17,11 +17,12 @@ create.grid.graph(
 
 \item{weight.list}{Edge-length list matching \code{adj.list}.}
 
-\item{grid.size}{Target number of added grid vertices.}
+\item{grid.size}{Target grid size parameter.}
 
-\item{start.vertex}{Retained for compatibility.}
+\item{start.vertex}{Starting vertex used for the original gflow BFS grid
+placement logic.}
 
-\item{snap.tolerance}{Retained for compatibility.}
+\item{snap.tolerance}{Grid snapping tolerance.}
 }
 \value{
 A list with \code{adj_list}, \code{weight_list}, and \code{grid_vertices}.

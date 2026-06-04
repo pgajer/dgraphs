@@ -76,24 +76,8 @@ create.threshold.distance.graph <- function(...) .dgraphs_gflow_export("create.t
 
 #' @rdname graph-constructor-bridges
 #' @export
-create.grid.graph <- function(...) .dgraphs_gflow_export("create.grid.graph")(...)
-
-#' @rdname graph-constructor-bridges
-#' @export
-create.path.graph <- function(...) .dgraphs_gflow_export("create.path.graph")(...)
-
-#' @rdname graph-constructor-bridges
-#' @export
-graph.geodesic.distances <- function(...) .dgraphs_gflow_export("graph.geodesic.distances")(...)
-
-#' @rdname graph-constructor-bridges
-#' @export
 as_igraph <- function(...) .dgraphs_gflow_export("as_igraph")(...)
 
 #' @rdname graph-constructor-bridges
 #' @export
 remove.knn.outliers <- function(...) .dgraphs_gflow_export("remove.knn.outliers")(...)
-
-#' @rdname graph-constructor-bridges
-#' @export
-wgraph.prune.long.edges <- function(...) .dgraphs_gflow_export("wgraph.prune.long.edges")(...)

@@ -13,12 +13,8 @@
 \alias{create.iterated.iknn.graphs}
 \alias{create.geodesic.iknn.graph}
 \alias{create.threshold.distance.graph}
-\alias{create.grid.graph}
-\alias{create.path.graph}
-\alias{graph.geodesic.distances}
 \alias{as_igraph}
 \alias{remove.knn.outliers}
-\alias{wgraph.prune.long.edges}
 \title{Bridge exports for data-derived graph construction}
 \usage{
 create.mknn.graph(...)
@@ -34,12 +30,8 @@ create.single.iknn.graph(...)
 create.iterated.iknn.graphs(...)
 create.geodesic.iknn.graph(...)
 create.threshold.distance.graph(...)
-create.grid.graph(...)
-create.path.graph(...)
-graph.geodesic.distances(...)
 as_igraph(...)
 remove.knn.outliers(...)
-wgraph.prune.long.edges(...)
 }
 \arguments{
 \item{...}{Arguments forwarded unchanged to the corresponding \pkg{gflow}

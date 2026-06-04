@@ -1,0 +1,21 @@
+Package: dgraphs
+Title: Data-Derived Graph Construction Utilities
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Peter", "Gajer", role = c("aut", "cre"),
+           email = "pgajer@example.com")
+    )
+Description: Data-derived graph construction utilities split out from gflow.
+    The initial package provides bridge exports for core graph constructors
+    while the native ANN-backed implementation is migrated in audited slices.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends:
+    R (>= 4.1.0)
+Imports:
+    gflow
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

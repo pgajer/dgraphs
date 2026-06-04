@@ -6,9 +6,8 @@ Authors@R: c(
            email = "pgajer@example.com")
     )
 Description: Data-derived graph construction utilities split out from gflow.
-    The package provides local ANN-backed MkNN, radius, adaptive-radius, SkNN,
-    and MST-completion graph constructors, with bridge exports for graph
-    construction utilities that have not yet been migrated.
+    The package provides local ANN-backed kNN, intersection-kNN, geodesic-kNN,
+    radius, adaptive-radius, SkNN, and MST-completion graph constructors.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -16,6 +15,7 @@ RoxygenNote: 7.3.3
 Depends:
     R (>= 4.1.0)
 Imports:
+    FNN,
     igraph
 LinkingTo:
     RcppEigen

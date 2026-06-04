@@ -361,75 +361,6 @@ SEXP path_graph_plus_to_R(const path_graph_plus_t& path_graph) {
     return r_result;
 }
 
-double alternative_path_length(
-        const std::vector<std::vector<int>>& graph,
-        const std::vector<std::vector<double>>& weights,
-        int source,
-        int target,
-        double edge_length,
-        bool use_total_length_constraint) {
-    const int n = static_cast<int>(graph.size());
-    std::vector<double> distance(n, std::numeric_limits<double>::max());
-    std::queue<int> q;
-    q.push(source);
-    distance[static_cast<size_t>(source)] = 0.0;
-
-    while (!q.empty()) {
-        int current = q.front();
-        q.pop();
-        for (size_t i = 0; i < graph[static_cast<size_t>(current)].size(); ++i) {
-            int neighbor = graph[static_cast<size_t>(current)][i];
-            double neighbor_edge_length = weights[static_cast<size_t>(current)][i];
-            const double proposed =
-                distance[static_cast<size_t>(current)] + neighbor_edge_length;
-            bool length_condition;
-            if (use_total_length_constraint) {
-                length_condition = proposed < edge_length;
-            } else {
-                length_condition = neighbor_edge_length < edge_length;
-            }
-            if (neighbor == target && length_condition) {
-                return proposed;
-            }
-            if (proposed < distance[static_cast<size_t>(neighbor)] &&
-                length_condition) {
-                distance[static_cast<size_t>(neighbor)] = proposed;
-                q.push(neighbor);
-            }
-        }
-    }
-    return 0.0;
-}
-
-double edge_weight_between(const std::vector<std::vector<int>>& graph,
-                           const std::vector<std::vector<double>>& weights,
-                           int i, int j) {
-    for (size_t k = 0; k < graph[static_cast<size_t>(i)].size(); ++k) {
-        if (graph[static_cast<size_t>(i)][k] == j) {
-            return weights[static_cast<size_t>(i)][k];
-        }
-    }
-    return std::numeric_limits<double>::infinity();
-}
-
-void remove_edge(std::vector<std::vector<int>>& graph,
-                 std::vector<std::vector<double>>& weights,
-                 int i, int j) {
-    for (int pass = 0; pass < 2; ++pass) {
-        int a = pass == 0 ? i : j;
-        int b = pass == 0 ? j : i;
-        auto& adj = graph[static_cast<size_t>(a)];
-        auto& w = weights[static_cast<size_t>(a)];
-        for (size_t k = 0; k < adj.size(); ++k) {
-            if (adj[k] == b) {
-                adj.erase(adj.begin() + static_cast<long>(k));
-                w.erase(w.begin() + static_cast<long>(k));
-                break;
-            }
-        }
-    }
-}
-
 double vertex_eccentricity(const std::vector<std::vector<int>>& graph,
                            const std::vector<std::vector<double>>& weights,
                            int start) {
@@ -471,6 +402,36 @@ SEXP S_create_mknn_graphs(SEXP s_X, SEXP s_kmin, SEXP s_kmax,
                           SEXP s_compute_full,
                           SEXP s_verbose);
 SEXP S_create_mst_completion_graph(SEXP s_X, SEXP s_q_thld, SEXP s_verbose);
+SEXP S_create_single_iknn_graph(SEXP s_X, SEXP s_k,
+                                SEXP s_max_path_edge_ratio_thld,
+                                SEXP s_path_edge_ratio_percentile,
+                                SEXP s_threshold_percentile,
+                                SEXP s_compute_full,
+                                SEXP s_with_isize_pruning,
+                                SEXP s_with_edge_pruning_stats,
+                                SEXP s_knn_cache_path,
+                                SEXP s_knn_cache_mode,
+                                SEXP s_knn_metric,
+                                SEXP s_linf_tol,
+                                SEXP s_verbose);
+SEXP S_create_iknn_graphs(SEXP s_X, SEXP s_kmin, SEXP s_kmax,
+                          SEXP s_max_path_edge_ratio_thld,
+                          SEXP s_path_edge_ratio_percentile,
+                          SEXP s_threshold_percentile,
+                          SEXP s_compute_full,
+                          SEXP s_with_isize_pruning,
+                          SEXP s_with_edge_pruning_stats,
+                          SEXP s_n_cores,
+                          SEXP s_parallel_mode,
+                          SEXP s_hybrid_batch_size,
+                          SEXP s_knn_cache_path,
+                          SEXP s_knn_cache_mode,
+                          SEXP s_knn_metric,
+                          SEXP s_linf_tol,
+                          SEXP s_verbose);
+SEXP S_compare_iknn_graph_builders(SEXP s_X, SEXP s_k, SEXP s_runs, SEXP s_tolerance);
+SEXP S_create_geodesic_iknn_graph(SEXP s_adj_list, SEXP s_weight_list, SEXP s_k);
+SEXP S_linf_simplex_knn(SEXP s_X, SEXP s_k, SEXP s_linf_tol);
 SEXP S_create_sknn_graph(SEXP s_X, SEXP s_k, SEXP s_connect_components,
                          SEXP s_connect_method, SEXP s_neighbor_method,
                          SEXP s_ann_eps, SEXP s_knn_index,
@@ -491,6 +452,11 @@ SEXP S_prune_graph_local_geodesic(SEXP s_X, SEXP s_adj_list,
                                   SEXP s_weight_list, SEXP s_prune_tau,
                                   SEXP s_prune_local_k,
                                   SEXP s_with_pruned_edge_stats);
+SEXP S_wgraph_prune_long_edges(SEXP s_adj_list,
+                               SEXP s_edge_length_list,
+                               SEXP s_alt_path_len_ratio_thld,
+                               SEXP s_use_total_length_constraint,
+                               SEXP s_verbose);
 
 SEXP S_shortest_path(SEXP s_graph, SEXP s_edge_lengths, SEXP s_vertices) {
     std::vector<std::vector<int>> graph = convert_adj_list_from_R(s_graph);
@@ -532,81 +498,6 @@ SEXP S_create_path_graph_series(SEXP s_adj_list, SEXP s_weight_list, SEXP s_h_va
     }
     UNPROTECT(1);
     return r_result;
-}
-
-SEXP S_wgraph_prune_long_edges(SEXP s_adj_list,
-                               SEXP s_edge_length_list,
-                               SEXP s_alt_path_len_ratio_thld,
-                               SEXP s_use_total_length_constraint,
-                               SEXP s_verbose) {
-    std::vector<std::vector<int>> graph = convert_adj_list_from_R(s_adj_list);
-    std::vector<std::vector<double>> weights = convert_weight_list_from_R(s_edge_length_list);
-    const double threshold = REAL(s_alt_path_len_ratio_thld)[0];
-    const bool use_total = LOGICAL(s_use_total_length_constraint)[0];
-    const bool verbose = LOGICAL(s_verbose)[0];
-
-    struct edge_t { int i; int j; double w; };
-    std::vector<edge_t> edges;
-    for (int i = 0; i < static_cast<int>(graph.size()); ++i) {
-        for (size_t k = 0; k < graph[static_cast<size_t>(i)].size(); ++k) {
-            int j = graph[static_cast<size_t>(i)][k];
-            if (i < j) edges.push_back({i, j, weights[static_cast<size_t>(i)][k]});
-        }
-    }
-    std::sort(edges.begin(), edges.end(), [](const edge_t& a, const edge_t& b) {
-        return a.w > b.w;
-    });
-
-    std::vector<double> path_lengths;
-    std::vector<double> edge_lengths;
-    for (const auto& edge : edges) {
-        if (!std::isfinite(edge_weight_between(graph, weights, edge.i, edge.j))) continue;
-        double alt_distance = alternative_path_length(
-            graph, weights, edge.i, edge.j, edge.w, use_total
-        );
-        if (alt_distance > 0.0) {
-            path_lengths.push_back(alt_distance);
-            edge_lengths.push_back(edge.w);
-        }
-        if (alt_distance > 0.0 && alt_distance / edge.w < threshold) {
-            if (verbose) Rprintf("Pruning edge %d-%d\n", edge.i + 1, edge.j + 1);
-            remove_edge(graph, weights, edge.i, edge.j);
-        }
-    }
-
-    const int n_vertices = static_cast<int>(graph.size());
-    SEXP res = PROTECT(Rf_allocVector(VECSXP, 4));
-    SEXP names = PROTECT(Rf_allocVector(STRSXP, 4));
-    SET_STRING_ELT(names, 0, Rf_mkChar("adj_list"));
-    SET_STRING_ELT(names, 1, Rf_mkChar("edge_lengths_list"));
-    SET_STRING_ELT(names, 2, Rf_mkChar("path_lengths"));
-    SET_STRING_ELT(names, 3, Rf_mkChar("edge_lengths"));
-    Rf_setAttrib(res, R_NamesSymbol, names);
-
-    SEXP r_adj = PROTECT(Rf_allocVector(VECSXP, n_vertices));
-    SEXP r_weights = PROTECT(Rf_allocVector(VECSXP, n_vertices));
-    for (int i = 0; i < n_vertices; ++i) {
-        SEXP a = PROTECT(Rf_allocVector(INTSXP, graph[static_cast<size_t>(i)].size()));
-        SEXP w = PROTECT(Rf_allocVector(REALSXP, weights[static_cast<size_t>(i)].size()));
-        for (size_t k = 0; k < graph[static_cast<size_t>(i)].size(); ++k) {
-            INTEGER(a)[k] = graph[static_cast<size_t>(i)][k];
-            REAL(w)[k] = weights[static_cast<size_t>(i)][k];
-        }
-        SET_VECTOR_ELT(r_adj, i, a);
-        SET_VECTOR_ELT(r_weights, i, w);
-        UNPROTECT(2);
-    }
-    SET_VECTOR_ELT(res, 0, r_adj);
-    SET_VECTOR_ELT(res, 1, r_weights);
-
-    SEXP r_path_lengths = PROTECT(Rf_allocVector(REALSXP, path_lengths.size()));
-    for (size_t i = 0; i < path_lengths.size(); ++i) REAL(r_path_lengths)[i] = path_lengths[i];
-    SEXP r_edge_lengths = PROTECT(Rf_allocVector(REALSXP, edge_lengths.size()));
-    for (size_t i = 0; i < edge_lengths.size(); ++i) REAL(r_edge_lengths)[i] = edge_lengths[i];
-    SET_VECTOR_ELT(res, 2, r_path_lengths);
-    SET_VECTOR_ELT(res, 3, r_edge_lengths);
-    UNPROTECT(6);
-    return res;
 }
 
 SEXP S_create_uniform_grid_graph(SEXP s_adj_list,
@@ -744,6 +635,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"S_create_mknn_graph", (DL_FUNC) &S_create_mknn_graph, 2},
     {"S_create_mknn_graphs", (DL_FUNC) &S_create_mknn_graphs, 7},
     {"S_create_mst_completion_graph", (DL_FUNC) &S_create_mst_completion_graph, 3},
+    {"S_create_single_iknn_graph", (DL_FUNC) &S_create_single_iknn_graph, 13},
+    {"S_create_iknn_graphs", (DL_FUNC) &S_create_iknn_graphs, 17},
+    {"S_compare_iknn_graph_builders", (DL_FUNC) &S_compare_iknn_graph_builders, 4},
+    {"S_create_geodesic_iknn_graph", (DL_FUNC) &S_create_geodesic_iknn_graph, 3},
+    {"S_linf_simplex_knn", (DL_FUNC) &S_linf_simplex_knn, 3},
     {"S_create_sknn_graph", (DL_FUNC) &S_create_sknn_graph, 16},
     {"S_shortest_path", (DL_FUNC) &S_shortest_path, 3},
     {"S_create_path_graph_plus", (DL_FUNC) &S_create_path_graph_plus, 3},

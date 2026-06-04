@@ -13,6 +13,7 @@ OBJECTS = \
 	cpp_mstrees.o \
 	dg2_native.o \
 	geometric_edge_pruning.o \
+	geodesic_iknn_graphs.o \
 	graph_conn_components.o \
 	graph_maximal_packing.o \
 	graph_utils_native.o \
@@ -24,11 +25,14 @@ OBJECTS = \
 	mst_completion_graphs_r.o \
 	mstree_total_length.o \
 	progress_utils.o \
+	pruning_long_edges.o \
 	prune_long_edges.o \
 	set_wgraph.o \
 	shortest_path_utils.o \
 	sknn_graphs.o \
 	kernels.o \
+	iknn_graphs.o \
+	linf_simplex_knn.o \
 	mstree.o \
 	ANN/ANN.o \
 	ANN/bd_fix_rad_search.o \

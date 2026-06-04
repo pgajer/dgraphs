@@ -1,4 +1,9 @@
 .dgraphs_gflow_export <- function(name) {
+    if (!requireNamespace("gflow", quietly = TRUE)) {
+        stop("The bridge function '", name, "' requires the gflow package ",
+             "until its implementation is migrated into dgraphs.",
+             call. = FALSE)
+    }
     getExportedValue("gflow", name)
 }
 
@@ -71,22 +76,6 @@ create.threshold.distance.graph <- function(...) .dgraphs_gflow_export("create.t
 
 #' @rdname graph-constructor-bridges
 #' @export
-create.random.graph <- function(...) .dgraphs_gflow_export("create.random.graph")(...)
-
-#' @rdname graph-constructor-bridges
-#' @export
-create.complete.graph <- function(...) .dgraphs_gflow_export("create.complete.graph")(...)
-
-#' @rdname graph-constructor-bridges
-#' @export
-create.empty.graph <- function(...) .dgraphs_gflow_export("create.empty.graph")(...)
-
-#' @rdname graph-constructor-bridges
-#' @export
-create.star.graph <- function(...) .dgraphs_gflow_export("create.star.graph")(...)
-
-#' @rdname graph-constructor-bridges
-#' @export
 create.grid.graph <- function(...) .dgraphs_gflow_export("create.grid.graph")(...)
 
 #' @rdname graph-constructor-bridges
@@ -95,31 +84,7 @@ create.path.graph <- function(...) .dgraphs_gflow_export("create.path.graph")(..
 
 #' @rdname graph-constructor-bridges
 #' @export
-join.graphs <- function(...) .dgraphs_gflow_export("join.graphs")(...)
-
-#' @rdname graph-constructor-bridges
-#' @export
-graph.connected.components <- function(...) .dgraphs_gflow_export("graph.connected.components")(...)
-
-#' @rdname graph-constructor-bridges
-#' @export
-graph.adj.mat <- function(...) .dgraphs_gflow_export("graph.adj.mat")(...)
-
-#' @rdname graph-constructor-bridges
-#' @export
 graph.geodesic.distances <- function(...) .dgraphs_gflow_export("graph.geodesic.distances")(...)
-
-#' @rdname graph-constructor-bridges
-#' @export
-compute.graph.distance <- function(...) .dgraphs_gflow_export("compute.graph.distance")(...)
-
-#' @rdname graph-constructor-bridges
-#' @export
-compute.graph.diameter <- function(...) .dgraphs_gflow_export("compute.graph.diameter")(...)
-
-#' @rdname graph-constructor-bridges
-#' @export
-adjlist.to.igraph <- function(...) .dgraphs_gflow_export("adjlist.to.igraph")(...)
 
 #' @rdname graph-constructor-bridges
 #' @export

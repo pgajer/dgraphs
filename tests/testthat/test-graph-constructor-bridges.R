@@ -1,6 +1,4 @@
-test_that("graph constructor bridges create simple graphs through gflow", {
-    skip_if_not_installed("gflow")
-
+test_that("DG3 graph constructors create simple graphs locally", {
     set.seed(1)
     X <- matrix(runif(40), ncol = 2)
 

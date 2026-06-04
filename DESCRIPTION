@@ -6,8 +6,9 @@ Authors@R: c(
            email = "pgajer@example.com")
     )
 Description: Data-derived graph construction utilities split out from gflow.
-    The initial package provides bridge exports for core graph constructors
-    while the native ANN-backed implementation is migrated in audited slices.
+    The package provides local ANN-backed MkNN, radius, adaptive-radius, SkNN,
+    and MST-completion graph constructors, with bridge exports for graph
+    construction utilities that have not yet been migrated.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -16,6 +17,8 @@ Depends:
     R (>= 4.1.0)
 Imports:
     igraph
+LinkingTo:
+    RcppEigen
 Suggests:
     gflow,
     testthat (>= 3.0.0)

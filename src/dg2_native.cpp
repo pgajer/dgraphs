@@ -461,6 +461,37 @@ void remove_undirected_edge(std::vector<std::map<int, double>>& graph,
 
 extern "C" {
 
+SEXP S_adaptive_radius_edges_ann(SEXP s_X, SEXP s_k_scale, SEXP s_radius_factor,
+                                 SEXP s_radius_rule);
+SEXP S_compute_mstree_total_length(SEXP s_X);
+SEXP S_create_mknn_graph(SEXP RX, SEXP Rk);
+SEXP S_create_mknn_graphs(SEXP s_X, SEXP s_kmin, SEXP s_kmax,
+                          SEXP s_max_path_edge_ratio_thld,
+                          SEXP s_path_edge_ratio_percentile,
+                          SEXP s_compute_full,
+                          SEXP s_verbose);
+SEXP S_create_mst_completion_graph(SEXP s_X, SEXP s_q_thld, SEXP s_verbose);
+SEXP S_create_sknn_graph(SEXP s_X, SEXP s_k, SEXP s_connect_components,
+                         SEXP s_connect_method, SEXP s_neighbor_method,
+                         SEXP s_ann_eps, SEXP s_knn_index,
+                         SEXP s_bridge_knn_index, SEXP s_bridge_k,
+                         SEXP s_bridge_k_max, SEXP s_bridge_growth,
+                         SEXP s_prune_edges, SEXP s_prune_method,
+                         SEXP s_prune_tau, SEXP s_prune_local_k,
+                         SEXP s_with_pruned_edge_stats);
+SEXP S_graph_connected_components(SEXP R_graph);
+SEXP S_kNN(SEXP RX, SEXP Rk);
+SEXP S_mstree(SEXP X);
+SEXP S_prune_graph_global_geodesic_ratio(SEXP s_adj_list,
+                                         SEXP s_weight_list,
+                                         SEXP s_max_ratio_threshold,
+                                         SEXP s_path_edge_ratio_percentile,
+                                         SEXP s_with_pruned_edge_stats);
+SEXP S_prune_graph_local_geodesic(SEXP s_X, SEXP s_adj_list,
+                                  SEXP s_weight_list, SEXP s_prune_tau,
+                                  SEXP s_prune_local_k,
+                                  SEXP s_with_pruned_edge_stats);
+
 SEXP S_shortest_path(SEXP s_graph, SEXP s_edge_lengths, SEXP s_vertices) {
     std::vector<std::vector<int>> graph = convert_adj_list_from_R(s_graph);
     std::vector<std::vector<double>> edge_lengths = convert_weight_list_from_R(s_edge_lengths);
@@ -708,11 +739,22 @@ SEXP S_create_uniform_grid_graph(SEXP s_adj_list,
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"S_adaptive_radius_edges_ann", (DL_FUNC) &S_adaptive_radius_edges_ann, 4},
+    {"S_compute_mstree_total_length", (DL_FUNC) &S_compute_mstree_total_length, 1},
+    {"S_create_mknn_graph", (DL_FUNC) &S_create_mknn_graph, 2},
+    {"S_create_mknn_graphs", (DL_FUNC) &S_create_mknn_graphs, 7},
+    {"S_create_mst_completion_graph", (DL_FUNC) &S_create_mst_completion_graph, 3},
+    {"S_create_sknn_graph", (DL_FUNC) &S_create_sknn_graph, 16},
     {"S_shortest_path", (DL_FUNC) &S_shortest_path, 3},
     {"S_create_path_graph_plus", (DL_FUNC) &S_create_path_graph_plus, 3},
     {"S_create_path_graph_series", (DL_FUNC) &S_create_path_graph_series, 3},
     {"S_wgraph_prune_long_edges", (DL_FUNC) &S_wgraph_prune_long_edges, 5},
     {"S_create_uniform_grid_graph", (DL_FUNC) &S_create_uniform_grid_graph, 5},
+    {"S_graph_connected_components", (DL_FUNC) &S_graph_connected_components, 1},
+    {"S_kNN", (DL_FUNC) &S_kNN, 2},
+    {"S_mstree", (DL_FUNC) &S_mstree, 1},
+    {"S_prune_graph_global_geodesic_ratio", (DL_FUNC) &S_prune_graph_global_geodesic_ratio, 5},
+    {"S_prune_graph_local_geodesic", (DL_FUNC) &S_prune_graph_local_geodesic, 6},
     {NULL, NULL, 0}
 };
 

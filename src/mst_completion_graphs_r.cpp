@@ -1,6 +1,6 @@
-#include "mst_completion_graphs.hpp"
-#include "error_utils.h"                 // REPORT_ERROR()
-#include "SEXP_cpp_conversion_utils.hpp" // convert_adj_list_from_R, convert_weight_list_from_R
+#include "dgraphs/mst_completion_graphs.hpp"
+#include "dgraphs/error_utils.h"                 // REPORT_ERROR()
+#include "dgraphs/SEXP_cpp_conversion_utils.hpp" // convert_adj_list_from_R, convert_weight_list_from_R
 
 #include <vector>
 #include <utility>  // for std::pair

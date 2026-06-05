@@ -8,9 +8,9 @@
 #include <mutex>         // For std::mutex
 #include <chrono>        // For timing-based progress updates
 
-#include "edge_pruning_stats.hpp" // For edge_pruning_stats_t
-#include "set_wgraph.hpp"     // For set_wgraph_t definition
-#include "error_utils.h"      // For REPORT_ERROR
+#include "dgraphs/edge_pruning_stats.hpp" // For edge_pruning_stats_t
+#include "dgraphs/set_wgraph.hpp"     // For set_wgraph_t definition
+#include "dgraphs/error_utils.h"      // For REPORT_ERROR
 
 #include <R_ext/Print.h>      // For Rprintf, R_FlushConsole
 

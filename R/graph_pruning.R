@@ -33,6 +33,5 @@ wgraph.prune.long.edges <- function(graph,
                  as.logical(use.total.length.constraint),
                  as.logical(verbose),
                  PACKAGE = "dgraphs")
-    res$adj_list <- lapply(res$adj_list, function(x) as.integer(x + 1L))
     res
 }

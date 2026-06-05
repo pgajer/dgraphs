@@ -28,17 +28,17 @@
 
 */
 
-#include "omp_compat.h"
-#include "iknn_graphs.hpp"
-#include "set_wgraph.hpp"
-#include "knn_search_result.hpp"
-#include "linf_simplex_knn.hpp"
-#include "kNN_r.h"            // for S_kNN()
-#include "kNN.h"              // for struct iknn_vertex_tt
-#include "cpp_utils.hpp"      // for debugging
-#include "progress_utils.hpp" // for elapsed_time
-#include "SEXP_cpp_conversion_utils.hpp"
-#include "edge_pruning_stats.hpp"
+#include "dgraphs/omp_compat.h"
+#include "dgraphs/iknn_graphs.hpp"
+#include "dgraphs/set_wgraph.hpp"
+#include "dgraphs/knn_search_result.hpp"
+#include "dgraphs/linf_simplex_knn.hpp"
+#include "dgraphs/kNN_r.h"            // for S_kNN()
+#include "dgraphs/kNN.h"              // for struct iknn_vertex_tt
+#include "dgraphs/cpp_utils.hpp"      // for debugging
+#include "dgraphs/progress_utils.hpp" // for elapsed_time
+#include "dgraphs/SEXP_cpp_conversion_utils.hpp"
+#include "dgraphs/edge_pruning_stats.hpp"
 
 #include <vector>
 #include <unordered_set>
@@ -631,12 +631,12 @@ SEXP S_compare_iknn_graph_builders(SEXP s_X,
             num_threads = req;
         }
     } else {
-        num_threads = gflow_get_num_procs();
+        num_threads = dgraphs_get_num_procs();
     }
     if (num_threads < 1) {
         num_threads = 1;
     }
-    const int max_t = gflow_get_num_procs();
+    const int max_t = dgraphs_get_num_procs();
     if (num_threads > max_t) {
         num_threads = max_t;
     }
@@ -888,7 +888,7 @@ iknn_graph_t create_iknn_graph(SEXP RX, SEXP Rk) {
 
     std::string debug_dir;
     #if DEBUG_CREATE_IKNN_GRAPH
-        debug_dir = "/tmp/gflow_debug/create_iknn_graph/";
+        debug_dir = "/tmp/dgraphs_debug/create_iknn_graph/";
     #endif
 
     SEXP s_dim = PROTECT(Rf_getAttrib(RX, R_DimSymbol));
@@ -1279,11 +1279,11 @@ SEXP S_create_single_iknn_graph(SEXP s_X,
         Rf_error("knn.cache.path must be provided when knn.cache.mode is not 'none'.");
     }
 
-    int num_threads = gflow_get_num_procs();
+    int num_threads = dgraphs_get_num_procs();
     if (num_threads < 1) {
         num_threads = 1;
     }
-    gflow_set_num_threads(num_threads);
+    dgraphs_set_num_threads(num_threads);
 
     if (verbose) {
 #if defined(_OPENMP)
@@ -2022,13 +2022,13 @@ iknn_graph_t create_iknn_graph_inverted_index(const knn_search_result_t& knn_res
 
 #ifdef _OPENMP
     if (try_parallel) {
-        const int thread_count = std::max(1, std::min(num_threads, gflow_get_max_threads()));
+        const int thread_count = std::max(1, std::min(num_threads, dgraphs_get_max_threads()));
         if (thread_count > 1) {
             std::vector<edge_accumulator_map_t> local_maps(static_cast<size_t>(thread_count));
 
 #pragma omp parallel num_threads(thread_count) default(none) shared(buckets, local_maps)
             {
-                edge_accumulator_map_t& local_map = local_maps[static_cast<size_t>(gflow_get_thread_num())];
+                edge_accumulator_map_t& local_map = local_maps[static_cast<size_t>(dgraphs_get_thread_num())];
 
 #pragma omp for schedule(dynamic, 1)
                 for (int bucket_idx = 0; bucket_idx < static_cast<int>(buckets.size()); ++bucket_idx) {
@@ -2767,15 +2767,15 @@ SEXP S_create_iknn_graphs(
         }
         if (req > 0) num_threads = req;
     } else {
-        num_threads = gflow_get_num_procs();
+        num_threads = dgraphs_get_num_procs();
     }
 
-    const int max_t = gflow_get_num_procs();
+    const int max_t = dgraphs_get_num_procs();
     if (num_threads > max_t) num_threads = max_t;
     if (num_threads < 1)     num_threads = 1;
 
     // Set threads (no-op if OpenMP is absent)
-    gflow_set_num_threads(num_threads);
+    dgraphs_set_num_threads(num_threads);
 
 #if defined(_OPENMP)
     const bool openmp_available = true;

@@ -1,15 +1,16 @@
 #include <vector>             // For std::vector
+#include <algorithm>          // For std::sort, std::reverse
 #include <queue>              // For std::priority_queue
 #include <utility>            // For std::pair
 #include <numeric>            // For std::accumulate
 #include <fstream>            // For std::ofstream
 #include <filesystem>         // For DEBUGGING only !!!
 
-#include "set_wgraph.hpp"     // For set_wgraph_t class definition
-#include "error_utils.h"      // For REPORT_ERROR()
-#include "kernels.h"
-#include "progress_utils.hpp" // for elapsed.time
-#include "vertex_info.hpp"
+#include "dgraphs/set_wgraph.hpp"     // For set_wgraph_t class definition
+#include "dgraphs/error_utils.h"      // For REPORT_ERROR()
+#include "dgraphs/kernels.h"
+#include "dgraphs/progress_utils.hpp" // for elapsed.time
+#include "dgraphs/vertex_info.hpp"
 
 /**
  * @brief Finds all shortest paths within a specified radius that meet a minimum path size requirement

@@ -1,0 +1,12 @@
+^tests/migration$
+^AGENTS\.md$
+^GRAPH_MIGRATION_ACTION_PLAN\.md$
+^\.claude$
+^.*\.Rcheck$
+^.*\.tar\.gz$
+^src/.*\.(o|so|dylib|dll)$
+^.*\.log$
+^.*\.tmp$
+^.*\.bak$
+^package_split_audit$
+^development$

@@ -1,5 +1,5 @@
-#include "knn_search_result.hpp"
-#include "kNN_r.h"
+#include "dgraphs/knn_search_result.hpp"
+#include "dgraphs/kNN_r.h"
 
 #include <R.h>
 #include <Rinternals.h>

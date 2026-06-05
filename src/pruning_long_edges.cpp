@@ -35,9 +35,9 @@
   figure out a threshold for that length of the path in the isize pruning.
  */
 
-#include "pruning_long_edges_r.h"
-#include "SEXP_cpp_conversion_utils.hpp"
-#include "iknn_graphs.hpp"
+#include "dgraphs/pruning_long_edges_r.h"
+#include "dgraphs/SEXP_cpp_conversion_utils.hpp"
+#include "dgraphs/iknn_graphs.hpp"
 
 #include <vector>
 #include <queue>

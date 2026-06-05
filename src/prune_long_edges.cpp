@@ -8,9 +8,9 @@
 #include <utility>       // For std::pair
 #include <cmath>         // For mathematical operations
 
-#include "exec_policy.hpp"
-#include "set_wgraph.hpp"     // For set_wgraph_t definition
-#include "error_utils.h"      // For REPORT_ERROR
+#include "dgraphs/exec_policy.hpp"
+#include "dgraphs/set_wgraph.hpp"     // For set_wgraph_t definition
+#include "dgraphs/error_utils.h"      // For REPORT_ERROR
 
 /**
  * @brief Creates a new graph with long edges pruned while preserving connectivity
@@ -56,7 +56,7 @@ set_wgraph_t set_wgraph_t::prune_long_edges(double threshold_percentile) const {
 
     std::mutex edges_mutex;  // Mutex for thread-safe access to all_edges
 
-    gflow::for_each(GFLOW_EXEC_POLICY, vertices.begin(), vertices.end(),
+    dgraphs::for_each(DGRAPHS_EXEC_POLICY, vertices.begin(), vertices.end(),
         [this, &all_edges, &edges_mutex](size_t vertex) {
             std::vector<Edge> local_edges;
 

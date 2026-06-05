@@ -1,4 +1,4 @@
-#include "sknn_graphs_r.h"
+#include "dgraphs/sknn_graphs_r.h"
 
 #include <R.h>
 #include <Rinternals.h>

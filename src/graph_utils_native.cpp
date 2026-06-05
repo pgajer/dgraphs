@@ -1,7 +1,7 @@
-#include "graph_utils_r.h"
-#include "cpp_utils.hpp"
-#include "SEXP_cpp_conversion_utils.hpp"
-#include "stats_utils.h"
+#include "dgraphs/graph_utils_r.h"
+#include "dgraphs/cpp_utils.hpp"
+#include "dgraphs/SEXP_cpp_conversion_utils.hpp"
+#include "dgraphs/stats_utils.h"
 
 #include <vector>
 #include <queue>

@@ -1,7 +1,7 @@
-PKG_CPPFLAGS = -I. -IANN -I../inst/include/gflow -I../inst/include \
+PKG_CPPFLAGS = -I. -IANN -I../inst/include/dgraphs -I../inst/include \
 	-DR_NO_REMAP -D_Alignof=__alignof__ -DDLL_API= -DGFLOW_ALLOW_NO_OPENMP \
 	-DEIGEN_DONT_VECTORIZE -DEIGEN_DONT_PARALLELIZE \
-	-include ../inst/include/gflow/eigen_config.hpp
+	-include ../inst/include/dgraphs/eigen_config.hpp
 
 PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 
@@ -9,13 +9,22 @@ CXX_STD = CXX17
 
 OBJECTS = \
 	SEXP_cpp_conversion_utils.o \
+	Eigen_utils.o \
 	adaptive_radius_graph_ann.o \
+	bidirectional_dijkstra.o \
 	cpp_mstrees.o \
-	dg2_native.o \
+	dgraphs_init.o \
 	geometric_edge_pruning.o \
 	geodesic_iknn_graphs.o \
+	geodesic_stats.o \
+	geodesic_stats_r.o \
+	graph_core_endpoints.o \
+	graph_endpoint_geometry_rcpp.o \
+	graph_endpoint_geometry_rcpp_wrappers.o \
+	graph_spectrum.o \
 	graph_conn_components.o \
 	graph_maximal_packing.o \
+	graph_maximal_packing_r.o \
 	graph_utils_native.o \
 	kNN.o \
 	knn_search_result_native.o \
@@ -24,6 +33,7 @@ OBJECTS = \
 	mst_completion_graphs.o \
 	mst_completion_graphs_r.o \
 	mstree_total_length.o \
+	path_grid.o \
 	progress_utils.o \
 	pruning_long_edges.o \
 	prune_long_edges.o \

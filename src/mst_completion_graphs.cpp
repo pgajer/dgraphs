@@ -3,8 +3,8 @@
 #include <algorithm>
 #include <numeric>
 
-#include "mst_completion_graphs.hpp"
-#include "error_utils.h" // For REPORT_ERROR
+#include "dgraphs/mst_completion_graphs.hpp"
+#include "dgraphs/error_utils.h" // For REPORT_ERROR
 
 #include <vector>
 #include <cmath>
@@ -12,7 +12,7 @@
 #include <numeric>
 #include <unordered_set>
 #include <limits>
-#include "mstree.h"
+#include "dgraphs/mstree.h"
 
 // Forward declaration of brute-force kNN
 void compute_knn_brute_force(

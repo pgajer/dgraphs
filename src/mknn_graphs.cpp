@@ -5,11 +5,11 @@
 
 */
 
-#include "omp_compat.h"
-#include "set_wgraph.hpp"
-#include "knn_search_result.hpp"
-#include "progress_utils.hpp" // For elapsed.time
-#include "kNN_r.h"            // For S_kNN()
+#include "dgraphs/omp_compat.h"
+#include "dgraphs/set_wgraph.hpp"
+#include "dgraphs/knn_search_result.hpp"
+#include "dgraphs/progress_utils.hpp" // For elapsed.time
+#include "dgraphs/kNN_r.h"            // For S_kNN()
 
 #include <ANN/ANN.h>  // ANN library header
 #include <vector>
@@ -226,9 +226,9 @@ SEXP S_create_mknn_graphs(
     std::vector<edge_pruning_stats_t> all_edge_pruning_stats(kmax - kmin + 1);
 
     // --- Thread setup (works with/without OpenMP) ---
-    const int max_threads = gflow_get_max_threads();   // =1 when no OpenMP
+    const int max_threads = dgraphs_get_max_threads();   // =1 when no OpenMP
     int num_threads = max_threads;                      // or clamp a user-supplied n_cores here
-    gflow_set_num_threads(num_threads);                 // no-op when no OpenMP
+    dgraphs_set_num_threads(num_threads);                 // no-op when no OpenMP
 
     if (verbose) {
 #if defined(_OPENMP)

@@ -4,7 +4,7 @@
 #include <math.h>
 #include <float.h>
 
-#include "kernels.h"
+#include "dgraphs/kernels.h"
 
 static double g_scale = 1.0;  // Global scale parameter used by both normal and Laplace kernels
 void (*kernel_fn)(const double*, int, double*);  // Actual definition of the function pointer

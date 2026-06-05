@@ -1,6 +1,6 @@
-#include "set_wgraph.hpp"
-#include "error_utils.h" // for REPORT_ERROR()
-#include "SEXP_cpp_conversion_utils.hpp"
+#include "dgraphs/set_wgraph.hpp"
+#include "dgraphs/error_utils.h" // for REPORT_ERROR()
+#include "dgraphs/SEXP_cpp_conversion_utils.hpp"
 
 #include <queue>
 #include <random>     // for std::mt19937

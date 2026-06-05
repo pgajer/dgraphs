@@ -9,11 +9,10 @@
 #include <cstdlib>  // For getenv
 #include <R.h>      // For Rprintf
 
-#include "cpp_utils.hpp"
-#include "set_wgraph.hpp"
-#include "uniform_grid_graph.hpp"
-#include "error_utils.h"  // for REPORT_ERROR()
-// #include "SEXP_cpp_conversion_utils.hpp"
+#include "dgraphs/cpp_utils.hpp"
+#include "dgraphs/set_wgraph.hpp"
+#include "dgraphs/uniform_grid_graph.hpp"
+#include "dgraphs/error_utils.h"  // for REPORT_ERROR()
 
 /**
  * @brief Finds a vertex that is at least epsilon away from all vertices in the packing
@@ -841,4 +840,3 @@ uniform_grid_graph_t create_maximal_packing(
 
 	return grid_graph;
 }
-

@@ -5,7 +5,7 @@
  // Nested structures (vector of sets, etc.) become nested R lists
  // All numeric values are properly converted to R integer or real types
 
-#include "SEXP_cpp_conversion_utils.hpp"
+#include "dgraphs/SEXP_cpp_conversion_utils.hpp"
 
 /**
  * @brief Helper function to convert mean shift smoothing results to an R list.
@@ -986,52 +986,6 @@ SEXP convert_map_vector_set_to_R(
     UNPROTECT(2); // names, Rlist
     return Rlist;
 }
-
-/**
- * @brief Converts a C++ map of cell trajectories to a named R list
- *
- * @param cell_traj Input map where keys are cell_t structures and values are sets of size_t indices
- * @return SEXP Named R list where:
- *              - Names are created by concatenating cell components ("lmax_lmin_cell_index")
- *              - Values are integer vectors containing trajectory indices
- *
- * @note The returned SEXP is the PROTECTed state.
- * @note Converts size_t values to integers for R compatibility
- */
-SEXP convert_cell_trajectories_to_R(const std::map<cell_t, std::set<size_t>>& cell_traj) {
-    int n = cell_traj.size();
-    SEXP Rlist = PROTECT(Rf_allocVector(VECSXP, n));
-
-    {
-        SEXP names = PROTECT(Rf_allocVector(STRSXP, n));
-        int i = 0;
-        for (const auto& pair : cell_traj) {
-            // Convert set of size_t to vector of integers
-            SEXP Rvec = PROTECT(Rf_allocVector(INTSXP, pair.second.size()));
-            int* ptr = INTEGER(Rvec);
-            int j = 0;
-            for (const auto& val : pair.second) {
-                ptr[j++] = static_cast<int>(val);
-            }
-
-            // Create name from cell_t components
-            std::string name = std::to_string(pair.first.lmax) + "_" +
-                std::to_string(pair.first.lmin) + "_" +
-                std::to_string(pair.first.cell_index);
-            SET_STRING_ELT(names, i, Rf_mkChar(name.c_str()));
-
-            SET_VECTOR_ELT(Rlist, i, Rvec);
-            UNPROTECT(1); // Rvec
-            i++;
-        }
-        Rf_setAttrib(Rlist, R_NamesSymbol, names);
-        UNPROTECT(1);
-    }
-
-    UNPROTECT(1); // Rlist
-    return Rlist; // UNPROTECTED on return - caller protects or inserts immediately
-}
-
 
 /**
  * @brief Converts a C++ map from integer pairs to vectors of integers to a named R list

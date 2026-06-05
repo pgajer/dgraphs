@@ -10,7 +10,7 @@
 
  */
 
-#include "graph_conn_components_r.h"
+#include "dgraphs/graph_conn_components_r.h"
 
 #include <vector>
 #include <unordered_set>

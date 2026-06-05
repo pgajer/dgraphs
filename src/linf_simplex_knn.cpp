@@ -1,4 +1,4 @@
-#include "linf_simplex_knn.hpp"
+#include "dgraphs/linf_simplex_knn.hpp"
 
 #include <algorithm>
 #include <cmath>

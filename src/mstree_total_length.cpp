@@ -1,7 +1,7 @@
-#include "mstree.h"
-#include "mstree_total_length_r.h"
-#include "kNN.h"
-#include "SEXP_cpp_conversion_utils.hpp"
+#include "dgraphs/mstree.h"
+#include "dgraphs/mstree_total_length_r.h"
+#include "dgraphs/kNN.h"
+#include "dgraphs/SEXP_cpp_conversion_utils.hpp"
 
 #include <vector>
 #include <algorithm>

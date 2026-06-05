@@ -1,4 +1,4 @@
-#include "cpp_utils.hpp"
+#include "dgraphs/cpp_utils.hpp"
 
 #include <vector>
 #include <queue>
@@ -224,4 +224,3 @@ SEXP S_mstree(SEXP X) {
     UNPROTECT(3);
     return result;
 }
-

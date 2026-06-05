@@ -2,7 +2,7 @@
 #include <R_ext/Lapack.h>
 #include <stdlib.h>
 
-#include "gflow_macros.h"
+#include "dgraphs/gflow_macros.h"
 
 /*!
     \brief Creates a Minimal Spanning Tree (MST) on a matrix X with > 1 column using Prim's algorithm

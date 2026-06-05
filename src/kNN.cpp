@@ -1,4 +1,4 @@
-#include "kNN.h"
+#include "dgraphs/kNN.h"
 
 #include <vector>
 #include <cmath>

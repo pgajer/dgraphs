@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.claude/
+*.rds
+*.RDS
+*.o
+*.so
+*.dll
+*.tar.gz
+*.Rcheck/

@@ -443,6 +443,189 @@ create.rknn.graph <- function(X,
     )
 }
 
+#' Compute Adaptive Radius-kNN Graphs Across k Values
+#'
+#' @description
+#' Creates a sequence of adaptive-radius graphs by varying the `k.scale`
+#' parameter passed to `create.rknn.graph(type = "adaptive.radius")`. This is
+#' an R-level convenience constructor: each returned graph is constructed by
+#' the scalar adaptive-radius path and is therefore intended to match the
+#' corresponding `create.rknn.graph(..., k.scale = k)` result exactly.
+#'
+#' @param X Numeric matrix or data frame with observations in rows.
+#' @param kmin,kmax Optional integer scalars defining the inclusive k range.
+#'   Required when `k.values` is `NULL`.
+#' @param ... Additional arguments forwarded to `create.rknn.graph()` with
+#'   `type = "adaptive.radius"`. The arguments `type`, `k.scale`, and `radius`
+#'   are reserved by this plural constructor.
+#' @param k.values Optional integer vector of k values to evaluate. When
+#'   supplied, `k.values` is used instead of `kmin:kmax`, and the returned
+#'   graph order follows the supplied vector.
+#'
+#' @return A list of class `"rknn_graphs"` with components:
+#'   \describe{
+#'     \item{graphs}{A named list of adaptive-radius graph objects, one per k.}
+#'     \item{k_statistics}{A data frame with one row per k containing edge,
+#'       component, and MST-repair counts.}
+#'     \item{timing}{Present only when forwarded options request graph timing;
+#'       contains per-k timing rows from the scalar constructor.}
+#'   }
+#'   Attributes include `kmin`, `kmax`, `k.values`, and `n_vertices`.
+#'
+#' @examples
+#' X <- matrix(c(0, 1, 3, 4), ncol = 1)
+#' result <- create.rknn.graphs(
+#'   X,
+#'   kmin = 1,
+#'   kmax = 2,
+#'   radius.search = "all.pairs",
+#'   graph.detail = "minimal",
+#'   prune.method = "none"
+#' )
+#' names(result$graphs)
+#' result$k_statistics
+#'
+#' @seealso [create.rknn.graph()]
+#'
+#' @export
+create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
+                               k.values = NULL) {
+    X <- .validate.numeric.data.matrix(X)
+    n <- nrow(X)
+    k.values <- .normalize.rknn.graphs.k.values(kmin, kmax, k.values, n)
+
+    args <- list(...)
+    if ("k.scale" %in% names(args)) {
+        stop("'k.scale' is varied by create.rknn.graphs(); use 'kmin', 'kmax', or 'k.values'.",
+             call. = FALSE)
+    }
+    if ("radius" %in% names(args)) {
+        stop("'radius' is for fixed-radius graphs; create.rknn.graphs() varies k.scale for adaptive-radius graphs.",
+             call. = FALSE)
+    }
+    if ("type" %in% names(args)) {
+        if (!is.character(args$type) || length(args$type) != 1L ||
+            !identical(args$type, "adaptive.radius")) {
+            stop("'type' must be omitted or set to 'adaptive.radius' in create.rknn.graphs().",
+                 call. = FALSE)
+        }
+        args$type <- NULL
+    }
+
+    graphs <- vector("list", length(k.values))
+    names(graphs) <- as.character(k.values)
+    for (i in seq_along(k.values)) {
+        graphs[[i]] <- do.call(
+            create.rknn.graph,
+            c(list(
+                X = X,
+                type = "adaptive.radius",
+                k.scale = k.values[[i]]
+            ), args)
+        )
+    }
+
+    out <- list(
+        graphs = graphs,
+        k_statistics = .rknn.graphs.k.statistics(graphs, k.values)
+    )
+    timing <- .rknn.graphs.timing(graphs, k.values)
+    if (!is.null(timing)) {
+        out$timing <- timing
+    }
+
+    attr(out, "kmin") <- min(k.values)
+    attr(out, "kmax") <- max(k.values)
+    attr(out, "k.values") <- k.values
+    attr(out, "n_vertices") <- n
+    attr(out, "graph_rule") <- "adaptive.radius"
+    class(out) <- c("rknn_graphs", "list")
+    out
+}
+
+.normalize.rknn.graphs.k.values <- function(kmin, kmax, k.values, n) {
+    if (!is.null(k.values)) {
+        if (!is.numeric(k.values) || !length(k.values) ||
+            any(!is.finite(k.values)) || any(k.values != floor(k.values))) {
+            stop("'k.values' must be a non-empty integer vector.",
+                 call. = FALSE)
+        }
+        k.values <- as.integer(k.values)
+        if (any(k.values < 1L) || any(k.values >= n)) {
+            stop("'k.values' must contain positive integers smaller than nrow(X).",
+                 call. = FALSE)
+        }
+        if (anyDuplicated(k.values)) {
+            stop("'k.values' cannot contain duplicate values.", call. = FALSE)
+        }
+        return(k.values)
+    }
+
+    if (is.null(kmin) || is.null(kmax)) {
+        stop("Provide either 'k.values' or both 'kmin' and 'kmax'.",
+             call. = FALSE)
+    }
+    if (!is.numeric(kmin) || length(kmin) != 1L || !is.finite(kmin) ||
+        kmin != floor(kmin) || kmin < 1L) {
+        stop("'kmin' must be a positive integer scalar.", call. = FALSE)
+    }
+    if (!is.numeric(kmax) || length(kmax) != 1L || !is.finite(kmax) ||
+        kmax != floor(kmax) || kmax < kmin) {
+        stop("'kmax' must be an integer scalar greater than or equal to 'kmin'.",
+             call. = FALSE)
+    }
+    if (kmax >= n) {
+        stop("'kmax' must be smaller than nrow(X).", call. = FALSE)
+    }
+    as.integer(kmin):as.integer(kmax)
+}
+
+.rknn.graphs.k.statistics <- function(graphs, k.values) {
+    data.frame(
+        idx = seq_along(k.values),
+        k = as.integer(k.values),
+        n_edges = vapply(graphs, function(g) g$n_edges, integer(1)),
+        n_edges_before_pruning = vapply(
+            graphs, function(g) g$n_edges_before_pruning, integer(1)
+        ),
+        n_edges_after_pruning = vapply(
+            graphs, function(g) g$n_edges_after_pruning, integer(1)
+        ),
+        n_components_before = vapply(
+            graphs, function(g) g$n_components_before, integer(1)
+        ),
+        n_components_after = vapply(
+            graphs, function(g) g$n_components_after, integer(1)
+        ),
+        n_mst_edges_added = vapply(
+            graphs, function(g) g$n_mst_edges_added, integer(1)
+        ),
+        stringsAsFactors = FALSE
+    )
+}
+
+.rknn.graphs.timing <- function(graphs, k.values) {
+    rows <- vector("list", length(graphs))
+    for (i in seq_along(graphs)) {
+        timing <- graphs[[i]]$timing
+        if (is.null(timing)) {
+            next
+        }
+        rows[[i]] <- data.frame(
+            k = as.integer(k.values[[i]]),
+            timing,
+            stringsAsFactors = FALSE
+        )
+    }
+    rows <- rows[!vapply(rows, is.null, logical(1))]
+    if (!length(rows)) {
+        return(NULL)
+    }
+    timing <- do.call(rbind, rows)
+    rownames(timing) <- NULL
+    timing
+}
+
 .create.radius.graph <- function(X,
                                  radius,
                                  prune.method = c("none", "local.geodesic", "global.geodesic.ratio"),
@@ -823,6 +1006,15 @@ print.cknn_graph <- function(x, ...) {
     cat("Delta:", x$delta, "\n")
     cat("Connected components before MST augmentation:", x$n_components_before, "\n")
     cat("Connected components after MST augmentation:", x$n_components_after, "\n")
+    invisible(x)
+}
+
+#' @export
+print.rknn_graphs <- function(x, ...) {
+    cat("Adaptive-radius graph sequence\n")
+    cat("Number of vertices:", attr(x, "n_vertices"), "\n")
+    cat("Number of graphs:", length(x$graphs), "\n")
+    cat("k values:", paste(attr(x, "k.values"), collapse = ", "), "\n")
     invisible(x)
 }
 

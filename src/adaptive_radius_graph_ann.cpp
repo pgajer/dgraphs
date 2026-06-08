@@ -444,34 +444,52 @@ extern "C" SEXP S_adaptive_radius_edges_ann_graphs(SEXP s_X,
 
         radius_start = std::chrono::steady_clock::now();
         const double tol = 64.0 * std::numeric_limits<double>::epsilon();
-        for (size_t k_pos = 0; k_pos < k_values.size(); ++k_pos) {
-            const std::vector<double>& sigma = sigma_by_k[k_pos];
-            std::map<std::uint64_t, double>& edges = edges_by_k[k_pos];
-            for (int i = 0; i < n; ++i) {
-                const double search_radius = radius_factor * sigma[static_cast<size_t>(i)];
-                const double sq_radius = search_radius * search_radius;
-                int count = tree->annkFRSearch(data[i], sq_radius, 0, nullptr, nullptr, 0.0);
-                if (count <= 0) {
+        std::vector<double> sigma_i_by_k(k_values.size(), 0.0);
+        std::vector<double> directional_sq_radius_by_k(k_values.size(), 0.0);
+        for (int i = 0; i < n; ++i) {
+            double max_sigma_i = 0.0;
+            for (size_t k_pos = 0; k_pos < k_values.size(); ++k_pos) {
+                const double sigma_i = sigma_by_k[k_pos][static_cast<size_t>(i)];
+                sigma_i_by_k[k_pos] = sigma_i;
+                const double directional_radius = radius_factor * sigma_i;
+                directional_sq_radius_by_k[k_pos] =
+                    directional_radius * directional_radius;
+                max_sigma_i = std::max(max_sigma_i, sigma_i);
+            }
+
+            const double search_radius = radius_factor * max_sigma_i;
+            const double sq_radius = search_radius * search_radius;
+            int count = tree->annkFRSearch(data[i], sq_radius, 0, nullptr, nullptr, 0.0);
+            if (count <= 0) {
+                continue;
+            }
+            std::vector<ANNidx> idx(static_cast<size_t>(count));
+            std::vector<ANNdist> dist(static_cast<size_t>(count));
+            tree->annkFRSearch(data[i], sq_radius, count, idx.data(), dist.data(), 0.0);
+
+            for (int pos = 0; pos < count; ++pos) {
+                const int j = idx[static_cast<size_t>(pos)];
+                if (j < 0 || j >= n || j == i) {
                     continue;
                 }
-                std::vector<ANNidx> idx(static_cast<size_t>(count));
-                std::vector<ANNdist> dist(static_cast<size_t>(count));
-                tree->annkFRSearch(data[i], sq_radius, count, idx.data(), dist.data(), 0.0);
-
-                for (int pos = 0; pos < count; ++pos) {
-                    const int j = idx[static_cast<size_t>(pos)];
-                    if (j < 0 || j >= n || j == i) {
+                const double candidate_sq = static_cast<double>(
+                    dist[static_cast<size_t>(pos)]
+                );
+                const double d = ANN_ROOT(candidate_sq);
+                const std::uint64_t key = edge_key(i, j);
+                for (size_t k_pos = 0; k_pos < k_values.size(); ++k_pos) {
+                    if (candidate_sq > directional_sq_radius_by_k[k_pos]) {
                         continue;
                     }
-                    const double d = ANN_ROOT(static_cast<double>(dist[static_cast<size_t>(pos)]));
+                    const std::vector<double>& sigma = sigma_by_k[k_pos];
                     const double threshold = adaptive_threshold(
-                        sigma[static_cast<size_t>(i)],
+                        sigma_i_by_k[k_pos],
                         sigma[static_cast<size_t>(j)],
                         radius_factor,
                         radius_rule_id
                     );
                     if (d <= threshold * (1.0 + tol) + tol) {
-                        edges[edge_key(i, j)] = d;
+                        edges_by_k[k_pos][key] = d;
                     }
                 }
             }

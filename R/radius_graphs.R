@@ -57,6 +57,32 @@
     list(edges = edges, sigma = as.numeric(out$sigma), timing = out$timing)
 }
 
+.adaptive.radius.graphs.ann <- function(X, k.values, radius.factor, radius.rule) {
+    radius.rule.id <- switch(radius.rule,
+                             max = 0L,
+                             min = 1L,
+                             geomean = 2L)
+    out <- .Call(
+        "S_adaptive_radius_edges_ann_graphs",
+        X,
+        as.integer(k.values),
+        as.double(radius.factor),
+        as.integer(radius.rule.id),
+        PACKAGE = "dgraphs"
+    )
+    for (i in seq_along(out$edges)) {
+        if (!nrow(out$edges[[i]])) {
+            out$edges[[i]] <- data.frame(
+                from = integer(),
+                to = integer(),
+                weight = numeric()
+            )
+        }
+    }
+    out$sigma <- lapply(out$sigma, as.numeric)
+    out
+}
+
 .radius.graph.timing.frame <- function(named.seconds) {
     data.frame(
         phase = names(named.seconds),
@@ -541,6 +567,220 @@ create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
     attr(out, "graph_rule") <- "adaptive.radius"
     class(out) <- c("rknn_graphs", "list")
     out
+}
+
+#' Compute Adaptive Radius-kNN Graphs With Batched ANN Search
+#'
+#' @description
+#' Tentative C++-backed counterpart to `create.rknn.graphs()`. It builds one
+#' ANN kd-tree, computes nearest-neighbor distances through the maximal
+#' requested k value once, derives each requested `k.scale` from that shared
+#' result, and materializes adaptive-radius edge tables for all k values in
+#' C++. The existing R finalization path is then used for pruning, lifecycle
+#' branches, and optional component repair.
+#'
+#' This function is intentionally named `cpp.create.rknn.graphs()` while the
+#' native backend is being validated against `create.rknn.graphs()`. For
+#' ordinary use, prefer `create.rknn.graphs()` until the backend selection API
+#' is finalized.
+#'
+#' @inheritParams create.rknn.graphs
+#'
+#' @return A `"rknn_graphs"` object with the same default structure as
+#'   `create.rknn.graphs()`. When `return.timing = TRUE`, timing is attached at
+#'   the graph-sequence level because the ANN setup and max-k scale search are
+#'   shared across k values.
+#'
+#' @examples
+#' X <- matrix(c(0, 1, 3, 4), ncol = 1)
+#' result <- cpp.create.rknn.graphs(
+#'   X,
+#'   k.values = c(1, 2),
+#'   graph.detail = "minimal",
+#'   prune.method = "none"
+#' )
+#' names(result$graphs)
+#'
+#' @seealso [create.rknn.graphs()]
+#'
+#' @export
+cpp.create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
+                                   k.values = NULL) {
+    X <- .validate.numeric.data.matrix(X)
+    n <- nrow(X)
+    k.values <- .normalize.rknn.graphs.k.values(kmin, kmax, k.values, n)
+    controls <- .normalize.cpp.rknn.graphs.controls(list(...))
+
+    ann <- .adaptive.radius.graphs.ann(
+        X = X,
+        k.values = k.values,
+        radius.factor = controls$radius.factor,
+        radius.rule = controls$radius.rule
+    )
+
+    graphs <- vector("list", length(k.values))
+    names(graphs) <- as.character(k.values)
+    timing.rows <- list()
+    if (controls$return.timing) {
+        timing.rows[["ann"]] <- data.frame(
+            k = NA_integer_,
+            .radius.graph.timing.frame(ann$timing),
+            stringsAsFactors = FALSE
+        )
+    }
+
+    for (i in seq_along(k.values)) {
+        k <- as.integer(k.values[[i]])
+        graph <- .finalize.radius.graph(
+            X, ann$edges[[i]], controls$connect.components,
+            controls$connect.method, controls$bridge.k,
+            controls$bridge.k.max, controls$bridge.growth,
+            "adaptive_radius_graph",
+            prune.method = controls$prune.method,
+            max.path.edge.ratio.deviation.thld =
+                controls$max.path.edge.ratio.deviation.thld,
+            path.edge.ratio.percentile = controls$path.edge.ratio.percentile,
+            prune.tau = controls$prune.tau,
+            prune.local.k = controls$prune.local.k,
+            prune.k = k,
+            with.pruned.edge.stats = controls$with.pruned.edge.stats,
+            return.timing = controls$return.timing,
+            graph.detail = controls$graph.detail
+        )
+        graph$k_scale <- k
+        graph$radius_factor <- as.numeric(controls$radius.factor)
+        graph$radius_rule <- controls$radius.rule
+        graph$radius_search <- "ann"
+        graph$sigma <- ann$sigma[[i]]
+        graph$graph_rule <- "adaptive.radius"
+        graph$graph_detail <- controls$graph.detail
+
+        if (controls$return.timing && !is.null(graph$finalization_timing)) {
+            timing.rows[[paste0("finalization.", k)]] <- data.frame(
+                k = k,
+                graph$finalization_timing,
+                stringsAsFactors = FALSE
+            )
+            graph$finalization_timing <- NULL
+        }
+        graphs[[i]] <- graph
+    }
+
+    out <- list(
+        graphs = graphs,
+        k_statistics = .rknn.graphs.k.statistics(graphs, k.values)
+    )
+    if (controls$return.timing && length(timing.rows)) {
+        timing <- do.call(rbind, timing.rows)
+        rownames(timing) <- NULL
+        out$timing <- timing
+    }
+
+    attr(out, "kmin") <- min(k.values)
+    attr(out, "kmax") <- max(k.values)
+    attr(out, "k.values") <- k.values
+    attr(out, "n_vertices") <- n
+    attr(out, "graph_rule") <- "adaptive.radius"
+    class(out) <- c("rknn_graphs", "list")
+    out
+}
+
+.normalize.cpp.rknn.graphs.controls <- function(args) {
+    if (length(args)) {
+        arg.names <- names(args)
+        if (is.null(arg.names) || any(!nzchar(arg.names))) {
+            stop("All arguments in '...' must be named.", call. = FALSE)
+        }
+    }
+
+    take <- function(name, default) {
+        if (name %in% names(args)) {
+            value <- args[[name]]
+            args[[name]] <<- NULL
+            value
+        } else {
+            default
+        }
+    }
+
+    type <- take("type", "adaptive.radius")
+    if (!is.character(type) || length(type) != 1L ||
+        !identical(type, "adaptive.radius")) {
+        stop("'type' must be omitted or set to 'adaptive.radius' in cpp.create.rknn.graphs().",
+             call. = FALSE)
+    }
+    if ("k.scale" %in% names(args)) {
+        stop("'k.scale' is varied by cpp.create.rknn.graphs(); use 'kmin', 'kmax', or 'k.values'.",
+             call. = FALSE)
+    }
+    if ("radius" %in% names(args)) {
+        stop("'radius' is for fixed-radius graphs; cpp.create.rknn.graphs() varies k.scale for adaptive-radius graphs.",
+             call. = FALSE)
+    }
+
+    radius.factor <- take("radius.factor", 1)
+    if (!is.numeric(radius.factor) || length(radius.factor) != 1L ||
+        !is.finite(radius.factor) || radius.factor <= 0) {
+        stop("'radius.factor' must be a positive finite numeric scalar.",
+             call. = FALSE)
+    }
+    radius.rule <- match.arg(
+        take("radius.rule", "max"),
+        c("max", "min", "geomean")
+    )
+    radius.search <- match.arg(
+        take("radius.search", "ann"),
+        c("ann", "all.pairs")
+    )
+    if (!identical(radius.search, "ann")) {
+        stop("'radius.search' must be omitted or set to 'ann' in cpp.create.rknn.graphs().",
+             call. = FALSE)
+    }
+    return.timing <- isTRUE(take("return.timing", FALSE))
+    graph.detail <- match.arg(take("graph.detail", "full"),
+                              c("full", "minimal"))
+    prune.method <- match.arg(
+        take("prune.method", "none"),
+        c("none", "local.geodesic", "global.geodesic.ratio")
+    )
+    connect.components <- take("connect.components", FALSE)
+    if (!is.logical(connect.components) || length(connect.components) != 1L ||
+        is.na(connect.components)) {
+        stop("'connect.components' must be TRUE or FALSE.", call. = FALSE)
+    }
+    connect.method <- match.arg(
+        take("connect.method", "component.mst"),
+        c("component.mst", "component.mst.ann", "global.mst")
+    )
+
+    controls <- list(
+        radius.factor = radius.factor,
+        radius.rule = radius.rule,
+        return.timing = return.timing,
+        graph.detail = graph.detail,
+        prune.method = prune.method,
+        max.path.edge.ratio.deviation.thld =
+            take("max.path.edge.ratio.deviation.thld", 0.1),
+        path.edge.ratio.percentile =
+            take("path.edge.ratio.percentile", 0.5),
+        prune.tau = take("prune.tau", 1.05),
+        prune.local.k = take("prune.local.k", NULL),
+        with.pruned.edge.stats = take("with.pruned.edge.stats", FALSE),
+        connect.components = connect.components,
+        connect.method = connect.method,
+        bridge.k = take("bridge.k", NULL),
+        bridge.k.max = take("bridge.k.max", NULL),
+        bridge.growth = take("bridge.growth", 2)
+    )
+
+    if (length(args)) {
+        stop(sprintf(
+            "Unused argument%s in '...': %s",
+            if (length(args) == 1L) "" else "s",
+            paste(names(args), collapse = ", ")
+        ), call. = FALSE)
+    }
+    controls
 }
 
 .normalize.rknn.graphs.k.values <- function(kmin, kmax, k.values, n) {

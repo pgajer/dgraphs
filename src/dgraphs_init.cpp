@@ -8,6 +8,10 @@ SEXP S_adaptive_radius_edges_ann(SEXP s_X,
                                  SEXP s_k_scale,
                                  SEXP s_radius_factor,
                                  SEXP s_radius_rule);
+SEXP S_adaptive_radius_edges_ann_graphs(SEXP s_X,
+                                        SEXP s_k_values,
+                                        SEXP s_radius_factor,
+                                        SEXP s_radius_rule);
 SEXP S_compute_mstree_total_length(SEXP s_X);
 SEXP S_create_geodesic_iknn_graph(SEXP s_adj_list,
                                   SEXP s_weight_list,
@@ -160,6 +164,7 @@ SEXP S_wgraph_prune_long_edges(SEXP s_adj_list,
 
 static const R_CallMethodDef CallEntries[] = {
     {"S_adaptive_radius_edges_ann", (DL_FUNC) &S_adaptive_radius_edges_ann, 4},
+    {"S_adaptive_radius_edges_ann_graphs", (DL_FUNC) &S_adaptive_radius_edges_ann_graphs, 4},
     {"S_compute_mstree_total_length", (DL_FUNC) &S_compute_mstree_total_length, 1},
     {"S_create_geodesic_iknn_graph", (DL_FUNC) &S_create_geodesic_iknn_graph, 3},
     {"S_create_iknn_graphs", (DL_FUNC) &S_create_iknn_graphs, 17},

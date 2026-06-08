@@ -477,10 +477,10 @@ create.rknn.graph <- function(X,
 #'
 #' @description
 #' Creates a sequence of adaptive-radius graphs by varying the `k.scale`
-#' parameter passed to `create.rknn.graph(type = "adaptive.radius")`. This is
-#' an R-level convenience constructor: each returned graph is constructed by
-#' the scalar adaptive-radius path and is therefore intended to match the
-#' corresponding `create.rknn.graph(..., k.scale = k)` result exactly.
+#' parameter passed to `create.rknn.graph(type = "adaptive.radius")`. By
+#' default, ANN-backed construction uses the batched C++ backend while the
+#' direct all-pairs reference path uses the scalar R loop. Set `backend = "r"`
+#' to force the scalar loop for ANN parity checks.
 #'
 #' @param X Numeric matrix or data frame with observations in rows.
 #' @param kmin,kmax Optional integer scalars defining the inclusive k range.
@@ -491,6 +491,11 @@ create.rknn.graph <- function(X,
 #' @param k.values Optional integer vector of k values to evaluate. When
 #'   supplied, `k.values` is used instead of `kmin:kmax`, and the returned
 #'   graph order follows the supplied vector.
+#' @param backend Character scalar. `"auto"` uses the batched C++ ANN backend
+#'   when `radius.search = "ann"` and the scalar R loop when
+#'   `radius.search = "all.pairs"`. `"cpp"` forces the batched C++ ANN backend
+#'   and therefore requires `radius.search = "ann"`. `"r"` forces the scalar
+#'   R loop and is retained as a reference parity backend.
 #'
 #' @return A list of class `"rknn_graphs"` with components:
 #'   \describe{
@@ -498,7 +503,7 @@ create.rknn.graph <- function(X,
 #'     \item{k_statistics}{A data frame with one row per k containing edge,
 #'       component, and MST-repair counts.}
 #'     \item{timing}{Present only when forwarded options request graph timing;
-#'       contains per-k timing rows from the scalar constructor.}
+#'       contains backend-specific construction timing rows.}
 #'   }
 #'   Attributes include `kmin`, `kmax`, `k.values`, and `n_vertices`.
 #'
@@ -519,12 +524,29 @@ create.rknn.graph <- function(X,
 #'
 #' @export
 create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
-                               k.values = NULL) {
+                               k.values = NULL,
+                               backend = c("auto", "cpp", "r")) {
     X <- .validate.numeric.data.matrix(X)
     n <- nrow(X)
     k.values <- .normalize.rknn.graphs.k.values(kmin, kmax, k.values, n)
+    backend <- match.arg(backend)
 
     args <- list(...)
+    radius.search <- if ("radius.search" %in% names(args)) {
+        match.arg(args$radius.search, c("ann", "all.pairs"))
+    } else {
+        "ann"
+    }
+    if (identical(backend, "auto")) {
+        backend <- if (identical(radius.search, "ann")) "cpp" else "r"
+    }
+    if (identical(backend, "cpp")) {
+        return(do.call(
+            cpp.create.rknn.graphs,
+            c(list(X = X, k.values = k.values), args)
+        ))
+    }
+
     if ("k.scale" %in% names(args)) {
         stop("'k.scale' is varied by create.rknn.graphs(); use 'kmin', 'kmax', or 'k.values'.",
              call. = FALSE)

@@ -36,47 +36,56 @@
         }
         return(list(adj_list = adj, weight_list = weights))
     }
-    edges <- edges[order(edges$from, edges$to), , drop = FALSE]
-    for (r in seq_len(nrow(edges))) {
-        u <- as.integer(edges$from[[r]])
-        v <- as.integer(edges$to[[r]])
-        w <- as.numeric(edges$weight[[r]])
-        adj[[u]] <- c(adj[[u]], v)
-        weights[[u]] <- c(weights[[u]], w)
-        adj[[v]] <- c(adj[[v]], u)
-        weights[[v]] <- c(weights[[v]], w)
+
+    u <- as.integer(edges$from)
+    v <- as.integer(edges$to)
+    w <- as.numeric(edges$weight)
+    from <- c(u, v)
+    to <- c(v, u)
+    weight <- c(w, w)
+    ord <- order(from, to)
+    from <- from[ord]
+    to <- to[ord]
+    weight <- weight[ord]
+
+    counts <- tabulate(from, nbins = n)
+    ends <- cumsum(counts)
+    starts <- ends - counts + 1L
+    non.empty <- which(counts > 0L)
+    for (i in non.empty) {
+        idx <- starts[[i]]:ends[[i]]
+        adj[[i]] <- as.integer(to[idx])
+        weights[[i]] <- as.numeric(weight[idx])
     }
-    for (i in seq_len(n)) {
-        if (length(adj[[i]]) > 1L) {
-            ord <- order(adj[[i]])
-            adj[[i]] <- as.integer(adj[[i]][ord])
-            weights[[i]] <- as.numeric(weights[[i]][ord])
-        } else {
-            adj[[i]] <- as.integer(adj[[i]])
-            weights[[i]] <- as.numeric(weights[[i]])
-        }
+    empty <- which(counts == 0L)
+    for (i in empty) {
+        adj[[i]] <- integer(0)
+        weights[[i]] <- numeric(0)
     }
     list(adj_list = adj, weight_list = weights)
 }
 
 .graph.components <- function(adj.list) {
     n <- length(adj.list)
-    comp <- rep.int(NA_integer_, n)
+    comp <- integer(n)
     comp.id <- 0L
+    stack <- integer(n)
     for (start in seq_len(n)) {
-        if (!is.na(comp[[start]])) {
+        if (comp[[start]] != 0L) {
             next
         }
         comp.id <- comp.id + 1L
+        top <- 1L
+        stack[[top]] <- start
         comp[[start]] <- comp.id
-        stack <- start
-        while (length(stack)) {
-            u <- stack[[length(stack)]]
-            stack <- stack[-length(stack)]
+        while (top > 0L) {
+            u <- stack[[top]]
+            top <- top - 1L
             for (v in adj.list[[u]]) {
-                if (is.na(comp[[v]])) {
+                if (comp[[v]] == 0L) {
                     comp[[v]] <- comp.id
-                    stack <- c(stack, v)
+                    top <- top + 1L
+                    stack[[top]] <- v
                 }
             }
         }

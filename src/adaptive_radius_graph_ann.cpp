@@ -511,16 +511,13 @@ extern "C" SEXP S_adaptive_radius_edges_ann_graphs(SEXP s_X,
     Rf_setAttrib(sigma_list, R_NamesSymbol, list_names);
 
     for (int i = 0; i < n_k; ++i) {
-        SET_VECTOR_ELT(
-            edges_list,
-            i,
-            edge_map_to_data_frame(edges_by_k[static_cast<size_t>(i)])
-        );
-        SET_VECTOR_ELT(
-            sigma_list,
-            i,
-            numeric_vector_from_std_vector(sigma_by_k[static_cast<size_t>(i)])
-        );
+        SEXP edge_df = PROTECT(edge_map_to_data_frame(edges_by_k[static_cast<size_t>(i)]));
+        SET_VECTOR_ELT(edges_list, i, edge_df);
+        UNPROTECT(1);
+
+        SEXP sigma_vec = PROTECT(numeric_vector_from_std_vector(sigma_by_k[static_cast<size_t>(i)]));
+        SET_VECTOR_ELT(sigma_list, i, sigma_vec);
+        UNPROTECT(1);
     }
 
     SET_VECTOR_ELT(out, 0, edges_list);

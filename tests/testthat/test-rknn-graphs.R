@@ -1,3 +1,10 @@
+.dg7.rknn.expect.cpp.ann.parity <- function(X, ..., tolerance = 1e-12) {
+    r.graphs <- create.rknn.graphs(X, radius.search = "ann", ...)
+    cpp.graphs <- cpp.create.rknn.graphs(X, ...)
+    expect_equal(cpp.graphs, r.graphs, tolerance = tolerance)
+    invisible(cpp.graphs)
+}
+
 test_that("create.rknn.graphs matches scalar adaptive-radius constructor", {
     X <- matrix(c(
         0.00, 0.00,
@@ -115,6 +122,65 @@ test_that("cpp.create.rknn.graphs matches R-level ANN backend", {
     }
 })
 
+test_that("cpp.create.rknn.graphs matches ANN backend for near-duplicate and tie cases", {
+    cases <- list(
+        near.duplicates = list(
+            X = matrix(c(
+                0, 0,
+                1e-12, 0,
+                2e-12, 0,
+                1, 0,
+                2, 0,
+                3, 0
+            ), ncol = 2, byrow = TRUE),
+            k.values = c(1, 2, 4)
+        ),
+        jittered.cluster.line = list(
+            X = matrix(c(
+                0,      0,
+                1e-12,  0,
+                1,      0,
+                2,      0,
+                3,      0,
+                4,      0
+            ), ncol = 2, byrow = TRUE),
+            k.values = c(3, 1, 2)
+        ),
+        square.center.ties = list(
+            X = matrix(c(
+                 0,  0,
+                 1,  0,
+                -1,  0,
+                 0,  1,
+                 0, -1,
+                 2,  0
+            ), ncol = 2, byrow = TRUE),
+            k.values = c(1, 2, 3)
+        ),
+        symmetric.hexagon = list(
+            X = cbind(
+                cos(2 * pi * (0:5) / 6),
+                sin(2 * pi * (0:5) / 6)
+            ),
+            k.values = c(2, 1, 3)
+        )
+    )
+
+    for (case in cases) {
+        for (rule in c("max", "min", "geomean")) {
+            .dg7.rknn.expect.cpp.ann.parity(
+                case$X,
+                k.values = case$k.values,
+                radius.factor = 1,
+                radius.rule = rule,
+                prune.method = "none",
+                graph.detail = "minimal",
+                connect.components = FALSE
+            )
+        }
+    }
+})
+
 test_that("cpp.create.rknn.graphs forwards finalization controls", {
     X <- rbind(
         c(0, 0), c(0.07, 0), c(0, 0.07),
@@ -144,6 +210,92 @@ test_that("cpp.create.rknn.graphs forwards finalization controls", {
     )
 
     expect_equal(cpp.graphs, r.graphs, tolerance = 1e-12)
+})
+
+test_that("cpp.create.rknn.graphs matches ANN backend for pruning finalization", {
+    X <- matrix(c(
+        0.00, 0.00,
+        0.35, 0.00,
+        0.70, 0.00,
+        0.20, 0.35,
+        0.55, 0.38,
+        0.90, 0.30,
+        1.20, 0.00
+    ), ncol = 2, byrow = TRUE)
+
+    .dg7.rknn.expect.cpp.ann.parity(
+        X,
+        k.values = c(2, 3),
+        radius.factor = 1.4,
+        radius.rule = "max",
+        prune.method = "local.geodesic",
+        prune.local.k = 3,
+        with.pruned.edge.stats = TRUE,
+        connect.components = FALSE
+    )
+
+    .dg7.rknn.expect.cpp.ann.parity(
+        X,
+        k.values = c(2, 3),
+        radius.factor = 1.4,
+        radius.rule = "max",
+        prune.method = "global.geodesic.ratio",
+        max.path.edge.ratio.deviation.thld = 0.12,
+        path.edge.ratio.percentile = 0.25,
+        with.pruned.edge.stats = TRUE,
+        connect.components = FALSE
+    )
+})
+
+test_that("cpp.create.rknn.graphs matches ANN backend for component repair methods", {
+    X <- rbind(
+        c(0, 0), c(0.07, 0), c(0, 0.07),
+        c(10, 10), c(10.07, 10), c(10, 10.07)
+    )
+
+    cpp.graphs <- .dg7.rknn.expect.cpp.ann.parity(
+        X,
+        k.values = c(1, 2),
+        radius.factor = 1.05,
+        radius.rule = "max",
+        prune.method = "none",
+        connect.components = TRUE,
+        connect.method = "component.mst.ann",
+        bridge.k = 1,
+        bridge.k.max = 1
+    )
+    expect_true(all(vapply(cpp.graphs$graphs,
+                           function(g) isTRUE(g$bridge_exact_fallback_used),
+                           logical(1))))
+
+    .dg7.rknn.expect.cpp.ann.parity(
+        X,
+        k.values = c(1, 2),
+        radius.factor = 1.05,
+        radius.rule = "max",
+        prune.method = "none",
+        connect.components = TRUE,
+        connect.method = "global.mst"
+    )
+})
+
+test_that("cpp.create.rknn.graphs matches ANN backend for full lifecycle repair", {
+    X <- rbind(
+        c(0, 0), c(0.07, 0), c(0, 0.07),
+        c(10, 10), c(10.07, 10), c(10, 10.07)
+    )
+
+    .dg7.rknn.expect.cpp.ann.parity(
+        X,
+        k.values = c(1, 2),
+        radius.factor = 1.05,
+        radius.rule = "max",
+        prune.method = "local.geodesic",
+        prune.local.k = 2,
+        with.pruned.edge.stats = TRUE,
+        connect.components = TRUE,
+        connect.method = "component.mst"
+    )
 })
 
 test_that("cpp.create.rknn.graphs reports shared native timing", {
@@ -238,5 +390,65 @@ test_that("cpp.create.rknn.graphs rejects non-ANN and unsupported controls", {
     expect_error(
         cpp.create.rknn.graphs(X, 1, 2, unknown.control = TRUE),
         "Unused argument"
+    )
+})
+
+test_that("radius graph constructors reject duplicate rows", {
+    X <- matrix(c(
+        0.00, 0.00,
+        0.25, 0.25,
+        0.25, 0.25,
+        0.75, 0.75
+    ), ncol = 2, byrow = TRUE)
+
+    expect_error(
+        create.rknn.graph(
+            X,
+            type = "adaptive.radius",
+            k.scale = 1,
+            radius.search = "all.pairs",
+            prune.method = "none",
+            graph.detail = "minimal"
+        ),
+        "duplicate rows"
+    )
+    expect_error(
+        create.rknn.graph(
+            X,
+            type = "fixed",
+            radius = 0.5,
+            prune.method = "none"
+        ),
+        "duplicate rows"
+    )
+    expect_error(
+        create.rknn.graphs(
+            X,
+            kmin = 1,
+            kmax = 2,
+            prune.method = "none",
+            graph.detail = "minimal"
+        ),
+        "duplicate rows"
+    )
+    expect_error(
+        cpp.create.rknn.graphs(
+            X,
+            kmin = 1,
+            kmax = 2,
+            prune.method = "none",
+            graph.detail = "minimal"
+        ),
+        "duplicate rows"
+    )
+    expect_error(
+        create.cknn.graph(
+            X,
+            k.scale = 1,
+            radius.search = "all.pairs",
+            prune.method = "none",
+            graph.detail = "minimal"
+        ),
+        "duplicate rows"
     )
 })

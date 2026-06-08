@@ -10,3 +10,4 @@
 *.dll
 *.tar.gz
 *.Rcheck/
+phase_handoffs/

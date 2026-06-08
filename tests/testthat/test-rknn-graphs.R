@@ -1,5 +1,5 @@
 .dg7.rknn.expect.cpp.ann.parity <- function(X, ..., tolerance = 1e-12) {
-    r.graphs <- create.rknn.graphs(X, radius.search = "ann", ...)
+    r.graphs <- create.rknn.graphs(X, radius.search = "ann", backend = "r", ...)
     cpp.graphs <- cpp.create.rknn.graphs(X, ...)
     expect_equal(cpp.graphs, r.graphs, tolerance = tolerance)
     invisible(cpp.graphs)
@@ -86,6 +86,52 @@ test_that("create.rknn.graphs supports explicit k.values order", {
     expect_equal(attr(graphs, "kmax"), 3L)
 })
 
+test_that("create.rknn.graphs uses C++ backend by default for ANN search", {
+    X <- matrix(c(
+        0.00, 0.00,
+        0.41, 0.07,
+        0.82, 0.13,
+        0.09, 0.61,
+        0.52, 0.68,
+        0.91, 0.79,
+        1.17, 0.33
+    ), ncol = 2, byrow = TRUE)
+
+    auto.graphs <- create.rknn.graphs(
+        X,
+        k.values = c(3, 1, 2),
+        radius.factor = 1.13,
+        radius.rule = "geomean",
+        radius.search = "ann",
+        prune.method = "none",
+        graph.detail = "minimal",
+        connect.components = FALSE
+    )
+    cpp.graphs <- cpp.create.rknn.graphs(
+        X,
+        k.values = c(3, 1, 2),
+        radius.factor = 1.13,
+        radius.rule = "geomean",
+        prune.method = "none",
+        graph.detail = "minimal",
+        connect.components = FALSE
+    )
+    r.graphs <- create.rknn.graphs(
+        X,
+        k.values = c(3, 1, 2),
+        radius.factor = 1.13,
+        radius.rule = "geomean",
+        radius.search = "ann",
+        backend = "r",
+        prune.method = "none",
+        graph.detail = "minimal",
+        connect.components = FALSE
+    )
+
+    expect_equal(auto.graphs, cpp.graphs, tolerance = 1e-12)
+    expect_equal(auto.graphs, r.graphs, tolerance = 1e-12)
+})
+
 test_that("cpp.create.rknn.graphs matches R-level ANN backend", {
     X <- matrix(c(
         0.00, 0.00,
@@ -104,6 +150,7 @@ test_that("cpp.create.rknn.graphs matches R-level ANN backend", {
             radius.factor = 1.13,
             radius.rule = rule,
             radius.search = "ann",
+            backend = "r",
             prune.method = "none",
             graph.detail = "minimal",
             connect.components = FALSE
@@ -194,6 +241,7 @@ test_that("cpp.create.rknn.graphs forwards finalization controls", {
         radius.factor = 1.05,
         radius.rule = "max",
         radius.search = "ann",
+        backend = "r",
         prune.method = "none",
         connect.components = TRUE,
         connect.method = "component.mst"
@@ -349,6 +397,25 @@ test_that("create.rknn.graphs aggregates scalar timing rows", {
     expect_s3_class(graphs$timing, "data.frame")
     expect_true(all(c("k", "phase", "elapsed.sec") %in% names(graphs$timing)))
     expect_equal(sort(unique(graphs$timing$k)), c(1L, 2L))
+})
+
+test_that("create.rknn.graphs backend selection validates incompatible controls", {
+    X <- matrix(seq_len(12), ncol = 2)
+
+    expect_error(
+        create.rknn.graphs(
+            X,
+            1,
+            2,
+            radius.search = "all.pairs",
+            backend = "cpp"
+        ),
+        "'radius.search' must be omitted"
+    )
+    expect_error(
+        create.rknn.graphs(X, 1, 2, backend = "not-a-backend"),
+        "'arg' should be one of"
+    )
 })
 
 test_that("create.rknn.graphs rejects scalar and fixed-radius controls", {

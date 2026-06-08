@@ -4,7 +4,14 @@
 \alias{create.rknn.graphs}
 \title{Compute Adaptive Radius-kNN Graphs Across k Values}
 \usage{
-create.rknn.graphs(X, kmin = NULL, kmax = NULL, ..., k.values = NULL)
+create.rknn.graphs(
+  X,
+  kmin = NULL,
+  kmax = NULL,
+  ...,
+  k.values = NULL,
+  backend = c("auto", "cpp", "r")
+)
 }
 \arguments{
 \item{X}{Numeric matrix or data frame with observations in rows.}
@@ -19,6 +26,12 @@ are reserved by this plural constructor.}
 \item{k.values}{Optional integer vector of k values to evaluate. When
 supplied, \code{k.values} is used instead of \code{kmin:kmax}, and the returned
 graph order follows the supplied vector.}
+
+\item{backend}{Character scalar. \code{"auto"} uses the batched C++ ANN backend
+when \code{radius.search = "ann"} and the scalar R loop when
+\code{radius.search = "all.pairs"}. \code{"cpp"} forces the batched C++ ANN backend
+and therefore requires \code{radius.search = "ann"}. \code{"r"} forces the scalar
+R loop and is retained as a reference parity backend.}
 }
 \value{
 A list of class \code{"rknn_graphs"} with components:
@@ -27,16 +40,16 @@ A list of class \code{"rknn_graphs"} with components:
 \item{k_statistics}{A data frame with one row per k containing edge,
 component, and MST-repair counts.}
 \item{timing}{Present only when forwarded options request graph timing;
-contains per-k timing rows from the scalar constructor.}
+contains backend-specific construction timing rows.}
 }
 Attributes include \code{kmin}, \code{kmax}, \code{k.values}, and \code{n_vertices}.
 }
 \description{
 Creates a sequence of adaptive-radius graphs by varying the \code{k.scale}
-parameter passed to \code{create.rknn.graph(type = "adaptive.radius")}. This is
-an R-level convenience constructor: each returned graph is constructed by
-the scalar adaptive-radius path and is therefore intended to match the
-corresponding \code{create.rknn.graph(..., k.scale = k)} result exactly.
+parameter passed to \code{create.rknn.graph(type = "adaptive.radius")}. By
+default, ANN-backed construction uses the batched C++ backend while the
+direct all-pairs reference path uses the scalar R loop. Set \code{backend = "r"}
+to force the scalar loop for ANN parity checks.
 }
 \examples{
 X <- matrix(c(0, 1, 3, 4), ncol = 1)

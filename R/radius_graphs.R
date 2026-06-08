@@ -12,6 +12,10 @@
     if (nrow(X) < 2L) {
         stop("'X' must contain at least two observations.", call. = FALSE)
     }
+    if (anyDuplicated(X)) {
+        stop("'X' cannot contain duplicate rows; dereplicate or jitter tied observations before graph construction.",
+             call. = FALSE)
+    }
     if (!is.double(X)) {
         storage.mode(X) <- "double"
     }

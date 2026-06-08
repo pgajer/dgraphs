@@ -102,7 +102,6 @@ test_that("create.rknn.graphs uses C++ backend by default for ANN search", {
         k.values = c(3, 1, 2),
         radius.factor = 1.13,
         radius.rule = "geomean",
-        radius.search = "ann",
         prune.method = "none",
         graph.detail = "minimal",
         connect.components = FALSE
@@ -410,7 +409,7 @@ test_that("create.rknn.graphs backend selection validates incompatible controls"
             radius.search = "all.pairs",
             backend = "cpp"
         ),
-        "'radius.search' must be omitted"
+        "backend = \"cpp\" requires radius.search = \"ann\""
     )
     expect_error(
         create.rknn.graphs(X, 1, 2, backend = "not-a-backend"),

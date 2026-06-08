@@ -34,10 +34,10 @@ result, and materializes adaptive-radius edge tables for all k values in
 C++. The existing R finalization path is then used for pruning, lifecycle
 branches, and optional component repair.
 
-This function is intentionally named \code{cpp.create.rknn.graphs()} while the
-native backend is being validated against \code{create.rknn.graphs()}. For
-ordinary use, prefer \code{create.rknn.graphs()} until the backend selection API
-is finalized.
+This function is exported as a diagnostic helper while the native backend is
+being benchmarked and validated. Ordinary callers should use
+\code{create.rknn.graphs()} with the default \code{backend = "auto"} or with
+\code{backend = "cpp"} to request this native backend explicitly.
 }
 \examples{
 X <- matrix(c(0, 1, 3, 4), ncol = 1)

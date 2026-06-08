@@ -540,6 +540,10 @@ create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
     if (identical(backend, "auto")) {
         backend <- if (identical(radius.search, "ann")) "cpp" else "r"
     }
+    if (identical(backend, "cpp") && !identical(radius.search, "ann")) {
+        stop("backend = \"cpp\" requires radius.search = \"ann\".",
+             call. = FALSE)
+    }
     if (identical(backend, "cpp")) {
         return(do.call(
             cpp.create.rknn.graphs,
@@ -605,10 +609,10 @@ create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
 #' C++. The existing R finalization path is then used for pruning, lifecycle
 #' branches, and optional component repair.
 #'
-#' This function is intentionally named `cpp.create.rknn.graphs()` while the
-#' native backend is being validated against `create.rknn.graphs()`. For
-#' ordinary use, prefer `create.rknn.graphs()` until the backend selection API
-#' is finalized.
+#' This function is exported as a diagnostic helper while the native backend is
+#' being benchmarked and validated. Ordinary callers should use
+#' `create.rknn.graphs()` with the default `backend = "auto"` or with
+#' `backend = "cpp"` to request this native backend explicitly.
 #'
 #' @inheritParams create.rknn.graphs
 #'

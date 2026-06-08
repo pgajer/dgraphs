@@ -168,6 +168,26 @@ test_that("cpp.create.rknn.graphs matches R-level ANN backend", {
     }
 })
 
+test_that("cpp.create.rknn.graphs matches ANN backend for wider unordered k sweeps", {
+    theta <- seq(0, 3 * pi, length.out = 18L)
+    X <- cbind(
+        theta / max(theta),
+        sin(theta) + seq_along(theta) * 0.003
+    )
+
+    for (rule in c("max", "min", "geomean")) {
+        .dg7.rknn.expect.cpp.ann.parity(
+            X,
+            k.values = c(9L, 2L, 6L, 4L),
+            radius.factor = 1.08,
+            radius.rule = rule,
+            prune.method = "none",
+            graph.detail = "minimal",
+            connect.components = FALSE
+        )
+    }
+})
+
 test_that("cpp.create.rknn.graphs matches ANN backend for near-duplicate and tie cases", {
     cases <- list(
         near.duplicates = list(

@@ -27,6 +27,7 @@
 #'   \item{summary}{Data frame. Summary statistics for each radius.}
 #' }
 #'
+#' @export
 compute.geodesic.stats <- function(adj.list,
                                  weight.list,
                                  min.radius = 0.2,
@@ -273,6 +274,7 @@ print.geodesic_stats <- function(x, ...) {
 #'   \item{overlap_max}{Maximum overlap ratio.}
 #' }
 #'
+#' @export
 compute.vertex.geodesic.stats <- function(adj.list,
                                           weight.list,
                                           grid.vertex,

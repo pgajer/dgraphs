@@ -6,7 +6,6 @@
 __pycache__/
 split_handoffs/
 audit_artifacts/
-man/
 *.rds
 *.RDS
 *.o

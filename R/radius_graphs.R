@@ -22,6 +22,10 @@
     X
 }
 
+`%||%` <- function(x, y) {
+    if (is.null(x)) y else x
+}
+
 .pairwise.radius.edges <- function(X, keep.edge) {
     n <- nrow(X)
     rows <- vector("list", n * (n - 1L) / 2L)
@@ -872,6 +876,177 @@ cpp.create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
         ),
         stringsAsFactors = FALSE
     )
+}
+
+#' Summarize an rknn_graphs Object
+#'
+#' @description
+#' Provides a compact table of graph characteristics for an
+#' `"rknn_graphs"` object created by [create.rknn.graphs()] or
+#' [cpp.create.rknn.graphs()]. The table reports final edge counts,
+#' component-repair counts, degree summaries, and density/sparsity for each
+#' adaptive-radius `k.scale` value.
+#'
+#' @param object An object of class `"rknn_graphs"`.
+#' @param ... Additional arguments passed to or from other methods; currently
+#'   unused.
+#'
+#' @return Invisibly returns a data frame with one row per graph and columns:
+#'   \item{idx}{Position of the graph in the returned graph sequence.}
+#'   \item{k}{The adaptive-radius `k.scale` value.}
+#'   \item{n_vertices}{Number of graph vertices.}
+#'   \item{n_ccomp}{Number of connected components in the final graph.}
+#'   \item{n_ccomp_before_repair}{Number of components before component-MST
+#'     repair.}
+#'   \item{edges}{Final number of undirected edges.}
+#'   \item{edges_before_pruning}{Number of edges before geometric pruning.}
+#'   \item{edges_after_pruning}{Number of edges after geometric pruning and
+#'     before optional component repair.}
+#'   \item{mst_edges_added}{Number of component-MST repair edges added.}
+#'   \item{mean_degree}{Average vertex degree in the final graph.}
+#'   \item{min_degree}{Minimum vertex degree.}
+#'   \item{median_degree}{Median vertex degree.}
+#'   \item{max_degree}{Maximum vertex degree.}
+#'   \item{max_degree_over_median}{Ratio of maximum to median degree, or
+#'     `NA` when the median degree is zero.}
+#'   \item{universal_vertices}{Number of vertices adjacent to every other
+#'     vertex.}
+#'   \item{density}{Final graph density.}
+#'   \item{sparsity}{One minus graph density.}
+#'
+#' @examples
+#' X <- matrix(c(0, 1, 3, 4), ncol = 1)
+#' graphs <- create.rknn.graphs(
+#'   X,
+#'   kmin = 1,
+#'   kmax = 2,
+#'   radius.search = "all.pairs",
+#'   graph.detail = "minimal",
+#'   prune.method = "none"
+#' )
+#' summary(graphs)
+#'
+#' @seealso [create.rknn.graphs()], [cpp.create.rknn.graphs()]
+#'
+#' @export
+summary.rknn_graphs <- function(object, ...) {
+    if (!inherits(object, "rknn_graphs")) {
+        stop("Object must be of class 'rknn_graphs'", call. = FALSE)
+    }
+    graphs <- object$graphs
+    if (!is.list(graphs) || !length(graphs)) {
+        stop("object$graphs must be a non-empty list of graph objects.",
+             call. = FALSE)
+    }
+
+    k.values <- attr(object, "k.values")
+    if (is.null(k.values)) {
+        k.values <- suppressWarnings(as.integer(names(graphs)))
+    }
+    if (length(k.values) != length(graphs) || anyNA(k.values)) {
+        k.values <- vapply(graphs, function(g) {
+            if (!is.null(g$k_scale)) {
+                as.integer(g$k_scale)
+            } else {
+                NA_integer_
+            }
+        }, integer(1))
+    }
+
+    graph.summary.row <- function(graph, idx, k) {
+        if (is.null(graph$adj_list) || !is.list(graph$adj_list)) {
+            stop("Each rknn graph must contain an adjacency list at 'adj_list'.",
+                 call. = FALSE)
+        }
+        n.vertices <- length(graph$adj_list)
+        degrees <- lengths(graph$adj_list)
+        edge.count <- if (!is.null(graph$n_edges)) {
+            as.numeric(graph$n_edges)
+        } else {
+            sum(degrees) / 2
+        }
+        possible.edges <- n.vertices * (n.vertices - 1) / 2
+        density <- if (possible.edges > 0) edge.count / possible.edges else NA_real_
+        n.components <- if (!is.null(graph$n_components_after)) {
+            as.integer(graph$n_components_after)
+        } else {
+            .graph.components(graph$adj_list)$n_components
+        }
+        median.degree <- stats::median(degrees)
+        max.degree <- if (length(degrees)) max(degrees) else NA_integer_
+        data.frame(
+            idx = as.integer(idx),
+            k = as.integer(k),
+            n_vertices = as.integer(n.vertices),
+            n_ccomp = n.components,
+            n_ccomp_before_repair = as.integer(graph$n_components_before %||% NA_integer_),
+            edges = as.integer(edge.count),
+            edges_before_pruning = as.integer(graph$n_edges_before_pruning %||% NA_integer_),
+            edges_after_pruning = as.integer(graph$n_edges_after_pruning %||% NA_integer_),
+            mst_edges_added = as.integer(graph$n_mst_edges_added %||% NA_integer_),
+            mean_degree = mean(degrees),
+            min_degree = if (length(degrees)) min(degrees) else NA_integer_,
+            median_degree = as.numeric(median.degree),
+            max_degree = as.integer(max.degree),
+            max_degree_over_median = if (is.finite(median.degree) && median.degree > 0) {
+                as.numeric(max.degree) / median.degree
+            } else {
+                NA_real_
+            },
+            universal_vertices = if (n.vertices > 1L) {
+                as.integer(sum(degrees >= n.vertices - 1L))
+            } else {
+                0L
+            },
+            density = density,
+            sparsity = 1 - density,
+            stringsAsFactors = FALSE
+        )
+    }
+
+    stats.table <- do.call(rbind, Map(
+        graph.summary.row,
+        graph = graphs,
+        idx = seq_along(graphs),
+        k = k.values
+    ))
+    rownames(stats.table) <- NULL
+
+    graph.rule <- attr(object, "graph_rule") %||% "adaptive.radius"
+    n.vertices <- stats.table$n_vertices[[1]]
+    radius.factor <- unique(vapply(
+        graphs,
+        function(g) as.numeric(g$radius_factor %||% NA_real_),
+        numeric(1)
+    ))
+    radius.rule <- unique(vapply(
+        graphs,
+        function(g) as.character(g$radius_rule %||% NA_character_),
+        character(1)
+    ))
+
+    cat("Summary of rknn_graphs object\n")
+    cat("-----------------------------\n")
+    cat("Graph rule:", graph.rule, "\n")
+    cat("Number of vertices:", n.vertices, "\n")
+    cat("k values:", paste(k.values, collapse = ", "), "\n")
+    if (any(is.finite(radius.factor))) {
+        cat("Radius factor:", paste(radius.factor[is.finite(radius.factor)], collapse = ", "), "\n")
+    }
+    if (any(!is.na(radius.rule))) {
+        cat("Radius rule:", paste(radius.rule[!is.na(radius.rule)], collapse = ", "), "\n")
+    }
+    cat("\n")
+
+    print.table <- stats.table
+    print.table$mean_degree <- round(print.table$mean_degree, 2)
+    print.table$median_degree <- round(print.table$median_degree, 2)
+    print.table$max_degree_over_median <- round(print.table$max_degree_over_median, 3)
+    print.table$density <- round(print.table$density, 6)
+    print.table$sparsity <- round(print.table$sparsity, 6)
+    print(print.table, row.names = FALSE)
+
+    invisible(stats.table)
 }
 
 .rknn.graphs.timing <- function(graphs, k.values) {

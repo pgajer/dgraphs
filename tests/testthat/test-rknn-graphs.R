@@ -60,6 +60,55 @@ test_that("cpp.create.rknn.graphs is exported", {
     expect_true("cpp.create.rknn.graphs" %in% getNamespaceExports("dgraphs"))
 })
 
+test_that("summary.rknn_graphs reports graph characteristics", {
+    X <- rbind(
+        c(0, 0), c(0.08, 0), c(0, 0.08),
+        c(10, 10), c(10.08, 10), c(10, 10.08)
+    )
+
+    graphs <- create.rknn.graphs(
+        X,
+        k.values = c(1, 2),
+        radius.factor = 1,
+        radius.rule = "max",
+        radius.search = "all.pairs",
+        prune.method = "none",
+        connect.components = TRUE,
+        connect.method = "component.mst"
+    )
+
+    printed <- utils::capture.output(stats <- summary(graphs))
+    expect_true(any(grepl("Summary of rknn_graphs object", printed, fixed = TRUE)))
+    expect_s3_class(stats, "data.frame")
+    expect_equal(stats$k, c(1L, 2L))
+    expect_true(all(c(
+        "n_vertices",
+        "n_ccomp",
+        "n_ccomp_before_repair",
+        "edges",
+        "edges_before_pruning",
+        "edges_after_pruning",
+        "mst_edges_added",
+        "mean_degree",
+        "median_degree",
+        "max_degree",
+        "max_degree_over_median",
+        "universal_vertices",
+        "density",
+        "sparsity"
+    ) %in% names(stats)))
+    expect_equal(stats$n_vertices, rep(nrow(X), 2))
+    expect_equal(stats$n_ccomp, c(1L, 1L))
+    expect_true(all(stats$n_ccomp_before_repair > stats$n_ccomp))
+    expect_equal(stats$mst_edges_added,
+                 stats$n_ccomp_before_repair - stats$n_ccomp)
+    expect_true(all(stats$max_degree >= stats$median_degree))
+    expect_true(all(stats$max_degree_over_median >= 1))
+    expect_equal(stats$universal_vertices, c(0L, 0L))
+    expect_true(all(stats$density > 0 & stats$density <= 1))
+    expect_equal(stats$sparsity, 1 - stats$density)
+})
+
 test_that("create.rknn.graphs supports explicit k.values order", {
     X <- matrix(c(
         0.00, 0.00,

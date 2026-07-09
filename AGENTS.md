@@ -33,6 +33,17 @@ code.
 - Keep local build products, check directories, compiled objects, shared
   libraries, generated tarballs, and logs out of commits.
 
+## Research Reports
+
+- For HTML research reports, dashboards, and generated analysis summaries,
+  follow
+  `/Users/pgajer/.codex/notes/agent_instructions/reports/html_report_style_guide.md`.
+- Before treating an HTML report as complete, run a figure/table quality-control
+  pass using
+  `/Users/pgajer/.codex/notes/agent_instructions/reports/report_figure_table_qc.md`;
+  check that report goals, definitions, figure captions, interpretation text,
+  readable labels, linked source tables, and non-overlapping plots are present.
+
 ## Migration Discipline
 
 - Follow `GRAPH_MIGRATION_ACTION_PLAN.md` for the DG phase sequence and

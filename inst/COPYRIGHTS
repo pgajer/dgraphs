@@ -1,0 +1,18 @@
+This package includes the following external libraries:
+
+ANN - Approximate Nearest Neighbor Library
+(https://www.cs.umd.edu/~mount/ANN/)
+License: LGPL-2.1-or-later
+Copyright (c) 1997-2010 University of Maryland, Sunil Arya, and David M. Mount
+The upstream copyright and license notice is included in
+inst/licenses/ANN-Copyright-Notice.txt.
+
+Spectra (https://spectralib.org/)
+License: MPL-2.0
+Copyright (c) 2016-2024 Yixuan Qiu and contributors
+The included source files retain their MPL-2.0 notices and link to the license
+text at https://mozilla.org/MPL/2.0/.
+
+The Spectra contribution inst/include/Spectra/contrib/LOBPCGSolver.h is
+Copyright Anna Araslanova and Yixuan Qiu and is distributed under the MIT
+license stated in that source file.

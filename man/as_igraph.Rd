@@ -2,13 +2,14 @@
 % Please edit documentation in R/as_igraph.R
 \name{as_igraph}
 \alias{as_igraph}
-\title{Convert a gflow-Style Basin Graph to igraph}
+\title{Convert a Basin Graph to igraph}
 \usage{
 as_igraph(gflow.graph, include.vertex.attrs = TRUE, include.edge.attrs = TRUE)
 }
 \arguments{
-\item{gflow.graph}{A list with adjacency, weight, intersection, and basin
-metadata fields.}
+\item{gflow.graph}{A basin graph list with adjacency, weight, intersection,
+and basin metadata fields. The argument name is retained for backward
+compatibility.}
 
 \item{include.vertex.attrs}{Logical; include basin metadata as vertex
 attributes.}
@@ -20,5 +21,5 @@ sizes as edge attributes.}
 An \code{igraph} object.
 }
 \description{
-Convert a gflow-Style Basin Graph to igraph
+Convert a Basin Graph to igraph
 }

@@ -1,7 +1,3 @@
-##
-## DG6c generic path and geodesic utilities split from gflow.
-##
-
 #' Produce k-NN Distance and Index Matrices from a Distance Matrix
 #'
 #' @param d Symmetric distance matrix.

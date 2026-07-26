@@ -117,7 +117,7 @@ nerve.graph <- function(covering.list, n.cores = 1) {
     }
 
     if (is.null(n.cores)) {
-        n.cores <- max(1L, parallel::detectCores() - 1L)
+        n.cores <- min(2L, max(1L, parallel::detectCores()))
     }
     n.cores <- as.integer(n.cores)
     if (length(n.cores) != 1L || is.na(n.cores) || n.cores < 1L) {

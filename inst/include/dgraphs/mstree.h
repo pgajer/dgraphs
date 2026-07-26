@@ -1,5 +1,5 @@
-#ifndef GFLOW_MSTREE_H_
-#define GFLOW_MSTREE_H_
+#ifndef DGRAPHS_MSTREE_H_
+#define DGRAPHS_MSTREE_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,4 +17,4 @@ void C_mstree(const int    *riinit,
 }
 #endif
 
-#endif // GFLOW_MSTREE_H_
+#endif // DGRAPHS_MSTREE_H_

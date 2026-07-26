@@ -90,56 +90,18 @@ can be well-approximated by two-hop paths, which can improve graph quality
 for clustering and visualization tasks.
 }
 \examples{
-\dontrun{
-# Generate sample data with clusters
 set.seed(123)
-n <- 150
-X <- rbind(
-  matrix(rnorm(n * 2, mean = 0), ncol = 2),
-  matrix(rnorm(n * 2, mean = 5), ncol = 2),
-  matrix(rnorm(n * 2, mean = c(2.5, 5)), ncol = 2)
-)
-
-# Create MkNN graphs for k from 5 to 15 with pruning
+X <- matrix(rnorm(80), ncol = 2)
 result <- create.mknn.graphs(
-  X,
-  kmin = 5,
-  kmax = 15,
-  max.path.edge.ratio.thld = 1.2,
-  path.edge.ratio.percentile = 0.5,
-  compute.full = TRUE,
-  verbose = TRUE
+  X, kmin = 3, kmax = 4, compute.full = TRUE, verbose = FALSE
 )
+result$k_statistics
 
-# Examine the summary statistics
-print(result$k_statistics)
-
-# Get the graph for k=10
-k10_graph <- result$pruned_graphs[["10"]]
-cat("Graph with k=10 has", k10_graph$n_edges, "edges\n")
-}
-
-# High-dimensional example with PCA
-\dontrun{
-# Generate high-dimensional data
-set.seed(456)
-X_highdim <- matrix(rnorm(200 * 1000), nrow = 200, ncol = 1000)
-
-# Apply PCA before graph construction
-result_pca <- create.mknn.graphs(
-  X_highdim,
-  kmin = 10,
-  kmax = 20,
-  pca.dim = 50,
-  variance.explained = 0.95,
-  verbose = TRUE
+X.high <- matrix(rnorm(120), nrow = 20, ncol = 6)
+result.pca <- create.mknn.graphs(
+  X.high, kmin = 2, kmax = 3, pca.dim = 3, verbose = FALSE
 )
-
-# Check PCA information
-pca_info <- attr(result_pca, "pca")
-cat("Used", pca_info$n_components, "components explaining",
-    round(pca_info$variance_explained * 100, 2), "\% of variance\n")
-}
+attr(result.pca, "pca")$n_components
 
 }
 \seealso{

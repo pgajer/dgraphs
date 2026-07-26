@@ -1,5 +1,5 @@
-#ifndef MSR2_EIGEN_UTILS_H_
-#define MSR2_EIGEN_UTILS_H_
+#ifndef DGRAPHS_EIGEN_UTILS_H_
+#define DGRAPHS_EIGEN_UTILS_H_
 
 #include "dgraphs/omp_compat.h"
 
@@ -16,4 +16,4 @@ SEXP EigenVectorXd_to_SEXP(const Eigen::VectorXd& vec);
 SEXP EigenMatrixXd_to_SEXP(const Eigen::MatrixXd& mat);
 SEXP EigenSparseMatrix_to_SEXP(const Eigen::SparseMatrix<double>& mat);
 
-#endif // MSR2_EIGEN_UTILS_H_
+#endif // DGRAPHS_EIGEN_UTILS_H_

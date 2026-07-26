@@ -14,7 +14,7 @@ create.iterated.iknn.graphs(
   threshold.percentile = 0,
   pca.dim = 100,
   variance.explained = 0.99,
-  n.cores = NULL,
+  n.cores = 1L,
   parallel.mode = c("auto", "k", "bucket", "hybrid", "bucket.prune"),
   hybrid.batch.size = 2L,
   verbose = TRUE,

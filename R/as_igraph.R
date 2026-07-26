@@ -1,7 +1,8 @@
-#' Convert a gflow-Style Basin Graph to igraph
+#' Convert a Basin Graph to igraph
 #'
-#' @param gflow.graph A list with adjacency, weight, intersection, and basin
-#'   metadata fields.
+#' @param gflow.graph A basin graph list with adjacency, weight, intersection,
+#'   and basin metadata fields. The argument name is retained for backward
+#'   compatibility.
 #' @param include.vertex.attrs Logical; include basin metadata as vertex
 #'   attributes.
 #' @param include.edge.attrs Logical; include edge weights and intersection

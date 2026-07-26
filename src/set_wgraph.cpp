@@ -763,87 +763,6 @@ std::vector<edge_weight_rel_deviation_t> set_wgraph_t::compute_edge_weight_rel_d
 }
 
 
-#if 0
-edge_weight_deviations_t set_wgraph_t::compute_edge_weight_deviations() const {
-    size_t n_vertices = adjacency_list.size();
-    edge_weight_deviations_t result;
-
-    // Define a threshold for "large" deviations
-    const double LARGE_DEVIATION_THRESHOLD = 0.01;
-
-    // For each node i
-    for (size_t i = 0; i < n_vertices; ++i) {
-        const auto& i_neighbors = adjacency_list[i];
-
-        // Process each edge (i,k)
-        for (const auto& edge_ik : i_neighbors) {
-            size_t k = edge_ik.vertex;
-            double w_ik = edge_ik.weight;
-
-            if (i >= k) continue;  // Skip if i >= k to process each edge once
-
-            double min_abs_deviation = std::numeric_limits<double>::infinity();
-            double min_rel_deviation = std::numeric_limits<double>::infinity();
-            size_t best_intermediate = n_vertices; // Invalid vertex as default
-
-            const auto& k_neighbors = adjacency_list[k];
-
-            // Check all potential intermediate nodes (common neighbors)
-            for (const auto& edge_ij : i_neighbors) {
-                size_t j = edge_ij.vertex;
-                double w_ij = edge_ij.weight;
-
-                if (j == k) continue;  // Skip direct edge
-
-                // Create a temporary edge_info_t to use as key for lookup
-                edge_info_t search_key{j, 0.0};  // weight doesn't matter for search
-                auto it = k_neighbors.find(search_key);
-
-                if (it != k_neighbors.end()) {  // j is a common neighbor
-                    double w_jk = it->weight;
-
-                    // Compute absolute deviation
-                    double abs_dev = std::abs(w_ij + w_jk - w_ik);
-
-                    // Compute relative deviation
-                    double rel_dev = (w_ik > 1e-10) ? abs_dev / w_ik : std::numeric_limits<double>::infinity();
-
-                    // Update minimum deviations
-                    if (abs_dev < min_abs_deviation) {
-                        min_abs_deviation = abs_dev;
-                        min_rel_deviation = rel_dev;
-                        best_intermediate = j;
-                    }
-                }
-            }
-
-            // Store results if we found at least one alternative path
-            if (min_abs_deviation != std::numeric_limits<double>::infinity()) {
-                result.absolute_deviations.push_back(min_abs_deviation);
-                result.relative_deviations.push_back(min_rel_deviation);
-
-                // Print triangles with large deviations for debugging
-                if (min_abs_deviation > LARGE_DEVIATION_THRESHOLD) {
-                    Rprintf("Large deviation found: Triangle (%zu, %zu, %zu)\n",
-                           i+1, best_intermediate+1, k+1); // +1 for R indexing
-                    Rprintf("  Weights: w(%zu,%zu) = %.10f, w(%zu,%zu) = %.10f, w(%zu,%zu) = %.10f\n",
-                           i+1, best_intermediate+1,
-                           adjacency_list[i].find(edge_info_t{best_intermediate, 0.0})->weight,
-                           best_intermediate+1, k+1,
-                           adjacency_list[best_intermediate].find(edge_info_t{k, 0.0})->weight,
-                           i+1, k+1, w_ik);
-                    Rprintf("  Absolute deviation: %.10f\n", min_abs_deviation);
-                    Rprintf("  Relative deviation: %.10f\n\n", min_rel_deviation);
-                }
-            }
-        }
-    }
-
-    return result;
-}
-#endif
-
-
 /**
  * @brief Computes geometric edge weight deviations for graph structure analysis.
  *
@@ -1006,7 +925,6 @@ SEXP S_compute_edge_weight_rel_deviations(SEXP s_adj_list, SEXP s_weight_list) {
  * @param v2 Second vertex of the edge
  *
  * Removes the edge in both directions (undirected graph).
- * Prints debug information about the removed edge.
  */
 void set_wgraph_t::remove_edge(size_t v1, size_t v2) {
 
@@ -1019,7 +937,6 @@ void set_wgraph_t::remove_edge(size_t v1, size_t v2) {
         // Do the same for the reverse edge
         edge_info_t reverse_dummy{v1, 0.0};
         adjacency_list[v2].erase(reverse_dummy);
-        //Rprintf("DEBUG: Removed edge (%d, %d) with weight %.6f\n", v1, v2, weight);
     }
 }
 

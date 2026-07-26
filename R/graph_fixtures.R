@@ -1,5 +1,3 @@
-## DG6b graph fixture utilities migrated from gflow/R/graph_generators.R.
-
 #' Create a Chain Graph with Offset Vertex Labels
 #'
 #' @param n The number of vertices in the graph.

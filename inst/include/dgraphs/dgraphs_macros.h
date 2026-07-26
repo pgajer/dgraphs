@@ -1,12 +1,12 @@
-#ifndef GFLOW_MACROS_H
-#define GFLOW_MACROS_H
+#ifndef DGRAPHS_MACROS_H
+#define DGRAPHS_MACROS_H
 
 #include <R.h>
 #include <Rinternals.h>
 
 /*!
- * \file gflow_macros.h
- * \brief Common macros for error handling and debugging in the gflow package
+ * \file dgraphs_macros.h
+ * \brief Common macros for error handling in the dgraphs package
  */
 
 /*!
@@ -51,21 +51,6 @@
     } while(0)
 
 /*!
- * \def DEBUG_PRINT(fmt, ...)
- * \brief Print debug messages when DEBUG is defined
- * \param fmt Printf-style format string
- * \param ... Arguments for the format string
- */
-#ifdef DEBUG
-    #define DEBUG_PRINT(fmt, ...) \
-        do { \
-            Rprintf("[DEBUG] %s:%d: " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__); \
-        } while(0)
-#else
-    #define DEBUG_PRINT(fmt, ...) do {} while(0)
-#endif
-
-/*!
  * \def SAFE_FREE(p)
  * \brief Safely free memory and set pointer to NULL
  * \param p Pointer to free
@@ -78,4 +63,4 @@
         } \
     } while(0)
 
-#endif /* GFLOW_MACROS_H */
+#endif /* DGRAPHS_MACROS_H */

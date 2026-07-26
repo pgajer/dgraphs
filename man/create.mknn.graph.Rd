@@ -111,30 +111,20 @@ This mutual relationship ensures that the resulting graph is undirected and
 typically sparser than a standard k-nearest neighbor graph.
 
 The final graph is always stored in \code{adj_list}/\code{weight_list}.
-Lifecycle diagnostic fields follow the same convention as the other gflow
-graph constructors: \code{raw_*} is before pruning and MST repair, and
+Lifecycle diagnostic fields follow the same convention as the other graph
+constructors: \code{raw_*} is before pruning and MST repair, and
 \code{pruned_*} is after pruning but before MST repair.
 The \code{raw_repaired_*}, \code{pruned_repaired_*}, and
 \code{repaired_pruned_*} branches allow one constructor call to compare
 native, prune-first, and repair-first graph geodesic geometries.
 }
 \examples{
-\dontrun{
-# Generate sample 2D data
 set.seed(123)
-X <- matrix(rnorm(100 * 2), ncol = 2)
-
-# Create mutual 5-NN graph
-graph <- create.mknn.graph(X, k = 5)
-
-# Print basic statistics
-cat("Number of vertices:", graph$n_vertices, "\n")
-cat("Number of edges:", graph$n_edges, "\n")
-
-# Examine connections for first vertex
-cat("Vertex 1 is connected to:", graph$adj_list[[1]], "\n")
-cat("With distances:", round(graph$weight_list[[1]], 3), "\n")
-}
+X <- matrix(rnorm(60), ncol = 2)
+graph <- create.mknn.graph(X, k = 4)
+graph$n_vertices
+graph$n_edges
+graph$adj_list[[1]]
 
 }
 \seealso{

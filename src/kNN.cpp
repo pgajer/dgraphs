@@ -66,8 +66,7 @@ knn_result_t kNN(const std::vector<std::vector<double>>& X, int k) {
     return out;
 }
 
-// Direct-ANN version, also RAII-only.
-// Returns UNPROTECTed object - user needs to PROTECT it!!!
+// Direct ANN implementation. The caller must protect the returned object.
 SEXP S_kNN(SEXP RX, SEXP Rk) {
 
     if (!Rf_isMatrix(RX)) { Rf_error("S_kNN: RX must be a matrix"); }

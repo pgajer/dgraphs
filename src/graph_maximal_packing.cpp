@@ -9,7 +9,6 @@
 #include <cstdlib>  // For getenv
 #include <R.h>      // For Rprintf
 
-#include "dgraphs/cpp_utils.hpp"
 #include "dgraphs/set_wgraph.hpp"
 #include "dgraphs/uniform_grid_graph.hpp"
 #include "dgraphs/error_utils.h"  // for REPORT_ERROR()
@@ -537,83 +536,6 @@ std::vector<size_t> set_wgraph_t::create_maximal_packing(
 	return packing;
 }
 
-void set_wgraph_t::trace_exploration_path(
-	size_t from_vertex,
-	size_t to_vertex,
-	double radius) const {
-
-	// Rerun Dijkstra's algorithm with detailed logging
-	std::vector<double> dist(adjacency_list.size(), INFINITY);
-	std::vector<size_t> prev(adjacency_list.size(), INVALID_VERTEX);
-	dist[from_vertex] = 0;
-
-	std::priority_queue<std::pair<double, size_t>> pq;
-	pq.push({0, from_vertex});
-
-	Rprintf("TRACE: Starting path exploration from %zu to %zu\n", from_vertex + 1, to_vertex + 1);
-
-	while (!pq.empty()) {
-		auto top = pq.top();
-		double d = -top.first;   // Note the negation here!
-		size_t u = top.second;
-		pq.pop();
-
-		if (u == to_vertex) {
-			Rprintf("TRACE: Reached target vertex %zu with distance %.4f\n", to_vertex + 1, d);
-			break;
-		}
-
-		if (d > dist[u]) continue;
-
-		for (const auto& edge : adjacency_list[u]) {
-			size_t v = edge.vertex;
-			double w = edge.weight;
-			double new_dist = dist[u] + w;
-
-			if (new_dist < dist[v]) {
-				dist[v] = new_dist;
-				prev[v] = u;
-				pq.push({-new_dist, v});   // Note the negation!
-
-				if (v == to_vertex || new_dist < radius) {
-					Rprintf("TRACE: Updated vertex %zu distance to %.4f (via %zu)\n",
-							v + 1, new_dist, u + 1);
-				}
-
-				// Key debugging for the issue
-				if (new_dist < radius) {
-					Rprintf("TRACE: Vertex %zu should be marked as explored (dist=%.4f < radius=%.4f)\n",
-							v + 1, new_dist, radius);
-				}
-			}
-		}
-	}
-
-	// Reconstruct and print the shortest path
-	if (prev[to_vertex] != INVALID_VERTEX) {
-		std::vector<size_t> path;
-		for (size_t at = to_vertex; at != from_vertex; at = prev[at]) {
-			path.push_back(at);
-		}
-		path.push_back(from_vertex);
-		std::reverse(path.begin(), path.end());
-
-		Rprintf("TRACE: Shortest path from %zu to %zu: ", from_vertex + 1, to_vertex + 1);
-		for (size_t i = 0; i < path.size(); i++) {
-			Rprintf("%zu", path[i] + 1);
-			if (i < path.size() - 1) {
-				Rprintf(" -> ");
-			}
-		}
-		Rprintf(" (total distance: %.4f)\n", dist[to_vertex]);
-	}
-}
-
-
-
-
-
-
 /**
  * @brief Calculates the eccentricity of a vertex in the weighted graph and the farthest vertex
  *
@@ -772,11 +694,7 @@ std::vector<size_t> set_wgraph_t::create_maximal_packing(
 		iterations++;
 	}
 
-	max_packing_radius = best_radius;  // <-- setting max_packing_radius set_wgraph_t member value
-
-	// For logging/debugging purposes
-	Rprintf("Found packing of size %zu with radius %.4f after %zu iterations\n",
-			best_packing.size(), best_radius, iterations);
+	max_packing_radius = best_radius;
 
 	return best_packing;
 }

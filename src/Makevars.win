@@ -1,5 +1,5 @@
 PKG_CPPFLAGS = -I. -IANN -I../inst/include/dgraphs -I../inst/include \
-	-DR_NO_REMAP -D_Alignof=__alignof__ -DDLL_API= \
+	-DR_NO_REMAP -D_Alignof=__alignof__ -DDLL_EXPORTS \
 	-DEIGEN_DONT_VECTORIZE -DEIGEN_DONT_PARALLELIZE \
 	-include ../inst/include/dgraphs/eigen_config.hpp
 

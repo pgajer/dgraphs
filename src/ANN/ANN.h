@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// GFLOW CONFIGURATION NOTE:
+// DGRAPHS CONFIGURATION NOTE:
 // This ANN library is configured for L2 (Euclidean) distance.
 // To switch to L1 (Manhattan), comment out L2 macros (lines ~343-346)
 // and uncomment L1 macros (lines ~351-354), then rebuild the package.

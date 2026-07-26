@@ -35,7 +35,6 @@
 #include "dgraphs/linf_simplex_knn.hpp"
 #include "dgraphs/kNN_r.h"            // for S_kNN()
 #include "dgraphs/kNN.h"              // for struct iknn_vertex_tt
-#include "dgraphs/cpp_utils.hpp"      // for debugging
 #include "dgraphs/progress_utils.hpp" // for elapsed_time
 #include "dgraphs/SEXP_cpp_conversion_utils.hpp"
 #include "dgraphs/edge_pruning_stats.hpp"
@@ -148,7 +147,6 @@ struct knn_cache_header_t {
 
 knn_search_result_t compute_knn(SEXP RX, int k);
 knn_search_result_t compute_knn_by_metric(SEXP RX, int k, int knn_metric_id, double linf_tol);
-iknn_graph_t create_iknn_graph_pairscan_reference(const knn_search_result_t& knn_results, int k);
 iknn_graph_t create_iknn_graph_inverted_index(const knn_search_result_t& knn_results,
                                               int k,
                                               bool use_bucket_parallel,
@@ -429,330 +427,6 @@ void print_iiknn_graph(
 }
 
 
-/**
- * @brief Verifies the equivalence between old and new graph pruning implementations
- *
- * @details This function compares the results of the old edge pruning implementation
- * (prune_edges_with_alt_paths) with the new implementation (iknn_graph.prune_graph).
- * It constructs kNN graphs using both methods and performs a detailed comparison of
- * the resulting graph structures, identifying any discrepancies in edges or weights.
- *
- * @param s_X SEXP containing a numeric matrix of input data points
- * @param s_k SEXP containing the number of nearest neighbors (k)
- * @param s_max_alt_path_length SEXP containing the maximum alternative path length for pruning
- *
- * @return SEXP A list containing three elements:
- *   - identical: logical, TRUE if no discrepancies found
- *   - total_discrepancies: integer, number of vertices with differences
- *   - discrepancies: list of length n_vertices, where each non-NULL element contains:
- *     - vertex index
- *     - missing edges (present in old but not in new implementation)
- *     - extra edges (present in new but not in old implementation)
- *     Each edge is represented as a pair (vertex_index, weight)
- *
- * @throws Rf_error if X cannot be coerced to a numeric matrix
- *
- * @note The function performs a comprehensive comparison including both topology
- * (edge existence) and edge weights
- *
- * @see create_iknn_graph
- * @see prune_edges_with_alt_paths
- * @see iknn_graph_t::prune_graph
- */
-SEXP S_verify_pruning(SEXP s_X,
-                      SEXP s_k,
-                      SEXP s_max_alt_path_length) {
-
-    SEXP s_dim = PROTECT(Rf_getAttrib(s_X, R_DimSymbol));
-    if (s_dim == R_NilValue || TYPEOF(s_dim) != INTSXP || Rf_length(s_dim) < 1) {
-        UNPROTECT(1);
-        Rf_error("X must be a matrix with a valid integer 'dim' attribute.");
-    }
-    const int n_vertices = INTEGER(s_dim)[0];
-    UNPROTECT(1); // s_dim
-
-    int max_alt_path_length = Rf_asInteger(s_max_alt_path_length);
-
-    // Creating a kNN graph
-    iknn_graph_t iknn_graph = create_iknn_graph(s_X, s_k);
-
-    // Rprintf("\n\nIn S_verify_pruning()\n");
-    // iknn_graph.print(0,"original iknn_graph");
-
-    // Phase 1: Getting results from old implementation
-    auto IW_graph = IWD_to_IW_kNN_graph(iknn_graph.graph);
-    std::vector<int> long_edge_isize, alt_path_lengths, alt_path_total_isize;
-    std::vector<std::vector<std::pair<int, int>>> old_pruned_graph = prune_edges_with_alt_paths(*IW_graph,
-                                                                                                long_edge_isize,
-                                                                                                alt_path_lengths,
-                                                                                                alt_path_total_isize,
-                                                                                                max_alt_path_length);
-    //print_iiknn_graph(old_pruned_graph, "Old pruned graph", 0);
-
-    // Create vect_wgraph_t from old implementation results
-    vect_wgraph_t old_pruned_vect_wgraph;
-    old_pruned_vect_wgraph.adjacency_list.resize(n_vertices);
-    for (int vertex = 0; vertex < n_vertices; vertex++) {
-        for (auto neighbor_pair : old_pruned_graph[vertex]) {
-            size_t neighbor = neighbor_pair.first;
-            for (const auto& iknn_neighbor : iknn_graph.graph[vertex]) {
-                if (iknn_neighbor.index == neighbor) {
-                    old_pruned_vect_wgraph.adjacency_list[vertex].emplace_back(neighbor, iknn_neighbor.dist);
-                }
-            }
-        }
-    }
-
-    // Phase 2: Get results from new implementation
-    vect_wgraph_t new_pruned_vect_wgraph = iknn_graph.prune_graph(max_alt_path_length);
-
-    // return list
-    SEXP result = PROTECT(Rf_allocVector(VECSXP, 3));
-
-    // Set names for the result list
-    {
-        SEXP result_names = PROTECT(Rf_allocVector(STRSXP, 3));
-        SET_STRING_ELT(result_names, 0, Rf_mkChar("identical"));
-        SET_STRING_ELT(result_names, 1, Rf_mkChar("total_discrepancies"));
-        SET_STRING_ELT(result_names, 2, Rf_mkChar("discrepancies"));
-        Rf_setAttrib(result, R_NamesSymbol, result_names);
-        UNPROTECT(1);
-    }
-
-    {
-        SEXP discrepancies = PROTECT(Rf_allocVector(VECSXP, n_vertices));
-        SEXP vertex_names  = PROTECT(Rf_allocVector(STRSXP, n_vertices));
-        int total_discrepancies = 0;
-
-        for (int vertex = 0; vertex < n_vertices; vertex++) {
-
-            std::vector<edge_info_t>& old_edges = old_pruned_vect_wgraph.adjacency_list[vertex];
-            std::vector<edge_info_t>& new_edges = new_pruned_vect_wgraph.adjacency_list[vertex];
-
-            // Create sets of edges for easy comparison
-            std::set<std::pair<int, double>> old_edge_set, new_edge_set;
-            for (const auto& edge : old_edges) {
-                old_edge_set.insert({edge.vertex, edge.weight});
-            }
-            for (const auto& edge : new_edges) {
-                new_edge_set.insert({edge.vertex, edge.weight});
-            }
-
-            // Find differences
-            std::vector<std::pair<int, double>> missing_in_new, extra_in_new;
-
-            for (const auto& edge : old_edge_set) {
-                if (new_edge_set.find(edge) == new_edge_set.end()) {
-                    missing_in_new.push_back(edge);
-                }
-            }
-
-            for (const auto& edge : new_edge_set) {
-                if (old_edge_set.find(edge) == old_edge_set.end()) {
-                    extra_in_new.push_back(edge);
-                }
-            }
-
-            // If discrepancies found, create a report for this vertex
-            if (!missing_in_new.empty() || !extra_in_new.empty()) {
-                total_discrepancies++;
-
-                SEXP vertex_report = PROTECT(Rf_allocVector(VECSXP, 3));
-
-                // Missing edges
-                const int n_miss = (int) missing_in_new.size();
-                SEXP missing = PROTECT(Rf_allocMatrix(REALSXP, n_miss, 2));
-                double* missing_ptr = REAL(missing);
-                for (int i = 0; i < n_miss; i++) {
-                    missing_ptr[i]               = (double) missing_in_new[(size_t)i].first;
-                    missing_ptr[i + n_miss]      =        missing_in_new[(size_t)i].second;
-                }
-
-                // Extra edges
-                const int n_extra = (int) extra_in_new.size();
-                SEXP extra = PROTECT(Rf_allocMatrix(REALSXP, n_extra, 2));
-                double* extra_ptr = REAL(extra);
-                for (int i = 0; i < n_extra; i++) {
-                    extra_ptr[i]                = (double) extra_in_new[(size_t)i].first;
-                    extra_ptr[i + n_extra]      =        extra_in_new[(size_t)i].second;
-                }
-
-                SET_VECTOR_ELT(vertex_report, 0, Rf_ScalarInteger(vertex));
-                SET_VECTOR_ELT(vertex_report, 1, missing);
-                SET_VECTOR_ELT(vertex_report, 2, extra);
-
-                SET_VECTOR_ELT(discrepancies, vertex, vertex_report);
-                SET_STRING_ELT(vertex_names, vertex, Rf_mkChar(std::to_string(vertex).c_str()));
-
-                UNPROTECT(3); // vertex_report, missing, extra
-            } else {
-                SET_VECTOR_ELT(discrepancies, vertex, R_NilValue);
-                SET_STRING_ELT(vertex_names, vertex, Rf_mkChar(std::to_string(vertex).c_str()));
-            }
-        }
-
-        Rf_setAttrib(discrepancies, R_NamesSymbol, vertex_names);
-
-        SET_VECTOR_ELT(result, 0, Rf_ScalarLogical(total_discrepancies == 0));
-        SET_VECTOR_ELT(result, 1, Rf_ScalarInteger(total_discrepancies));
-        SET_VECTOR_ELT(result, 2, discrepancies);
-
-        UNPROTECT(2); // FIX: was 3; now matches {discrepancies, vertex_names}
-    }
-
-    UNPROTECT(1);
-    return result;
-}
-
-SEXP S_compare_iknn_graph_builders(SEXP s_X,
-                                   SEXP s_k,
-                                   SEXP s_n_cores,
-                                   SEXP s_verbose) {
-    if (!Rf_isInteger(s_k)) {
-        Rf_error("k must be integer.");
-    }
-    const int k = Rf_asInteger(s_k);
-    if (k <= 0) {
-        Rf_error("k must be > 0.");
-    }
-
-    const bool verbose = (Rf_isLogical(s_verbose) && Rf_asLogical(s_verbose) == TRUE);
-
-    int num_threads = 1;
-    if (!Rf_isNull(s_n_cores)) {
-        if (!Rf_isInteger(s_n_cores) || Rf_length(s_n_cores) < 1) {
-            Rf_error("n_cores must be NULL or a length-1 integer.");
-        }
-        const int req = INTEGER(s_n_cores)[0];
-        if (req == NA_INTEGER) {
-            Rf_error("n_cores cannot be NA.");
-        }
-        if (req > 0) {
-            num_threads = req;
-        }
-    } else {
-        num_threads = dgraphs_get_num_procs();
-    }
-    if (num_threads < 1) {
-        num_threads = 1;
-    }
-    const int max_t = dgraphs_get_num_procs();
-    if (num_threads > max_t) {
-        num_threads = max_t;
-    }
-
-    auto knn_results = compute_knn(s_X, k);
-
-    auto t0 = std::chrono::steady_clock::now();
-    auto graph_ref = create_iknn_graph_pairscan_reference(knn_results, k);
-    const double ref_seconds = std::chrono::duration<double>(
-        std::chrono::steady_clock::now() - t0
-    ).count();
-
-    t0 = std::chrono::steady_clock::now();
-    auto graph_new = create_iknn_graph_inverted_index(knn_results, k, num_threads > 1, num_threads);
-    const double new_seconds = std::chrono::duration<double>(
-        std::chrono::steady_clock::now() - t0
-    ).count();
-
-    struct edge_value_t {
-        size_t isize;
-        double dist;
-    };
-    auto build_edge_map = [](const iknn_graph_t& g) {
-        std::unordered_map<std::uint64_t, edge_value_t> edge_map;
-        for (size_t i = 0; i < g.graph.size(); ++i) {
-            for (const auto& edge : g.graph[i]) {
-                if (i < edge.index) {
-                    const std::uint64_t key =
-                        (static_cast<std::uint64_t>(i) << 32U) |
-                        static_cast<std::uint64_t>(edge.index);
-                    edge_map.emplace(key, edge_value_t{edge.isize, edge.dist});
-                }
-            }
-        }
-        return edge_map;
-    };
-
-    auto edges_ref = build_edge_map(graph_ref);
-    auto edges_new = build_edge_map(graph_new);
-
-    int n_missing = 0;
-    int n_extra = 0;
-    int n_isize_mismatch = 0;
-    int n_dist_mismatch = 0;
-    double max_abs_dist_diff = 0.0;
-    constexpr double k_dist_tol = 1e-12;
-
-    for (const auto& kv : edges_ref) {
-        const auto it = edges_new.find(kv.first);
-        if (it == edges_new.end()) {
-            n_missing += 1;
-            continue;
-        }
-        if (kv.second.isize != it->second.isize) {
-            n_isize_mismatch += 1;
-        }
-        const double abs_diff = std::fabs(kv.second.dist - it->second.dist);
-        if (abs_diff > k_dist_tol) {
-            n_dist_mismatch += 1;
-        }
-        if (abs_diff > max_abs_dist_diff) {
-            max_abs_dist_diff = abs_diff;
-        }
-    }
-
-    for (const auto& kv : edges_new) {
-        if (edges_ref.find(kv.first) == edges_ref.end()) {
-            n_extra += 1;
-        }
-    }
-
-    const bool identical = (n_missing == 0 &&
-                            n_extra == 0 &&
-                            n_isize_mismatch == 0 &&
-                            n_dist_mismatch == 0);
-
-    if (verbose) {
-        Rprintf("pairscan_reference: %.3fs\n", ref_seconds);
-        Rprintf("inverted_index: %.3fs\n", new_seconds);
-        Rprintf("edge count ref/new: %zu / %zu\n", edges_ref.size(), edges_new.size());
-        Rprintf("missing=%d extra=%d isize_mismatch=%d dist_mismatch=%d max_abs_dist_diff=%.3e\n",
-                n_missing, n_extra, n_isize_mismatch, n_dist_mismatch, max_abs_dist_diff);
-    }
-
-    SEXP result = PROTECT(Rf_allocVector(VECSXP, 10));
-    SEXP names  = PROTECT(Rf_allocVector(STRSXP, 10));
-    SET_STRING_ELT(names, 0, Rf_mkChar("identical"));
-    SET_STRING_ELT(names, 1, Rf_mkChar("n_edges_reference"));
-    SET_STRING_ELT(names, 2, Rf_mkChar("n_edges_inverted"));
-    SET_STRING_ELT(names, 3, Rf_mkChar("n_missing_edges"));
-    SET_STRING_ELT(names, 4, Rf_mkChar("n_extra_edges"));
-    SET_STRING_ELT(names, 5, Rf_mkChar("n_isize_mismatch"));
-    SET_STRING_ELT(names, 6, Rf_mkChar("n_dist_mismatch"));
-    SET_STRING_ELT(names, 7, Rf_mkChar("max_abs_dist_diff"));
-    SET_STRING_ELT(names, 8, Rf_mkChar("reference_seconds"));
-    SET_STRING_ELT(names, 9, Rf_mkChar("inverted_seconds"));
-    Rf_setAttrib(result, R_NamesSymbol, names);
-    UNPROTECT(1); // names
-
-    SET_VECTOR_ELT(result, 0, Rf_ScalarLogical(identical ? 1 : 0));
-    SET_VECTOR_ELT(result, 1, Rf_ScalarReal(static_cast<double>(edges_ref.size())));
-    SET_VECTOR_ELT(result, 2, Rf_ScalarReal(static_cast<double>(edges_new.size())));
-    SET_VECTOR_ELT(result, 3, Rf_ScalarInteger(n_missing));
-    SET_VECTOR_ELT(result, 4, Rf_ScalarInteger(n_extra));
-    SET_VECTOR_ELT(result, 5, Rf_ScalarInteger(n_isize_mismatch));
-    SET_VECTOR_ELT(result, 6, Rf_ScalarInteger(n_dist_mismatch));
-    SET_VECTOR_ELT(result, 7, Rf_ScalarReal(max_abs_dist_diff));
-    SET_VECTOR_ELT(result, 8, Rf_ScalarReal(ref_seconds));
-    SET_VECTOR_ELT(result, 9, Rf_ScalarReal(new_seconds));
-
-    UNPROTECT(1); // result
-    return result;
-}
-
-
-
 // ------------------------------------------------------------------------------------------
 //
 // print iknn graph
@@ -884,13 +558,6 @@ void print_iknn_graph(
  */
 iknn_graph_t create_iknn_graph(SEXP RX, SEXP Rk) {
 
-    #define DEBUG_CREATE_IKNN_GRAPH 0
-
-    std::string debug_dir;
-    #if DEBUG_CREATE_IKNN_GRAPH
-        debug_dir = "/tmp/dgraphs_debug/create_iknn_graph/";
-    #endif
-
     SEXP s_dim = PROTECT(Rf_getAttrib(RX, R_DimSymbol));
     if (s_dim == R_NilValue || TYPEOF(s_dim) != INTSXP || Rf_length(s_dim) < 1) {
         UNPROTECT(1);
@@ -906,23 +573,6 @@ iknn_graph_t create_iknn_graph(SEXP RX, SEXP Rk) {
     int *indices = INTEGER(VECTOR_ELT(knn_res, 0));
     double *distances = REAL(VECTOR_ELT(knn_res, 1));
 
-    #if DEBUG_CREATE_IKNN_GRAPH
-        Rprintf("In create_iknn_graph() DEBUG block\n");
-
-        std::vector<std::vector<size_t>> knn_indices_debug(n_points, std::vector<size_t>(k));
-        std::vector<std::vector<double>> knn_distances_debug(n_points, std::vector<double>(k));
-        for (size_t i = 0; i < n_points; ++i) {
-            for (size_t j = 0; j < k; ++j) {
-                knn_indices_debug[i][j] = indices[i + n_points * j];
-                knn_distances_debug[i][j] = distances[i + n_points * j];
-            }
-        }
-        debug_serialization::save_knn_result(
-            debug_dir + "phase_1a_knn_result.bin",
-            knn_indices_debug, knn_distances_debug, n_points, k
-        );
-    #endif
-
     UNPROTECT(1);
 
     std::vector<int> nn_i(k);
@@ -934,11 +584,6 @@ iknn_graph_t create_iknn_graph(SEXP RX, SEXP Rk) {
 
     size_t n_points_minus_one = n_points - 1;
     std::vector<int> intersection;
-
-    #if DEBUG_CREATE_IKNN_GRAPH
-        std::vector<std::pair<size_t, size_t>> edges_created;
-        std::vector<double> weights_created;
-    #endif
 
     for (size_t pt_i = 0; pt_i < n_points_minus_one; pt_i++) {
         for (size_t j = 0; j < k; j++) {
@@ -974,30 +619,9 @@ iknn_graph_t create_iknn_graph(SEXP RX, SEXP Rk) {
                 res.graph[pt_i].emplace_back(iknn_vertex_t{pt_j, common_count, min_dist});
                 res.graph[pt_j].emplace_back(iknn_vertex_t{pt_i, common_count, min_dist});
 
-                #if DEBUG_CREATE_IKNN_GRAPH
-                    edges_created.push_back({static_cast<size_t>(pt_i), static_cast<size_t>(pt_j)});
-                    weights_created.push_back(min_dist);
-                #endif
             }
         }
     }
-
-    #if DEBUG_CREATE_IKNN_GRAPH
-        debug_serialization::save_edge_list(
-            debug_dir + "phase_1b_edges_pre_pruning.bin",
-            edges_created, weights_created, "PHASE_1B_PRE_PRUNING"
-        );
-
-        // Compute connectivity
-        std::vector<int> component_ids;
-        size_t n_components = debug_serialization::compute_connected_components_from_iknn_graph(
-            res, component_ids
-        );
-        debug_serialization::save_connectivity(
-            debug_dir + "phase_final_connectivity.bin",
-            component_ids, n_components
-        );
-    #endif
 
     return res;
 }
@@ -1942,85 +1566,27 @@ static inline void process_bucket(const std::vector<bucket_member_t>& bucket,
     }
 }
 
-iknn_graph_t create_iknn_graph_pairscan_reference(const knn_search_result_t& knn_results, int k) {
-    const size_t n_points = knn_results.n_points;
-    iknn_graph_t res(n_points);
-
-    std::vector<int> nn_i(static_cast<size_t>(k));
-    std::vector<int> nn_j(static_cast<size_t>(k));
-    std::vector<int> sorted_nn_i(static_cast<size_t>(k));
-    std::vector<int> sorted_nn_j(static_cast<size_t>(k));
-    std::vector<int> intersection;
-
-    for (size_t pt_i = 0; pt_i < n_points - 1; ++pt_i) {
-        for (int j = 0; j < k; ++j) {
-            nn_i[static_cast<size_t>(j)] = knn_results.indices[pt_i][static_cast<size_t>(j)];
-            sorted_nn_i[static_cast<size_t>(j)] = nn_i[static_cast<size_t>(j)];
-        }
-        std::sort(sorted_nn_i.begin(), sorted_nn_i.end());
-
-        for (size_t pt_j = pt_i + 1; pt_j < n_points; ++pt_j) {
-            for (int j = 0; j < k; ++j) {
-                nn_j[static_cast<size_t>(j)] = knn_results.indices[pt_j][static_cast<size_t>(j)];
-                sorted_nn_j[static_cast<size_t>(j)] = nn_j[static_cast<size_t>(j)];
-            }
-            std::sort(sorted_nn_j.begin(), sorted_nn_j.end());
-
-            intersection.clear();
-            std::set_intersection(
-                sorted_nn_i.begin(), sorted_nn_i.end(),
-                sorted_nn_j.begin(), sorted_nn_j.end(),
-                std::back_inserter(intersection)
-            );
-
-            const size_t common_count = intersection.size();
-            if (common_count > 0) {
-                double min_dist = std::numeric_limits<double>::max();
-                for (int x_k : intersection) {
-                    const size_t idx_i = static_cast<size_t>(
-                        std::find(nn_i.begin(), nn_i.end(), x_k) - nn_i.begin()
-                    );
-                    const size_t idx_j = static_cast<size_t>(
-                        std::find(nn_j.begin(), nn_j.end(), x_k) - nn_j.begin()
-                    );
-                    const double dist_i_k = knn_results.distances[pt_i][idx_i];
-                    const double dist_j_k = knn_results.distances[pt_j][idx_j];
-                    min_dist = std::min(min_dist, dist_i_k + dist_j_k);
-                }
-
-                res.graph[pt_i].emplace_back(iknn_vertex_t{pt_j, common_count, min_dist});
-                res.graph[pt_j].emplace_back(iknn_vertex_t{pt_i, common_count, min_dist});
-            }
-        }
-    }
-
-    for (auto& neighbors : res.graph) {
-        std::sort(neighbors.begin(), neighbors.end(),
-                  [](const iknn_vertex_t& a, const iknn_vertex_t& b) {
-                      return a.index < b.index;
-                  });
-    }
-
-    return res;
-}
-
 iknn_graph_t create_iknn_graph_inverted_index(const knn_search_result_t& knn_results,
                                               int k,
                                               bool use_bucket_parallel,
-                                              int num_threads) {
+    int num_threads) {
     const size_t n_points = knn_results.n_points;
+#ifdef _OPENMP
     size_t bucket_pair_work = 0;
     auto buckets = build_inverted_knn_index(knn_results, k, &bucket_pair_work);
+#else
+    auto buckets = build_inverted_knn_index(knn_results, k, nullptr);
+#endif
 
     edge_accumulator_map_t edge_map;
 
+#ifdef _OPENMP
     // Small workloads run faster in serial due to OpenMP overhead.
     constexpr size_t k_min_parallel_pair_work = 200000;
     const bool try_parallel = use_bucket_parallel &&
                               num_threads > 1 &&
                               bucket_pair_work >= k_min_parallel_pair_work;
 
-#ifdef _OPENMP
     if (try_parallel) {
         const int thread_count = std::max(1, std::min(num_threads, dgraphs_get_max_threads()));
         if (thread_count > 1) {
@@ -2066,6 +1632,7 @@ iknn_graph_t create_iknn_graph_inverted_index(const knn_search_result_t& knn_res
         }
     }
 #else
+    (void)use_bucket_parallel;
     (void)num_threads;
     for (const auto& bucket : buckets) {
         process_bucket(bucket, edge_map);
@@ -2170,9 +1737,6 @@ constexpr char k_knn_cache_magic[8] = {'G', 'F', 'L', 'K', 'N', 'N', '0', '1'};
 constexpr std::uint32_t k_knn_cache_version = 2U;
 constexpr std::uint32_t k_knn_cache_endian_marker = 0x01020304U;
 std::atomic<std::uint64_t> g_knn_cache_tmp_counter(0U);
-
-constexpr int k_knn_metric_euclidean = 0;
-constexpr int k_knn_metric_linf_simplex = 1;
 
 template <typename T>
 bool write_binary(std::ofstream& out, const T& value) {

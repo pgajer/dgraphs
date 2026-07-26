@@ -215,12 +215,6 @@ struct set_wgraph_t {
 		size_t to
 		) const;
 
-	void trace_exploration_path(
-		size_t from_vertex,
-		size_t to_vertex,
-		double radius
-		) const;
-
 	shortest_paths_t find_graph_paths_within_radius(
 		size_t start,
 		double radius

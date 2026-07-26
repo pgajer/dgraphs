@@ -1,7 +1,6 @@
 #include "dgraphs/omp_compat.h"
 #include "dgraphs/Eigen_utils.h"
 #include "dgraphs/graph_spectrum_r.h"
-#include "dgraphs/cpp_utils.hpp"
 #include "dgraphs/SEXP_cpp_conversion_utils.hpp"
 
 #include <vector>

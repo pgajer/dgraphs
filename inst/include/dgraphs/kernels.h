@@ -1,5 +1,5 @@
-#ifndef MSR2_KERNELS_H_
-#define MSR2_KERNELS_H_
+#ifndef DGRAPHS_KERNELS_H_
+#define DGRAPHS_KERNELS_H_
 
 /* Kernel Indices */
 #define EPANECHNIKOV 1
@@ -93,4 +93,4 @@ inline double get_kernel_mass(int kernel_type) {
 }
 #endif
 
-#endif // MSR2_KERNELS_H_
+#endif // DGRAPHS_KERNELS_H_

@@ -1,43 +1,5 @@
 #include "dgraphs/Eigen_utils.h"
 
-/**
- * @brief Prints the elements of an Eigen::VectorXd to the standard output.
- *
- * This function prints the elements of an Eigen::VectorXd to the standard output. If a name is provided,
- * it is printed before the elements. The number of elements to print can be controlled by the parameter `n`.
- *
- * @param vec The Eigen::VectorXd to be printed.
- * @param name (Optional) A string to be printed before the vector elements. Default is an empty string.
- * @param n (Optional) The number of elements to print. If `n` is 0, all elements of the vector are printed. Default is 0.
- *
- * @details
- * - If `n` is greater than the size of the vector, all elements of the vector are printed.
- * - If `name` is provided, it is printed before the vector elements followed by a colon and space.
- * - The function ensures that only valid elements are accessed and printed.
- *
- * Example usage:
- * @code
- * Eigen::VectorXd vec(5);
- * vec << 1.0, 2.0, 3.0, 4.0, 5.0;
- *
- * print_Eigen_VectorXd(vec, "MyVector");        // Print all elements
- * print_Eigen_VectorXd(vec, "MyVector", 3);     // Print first 3 elements
- * print_Eigen_VectorXd(vec, "", 2);             // Print first 2 elements without name
- * @endcode
- *
- * @note The parameter `n` is of type `Eigen::Index`, which is typically an alias for `int` in Eigen.
- */
-void print_Eigen_VectorXd(const Eigen::VectorXd& vec,
-                          const std::string& name = "",
-                          Eigen::Index n = 0) {
-    if (n == 0) n = vec.size();
-    if (!name.empty()) Rprintf("%s: ", name.c_str());
-    for (Eigen::Index i = 0; i < n && i < vec.size(); ++i) {
-        Rprintf("%.6g%s", vec[i], (i + 1 < n && i + 1 < vec.size()) ? " " : "");
-    }
-    Rprintf("\n");
-}
-
 // Function to convert Eigen::VectorXd to SEXP
 SEXP EigenVectorXd_to_SEXP(const Eigen::VectorXd& vec) {
     SEXP result = PROTECT(Rf_allocVector(REALSXP, vec.size()));

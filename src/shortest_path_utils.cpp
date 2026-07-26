@@ -3,8 +3,6 @@
 #include <queue>              // For std::priority_queue
 #include <utility>            // For std::pair
 #include <numeric>            // For std::accumulate
-#include <fstream>            // For std::ofstream
-#include <filesystem>         // For DEBUGGING only !!!
 
 #include "dgraphs/set_wgraph.hpp"     // For set_wgraph_t class definition
 #include "dgraphs/error_utils.h"      // For REPORT_ERROR()
@@ -112,8 +110,6 @@ shortest_paths_t set_wgraph_t::find_graph_paths_within_radius_and_path_min_size(
  * @note The algorithm terminates exploration once vertex distances exceed the radius,
  *       but ensures all possible shorter paths within radius are discovered first
  *
- * The function caches results for subsequent calls with the same start vertex. (disabled!!!)
- *
  * @param start The index of the starting vertex
  * @param radius The maximum allowed distance for paths from the start vertex
  *
@@ -130,7 +126,6 @@ shortest_paths_t set_wgraph_t::find_graph_paths_within_radius_and_path_min_size(
  * @note The vertex_to_path_map enables O(1) lookup of any vertex's position within a path,
  *       allowing efficient extraction of subpaths between any reachable vertices
  * @note Each vertex is mapped to the shortest path that contains it when multiple paths are possible
- * @note The function caches results in paths_cache for efficiency in subsequent calls
  *
  * @pre The start vertex index must be valid (0 <= start < adjacency_list.size())
  * @pre The radius must be non-negative
@@ -145,7 +140,7 @@ shortest_paths_t set_wgraph_t::find_graph_paths_within_radius(
 	double radius
 	) const {
 
-	// Phase 1: a bounded version of Dijkstra's algorithm
+	// Run bounded Dijkstra search.
 	std::unordered_map<size_t, std::pair<double, int>> dp_map; // dp_map[vertex] = <distance, prev>
     size_t n = adjacency_list.size();
     std::vector<double> dist(n, INFINITY);
@@ -187,13 +182,8 @@ shortest_paths_t set_wgraph_t::find_graph_paths_within_radius(
 		return result;
 	}
 
-	// Phase 2: Uses dp_map to construct a vector of corresponding paths
+	// Construct paths from the predecessor map.
     shortest_paths_t result;
-
-    // struct vertex_info_t {
-    //     size_t vertex;
-    //     double distance;
-    // };
 
 	// Create and sort vertex info
     std::vector<vertex_info_t> vertex_info;
@@ -448,7 +438,6 @@ gray_xyw_t set_wgraph_t::get_xyw_along_path(
  *
  * @note The function uses find_graph_paths_within_radius() to discover paths at each bandwidth
  */
-// new
 double set_wgraph_t::find_minimum_bandwidth(
     size_t grid_vertex,
 	double lower_bound,
@@ -465,84 +454,13 @@ double set_wgraph_t::find_minimum_bandwidth(
 	// Check if the upper bound fails to satisfy the condition
     paths = find_graph_paths_within_radius(grid_vertex, upper_bound);
     if (!has_sufficient_path_size(paths, min_path_size)) {
-
-		Rprintf("\n---------------------\nERROR\ngrid_vertex: %zu\nNot a single geodesic ray containing at least min_path_size: %zu vertices was found using upper_bound: %.4f\n",
-				grid_vertex + 1, min_path_size, upper_bound);
-
-		//
-		// For DEBUGGING only !!!
-		//
-		// print_uset(paths.reachable_vertices, "reachable_vertices");
-		std::string debug_dir = "/Users/pgajer/current_projects/msr2/debugging_data/";
-
-		if (!std::filesystem::exists(debug_dir)) {
-			if (!std::filesystem::create_directories(debug_dir)) {
-				REPORT_ERROR("ERROR: Failed to create debug directory: %s\n", debug_dir.c_str());
-			}
-		}
-
-		std::string debug_file_path = debug_dir + "_reachable_vertices.csv";
-		std::ofstream reachable_vertices_file(debug_file_path);
-		if (reachable_vertices_file.is_open()) {
-			for (const auto& vertex : paths.reachable_vertices) {
-				reachable_vertices_file << (vertex + 1) << "\n";
-			}
-			reachable_vertices_file.close();
-			Rprintf("\npaths reachable vertices written to file: %s\n", debug_file_path.c_str());
-		}
-
-#if 0
-		Rprintf("\npaths:\n");
-		for (const auto& path : paths.paths) {
-			size_t n_path_vertices = path.vertices.size();
-			size_t n_path_vertices_minus_one = n_path_vertices - 1;
-			for (size_t i = 0; i < n_path_vertices_minus_one; i++) {
-				Rprintf("%zu(%.4f), ", path.vertices[i] + 1, path.distances[i]);
-			}
-			Rprintf("%zu(%.4f)\n", path.vertices[n_path_vertices_minus_one] + 1, path.distances[n_path_vertices_minus_one]);
-		}
-#endif
-
-		// Write each path to a separate CSV file
-		Rprintf("\nWriting paths to CSV files:\n");
-		size_t successful_files = 0;
-		for (size_t path_idx = 0; path_idx < paths.paths.size(); path_idx++) {
-			const auto& path = paths.paths[path_idx];
-			std::string path_file_name = debug_dir + "path_" + std::to_string(path_idx) + ".csv";
-			std::ofstream path_file(path_file_name);
-
-			if (path_file.is_open()) {
-				// Write CSV header
-				path_file << "vertex_index,distance\n";
-
-				// Write each vertex and its distance
-				for (size_t i = 0; i < path.vertices.size(); i++) {
-					// Add 1 to vertex index to match 1-based indexing in output
-					path_file << (path.vertices[i] + 1) << "," << path.distances[i] << "\n";
-				}
-
-				path_file.close();
-				Rprintf("  Path %zu written to file: %s (%zu vertices)\n",
-						path_idx, path_file_name.c_str(), path.vertices.size());
-				successful_files++;
-			} else {
-				Rprintf("  ERROR: Failed to open file for path %zu: %s\n",
-						path_idx, path_file_name.c_str());
-			}
-		}
-
-		// Print summary message for the user
-		Rprintf("\n----------------------------------------\n");
-		Rprintf("DEBUGGING DATA SUMMARY:\n");
-		Rprintf("- A total of %zu path files were generated\n", successful_files);
-		Rprintf("- Reachable vertices were written to: %s\n", debug_file_path.c_str());
-		Rprintf("- All files are located in directory: %s\n", debug_dir.c_str());
-		Rprintf("- To access these files in R, use:\n");
-		Rprintf("  path_data <- read.csv(\"%spath_0.csv\")\n", debug_dir.c_str());
-		Rprintf("  vertices <- read.csv(\"%s_reachable_vertices.csv\", header=FALSE)\n", debug_dir.c_str());
-		Rprintf("----------------------------------------\n");
-
-		REPORT_ERROR("ERROR\n");
+        REPORT_ERROR(
+            "No geodesic ray from vertex %zu contains at least %zu vertices "
+            "within upper bound %.6g.",
+            grid_vertex + 1,
+            min_path_size,
+            upper_bound
+        );
     }
 
 	// Binary search for the minimum bandwidth

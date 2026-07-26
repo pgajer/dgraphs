@@ -1,23 +1,27 @@
 # dgraphs
 
-`dgraphs` is the home for data-derived graph construction utilities split out
-from `gflow`.
+`dgraphs` constructs and analyzes graphs derived from numerical observations.
+It includes mutual and shared-neighbor graphs, intersection and geodesic
+nearest-neighbor graphs, radius and adaptive-radius graphs, and
+minimum-spanning-tree completion. Utilities for conversion, pruning,
+diagnostics, spectral embedding, endpoints, and paths are also provided.
 
-The package now contains local ANN-backed MkNN, intersection-kNN,
-graph-geodesic kNN, radius, adaptive-radius, SkNN, and MST-completion graph
-constructors.
+## Installation
 
-## Project Notes
+Once the package is available from CRAN, install it with:
 
-- [radEmu implications for dgraphs](docs/radEmu_compositional_implications_for_dgraphs.md):
-  notes on how sample mean efficiency, taxon-specific efficiency, and closure
-  affect kNN and related graph construction for compositional microbiome data.
-  HTML companion:
-  [docs/html/radEmu_compositional_implications_for_dgraphs.html](docs/html/radEmu_compositional_implications_for_dgraphs.html).
+```r
+install.packages("dgraphs")
+```
 
-Planned migration sequence:
+## Example
 
-1. Keep DG3/DG4 parity tests against the original `gflow` implementations.
-2. Audit downstream scripts against `dgraphs`.
-3. Remove migrated graph-construction exports from `gflow` after downstream
-   scripts have switched to `dgraphs`.
+```r
+library(dgraphs)
+
+set.seed(1)
+x <- matrix(rnorm(80), ncol = 2)
+graph <- create.mknn.graph(x, k = 4)
+
+length(graph$adjacency.list)
+```

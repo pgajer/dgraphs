@@ -1,5 +1,5 @@
-#ifndef GFLOW_SKNN_GRAPHS_R_H
-#define GFLOW_SKNN_GRAPHS_R_H
+#ifndef DGRAPHS_SKNN_GRAPHS_R_H
+#define DGRAPHS_SKNN_GRAPHS_R_H
 
 #include <Rinternals.h>
 

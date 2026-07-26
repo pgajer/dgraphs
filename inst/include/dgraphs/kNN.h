@@ -1,5 +1,5 @@
-#ifndef GFLOW_KNN_H_
-#define GFLOW_KNN_H_
+#ifndef DGRAPHS_KNN_H_
+#define DGRAPHS_KNN_H_
 
 #include <string>
 #include <vector>
@@ -31,4 +31,4 @@ knn_result_t compute_knn_from_eigen(
     bool* cache_hit = nullptr,
     bool* cache_written = nullptr);
 
-#endif // GFLOW_KNN_H_
+#endif // DGRAPHS_KNN_H_

@@ -1,7 +1,6 @@
 #include "dgraphs/graph_utils.hpp" // for get_grid_diameter()
 #include "dgraphs/uniform_grid_graph.hpp"
 #include "dgraphs/SEXP_cpp_conversion_utils.hpp"
-#include "dgraphs/cpp_utils.hpp"
 #include "dgraphs/error_utils.h"
 #include "dgraphs/kernels.h"
 

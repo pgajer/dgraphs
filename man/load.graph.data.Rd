@@ -44,15 +44,16 @@ Each RDA file should contain an object with the name specified in
 and \code{pruned_dist_list}.
 }
 \examples{
-\dontrun{
-# Load graphs for k = 5, 10, 15
-k.values <- c(5, 10, 15)
-graph.data <- load.graph.data(
-  k.values,
-  prefix = "path/to/graphs/graph_k",
-  suffix = "_NN_graph.rda",
-  graph.object.name = "S.graph"
+prefix <- file.path(tempdir(), "dgraphs-k")
+S.graph <- list(
+  pruned_adj_list = list(c(2L), c(1L)),
+  pruned_dist_list = list(1, 1)
 )
-}
+save(S.graph, file = paste0(prefix, 2, ".rda"))
+graph.data <- load.graph.data(
+  2, prefix = prefix, suffix = ".rda", verbose = FALSE
+)
+unlink(paste0(prefix, 2, ".rda"))
+names(graph.data$adj.list)
 
 }

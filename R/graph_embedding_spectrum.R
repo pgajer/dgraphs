@@ -1,7 +1,3 @@
-##
-## DG6d graph embedding and spectrum utilities split from gflow.
-##
-
 elapsed.time <- function(start.time,
                          message = "DONE",
                          with.brackets = TRUE) {
@@ -261,7 +257,7 @@ graph.spectrum <- function(graph,
     }
     g.m <- convert.adjacency.list.to.adjacency.matrix(graph)
     g <- igraph::graph_from_adjacency_matrix(g.m, mode = "undirected")
-    L  <- igraph::laplacian_matrix(g, normalized = FALSE)
+    L  <- igraph::laplacian_matrix(g, normalization = "unnormalized")
     ed <- eigen(L)
     res <- list(evalues = ed$values, evectors = ed$vectors)
     if (return.Laplacian) res$laplacian <- L

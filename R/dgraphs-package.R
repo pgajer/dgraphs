@@ -1,6 +1,6 @@
 #' dgraphs: Data-Derived Graph Construction Utilities
 #'
-#' Data-derived graph construction utilities split out from gflow.
+#' Construct and analyze graphs derived from numerical observations.
 #'
 #' @keywords internal
 #' @useDynLib dgraphs, .registration = TRUE

@@ -3,8 +3,7 @@
 #' @param adj.list Input graph adjacency list.
 #' @param weight.list Edge-length list matching `adj.list`.
 #' @param grid.size Target grid size parameter.
-#' @param start.vertex Starting vertex used for the original gflow BFS grid
-#'   placement logic.
+#' @param start.vertex Starting vertex used for breadth-first grid placement.
 #' @param snap.tolerance Grid snapping tolerance.
 #'
 #' @return A list with `adj_list`, `weight_list`, and `grid_vertices`.

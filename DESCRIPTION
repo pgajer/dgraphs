@@ -1,22 +1,28 @@
 Package: dgraphs
 Title: Data-Derived Graph Construction Utilities
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
     person("Peter", "Gajer", role = c("aut", "cre"),
-           email = "pgajer@example.com")
+           email = "pgajer@gmail.com")
     )
-Description: Data-derived graph construction utilities split out from gflow.
-    The package provides local ANN-backed kNN, intersection-kNN, geodesic-kNN,
-    radius, adaptive-radius, SkNN, and MST-completion graph constructors.
+Description: Constructs data-derived graphs from numerical observations using
+    mutual, shared-neighbor, intersection, geodesic, radius, adaptive-radius,
+    and minimum-spanning-tree completion methods. Provides graph conversion,
+    pruning, diagnostics, spectral embedding, endpoint detection, and path
+    utilities.
 License: MIT + file LICENSE
+Copyright: file inst/COPYRIGHTS
+URL: https://github.com/pgajer/dgraphs
+BugReports: https://github.com/pgajer/dgraphs/issues
 Encoding: UTF-8
+Language: en-US
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
+SystemRequirements: C++17
 Depends:
     R (>= 4.1.0)
 Imports:
     FNN,
-    igraph
+    igraph (>= 2.2.0)
 LinkingTo:
     Rcpp,
     RcppEigen
@@ -26,3 +32,4 @@ Suggests:
     Matrix,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0

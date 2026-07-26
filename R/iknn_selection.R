@@ -1,5 +1,3 @@
-## DG6e ikNN graph-selection diagnostics migrated from gflow/R/iknn_graphs.R.
-
 .dgraphs.safe.spline.predict <- function(x, y, xout = NULL, w = NULL, spar = NULL, df = NULL) {
     x <- as.numeric(x)
     y <- as.numeric(y)

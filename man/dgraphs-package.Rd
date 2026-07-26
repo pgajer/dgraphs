@@ -6,10 +6,23 @@
 \alias{dgraphs-package}
 \title{dgraphs: Data-Derived Graph Construction Utilities}
 \description{
-Data-derived graph construction utilities split out from gflow.
+Construct and analyze graphs derived from numerical observations.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/pgajer/dgraphs}
+  \item Report bugs at \url{https://github.com/pgajer/dgraphs/issues}
+}
+
 }
 \author{
-\strong{Maintainer}: Peter Gajer \email{pgajer@example.com}
+\strong{Maintainer}: Peter Gajer \email{pgajer@gmail.com}
+
+Authors:
+\itemize{
+  \item Peter Gajer \email{pgajer@gmail.com}
+}
 
 }
 \keyword{internal}

@@ -88,22 +88,11 @@ before graph construction. This can significantly reduce computation time
 for high-dimensional data while preserving the most important variation.
 }
 \examples{
-\dontrun{
-# Generate sample data
 set.seed(123)
-X <- matrix(rnorm(100 * 3), nrow = 100, ncol = 3)
-
-# Create MST completion graph with default parameters
-graph <- create.cmst.graph(X)
-
-# Create graph with PCA dimensionality reduction
-X_high <- matrix(rnorm(100 * 200), nrow = 100, ncol = 200)
-graph_pca <- create.cmst.graph(X_high, pca.dim = 50, variance.explained = 0.95)
-
-# Print summary
-print(graph_pca)
-summary(graph_pca)
-}
+X <- matrix(rnorm(60), nrow = 20, ncol = 3)
+graph <- create.cmst.graph(X, verbose = FALSE)
+graph$n_vertices
+graph$n_edges
 }
 \references{
 Gower, J. C., & Ross, G. J. S. (1969). Minimum spanning trees and single

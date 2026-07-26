@@ -19,8 +19,7 @@ create.grid.graph(
 
 \item{grid.size}{Target grid size parameter.}
 
-\item{start.vertex}{Starting vertex used for the original gflow BFS grid
-placement logic.}
+\item{start.vertex}{Starting vertex used for breadth-first grid placement.}
 
 \item{snap.tolerance}{Grid snapping tolerance.}
 }

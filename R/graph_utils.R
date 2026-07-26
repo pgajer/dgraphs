@@ -1,5 +1,3 @@
-## DG6a generic graph utilities migrated from gflow/R/graph_utils.R.
-
 utils::globalVariables("all.edge.lengths")
 
 #' Compare Two Adjacency Lists
@@ -272,17 +270,43 @@ count.edges <- function(adj.list) {
 #' @export
 get.edge.weights <- function(adj.list,
                              weight.list,
-                             n.cores = 12) {
+                             n.cores = 1L) {
+
+    n.cores <- as.integer(n.cores)
+    if (length(n.cores) != 1L || is.na(n.cores) || n.cores < 1L) {
+        stop("'n.cores' must be a positive integer.", call. = FALSE)
+    }
+
+    n.vertices <- length(adj.list)
+    if (n.vertices == 0L) {
+        return(numeric())
+    }
+
+    if (n.cores == 1L) {
+        results <- numeric()
+        for (i in seq_len(n.vertices)) {
+            nbrs <- adj.list[[i]]
+            for (j in seq_along(nbrs)) {
+                if (i < nbrs[j]) {
+                    results <- c(results, weight.list[[i]][j])
+                }
+            }
+        }
+        return(results)
+    }
 
     if (!requireNamespace("foreach", quietly = TRUE) ||
         !requireNamespace("doParallel", quietly = TRUE)) {
-        stop("Packages 'foreach' and 'doParallel' are required for this function")
+        stop(
+            "Packages 'foreach' and 'doParallel' are required when 'n.cores' is greater than 1.",
+            call. = FALSE
+        )
     }
 
+    n.cores <- min(n.cores, n.vertices)
     doParallel::registerDoParallel(cores = n.cores)
     on.exit(doParallel::stopImplicitCluster(), add = TRUE)
 
-    n.vertices <- length(adj.list)
     vertices.per.chunk <- ceiling(n.vertices / n.cores)
     vertex.chunks <- split(1:n.vertices,
                            ceiling(seq_along(1:n.vertices) / vertices.per.chunk))

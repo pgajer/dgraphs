@@ -2,6 +2,7 @@
 ^AGENTS\.md$
 ^GRAPH_MIGRATION_ACTION_PLAN\.md$
 ^\.claude$
+^\.github$
 ^.*\.Rcheck$
 ^.*\.tar\.gz$
 ^src/.*\.(o|so|dylib|dll)$

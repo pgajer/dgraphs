@@ -1,4 +1,5 @@
 #include <utility>        // For std::pair return type
+#include <limits>
 #include <queue>
 #include <vector>
 #include <string>
@@ -22,7 +23,7 @@
  * @param epsilon Minimum distance required between any two packing vertices
  * @param start_search_from Vertex to start the search from (optional)
  *
- * @return size_t Index of a suitable vertex, or SIZE_MAX if none found
+ * @return size_t Index of a suitable vertex, or the maximum size_t value if none found
  */
 size_t find_distant_vertex(
 	const std::vector<std::vector<int>>& adj_list,
@@ -93,7 +94,7 @@ size_t find_distant_vertex(
 	}
 
 	// No suitable vertex found
-	return SIZE_MAX;
+	return std::numeric_limits<size_t>::max();
 }
 
 /**

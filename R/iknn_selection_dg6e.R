@@ -1131,6 +1131,40 @@ plot.cst_graph_mixing_stats <- function(x,
     invisible(NULL)
 }
 
+#' Build iKNN Graphs and Select a Neighborhood Size
+#'
+#' Builds an iKNN graph sequence and selects `k` from structural edit-distance
+#' stability, label-mixing stability, or both.
+#'
+#' @param X Numeric observation-by-feature matrix.
+#' @param kmin,kmax Minimum and maximum neighborhood sizes.
+#' @param method Selection criterion.
+#' @param pca.dim,variance.explained PCA controls forwarded to
+#'   [create.iknn.graphs()].
+#' @param trim.disconnected Logical; trim to a largest connected component when
+#'   the requested connectivity tail is absent.
+#' @param edit.min.lcc.frac,edit.eps Connectivity and tolerance controls for
+#'   edit-distance selection.
+#' @param labels,perm.blocks Optional labels and permutation blocks for mixing
+#'   selection.
+#' @param mixing.metric,mixing.min.lcc.frac,mixing.eps Mixing criterion,
+#'   connectivity threshold, and tolerance.
+#' @param mixing.require.local.extremum,mixing.window Local-extremum controls
+#'   for the mixing curve.
+#' @param n.perm Number of label permutations.
+#' @param use.edge.weights,weights.are.edge.lengths Edge-weight interpretation.
+#' @param affinity.method,affinity.sigma,affinity.sigma.from,affinity.eps
+#'   Controls for converting edge lengths to affinities.
+#' @param simplify.multiple Logical; simplify loops and multiple edges.
+#' @param seed Random seed.
+#' @param n.cores Number of worker processes.
+#' @param verbose Logical; report progress.
+#' @param ... Additional arguments forwarded to [create.iknn.graphs()].
+#'
+#' @return An object of class `"build_iknn_graphs_and_selectk"` containing the
+#'   graph sequence, connectivity diagnostics, selection curves, selected
+#'   neighborhood sizes, trimming metadata, and call parameters.
+#' @export
 build.iknn.graphs.and.selectk <- function(X,
                                           kmin,
                                           kmax,

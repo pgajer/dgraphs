@@ -10,24 +10,41 @@ analyzing graphs derived from numerical observations.
   0 errors | 0 warnings | 0 notes
 * macOS 26.3.1 (Apple Silicon), R 4.6.1, Homebrew GCC 15.2.0:
   0 errors | 0 warnings | 0 notes
-* win-builder:
-  - Pending.
+* GitHub Actions, Ubuntu 24.04.4, R-devel (2026-06-21 r90185),
+  R 4.6.1, and R 4.5.3:
+  0 errors | 0 warnings | 0 notes
+* R-hub, R-devel:
+  - Ubuntu 24.04.4, x86_64 (2026-06-21 r90185):
+    0 errors | 0 warnings | 0 notes
+  - Windows Server 2022, x86_64 UCRT (2026-07-25 r90301):
+    0 errors | 0 warnings | 0 notes
+  - macOS 15.7.7, x86_64 (2026-06-24 r90190):
+    0 errors | 0 warnings | 0 notes
+* win-builder, Windows Server 2022, x86_64 UCRT:
+  - R-devel (2026-07-25 r90301):
+    0 errors | 0 warnings | 1 note
+  - R 4.6.1:
+    0 errors | 0 warnings | 1 note
+  - R 4.5.3:
+    0 errors | 0 warnings | 1 note
 
 ## R CMD check results
 
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 1 note
 
 ## Notes
 
-This is a new submission.
+Win-builder reports the expected incoming-feasibility note:
 
-The local R-devel package check with remote CRAN incoming checks disabled
-completed with `Status: OK`.
+```
+Maintainer: 'Peter Gajer <pgajer@gmail.com>'
+
+New submission
+```
+
+No other notes were reported.
 
 ## Additional checks
 
 * `urlchecker::url_check()` reports that all URLs are correct.
-* Package tests pass locally.
-* One downstream `gflow` test has an R 4.6.1 numerical-tolerance difference
-  in a PHATE embedding test that does not exercise `dgraphs`; this result will
-  be resolved or documented before submission.
+* All 354 package tests pass locally under R-devel.

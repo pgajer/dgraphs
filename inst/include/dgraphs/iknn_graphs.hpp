@@ -7,7 +7,7 @@
 struct knn_result_t;
 
 struct iknn_graph_t {
-    std::vector<std::vector<iknn_vertex_t>> graph; // ToDo: change to 'neighbors' or 'adjacency_list'
+    std::vector<std::vector<iknn_vertex_t>> graph;
 
     // Constructor that takes initial size
     explicit iknn_graph_t(size_t n_vertices)
@@ -16,7 +16,6 @@ struct iknn_graph_t {
           num_edges_cache(n_vertices)
         {}
 
-    // Constructor takes rvalue reference - meaning it expects a temporary or moved value
     explicit iknn_graph_t(std::vector<std::vector<iknn_vertex_t>>&& input_graph)
         : graph(std::move(input_graph)),
           total_isize_cache(input_graph.size()),
@@ -33,10 +32,6 @@ struct iknn_graph_t {
     const std::vector<iknn_vertex_t>& get_neighbors(int vertex) const {
         return graph[vertex];
     }
-
-    // Future member functions could include:
-    // void add_edge(int from, int to, int common_count, double distance);
-    // void remove_edge(int from, int to);
 
     void print(size_t vertex_index_shift = 0,
                const std::string& name = "") const;

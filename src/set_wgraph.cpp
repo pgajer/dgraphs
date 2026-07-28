@@ -738,14 +738,6 @@ std::vector<edge_weight_rel_deviation_t> set_wgraph_t::compute_edge_weight_rel_d
 
                     double rel_dev = (w_ij + w_jk) / w_ik - 1.0;
 
-                    #if 0
-                    // Compute absolute deviation
-                    double abs_dev = std::abs(w_ij + w_jk - w_ik);
-                    // Compute relative deviation
-                    double sum = w_ij + w_jk;
-                    double rel_dev = (sum != 0.0) ? abs_dev / sum : std::numeric_limits<double>::infinity();
-                    #endif
-
                     // Update minimum deviations
                     if (rel_dev < min_rel_deviation) {
                         min_rel_deviation = rel_dev;

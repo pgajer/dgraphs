@@ -45,7 +45,7 @@ struct compare_edge_t {
  * It also uses an unordered set to keep track of the vertices currently in the MST, allowing for
  * efficient checking of whether a point is in the MST or not.
  *
- * @param X A vector of doubles representing the flat data matrix. Each nc_X consecutive elements represent one point.
+ * @param X The input matrix in R's column-major storage order.
  * @param nr_X The number of points (rows) in the data matrix.
  * @param nc_X The number of dimensions (columns) for each point in the data matrix.
  *
@@ -55,16 +55,14 @@ struct compare_edge_t {
  * @note The function uses Euclidean distance as the distance metric. If a different metric is needed,
  *       modifications to the distance calculation would be required.
  *
- * @Rf_warning This function assumes that the input data is valid and contains at least one point.
- *          It does not perform extensive Rf_error checking on the input parameters.
- *
  * @see edge_t, compare_edge_t
  *
  * Time Complexity: O(n^2 log n), where n is the number of points.
  * Space Complexity: O(n), where n is the number of points.
  *
- * @todo Implement a more efficient version that doesn't recompute all nearest neighbors
- *       after each point is added to the MST.
+ * @note The implementation recomputes nearest-neighbor candidates after each
+ *       point is added to the MST, which accounts for the stated time
+ *       complexity.
  */
 std::vector<edge_t> data_mstree(const std::vector<double>& X, int nr_X, int nc_X) {
 
@@ -97,9 +95,10 @@ std::vector<edge_t> data_mstree(const std::vector<double>& X, int nr_X, int nc_X
     auto add_edges = [&]() {
         for (const auto &v : tree_vertices) {
             kd_tree->annkSearch(data_pts[v], nr_X, nn_idx, nn_dist, 0);
-            for (int i = 1; i < nr_X; i++) {  // Start from 1 to skip the query point itself
-                if (!inMST[nn_idx[i]]) {
-                    pq.push(edge_t(v, nn_idx[i], std::sqrt(nn_dist[i])));
+            for (int i = 0; i < nr_X; i++) {
+                const int candidate = nn_idx[i];
+                if (!inMST[candidate]) {
+                    pq.push(edge_t(v, candidate, std::sqrt(nn_dist[i])));
                     break;  // We only need the closest non-MST point
                 }
             }
@@ -154,9 +153,6 @@ std::vector<edge_t> data_mstree(const std::vector<double>& X, int nr_X, int nc_X
  * @note This function uses the data_mstree C++ function to compute the MST.
  *       It handles the conversion between R and C++ data structures.
  *
- * @Rf_warning The input matrix X must be a numeric matrix. The function will raise an R Rf_error
- *          if this condition is not met.
- *
  * @see data_mstree
  *
  * @example
@@ -169,13 +165,8 @@ std::vector<edge_t> data_mstree(const std::vector<double>& X, int nr_X, int nc_X
  *
  * @note The resulting edge indices are 1-based to conform with R's indexing convention.
  *
- * @note This function uses R's C API and should be compiled into a shared object
- *       before being called from R.
- *
- * @todo Add more robust Rf_error checking and handling for production use.
- *
- * @todo If performance is critical, consider using Rcpp for easier and potentially
- *       more efficient R and C++ integration.
+ * @note The input must be a non-empty numeric matrix containing only finite
+ *       values.
  */
 SEXP S_mstree(SEXP X) {
     // Check if X is a numeric matrix
@@ -185,13 +176,24 @@ SEXP S_mstree(SEXP X) {
 
     // Get dimensions of X
     SEXP s_dim = PROTECT(Rf_getAttrib(X, R_DimSymbol));
-    if (s_dim == R_NilValue || TYPEOF(s_dim) != INTSXP || Rf_length(s_dim) < 1) {
+    if (s_dim == R_NilValue || TYPEOF(s_dim) != INTSXP || Rf_length(s_dim) != 2) {
         UNPROTECT(1);
         Rf_error("X must be a matrix with a valid integer 'dim' attribute.");
     }
     const int nr_X = INTEGER(s_dim)[0];
     const int nc_X = INTEGER(s_dim)[1];
     UNPROTECT(1); // s_dim
+
+    if (nr_X < 1 || nc_X < 1) {
+        Rf_error("X must have at least one row and one column.");
+    }
+
+    const R_xlen_t n_values = XLENGTH(X);
+    for (R_xlen_t i = 0; i < n_values; ++i) {
+        if (!R_FINITE(REAL(X)[i])) {
+            Rf_error("X must contain only finite values.");
+        }
+    }
 
     // Convert X to std::vector<double>
     std::vector<double> x_vec(REAL(X), REAL(X) + nr_X * nc_X);

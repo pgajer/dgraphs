@@ -88,19 +88,3 @@ SEXP S_compute_mstree_total_length(SEXP s_X) {
 
     return result;
 }
-
-#if 0
-SEXP S_compute_mstree_total_length(SEXP s_X) {
-
-    // Converting R matrix to C++ vector of vectors
-    std::vector<std::vector<double>> X = std::move(*Rmatrix_to_cpp(s_X));
-
-    double total_length = compute_mstree_total_length(X);
-
-    SEXP result = PROTECT(result = Rf_allocVector(REALSXP, 1));
-    REAL(result)[0] = total_length;
-    UNPROTECT(1);
-
-    return result;
-}
-#endif

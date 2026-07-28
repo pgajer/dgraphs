@@ -110,17 +110,6 @@ inline void check_null(SEXP x, const char* file, int line, const char* var_name)
 
 #define CHECK_NULL(x) check_null(x, LOC_INFO, #x)
 
-#if 0
-inline void check_length(SEXP x, R_xlen_t expected, const char* file, int line, const char* var_name) {
-    if (XLENGTH(x) != expected) {
-        report_error(file, line, "Length mismatch for '%s': expected %lld, got %lld",
-                    var_name, (long long)expected, (long long)XLENGTH(x));
-    }
-}
-
-#define CHECK_LENGTH(x, n) check_length(x, n, LOC_INFO, #x)
-#endif
-
 // Vector bounds checking
 template<typename T>
 inline void check_index(T idx, T max, const char* file, int line, const char* var_name) {

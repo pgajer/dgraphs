@@ -309,21 +309,6 @@ struct uniform_grid_graph_t : public set_wgraph_t {
         double dist_normalization_factor
         ) const;
 
-    // -----
-
-#if 0
-    std::vector<xyw_path_t> reconstruct_xyw_paths(
-        const reachability_map_t& reachability_map,
-        const std::vector<double>& y,
-        double radius,
-        size_t kernel_type,
-        double dist_normalization_factor,
-        size_t min_path_size,
-        size_t diff_threshold,
-        const edge_weights_t& edge_weights
-        ) const;
-#endif
-
     void remove_edge(size_t v1, size_t v2);
     void add_edge(size_t v1, size_t v2, double weight);
     double find_grid_distance(size_t source, size_t target) const;
@@ -356,41 +341,6 @@ private:
         const ref_vertex_path_t& path2,
         size_t min_path_size,
         size_t diff_threshold) const;
-
-#if 0
-    // Convert a single reference vertex path to XYW format
-    xyw_path_t convert_to_xyw_path(
-        const ref_vertex_path_t& path,
-        const std::vector<double>& y,
-        size_t kernel_type,
-        double dist_normalization_factor,
-        const edge_weights_t& edge_weights) const;
-
-    // Helper method to process paths into XYW format
-    std::vector<xyw_path_t> process_xyw_paths(
-        const std::vector<ref_vertex_path_t>& paths,
-        const std::vector<double>& y,
-        size_t min_path_size,
-        size_t diff_threshold,
-        size_t kernel_type,
-        double dist_normalization_factor,
-        const edge_weights_t& edge_weights) const;
-
-    // Create a composite path by combining two paths
-    xyw_path_t create_composite_xyw_path(
-        const ref_vertex_path_t& path1,
-        const ref_vertex_path_t& path2,
-        const std::vector<double>& y,
-        size_t kernel_type,
-        double dist_normalization_factor,
-        const edge_weights_t& edge_weights) const;
-
-    // Helper method to compute kernel weights for a path
-    void compute_kernel_weights(
-        xyw_path_t& path,
-        size_t kernel_type,
-        double dist_normalization_factor) const;
-#endif
 
     // Helper method to check if paths explore different directions
     bool paths_explore_different_directions(

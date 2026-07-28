@@ -331,39 +331,7 @@ gray_xyw_t set_wgraph_t::get_xyw_along_path(
 	// Use the pre-computed distances directly
     result.x_path = path.distances;
 
-#if 0
-	// weithts centered at the init vertex of each path
-	{
-		// Calculate distances to use for kernel weighting
-		std::vector<double> normalized_distances = result.x_path;
-
-		// Normalize distances for kernel function
-		double max_dist = normalized_distances.back(); // Maximum distance in the path
-		if (max_dist <= 0.0) max_dist = 1.0;          // Safety check
-
-		max_dist *= dist_normalization_factor;        // Apply normalization factor
-
-		for (size_t i = 0; i < n_vertices; ++i) {
-			normalized_distances[i] /= max_dist;
-		}
-
-		// Calculate kernel weights
-		result.w_path.resize(n_vertices);
-		kernel_fn(normalized_distances.data(), n_vertices, result.w_path.data());
-	}
-
-
-	// uniform weights
-	{
-		double dn = (double)result.vertices.size();
-		result.w_path.resize(n_vertices);
-		for (size_t i = 0; i < result.vertices.size(); i++) {
-			result.w_path[i] = 1.0 / dn;
-		}
-	}
-#endif
-
-	// weithts centered at the center of the path
+	// Weights centered at the midpoint of the path
 	{
 		size_t n_path_vertices = result.x_path.size();
 

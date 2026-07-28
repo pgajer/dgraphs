@@ -641,8 +641,7 @@ summary.mknn_graphs <- function(object, ...) {
     # Vertex degrees
     degrees <- sapply(adj_list, length)
 
-    # Connected components (simplified version - assumes helper function exists)
-    # In practice, this would use a proper graph traversal algorithm
+    # Connected components
     n_components <- .count_connected_components(adj_list)
 
     # Calculate density
@@ -701,8 +700,6 @@ summary.mknn_graphs <- function(object, ...) {
 }
 
 
-# Internal helper function to count connected components
-# This is a simplified placeholder - in practice, use proper graph algorithms
 .count_connected_components <- function(adj_list) {
   n <- length(adj_list)
   if (n == 0) return(0)
@@ -710,7 +707,6 @@ summary.mknn_graphs <- function(object, ...) {
   visited <- logical(n)
   n_components <- 0
 
-  # Simple DFS to count components
   dfs <- function(v) {
     visited[v] <<- TRUE
     for (neighbor in adj_list[[v]]) {
@@ -720,7 +716,6 @@ summary.mknn_graphs <- function(object, ...) {
     }
   }
 
-  # Count components
   for (i in seq_len(n)) {
     if (!visited[i]) {
       n_components <- n_components + 1

@@ -307,7 +307,7 @@ create.iknn.graphs <- function(X,
                     as.logical(verbose),
                     PACKAGE = "dgraphs")
 
-    ## Normalize optional matrices (placeholders may be empty)
+    ## Normalize optional matrices returned as empty native results.
     if (!is.null(result$birth_death_matrix)) {
         if (!is.matrix(result$birth_death_matrix) || nrow(result$birth_death_matrix) == 0) {
             result$birth_death_matrix <- matrix(

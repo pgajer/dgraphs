@@ -11,7 +11,7 @@ get.edge.weights(adj.list, weight.list, n.cores = 1L)
 
 \item{weight.list}{Edge-weight list aligned with \code{adj.list}.}
 
-\item{n.cores}{Number of cores used by the optional \code{foreach} backend.}
+\item{n.cores}{Number of worker processes used to extract edge weights.}
 }
 \value{
 Numeric vector of unique undirected edge weights.

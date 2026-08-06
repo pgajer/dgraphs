@@ -26,6 +26,10 @@ and \code{"mixing"}.}
 
 \item{...}{Additional arguments, currently ignored.}
 }
+\value{
+Invisibly returns \code{x}, unchanged, after producing the requested
+panels. If \code{which} is empty, invisibly returns \code{NULL} without plotting.
+}
 \description{
 Plot method for build_iknn_graphs_and_selectk
 }

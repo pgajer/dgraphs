@@ -163,6 +163,9 @@ plot2D.colored.graph <- function(embedding, adj.list, vertex.colors,
         point.colors <- cols[color.indices]
     }
 
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar), add = TRUE)
+
     mar.right <- if(add.legend) 4 else 1
     par(mar = c(1, 1, 2, mar.right))
 
@@ -215,7 +218,7 @@ plot2D.colored.graph <- function(embedding, adj.list, vertex.colors,
              cex = 0.8)
     }
 
-    par(xpd = FALSE)
+    invisible(NULL)
 }
 
 #' Compute Graph Spectrum

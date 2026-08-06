@@ -263,7 +263,7 @@ count.edges <- function(adj.list) {
 #'
 #' @param adj.list Adjacency list.
 #' @param weight.list Edge-weight list aligned with `adj.list`.
-#' @param n.cores Number of cores used by the optional `foreach` backend.
+#' @param n.cores Number of worker processes used to extract edge weights.
 #'
 #' @return Numeric vector of unique undirected edge weights.
 #'
@@ -295,29 +295,18 @@ get.edge.weights <- function(adj.list,
         return(results)
     }
 
-    if (!requireNamespace("foreach", quietly = TRUE) ||
-        !requireNamespace("doParallel", quietly = TRUE)) {
-        stop(
-            "Packages 'foreach' and 'doParallel' are required when 'n.cores' is greater than 1.",
-            call. = FALSE
-        )
-    }
-
     n.cores <- min(n.cores, n.vertices)
-    doParallel::registerDoParallel(cores = n.cores)
-    on.exit(doParallel::stopImplicitCluster(), add = TRUE)
-
     vertices.per.chunk <- ceiling(n.vertices / n.cores)
     vertex.chunks <- split(1:n.vertices,
                            ceiling(seq_along(1:n.vertices) / vertices.per.chunk))
 
-    chunk <- NULL
-    dopar <- foreach::`%dopar%`
-    results <- dopar(
-        foreach::foreach(chunk = vertex.chunks,
-                         .combine = "c",
-                         .packages = c()),
-        {
+    cluster <- parallel::makeCluster(n.cores)
+    on.exit(parallel::stopCluster(cluster), add = TRUE)
+
+    results <- parallel::parLapply(
+        cluster,
+        vertex.chunks,
+        function(chunk, adj.list, weight.list) {
             chunk.weights <- c()
 
             for (i in chunk) {
@@ -333,11 +322,13 @@ get.edge.weights <- function(adj.list,
                 }
             }
 
-            return(chunk.weights)
-        }
+            chunk.weights
+        },
+        adj.list = adj.list,
+        weight.list = weight.list
     )
 
-    return(results)
+    unlist(results, use.names = FALSE)
 }
 
 #' Extract Unique Edge Lengths from an Undirected Graph

@@ -6,6 +6,10 @@
 \usage{
 new.path.graph(adj.list, edge.length.list, hop.list, shortest.paths)
 }
+\value{
+A list of class \code{"path.graph"} containing aligned adjacency,
+edge-length, and hop-count lists together with the stored shortest paths.
+}
 \description{
 Construct a path.graph object
 }

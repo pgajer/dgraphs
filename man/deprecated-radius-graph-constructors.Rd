@@ -60,6 +60,14 @@ parameters passed to \code{create.rknn.graph(type = "adaptive.radius")}.}
 \item{return.timing, graph.detail}{Adaptive-radius output controls passed to
 \code{create.rknn.graph()}.}
 }
+\value{
+A graph list produced by \code{create.rknn.graph()}. The fixed-radius
+wrapper returns an object of class \code{"radius_graph"}; the adaptive-radius
+wrapper returns an object of class \code{"adaptive_radius_graph"}. Each object
+contains the final adjacency and weight lists, an edge matrix and edge
+weights, graph-construction parameters, and component, pruning, and repair
+diagnostics.
+}
 \description{
 \code{create.radius.graph()} and \code{create.adaptive.radius.graph()} are deprecated
 compatibility wrappers. Use \code{create.rknn.graph()} with \code{type = "fixed"} or

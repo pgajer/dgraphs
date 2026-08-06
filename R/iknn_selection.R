@@ -527,6 +527,10 @@ find.optimal.k.from.birth.death <- function(birth.death.matrix, kmin, kmax, matr
 #'
 #' @param x An object returned by `compute.stability.metrics()`.
 #' @param ... Passed to `plot.IkNNgraphs()`.
+#'
+#' @return Invisibly returns `TRUE` after producing the stability diagnostic
+#'   plot.
+#'
 #' @export
 plot.iknn_stability_metrics <- function(x, ...) {
     plot.IkNNgraphs(x, ...)
@@ -1065,6 +1069,10 @@ cst.graph.mixing.stats <- function(igraph.obj = NULL,
 #' @param x Object from `cst.graph.mixing.stats()`.
 #' @param which Character vector specifying panels to plot.
 #' @param ... Base graphics arguments.
+#'
+#' @return Invisibly returns `NULL` after producing the requested diagnostic
+#'   panels.
+#'
 #' @export
 plot.cst_graph_mixing_stats <- function(x,
                                         which = c("null.homophily", "null.assortativity", "mixing.matrix", "conductance"),
@@ -1776,6 +1784,10 @@ build.iknn.graphs.and.selectk <- function(X,
 #'
 #' @param x Object from `build.iknn.graphs.and.selectk()`.
 #' @param ... Unused.
+#'
+#' @return Invisibly returns `x`, unchanged, after printing its selected
+#'   neighborhood sizes and trimming status.
+#'
 #' @export
 print.build_iknn_graphs_and_selectk <- function(x, ...) {
     if (!inherits(x, "build_iknn_graphs_and_selectk")) stop("x must be class 'build_iknn_graphs_and_selectk'.")
@@ -1798,6 +1810,10 @@ print.build_iknn_graphs_and_selectk <- function(x, ...) {
 #' @param connect.args,edit.args,mixing.args Named lists forwarded to panel plots.
 #' @param par.args Named list forwarded to [graphics::par()].
 #' @param ... Additional arguments, currently ignored.
+#'
+#' @return Invisibly returns `x`, unchanged, after producing the requested
+#'   panels. If `which` is empty, invisibly returns `NULL` without plotting.
+#'
 #' @export
 plot.build_iknn_graphs_and_selectk <- function(x,
                                                which = c("connect", "edit", "mixing"),

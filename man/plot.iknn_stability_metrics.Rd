@@ -11,6 +11,10 @@
 
 \item{...}{Passed to \code{plot.IkNNgraphs()}.}
 }
+\value{
+Invisibly returns \code{TRUE} after producing the stability diagnostic
+plot.
+}
 \description{
 Plot Method for IkNN Stability Metrics
 }

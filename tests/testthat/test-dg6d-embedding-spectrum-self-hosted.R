@@ -85,19 +85,23 @@ test_that("DG6d plot2D.colored.graph prepares plotting on an off-screen device",
     out <- tempfile(fileext = ".pdf")
     grDevices::pdf(out)
     res <- tryCatch(
-        dgraphs::plot2D.colored.graph(
-            embedding,
-            graph,
-            colors,
-            vertex.size = 1.2,
-            edge.alpha = 0.4,
-            add.legend = FALSE
-        ),
+        {
+            oldpar <- graphics::par(c("mar", "xpd"))
+            value <- dgraphs::plot2D.colored.graph(
+                embedding,
+                graph,
+                colors,
+                vertex.size = 1.2,
+                edge.alpha = 0.4,
+                add.legend = FALSE
+            )
+            expect_equal(graphics::par(c("mar", "xpd")), oldpar)
+            value
+        },
         finally = grDevices::dev.off()
     )
 
-    expect_type(res, "list")
-    expect_named(res, "xpd")
+    expect_null(res)
     expect_true(file.exists(out))
     expect_gt(file.info(out)$size, 0)
 })

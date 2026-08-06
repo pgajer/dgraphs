@@ -3,13 +3,33 @@ Title: Data-Derived Graph Construction Utilities
 Version: 0.1.0
 Authors@R: c(
     person("Peter", "Gajer", role = c("aut", "cre"),
-           email = "pgajer@gmail.com")
+           email = "pgajer@gmail.com"),
+    person("Sunil", "Arya", role = "ctb",
+           comment = "ANN library"),
+    person("David M.", "Mount", role = "ctb",
+           comment = "ANN library"),
+    person("University of Maryland", role = "cph",
+           comment = "ANN library"),
+    person("Yixuan", "Qiu", role = c("ctb", "cph"),
+           comment = "Spectra library"),
+    person("Anna", "Araslanova", role = c("ctb", "cph"),
+           comment = "Spectra LOBPCG solver"),
+    person("Gael", "Guennebaud", role = c("ctb", "cph"),
+           comment = "Spectra linear algebra routines"),
+    person("Jitse", "Niesen", role = c("ctb", "cph"),
+           comment = "Spectra linear algebra routines"),
+    person("Netherlands eScience Center", role = c("ctb", "cph"),
+           comment = "Spectra eigensolver routines")
     )
 Description: Constructs data-derived graphs from numerical observations using
     mutual, shared-neighbor, intersection, geodesic, radius, adaptive-radius,
     and minimum-spanning-tree completion methods. Provides graph conversion,
     pruning, diagnostics, spectral embedding, endpoint detection, and path
-    utilities.
+    utilities. The implemented graph constructions include methods described by
+    Jarvis and Patrick (1973) <doi:10.1109/T-C.1973.223640>, Brito et al. (1997)
+    <doi:10.1016/S0167-7152(96)00213-1>, Berry and Sauer (2019)
+    <doi:10.3934/fods.2019001>, and Gower and Ross (1969)
+    <doi:10.2307/2346439>.
 License: MIT + file LICENSE
 Copyright: file inst/COPYRIGHTS
 URL: https://github.com/pgajer/dgraphs
@@ -22,13 +42,12 @@ Depends:
     R (>= 4.1.0)
 Imports:
     FNN,
-    igraph (>= 2.2.0)
+    igraph (>= 2.2.0),
+    parallel
 LinkingTo:
     Rcpp,
     RcppEigen
 Suggests:
-    doParallel,
-    foreach,
     Matrix,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

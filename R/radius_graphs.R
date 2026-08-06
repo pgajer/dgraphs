@@ -1135,6 +1135,13 @@ summary.rknn_graphs <- function(object, ...) {
 #' @param connect.components,connect.method,bridge.k,bridge.k.max,bridge.growth Component
 #'   repair controls passed to `create.rknn.graph()`.
 #'
+#' @return A graph list produced by `create.rknn.graph()`. The fixed-radius
+#'   wrapper returns an object of class `"radius_graph"`; the adaptive-radius
+#'   wrapper returns an object of class `"adaptive_radius_graph"`. Each object
+#'   contains the final adjacency and weight lists, an edge matrix and edge
+#'   weights, graph-construction parameters, and component, pruning, and repair
+#'   diagnostics.
+#'
 #' @examples
 #' X <- matrix(c(0, 1, 3), ncol = 1)
 #' create.rknn.graph(X, type = "fixed", radius = 1.1)$edge_matrix

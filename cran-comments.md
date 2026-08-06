@@ -29,6 +29,22 @@ analyzes graphs derived from numerical observations.
 * macOS 26.3.1 (Apple Silicon), R-devel 4.7.0 (2026-06-24
   r90190), Homebrew GCC 15.2.0, GNU Fortran 14.2.0:
   0 errors | 0 warnings | 2 notes
+* GitHub Actions, Ubuntu, R-devel, R 4.6.1, and R 4.5.3:
+  0 errors | 0 warnings | 0 notes on each configuration
+* R-hub, R-devel:
+  - Ubuntu 24.04.4, x86_64 (2026-06-21 r90185):
+    0 errors | 0 warnings | 0 notes
+  - Windows Server 2022, x86_64 UCRT (2026-08-05 r90355):
+    0 errors | 0 warnings | 0 notes
+  - macOS 15.7.7, x86_64 (2026-06-24 r90190):
+    0 errors | 0 warnings | 0 notes
+* win-builder, Windows Server 2022, x86_64 UCRT:
+  - R-devel (2026-08-05 r90355):
+    0 errors | 0 warnings | 1 note
+  - R 4.6.1:
+    0 errors | 0 warnings | 1 note
+  - R 4.5.3:
+    0 errors | 0 warnings | 1 note
 
 ## R CMD check results
 
@@ -47,6 +63,11 @@ New submission
 The second note is local-environment-only: the Apple-provided HTML Tidy is too
 old for R-devel's HTML-manual validation. The PDF and HTML manuals were both
 built successfully, and all Rd checks passed.
+
+Win-builder's incoming-feasibility output also lists `Brito`, `Gower`, and
+`Sauer` as possibly misspelled words; these are surnames of the cited authors.
+The listed words `et` and `al` are the standard abbreviation "et al." used in
+one citation. They are included in `inst/WORDLIST`.
 
 ## Additional checks
 

@@ -34,6 +34,13 @@ test_that("DG6a utilities run self-hosted on edge cases", {
     )
     expect_equal(weights, c(0.5, 0.7))
 
+    parallel.weights <- dgraphs::get.edge.weights(
+        list(c(2L, 3L), c(1L), c(1L)),
+        list(c(0.5, 0.7), 0.5, 0.7),
+        n.cores = 2
+    )
+    expect_equal(parallel.weights, weights)
+
     named.S <- matrix(seq_len(6), nrow = 3)
     rownames(named.S) <- c("a", "b", "c")
     sub <- dgraphs::create.subgraph(

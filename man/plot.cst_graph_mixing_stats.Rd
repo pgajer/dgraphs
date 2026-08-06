@@ -17,6 +17,10 @@
 
 \item{...}{Base graphics arguments.}
 }
+\value{
+Invisibly returns \code{NULL} after producing the requested diagnostic
+panels.
+}
 \description{
 Plot method for cst_graph_mixing_stats
 }

@@ -56,6 +56,9 @@ create.path.graph <- function(graph, edge.lengths, h) {
 
 #' Construct a path.graph object
 #'
+#' @return A list of class `"path.graph"` containing aligned adjacency,
+#'   edge-length, and hop-count lists together with the stored shortest paths.
+#'
 #' @keywords internal
 new.path.graph <- function(adj.list, edge.length.list, hop.list, shortest.paths) {
     structure(

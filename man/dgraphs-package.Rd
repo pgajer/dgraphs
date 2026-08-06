@@ -24,5 +24,17 @@ Authors:
   \item Peter Gajer \email{pgajer@gmail.com}
 }
 
+Other contributors:
+\itemize{
+  \item Sunil Arya (ANN library) [contributor]
+  \item David M. Mount (ANN library) [contributor]
+  \item University of Maryland (ANN library) [copyright holder]
+  \item Yixuan Qiu (Spectra library) [contributor, copyright holder]
+  \item Anna Araslanova (Spectra LOBPCG solver) [contributor, copyright holder]
+  \item Gael Guennebaud (Spectra linear algebra routines) [contributor, copyright holder]
+  \item Jitse Niesen (Spectra linear algebra routines) [contributor, copyright holder]
+  \item Netherlands eScience Center (Spectra eigensolver routines) [contributor, copyright holder]
+}
+
 }
 \keyword{internal}

@@ -105,7 +105,7 @@ result2 <- remove.knn.outliers(S, y, p = 0.95, method = "dist.factor",
                                dist.factor = 5, K = 10)
 
 # Plot the original and filtered state space
-par(mfrow = c(1, 2))
+oldpar <- par(mfrow = c(1, 2))
 plot(S, col = "gray", main = "Original State Space",
      xlab = "Dimension 1", ylab = "Dimension 2")
 points(S[!result$idx, ], col = "red", pch = 16, cex = 1.2)
@@ -115,6 +115,7 @@ plot(result$S.q, col = "blue", pch = 16,
      xlab = "Dimension 1", ylab = "Dimension 2")
 legend("topright", legend = c("Retained", "Removed"),
        col = c("blue", "red"), pch = 16)
+par(oldpar)
 
 }
 \seealso{

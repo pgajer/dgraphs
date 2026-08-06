@@ -11,6 +11,10 @@
 
 \item{...}{Unused.}
 }
+\value{
+Invisibly returns \code{x}, unchanged, after printing its selected
+neighborhood sizes and trimming status.
+}
 \description{
 Print method for build_iknn_graphs_and_selectk
 }

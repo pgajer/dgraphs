@@ -13,6 +13,10 @@ Copyright (c) 2016-2024 Yixuan Qiu and contributors
 The included source files retain their MPL-2.0 notices and link to the license
 text at https://mozilla.org/MPL/2.0/.
 
+Individual Spectra linear-algebra headers also retain copyright notices for
+Gael Guennebaud and Jitse Niesen. Eigensolver headers contributed by the
+Netherlands eScience Center retain that organization's copyright notices.
+
 The Spectra contribution inst/include/Spectra/contrib/LOBPCGSolver.h is
 Copyright Anna Araslanova and Yixuan Qiu and is distributed under the MIT
 license stated in that source file.

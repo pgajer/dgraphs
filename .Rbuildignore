@@ -12,6 +12,4 @@
 ^package_split_audit$
 ^cran-comments\.md$
 ^docs$
-^audits$
-^phase_handoffs$
-^development$
+^dev$

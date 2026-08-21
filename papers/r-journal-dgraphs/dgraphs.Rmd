@@ -44,7 +44,8 @@ packages:
     - dbscan
     - igraph
     - ggplot2
-  bioc: []
+  bioc:
+    - bluster
 ---
 
 ```{r setup, include=FALSE}
@@ -66,6 +67,27 @@ library(dgraphs)
 library(ggplot2)
 
 stopifnot(packageVersion("dgraphs") >= "0.2.0")
+
+accessible.kable <- function(data, caption, ...) {
+  alt <- knitr::opts_current$get("tab.alt")
+  if (!is.character(alt) || length(alt) != 1L || !nzchar(trimws(alt))) {
+    stop("Accessible tables require a nonempty tab.alt chunk option.")
+  }
+  if (knitr::is_latex_output()) {
+    return(knitr::kable(data, format = "latex", caption = caption, ...))
+  }
+  escaped.alt <- gsub("&", "&amp;", alt, fixed = TRUE)
+  escaped.alt <- gsub("\"", "&quot;", escaped.alt, fixed = TRUE)
+  escaped.alt <- gsub("<", "&lt;", escaped.alt, fixed = TRUE)
+  escaped.alt <- gsub(">", "&gt;", escaped.alt, fixed = TRUE)
+  knitr::kable(
+    data,
+    format = "html",
+    caption = caption,
+    table.attr = paste0('aria-label="', escaped.alt, '"'),
+    ...
+  )
+}
 
 pipeline.raw <- utils::read.csv("data/pipeline-benchmark.csv")
 family.raw <- utils::read.csv("data/graph-family-benchmark.csv")
@@ -130,6 +152,54 @@ linking the graph construction to the classical relationship between minimum
 spanning trees and single-linkage structure [@gowerRoss1969]. This article is
 about the software design and workflow; it does not propose a new graph rule.
 
+# Positioning and design choices
+
+`dgraphs` is intended for analysts and method developers whose downstream
+result depends on the graph construction itself. Its role begins after a data
+matrix has been assembled and ends with an explicit graph, its construction
+history, and diagnostics that can be passed to another method. Users who need
+only nearest-neighbor indices can use \CRANpkg{FNN}; users focused on
+density-based clustering can work directly with the kNN, fixed-radius, and
+shared-nearest-neighbor objects in \CRANpkg{dbscan} [@hahsler2019dbscan]. The
+Bioconductor package \BIOpkg{bluster} constructs kNN and shared-neighbor
+`igraph` objects for community detection, allows the neighbor-search backend to
+be selected through BiocNeighbors, and supports threaded construction
+[@blusterPackage]. These are closer alternatives than a general graph library.
+`dgraphs` differs by treating comparisons among graph rules, construction
+stages, repair order, and geodesic consequences as part of the returned
+analysis rather than as preprocessing for one clustering algorithm.
+
+The public interface follows a `create.<family>.graph()` convention, with
+plural constructors for parameter sequences. Constructor results are S3 lists
+rather than a new external graph class. Aligned adjacency and weight lists keep
+isolated vertices and intermediate branches directly inspectable, serialize
+with base R, and make it possible to compare native and repaired graphs without
+reconstructing them. The tradeoff is that retaining several lifecycle branches
+uses more memory than returning one final edge set. `as_igraph()` provides the
+boundary to the broader graph ecosystem instead of reproducing analysis
+algorithms already available in \CRANpkg{igraph}.
+
+R performs argument validation, result assembly, and lifecycle bookkeeping;
+nearest-neighbor search and the main construction kernels use C or C++ through
+Rcpp. The runtime dependencies are limited to FNN, igraph, parallel, and Rcpp,
+with RcppEigen used at compilation. The primary constructors are currently
+single-process, and the benchmarks in this article use one process. A few
+stand-alone utilities expose worker counts, but graph construction itself does
+not. Thus, `bluster` is a better fit when threaded kNN or shared-neighbor graph
+construction is the main requirement, while `dgraphs` favors deterministic
+cross-family diagnostics and lifecycle retention.
+
+For $n$ observations in $p$ dimensions and $m$ retained edges, the input matrix
+requires $O(np)$ storage and one adjacency/weight branch requires $O(n+m)$.
+Parameter sequences and lifecycle retention increase memory in proportion to
+the total number of stored branches and edges. ANN-backed Euclidean searches
+avoid an explicit all-pairs distance matrix; exact reference paths and exact
+component bridging can require quadratic pair comparisons. Diagnostics that
+return all pairwise graph distances necessarily allocate an $n$-by-$n$ result.
+For larger data, users can select ANN-backed constructors, request minimal graph
+detail when supported, and avoid retaining parameter sequences or all-pairs
+diagnostics that are not needed.
+
 # Graph rules and object lifecycle
 
 Let $x_1,\ldots,x_n \in \mathbb{R}^p$, let $N_k(i)$ be the set of $k$
@@ -155,16 +225,34 @@ paths on a preceding graph.
 Every current constructor returns aligned `adj_list` and `weight_list` fields.
 Weights are Euclidean edge lengths unless a documented function states
 otherwise. Constructors that support pruning and repair also retain lifecycle
-branches:
+branches.
 
-| Stage | Meaning |
-|:--|:--|
-| `raw_*` | Native construction before pruning or repair. |
-| `pruned_*` | Optional geometric pruning applied to the native graph. |
-| `raw_repaired_*` | Native graph after component repair. |
-| `pruned_repaired_*` | Prune-first graph after component repair. |
-| `repaired_pruned_*` | Repair-first graph after pruning. |
-| `adj_list`, `weight_list` | Final graph selected by the constructor call. |
+```{r lifecycle-table, echo=FALSE, tab.alt="Six-row table mapping dgraphs lifecycle field names to native, pruned, repaired, and final graph stages. The fields preserve alternative construction histories instead of storing only the selected final graph."}
+lifecycle.fields <- data.frame(
+  Stage = c(
+    "raw_*", "pruned_*", "raw_repaired_*",
+    "pruned_repaired_*", "repaired_pruned_*",
+    "adj_list, weight_list"
+  ),
+  Meaning = c(
+    "Native construction before pruning or repair.",
+    "Optional geometric pruning applied to the native graph.",
+    "Native graph after component repair.",
+    "Prune-first graph after component repair.",
+    "Repair-first graph after pruning.",
+    "Final graph selected by the constructor call."
+  )
+)
+accessible.kable(
+  lifecycle.fields,
+  caption = paste(
+    "Lifecycle fields retained by constructors that support pruning and",
+    "connectivity repair. Rows distinguish native, operation-order, and final",
+    "representations so repair edges are not mistaken for neighborhood edges."
+  ),
+  row.names = FALSE
+)
+```
 
 This redundancy is deliberate. A minimum-spanning-tree bridge makes a shortest
 path finite but does not make that bridge part of the native neighborhood
@@ -195,7 +283,7 @@ graphs <- list(
 )
 ```
 
-```{r candidate-summary, echo=FALSE}
+```{r candidate-summary, echo=FALSE, tab.alt="Four-row table comparing mutual kNN, symmetric kNN, continuous kNN, and adaptive maximum-radius graphs by edge count, connected components before and after repair, and the number of bridge edges. Symmetric kNN is connected without repair in this example; the other rows show any required bridges."}
 candidate.summary <- do.call(rbind, lapply(names(graphs), function(name) {
   graph <- graphs[[name]]
   data.frame(
@@ -209,7 +297,15 @@ candidate.summary <- do.call(rbind, lapply(names(graphs), function(name) {
 names(candidate.summary) <- c(
   "Graph", "Edges", "Raw components", "Final components", "Bridges"
 )
-knitr::kable(candidate.summary, row.names = FALSE)
+accessible.kable(
+  candidate.summary,
+  caption = paste(
+    "Candidate graphs for the variable-density circle. Edge counts describe",
+    "graph size; component and bridge columns show how much connectivity repair",
+    "contributes to each final graph."
+  ),
+  row.names = FALSE
+)
 ```
 
 The edge count is descriptive rather than an objective to maximize. The
@@ -252,11 +348,19 @@ radius.statistics <- radius.sequence$k_statistics[, c(
 )]
 ```
 
-```{r parameter-table, echo=FALSE}
+```{r parameter-table, echo=FALSE, tab.alt="Five-row parameter-sequence table for k values three through seven, reporting native edges, native connected components, bridge edges, and final connected components. Increasing k adds edges and generally reduces the repair needed for connectivity."}
 colnames(radius.statistics) <- c(
   "k", "Native edges", "Native components", "Bridges", "Final components"
 )
-knitr::kable(radius.statistics, row.names = FALSE)
+accessible.kable(
+  radius.statistics,
+  caption = paste(
+    "Adaptive-radius sequence over five neighborhood scales. Native edge and",
+    "component counts are reported separately from MST bridges and final",
+    "connectivity, exposing the effect of scale before repair."
+  ),
+  row.names = FALSE
+)
 ```
 
 For intersection-kNN sequences, `compute.stability.metrics()` compares
@@ -303,11 +407,16 @@ geodesic.diagnostics <- round(isometry.geodesic.diagnostics(
 ), 3)
 ```
 
-```{r geodesic-table, echo=FALSE}
-knitr::kable(
+```{r geodesic-table, echo=FALSE, tab.alt="Two-column table of scale-adjusted geodesic diagnostics for the selected continuous-kNN graph. Rows report calibration scale, relative errors, distance correlations, distortion quantiles, shortcut frequency, and distance-range bias summaries."}
+accessible.kable(
   data.frame(
     Metric = names(geodesic.diagnostics),
     Value = as.numeric(geodesic.diagnostics)
+  ),
+  caption = paste(
+    "Geodesic fidelity of the selected continuous-kNN graph relative to known",
+    "shorter-arc distances. The rows summarize calibration, error, correlation,",
+    "distortion, shortcuts, and distance-range bias."
   ),
   row.names = FALSE
 )
@@ -330,7 +439,7 @@ compute Euclidean edge weights. Each scenario was warmed up and timed three
 times. All `r nrow(pipeline.raw)` retained runs reproduced exactly the same
 undirected edge set; ties were absent in these continuous random data.
 
-```{r pipeline-timing, echo=FALSE, fig.pos="H", fig.cap="End-to-end symmetric-kNN graph construction times. Points are medians of three runs. The dgraphs pipeline also assembles graph lifecycle diagnostics; the FNN and dbscan pipelines use a common R edge-materialization helper. Times were measured on the R-devel system recorded with the benchmark data.", fig.alt="Faceted line plots of construction time by sample size for dgraphs, FNN, and dbscan in 2, 10, and 50 dimensions. Time increases with sample size and dimension."}
+```{r pipeline-timing, echo=FALSE, fig.pos="H", fig.cap="End-to-end symmetric-kNN graph construction times; points are medians of three runs. FNN was fastest in all tested scenarios. dgraphs remained within the same order of magnitude while also assembling lifecycle diagnostics, and it was slightly faster than the dbscan pipeline at 1,500 and 3,000 observations in 50 dimensions. Times were measured on the recorded single-process R-devel system.", fig.alt="Faceted line plots of construction time by sample size for dgraphs, FNN, and dbscan in 2, 10, and 50 dimensions. FNN is fastest throughout. Runtime increases with sample size and dimension; dgraphs and dbscan are close in 50 dimensions."}
 ggplot(
   pipeline.summary,
   aes(x = n, y = median_seconds, color = backend)
@@ -355,7 +464,12 @@ The timing comparison is intentionally scoped to the returned graph, not only
 nearest-neighbor lookup. It should not be read as a general benchmark of ANN
 libraries. The edge-parity result shows that users can move
 between a neighbor-search workflow and the richer `dgraphs` graph object
-without changing the symmetric-kNN rule on these tie-free data.
+without changing the symmetric-kNN rule on these tie-free data. In the largest
+scenario ($n=3{,}000$, $p=50$), median elapsed times were
+`r sprintf("%.3f", subset(pipeline.summary, backend == "FNN" & n == 3000 & dimension == 50)$median_seconds)`,
+`r sprintf("%.3f", subset(pipeline.summary, backend == "dgraphs" & n == 3000 & dimension == 50)$median_seconds)`,
+and `r sprintf("%.3f", subset(pipeline.summary, backend == "dbscan" & n == 3000 & dimension == 50)$median_seconds)`
+seconds for FNN, `dgraphs`, and dbscan, respectively.
 
 ## Construction families under density imbalance
 
@@ -367,14 +481,15 @@ used a nominal scale of six neighbors. The fixed radius was the median sixth-
 neighbor distance. Exact component-MST repair was enabled for every family.
 
 The experiment evaluates sensitivity rather than establishing a general
-ordering. Symmetric-kNN produced the fewest disconnected native graphs in
-these settings, while the other families more often required repair. Which
-graph had the smallest geodesic error depended on density, noise, and sample
+ordering. Symmetric-kNN produced the fewest disconnected native graphs and the
+smallest displayed median geodesic error in these settings, while the other
+families more often required repair. The magnitude of the differences and the
+ordering among the remaining families changed with density, noise, and sample
 size. The raw replicate-level results, generation script, edge-parity checks,
 and session metadata accompany the article so that the comparison can be
 audited or extended.
 
-```{r family-fidelity, echo=FALSE, fig.pos="!t", fig.cap="Median normalized absolute geodesic error across graph families. Lower values indicate closer agreement with the known circular arc distances. Each point summarizes three replicates; panels separate density and coordinate-noise settings. Connectivity repair was enabled for all graphs.", fig.alt="Four faceted line plots comparing normalized geodesic error for mutual kNN, symmetric kNN, continuous kNN, and fixed-radius graphs at 100 and 200 points under uniform and uneven density and low and high noise."}
+```{r family-fidelity, echo=FALSE, fig.pos="!t", fig.cap="Median normalized absolute geodesic error across graph families; lower values indicate closer agreement with known circular arc distances. Symmetric-kNN has the lowest displayed median in every setting, with the largest separation under uneven sampling. Each point summarizes three replicates, and connectivity repair was enabled for all graphs; the result is specific to this controlled circle experiment.", fig.alt="Four faceted line plots comparing normalized geodesic error for mutual kNN, symmetric kNN, continuous kNN, and fixed-radius graphs at 100 and 200 points. Symmetric kNN is lowest in each density and noise panel, especially under uneven density."}
 ggplot(
   family.summary,
   aes(x = n, y = normalized_mae, color = family)

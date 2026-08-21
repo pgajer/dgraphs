@@ -38,6 +38,25 @@ for path in TEXT:
             line = source.count("\n", 0, match.start()) + 1
             errors.append(f"{path.relative_to(ROOT)}:{line}: {label}: {match.group(0)!r}")
 
+rmd_source = (ROOT / "dgraphs.Rmd").read_text(encoding="utf-8")
+table_alt_chunks = re.findall(r"^```\{r [^\n]*\btab\.alt=", rmd_source, re.MULTILINE)
+if len(table_alt_chunks) != 4:
+    errors.append(
+        f"expected four table chunks with tab.alt metadata; found {len(table_alt_chunks)}"
+    )
+if rmd_source.count("accessible.kable(") != 4:
+    errors.append("expected four tables rendered through accessible.kable()")
+
+letter_source = (ROOT / "motivation-letter" / "motivation-letter.md").read_text(
+    encoding="utf-8"
+)
+if "official spelling" not in letter_source or "title-case diagnostic" not in letter_source:
+    errors.append("motivation letter does not document the lowercase title exception")
+
+bib_source = (ROOT / "RJreferences.bib").read_text(encoding="utf-8")
+if "note = {R package version 0.2.0}" not in bib_source:
+    errors.append("dgraphs bibliography entry does not identify version 0.2.0")
+
 pdf = ROOT / "output" / "pdf" / "dgraphs-r-journal.pdf"
 html = ROOT / "output" / "html" / "dgraphs-r-journal.html"
 for path in (pdf, html):
@@ -76,6 +95,8 @@ else:
     tex_text = tex.read_text(encoding="utf-8", errors="replace")
     if tex_text.count(r"\includegraphics") < 3:
         errors.append("generated TeX contains fewer than three plot inclusions")
+    if len(re.findall(r"\\caption\{\\label\{tab:", tex_text)) < 4:
+        errors.append("generated TeX contains fewer than four captioned tables")
 
 for log in sorted(ROOT.glob("*.log")) + sorted((ROOT / "build").glob("*.log")):
     content = log.read_text(encoding="utf-8", errors="replace")
@@ -91,6 +112,8 @@ if html.exists():
     html_text = html.read_text(encoding="utf-8", errors="replace")
     if re.search(r"citeproc-not-found|data-cites=\"\"", html_text):
         errors.append("rendered HTML contains unresolved citations")
+    if html_text.count("<table aria-label=") < 4:
+        errors.append("rendered HTML contains fewer than four accessible tables")
 
 if errors:
     print("R Journal readiness scan failed:")

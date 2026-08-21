@@ -10,6 +10,8 @@ Dear Editors,
 
 Please consider the package article, “dgraphs: Constructing, Selecting, and
 Diagnosing Data-Derived Graphs in R,” for publication in *The R Journal*.
+The lowercase initial in `dgraphs` is intentional: the title retains the
+package's official spelling despite the title-case diagnostic from `rjtools`.
 
 Data-derived graphs are often created as a preliminary step in manifold,
 spectral, clustering, or trajectory analyses, yet their construction and
@@ -27,10 +29,10 @@ comparison of graph geodesics under changes in sample size, density, and
 noise. The benchmark scripts, raw results, session metadata, and citation
 verification record accompany the source.
 
-The package is available on CRAN and is developed publicly at
-<https://github.com/pgajer/dgraphs>. The article is original, is not under
-review elsewhere, and has been prepared using the current R Journal article
-template and checking tools.
+Version 0.2.0 of the package will be available on CRAN before this article is
+submitted and is developed publicly at <https://github.com/pgajer/dgraphs>.
+The article is original, is not under review elsewhere, and has been prepared
+using the current R Journal article template and checking tools.
 
 Sincerely,
 

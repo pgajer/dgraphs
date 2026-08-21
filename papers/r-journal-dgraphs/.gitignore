@@ -1,4 +1,5 @@
 build/
+dist/
 library/
 output/
 tmp/
@@ -16,5 +17,7 @@ RJwrapper.tex
 *.aux
 *.bbl
 *.blg
+*.brf
+*.knit.md
 *.out
 *.toc

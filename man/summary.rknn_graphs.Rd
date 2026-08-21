@@ -38,8 +38,8 @@ vertex.}
 }
 \description{
 Provides a compact table of graph characteristics for an
-\code{"rknn_graphs"} object created by \code{\link[=create.rknn.graphs]{create.rknn.graphs()}} or
-\code{\link[=cpp.create.rknn.graphs]{cpp.create.rknn.graphs()}}. The table reports final edge counts,
+\code{"rknn_graphs"} object created by \code{\link[=create.rknn.graphs]{create.rknn.graphs()}}. The table reports
+final edge counts,
 component-repair counts, degree summaries, and density/sparsity for each
 adaptive-radius \code{k.scale} value.
 }
@@ -57,5 +57,5 @@ summary(graphs)
 
 }
 \seealso{
-\code{\link[=create.rknn.graphs]{create.rknn.graphs()}}, \code{\link[=cpp.create.rknn.graphs]{cpp.create.rknn.graphs()}}
+\code{\link[=create.rknn.graphs]{create.rknn.graphs()}}
 }

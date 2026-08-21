@@ -116,14 +116,15 @@ test_that("DG1 graph utilities run without native gflow calls", {
 
     X <- matrix(c(0, 0, 1, 0, 1, 1), ncol = 2, byrow = TRUE)
     E <- matrix(c(1, 2, 2, 3), ncol = 2, byrow = TRUE)
-    A <- graph.adj.mat(X, E)
+    A <- dgraphs:::.graph.adj.mat(X, E)
     expect_equal(A[1, 2], 1)
     expect_equal(A[2, 3], 1)
     expect_equal(A[1, 3], 0)
 
-    ig <- adjlist.to.igraph(adj)
+    ig <- as_igraph(adj, weight.list = weights)
     expect_equal(igraph::vcount(ig), 5)
     expect_equal(igraph::ecount(ig), 3)
+    expect_equal(igraph::E(ig)$weight, c(1, 2, 3))
 
     diam <- compute.graph.diameter(adj, weights)
     expect_equal(diam$diameter, 6)

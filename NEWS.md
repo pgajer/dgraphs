@@ -1,4 +1,23 @@
-# dgraphs 0.1.0.9000
+# dgraphs 0.2.0
+
+## Breaking API changes
+
+* Removes the deprecated `create.radius.graph()` and
+  `create.adaptive.radius.graph()` compatibility wrappers. Use
+  `create.rknn.graph()` with `type = "fixed"` or
+  `type = "adaptive.radius"`, respectively.
+* Removes the temporary public backend entry point
+  `cpp.create.rknn.graphs()`. Use `create.rknn.graphs(backend = "cpp")`.
+* Internalizes the low-level `dist.to.knn()`, `euclidean.distance()`, and
+  `graph.adj.mat()` helpers.
+* Removes the superseded `adjlist.to.igraph()` conversion function.
+  `as_igraph()` now accepts bare adjacency lists and an optional aligned
+  `weight.list` argument.
+* Removes the unused graph-edit workflow comprising `graph.edit.distance()`,
+  `load.graph.data()`, `calculate.edit.distances()`, and
+  `create.distance.plot()`.
+
+## Other changes
 
 * Adds a full workflow vignette covering graph construction, lifecycle
   diagnostics, connectivity repair, parameter sequences, conversion to

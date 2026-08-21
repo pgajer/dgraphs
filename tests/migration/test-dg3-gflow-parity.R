@@ -111,23 +111,12 @@ test_that("DG3 radius-family constructors match original gflow outputs", {
     )
 
     .dg3.expect.gflow.parity(
-        "create.radius.graph",
+        "create.rknn.graph",
         X = X,
+        type = "fixed",
         radius = 0.45,
         prune.method = "none",
         connect.components = FALSE
-    )
-
-    .dg3.expect.gflow.parity(
-        "create.adaptive.radius.graph",
-        X = X,
-        k.scale = 2,
-        radius.factor = 1.15,
-        radius.rule = "min",
-        radius.search = "ann",
-        prune.method = "none",
-        connect.components = FALSE,
-        return.timing = FALSE
     )
 
     .dg3.expect.gflow.parity(
@@ -227,16 +216,13 @@ test_that("DG3 adaptive-radius constructor has broad gflow parity coverage", {
         connect.components = TRUE
     )
 
-    .dg3.expect.gflow.parity(
-        "create.adaptive.radius.graph",
+    .dg3.expect.adaptive.radius.parity(
         X = X.irregular,
         k.scale = 3,
         radius.factor = 1.25,
         radius.rule = "geomean",
         radius.search = "ann",
-        prune.method = "none",
-        connect.components = FALSE,
-        return.timing = FALSE
+        connect.components = FALSE
     )
 })
 

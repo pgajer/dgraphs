@@ -49,13 +49,9 @@
 }
 
 test_that("DG6c generic path distance helpers match original gflow outputs", {
-    d <- matrix(c(0, 1, 4, 1, 0, 2, 4, 2, 0), nrow = 3, byrow = TRUE)
-    .dg6c.expect.gflow.parity("dist.to.knn", d = d, k = 2)
-
     V <- matrix(c(0, 0, 1, 0, 1, 1, 2, 1), ncol = 2, byrow = TRUE)
     .dg6c.expect.gflow.parity("path.dist", s = c(1L, 2L, 3L, 4L), V = V)
     .dg6c.expect.gflow.parity("path.length", X = V)
-    .dg6c.expect.gflow.parity("euclidean.distance", p1 = c(0, 0), p2 = c(3, 4))
     .dg6c.expect.gflow.parity("subdivide.path", path = V, n.subdivision.pts = 6)
 })
 

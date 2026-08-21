@@ -167,6 +167,43 @@ test_that("DG2 graph geodesic distances use lifecycle payloads", {
                  matrix(c(0, 3, 3, 0), nrow = 2, byrow = TRUE))
 })
 
+test_that("as_igraph converts current lifecycle and legacy basin graphs", {
+    X <- rbind(c(0, 0), c(1, 0), c(2, 0), c(10, 0))
+    current <- create.mknn.graph(
+        X,
+        k = 2,
+        connect.components = TRUE
+    )
+    current.igraph <- as_igraph(current)
+    expect_s3_class(current.igraph, "igraph")
+    expect_equal(igraph::vcount(current.igraph), nrow(X))
+    expect_equal(igraph::ecount(current.igraph), current$n_edges)
+    expect_true("weight" %in% igraph::edge_attr_names(current.igraph))
+
+    legacy <- list(
+        adjacency.list = list(2L, 1L, integer(0)),
+        weight.list = list(1, 1, numeric(0)),
+        intersection.matrix = matrix(
+            c(0, 3, 0, 3, 0, 0, 0, 0, 0),
+            nrow = 3,
+            byrow = TRUE
+        ),
+        basin.metadata = data.frame(
+            label = c("a", "b", "isolated"),
+            type = c("maximum", "minimum", "other"),
+            size = c(2, 3, 1),
+            extremum.vertex = c(1, 2, 3),
+            extremum.value = c(4, 2, 1)
+        )
+    )
+    legacy.igraph <- as_igraph(legacy)
+    expect_equal(igraph::vcount(legacy.igraph), 3L)
+    expect_equal(igraph::ecount(legacy.igraph), 1L)
+    expect_equal(igraph::V(legacy.igraph)$name, legacy$basin.metadata$label)
+    expect_equal(igraph::E(legacy.igraph)$weight, 1)
+    expect_equal(igraph::E(legacy.igraph)$intersection.size, 3)
+})
+
 test_that("DG2 long-edge pruning and grid graph run locally", {
     graph <- list(c(2L, 3L), c(1L, 3L), c(1L, 2L))
     weights <- list(c(1, 2), c(1, 3), c(2, 3))

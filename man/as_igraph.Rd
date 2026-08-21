@@ -2,24 +2,39 @@
 % Please edit documentation in R/as_igraph.R
 \name{as_igraph}
 \alias{as_igraph}
-\title{Convert a Basin Graph to igraph}
+\title{Convert a dgraphs Graph to igraph}
 \usage{
-as_igraph(gflow.graph, include.vertex.attrs = TRUE, include.edge.attrs = TRUE)
+as_igraph(
+  gflow.graph,
+  include.vertex.attrs = TRUE,
+  include.edge.attrs = TRUE,
+  stage = "final"
+)
 }
 \arguments{
-\item{gflow.graph}{A basin graph list with adjacency, weight, intersection,
-and basin metadata fields. The argument name is retained for backward
-compatibility.}
+\item{gflow.graph}{A current \code{dgraphs} graph object or a legacy basin graph
+list. The argument name is retained for backward compatibility.}
 
 \item{include.vertex.attrs}{Logical; include basin metadata as vertex
-attributes.}
+attributes when available.}
 
 \item{include.edge.attrs}{Logical; include edge weights and intersection
-sizes as edge attributes.}
+sizes when available.}
+
+\item{stage}{Lifecycle stage used for current \code{dgraphs} graph objects. See
+\code{\link[=graph.geodesic.distances]{graph.geodesic.distances()}} for supported values.}
 }
 \value{
 An \code{igraph} object.
 }
 \description{
-Convert a Basin Graph to igraph
+Convert a dgraphs Graph to igraph
+}
+\examples{
+X <- matrix(c(0, 0, 1, 0, 2, 0), ncol = 2, byrow = TRUE)
+graph <- create.mknn.graph(X, k = 2)
+ig <- as_igraph(graph)
+igraph::vcount(ig)
+igraph::ecount(ig)
+
 }

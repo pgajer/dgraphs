@@ -19,3 +19,9 @@ Numeric vector of unique undirected edge weights.
 \description{
 Get Unique Edge Weights from a Weighted Graph
 }
+\examples{
+graph <- list(c(2L, 3L), 1L, 1L)
+weights <- list(c(1, 2), 1, 2)
+get.edge.weights(graph, weights, n.cores = 1)
+
+}

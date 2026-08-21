@@ -58,3 +58,7 @@ OBJECTS = \
 	ANN/kd_util.o
 
 $(SHLIB): $(OBJECTS)
+
+.PHONY: clean
+clean:
+	@$(RM) $(OBJECTS) $(SHLIB)

@@ -93,3 +93,8 @@ Supported v1 summaries are:
 for disconnectedness / fragmentation, not as a general-purpose default
 stability summary.
 }
+\examples{
+graph <- list(c(2L, 3L), 1L, 1L)
+compute.graph.summary.pmf(graph, summary = "degree_distribution")
+
+}

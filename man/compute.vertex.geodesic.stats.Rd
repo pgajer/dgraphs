@@ -52,3 +52,15 @@ A data frame of class "vertex_geodesic_stats" with columns:
 \description{
 Analyzes how the number of geodesics scales with radius for a specific grid vertex.
 }
+\examples{
+graph <- generate.circle.graph(8, type = "uniform")
+compute.vertex.geodesic.stats(
+  graph$adj.list,
+  graph$weight.list,
+  grid.vertex = 1,
+  min.radius = 0.3,
+  max.radius = 0.5,
+  n.steps = 2
+)
+
+}

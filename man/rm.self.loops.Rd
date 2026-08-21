@@ -15,3 +15,7 @@ The adjacency list with entries equal to their vertex index removed.
 \description{
 Remove Self-Loops from an Adjacency List
 }
+\examples{
+rm.self.loops(list(c(1L, 2L), c(1L, 2L)))
+
+}

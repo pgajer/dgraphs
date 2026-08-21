@@ -15,3 +15,7 @@ An adjacency list for the empty graph on \code{n} vertices.
 \description{
 Create an Empty Graph
 }
+\examples{
+lengths(create.empty.graph(3))
+
+}

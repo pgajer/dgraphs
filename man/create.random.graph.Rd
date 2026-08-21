@@ -19,3 +19,9 @@ A list with \code{adj.list} and \code{weight.list}.
 \description{
 Create a Random Undirected Graph
 }
+\examples{
+set.seed(1)
+graph <- create.random.graph(8, avg_degree = 2)
+sum(lengths(graph$adj.list)) / 2
+
+}

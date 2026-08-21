@@ -4,6 +4,7 @@
 #'
 #' @keywords internal
 #' @useDynLib dgraphs, .registration = TRUE
+#' @importFrom Rcpp evalCpp
 #' @importFrom graphics contour grid image legend lines par points rect segments text
 #' @importFrom grDevices heat.colors rainbow
 #' @importFrom stats median

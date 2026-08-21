@@ -227,6 +227,15 @@ internal.find.local.minima <- function(x, k.values,
 #'   [compute.graph.summary.stability()].
 #'
 #' @return An object of class `"iknn_stability_metrics"`.
+#' @examples
+#' set.seed(1)
+#' x <- matrix(rnorm(60), ncol = 2)
+#' graphs <- create.iknn.graphs(
+#'   x, kmin = 2, kmax = 4, compute.full = TRUE,
+#'   n.cores = 1, verbose = FALSE
+#' )
+#' stability <- compute.stability.metrics(graphs)
+#' stability$edit.distances
 #' @export
 compute.stability.metrics <- function(
     graphs,
@@ -1170,6 +1179,14 @@ plot.cst_graph_mixing_stats <- function(x,
 #' @return An object of class `"build_iknn_graphs_and_selectk"` containing the
 #'   graph sequence, connectivity diagnostics, selection curves, selected
 #'   neighborhood sizes, trimming metadata, and call parameters.
+#' @examples
+#' set.seed(1)
+#' x <- matrix(rnorm(60), ncol = 2)
+#' selected <- build.iknn.graphs.and.selectk(
+#'   x, kmin = 2, kmax = 4, method = "edit",
+#'   n.cores = 1, verbose = FALSE
+#' )
+#' selected$k.opt.edit
 #' @export
 build.iknn.graphs.and.selectk <- function(X,
                                           kmin,

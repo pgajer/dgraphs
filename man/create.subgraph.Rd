@@ -30,3 +30,12 @@ A list with subgraph \code{adj_list} and \code{dist_list}.
 \description{
 Create a Subgraph from a Graph Object
 }
+\examples{
+graph <- list(
+  adj_list = list(c(2L, 3L), c(1L, 3L), c(1L, 2L)),
+  dist_list = list(c(1, 2), c(1, 1), c(2, 1))
+)
+create.subgraph(graph, id.indices = c(1, 3),
+                use.sequential.indices = TRUE)
+
+}

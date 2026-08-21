@@ -27,3 +27,9 @@ Data frame with consecutive vertex pairs and their edge lengths.
 \description{
 Extract Edge Lengths Along a Graph Path
 }
+\examples{
+graph <- list(2L, c(1L, 3L), 2L)
+lengths <- list(1, c(1, 2), 2)
+extract.trajectory.edge.lengths(c(1, 2, 3), graph, lengths)
+
+}

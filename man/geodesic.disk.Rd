@@ -23,3 +23,9 @@ List with \code{vertices}, effective \code{radius}, and aligned \code{dists}.
 \description{
 Geodesic Disk in a Weighted Graph
 }
+\examples{
+graph <- list(2L, c(1L, 3L), 2L)
+weights <- list(1, c(1, 2), 2)
+geodesic.disk(graph, weights, center.vertex = 2, radius = 2)
+
+}

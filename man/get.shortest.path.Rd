@@ -19,3 +19,10 @@ Path information, or \code{NULL} when no stored path exists.
 \description{
 Get Shortest Path Between Two Vertices
 }
+\examples{
+graph <- list(2L, c(1L, 3L), 2L)
+lengths <- list(1, c(1, 2), 2)
+pg <- create.path.graph(graph, lengths, h = 2)
+get.shortest.path(pg, from = 1, to = 3)
+
+}

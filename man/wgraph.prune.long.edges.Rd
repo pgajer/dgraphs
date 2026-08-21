@@ -31,3 +31,13 @@ A list with pruned adjacency and edge-length lists.
 \description{
 Prune Long Edges in a Weighted Graph
 }
+\examples{
+graph <- list(c(2L, 3L), c(1L, 3L), c(1L, 2L))
+lengths <- list(c(1, 2), c(1, 1), c(2, 1))
+wgraph.prune.long.edges(
+  graph,
+  lengths,
+  alt.path.len.ratio.thld = 1.1
+)$adj_list
+
+}

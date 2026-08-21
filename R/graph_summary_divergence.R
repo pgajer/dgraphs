@@ -52,6 +52,10 @@
 #'
 #' Otherwise, returns the named PMF vector.
 #'
+#' @examples
+#' graph <- list(c(2L, 3L), 1L, 1L)
+#' compute.graph.summary.pmf(graph, summary = "degree_distribution")
+#'
 #' @export
 compute.graph.summary.pmf <- function(
     graph,
@@ -238,6 +242,15 @@ compute.graph.summary.pmf <- function(
 #'
 #' Otherwise, returns the scalar divergence value.
 #'
+#' @examples
+#' path <- list(2L, c(1L, 3L), 2L)
+#' triangle <- list(c(2L, 3L), c(1L, 3L), c(1L, 2L))
+#' graph.summary.divergence(
+#'   path,
+#'   triangle,
+#'   summary = "degree_distribution"
+#' )
+#'
 #' @export
 graph.summary.divergence <- function(
     g1,
@@ -361,6 +374,17 @@ graph.summary.divergence <- function(
 #' - `details`: optional pairwise details for each transition.
 #'
 #' Otherwise, returns only the divergence vector.
+#'
+#' @examples
+#' graphs <- list(
+#'   list(2L, c(1L, 3L), 2L),
+#'   list(c(2L, 3L), c(1L, 3L), c(1L, 2L)),
+#'   create.complete.graph(3)
+#' )
+#' compute.graph.summary.stability(
+#'   graphs,
+#'   summary = "degree_distribution"
+#' )$values
 #'
 #' @export
 compute.graph.summary.stability <- function(

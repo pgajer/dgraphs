@@ -30,3 +30,12 @@ Numeric distance-matrix deviation.
 \description{
 Weighted Graph Distance Between Graphs with Identical Vertex Sets
 }
+\examples{
+graph <- list(2L, c(1L, 3L), 2L)
+weights1 <- list(1, c(1, 1), 1)
+weights2 <- list(1, c(1, 2), 2)
+identical.vertex.set.weighted.graph.similarity(
+  graph, weights1, graph, weights2
+)
+
+}

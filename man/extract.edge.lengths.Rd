@@ -27,3 +27,9 @@ Numeric vector of unique undirected edge lengths.
 \description{
 Extract Unique Edge Lengths from an Undirected Graph
 }
+\examples{
+graph <- list(c(2L, 3L), 1L, 1L)
+lengths <- list(c(1, 2), 1, 2)
+extract.edge.lengths(graph, lengths)
+
+}

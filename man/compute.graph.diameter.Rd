@@ -17,3 +17,9 @@ A list containing the diameter and the farthest path details.
 \description{
 Compute a Weighted Graph Diameter
 }
+\examples{
+graph <- list(2L, c(1L, 3L), 2L)
+weights <- list(1, c(1, 2), 2)
+compute.graph.diameter(graph, weights)$diameter
+
+}

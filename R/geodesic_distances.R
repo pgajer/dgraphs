@@ -42,6 +42,11 @@
 #'
 #' @return A numeric matrix of shortest-path distances.
 #'
+#' @examples
+#' X <- cbind(seq(0, 1, length.out = 6), 0)
+#' graph <- create.mknn.graph(X, k = 2, connect.components = TRUE)
+#' graph.geodesic.distances(graph, vertices = c(1, 6))
+#'
 #' @export
 graph.geodesic.distances <- function(graph, vertices = NULL, stage = "final") {
     fields <- .graph.geodesic.fields(graph, stage = stage)

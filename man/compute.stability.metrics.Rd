@@ -40,3 +40,13 @@ Computes stability diagnostics across the pruned IkNN graphs produced by
 graphs, graph-summary Jensen-Shannon divergence, edge-count diagnostics,
 local minima, and smoothed trend fits for plotting.
 }
+\examples{
+set.seed(1)
+x <- matrix(rnorm(60), ncol = 2)
+graphs <- create.iknn.graphs(
+  x, kmin = 2, kmax = 4, compute.full = TRUE,
+  n.cores = 1, verbose = FALSE
+)
+stability <- compute.stability.metrics(graphs)
+stability$edit.distances
+}

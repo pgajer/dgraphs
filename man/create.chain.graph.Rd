@@ -19,3 +19,9 @@ A list with \code{adj.list}, \code{edge.lengths}, \code{x.sorted}, and \code{y.s
 \description{
 Create a Chain Graph
 }
+\examples{
+chain <- create.chain.graph(x = c(3, 1, 2))
+chain$adj.list
+chain$edge.lengths
+
+}

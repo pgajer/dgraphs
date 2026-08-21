@@ -35,3 +35,15 @@ A \code{local_extrema} object.
 \description{
 Detect Local Extrema in a Graph
 }
+\examples{
+chain <- create.chain.graph(n.vertices = 5)
+extrema <- detect.local.extrema(
+  chain$adj.list,
+  chain$edge.lengths,
+  y = c(1, 3, 1, 2, 0),
+  max.radius = 1,
+  min.neighborhood.size = 2
+)
+extrema$vertices
+
+}

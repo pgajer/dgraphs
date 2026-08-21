@@ -17,3 +17,8 @@ A list with \code{nn.i} and \code{nn.d} matrices.
 \description{
 Produce k-NN Distance and Index Matrices from a Distance Matrix
 }
+\examples{
+d <- as.matrix(dist(matrix(c(0, 1, 3), ncol = 1)))
+dist.to.knn(d, k = 1)
+
+}

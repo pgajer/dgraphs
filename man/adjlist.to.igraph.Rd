@@ -15,3 +15,9 @@ An undirected \code{igraph} graph.
 \description{
 Convert an Adjacency List to igraph
 }
+\examples{
+graph <- list(c(2L, 3L), 1L, 1L, integer(0))
+ig <- adjlist.to.igraph(graph)
+c(vertices = igraph::vcount(ig), edges = igraph::ecount(ig))
+
+}

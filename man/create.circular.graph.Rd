@@ -15,3 +15,7 @@ An undirected cycle graph adjacency list.
 \description{
 Create a Circular Graph
 }
+\examples{
+create.circular.graph(5)
+
+}

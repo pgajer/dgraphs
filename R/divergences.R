@@ -5,6 +5,9 @@
 #'
 #' @return Jensen-Shannon divergence using log base 2.
 #'
+#' @examples
+#' jensen.shannon.divergence(c(0.75, 0.25), c(0.5, 0.5))
+#'
 #' @export
 jensen.shannon.divergence <- function(p, q) {
     p <- as.numeric(p)

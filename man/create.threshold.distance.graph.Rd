@@ -21,3 +21,8 @@ A list with \code{adj_list} and \code{weight_list}.
 \description{
 Create a Threshold Distance Graph
 }
+\examples{
+distances <- as.matrix(dist(matrix(c(0, 1, 3), ncol = 1)))
+create.threshold.distance.graph(distances, threshold = 1.5)
+
+}

@@ -17,3 +17,7 @@ Jensen-Shannon divergence using log base 2.
 \description{
 Jensen-Shannon Divergence
 }
+\examples{
+jensen.shannon.divergence(c(0.75, 0.25), c(0.5, 0.5))
+
+}

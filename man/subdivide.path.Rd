@@ -17,3 +17,8 @@ Matrix of subdivided path coordinates.
 \description{
 Subdivide a Path into Arc-Length Spaced Points
 }
+\examples{
+path <- rbind(c(0, 0), c(1, 0), c(1, 2))
+subdivide.path(path, n.subdivision.pts = 5)
+
+}

@@ -17,3 +17,8 @@ A list with \code{edge.matrix} and \code{weights}.
 \description{
 Convert an Adjacency List to an Edge Matrix
 }
+\examples{
+graph <- list(c(2L, 3L), 1L, 1L)
+convert.adjacency.to.edge.matrix(graph)
+
+}

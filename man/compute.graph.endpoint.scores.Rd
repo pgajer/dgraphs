@@ -75,3 +75,16 @@ computes:
 Neighborhoods are selected in graph-geodesic space while directions are taken
 from the supplied 3D embedding.
 }
+\examples{
+chain <- create.chain.graph(n.vertices = 8)
+layout <- cbind(seq_len(8), 0, 0)
+scores <- compute.graph.endpoint.scores(
+  chain$adj.list,
+  chain$edge.lengths,
+  layout,
+  k = c(2, 3),
+  min.neighborhood.size = 2
+)
+head(scores$summary)
+
+}

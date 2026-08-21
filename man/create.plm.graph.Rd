@@ -19,3 +19,9 @@ An object of class \code{path.graph.plm}.
 \description{
 Create a Path Length Matrix Graph Structure
 }
+\examples{
+graph <- list(2L, c(1L, 3L), 2L)
+lengths <- list(1, c(1, 2), 2)
+create.plm.graph(graph, lengths, h = 3)
+
+}

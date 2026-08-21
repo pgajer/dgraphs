@@ -59,3 +59,15 @@ sequence. This function provides a generalized sequence-level analogue of the
 degree-profile Jensen-Shannon calculation currently used in
 \code{compute.stability.metrics()}.
 }
+\examples{
+graphs <- list(
+  list(2L, c(1L, 3L), 2L),
+  list(c(2L, 3L), c(1L, 3L), c(1L, 2L)),
+  create.complete.graph(3)
+)
+compute.graph.summary.stability(
+  graphs,
+  summary = "degree_distribution"
+)$values
+
+}

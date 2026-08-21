@@ -27,6 +27,18 @@
 #'   \item{summary}{Data frame. Summary statistics for each radius.}
 #' }
 #'
+#' @examples
+#' graph <- generate.circle.graph(8, type = "uniform")
+#' stats <- compute.geodesic.stats(
+#'   graph$adj.list,
+#'   graph$weight.list,
+#'   min.radius = 0.3,
+#'   max.radius = 0.5,
+#'   n.steps = 2,
+#'   n.packing.vertices = 4
+#' )
+#' stats$summary
+#'
 #' @export
 compute.geodesic.stats <- function(adj.list,
                                  weight.list,
@@ -274,6 +286,17 @@ print.geodesic_stats <- function(x, ...) {
 #'   \item{overlap_max}{Maximum overlap ratio.}
 #' }
 #'
+#' @examples
+#' graph <- generate.circle.graph(8, type = "uniform")
+#' compute.vertex.geodesic.stats(
+#'   graph$adj.list,
+#'   graph$weight.list,
+#'   grid.vertex = 1,
+#'   min.radius = 0.3,
+#'   max.radius = 0.5,
+#'   n.steps = 2
+#' )
+#'
 #' @export
 compute.vertex.geodesic.stats <- function(adj.list,
                                           weight.list,
@@ -294,15 +317,14 @@ compute.vertex.geodesic.stats <- function(adj.list,
     if (grid.vertex < 1 || grid.vertex > length(adj.list))
         stop("grid.vertex must be between 1 and length(adj.list)")
 
-                                        # Convert to 0-based indices for C++
+                                        # Convert adjacency indices for C++
     adj.list.0based <- lapply(adj.list, function(x) as.integer(x - 1))
-    grid.vertex.0based <- as.integer(grid.vertex - 1)
 
     ## Call the C++ function
     result <- .Call("S_compute_vertex_geodesic_stats",
                     adj.list.0based,
                     weight.list,
-                    grid.vertex.0based,
+                    as.integer(grid.vertex),
                     as.double(min.radius),
                     as.double(max.radius),
                     as.integer(n.steps),

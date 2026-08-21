@@ -1,0 +1,216 @@
+---
+title: "Constructing and Diagnosing Data-Derived Graphs"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Constructing and Diagnosing Data-Derived Graphs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6.5,
+  fig.height = 5,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+## Overview
+
+`dgraphs` constructs graphs whose vertices are numerical observations. The
+package supports mutual and symmetric k-nearest-neighbor graphs, fixed and
+adaptive radius graphs, continuous-kNN graphs, intersection-kNN graphs, and
+minimum-spanning-tree completion. Constructors retain graph lifecycle stages
+so that native, pruned, and connectivity-repaired graphs can be compared.
+
+This vignette follows a small example from construction through connectivity
+repair, parameter inspection, conversion to `igraph`, and geodesic fidelity
+diagnostics.
+
+```{r data}
+library(dgraphs)
+
+set.seed(20260820)
+n <- 60L
+theta <- sort(c(
+  runif(40L, 0, pi),
+  runif(20L, pi, 2 * pi)
+))
+X <- cbind(x = cos(theta), y = sin(theta)) +
+  matrix(rnorm(2L * n, sd = 0.015), ncol = 2)
+```
+
+The unequal sample counts on the two semicircles create a simple
+variable-density point cloud. Its circular ordering also supplies a known
+reference distance for later diagnostics.
+
+## Construct candidate graph families
+
+The following calls use the same local scale, `k = 5`, where that parameter is
+defined. Connectivity repair is requested so every final graph supports
+all-pairs geodesic distances.
+
+```{r constructors}
+graphs <- list(
+  mutual = create.mknn.graph(
+    X,
+    k = 5,
+    connect.components = TRUE
+  ),
+  symmetric = create.sknn.graph(
+    X,
+    k = 5,
+    neighbor.method = "ann",
+    connect.components = TRUE
+  ),
+  continuous = create.cknn.graph(
+    X,
+    k.scale = 5,
+    delta = 1.2,
+    connect.components = TRUE
+  ),
+  adaptive.max = create.rknn.graph(
+    X,
+    type = "adaptive.radius",
+    k.scale = 5,
+    radius.rule = "max",
+    connect.components = TRUE
+  )
+)
+```
+
+Each final graph exposes aligned `adj_list` and `weight_list` fields. The
+weights are Euclidean edge lengths. The raw fields represent the graph before
+optional pruning and connectivity repair.
+
+```{r candidate-summary}
+graph.summary <- do.call(rbind, lapply(names(graphs), function(name) {
+  graph <- graphs[[name]]
+  data.frame(
+    graph = name,
+    edges = sum(lengths(graph$adj_list)) / 2,
+    raw.components = length(unique(
+      graph.connected.components(graph$raw_adj_list)
+    )),
+    final.components = length(unique(
+      graph.connected.components(graph$adj_list)
+    )),
+    bridges = graph$n_mst_edges_added
+  )
+}))
+graph.summary
+```
+
+The number of edges is a property of the construction rule, not a quality
+score by itself. The component columns show when the optional repair stage was
+needed and how many minimum-spanning-tree bridge edges it added.
+
+## Inspect a parameter sequence
+
+Plural constructors make parameter sweeps explicit. Here
+`create.rknn.graphs()` constructs adaptive-radius graphs for four local-scale
+values. Its statistics table separates native edge and component counts from
+repair counts.
+
+```{r parameter-sequence}
+radius.sequence <- create.rknn.graphs(
+  X,
+  k.values = 3:6,
+  radius.search = "ann",
+  connect.components = TRUE
+)
+radius.sequence$k_statistics[, c(
+  "k", "n_edges_before_pruning", "n_components_before",
+  "n_mst_edges_added", "n_components_after"
+)]
+```
+
+For exploratory work, this table can identify the smallest neighborhood scale
+that produces a connected native graph. Scientific applications should also
+evaluate whether the resulting geodesics preserve the geometry relevant to
+the analysis.
+
+## Convert and inspect a selected graph
+
+Current graph objects convert directly to `igraph`. Edge lengths become the
+`weight` edge attribute.
+
+```{r conversion}
+selected <- graphs$continuous
+selected.igraph <- as_igraph(selected)
+c(
+  vertices = igraph::vcount(selected.igraph),
+  edges = igraph::ecount(selected.igraph)
+)
+
+degree.pmf <- compute.graph.summary.pmf(
+  selected,
+  summary = "degree_distribution"
+)
+degree.pmf$pmf
+```
+
+The graph can also be drawn in the original coordinates without running a
+layout algorithm.
+
+```{r graph-figure, fig.cap="Continuous-kNN graph on the variable-density circular point cloud. Lines are graph edges and points are observations.", fig.alt="A circular point cloud with denser sampling on the upper semicircle. Gray graph edges connect nearby points around the circle."}
+edge.matrix <- convert.adjacency.to.edge.matrix(
+  selected$adj_list
+)$edge.matrix
+
+plot(
+  X,
+  asp = 1,
+  pch = 19,
+  col = "#1F5A94",
+  xlab = "Coordinate 1",
+  ylab = "Coordinate 2"
+)
+segments(
+  X[edge.matrix[, 1], 1],
+  X[edge.matrix[, 1], 2],
+  X[edge.matrix[, 2], 1],
+  X[edge.matrix[, 2], 2],
+  col = grDevices::adjustcolor("grey35", alpha.f = 0.45)
+)
+points(X, pch = 19, col = "#1F5A94")
+```
+
+## Diagnose geodesic fidelity
+
+For this example, the reference geodesic distance is the shorter arc between
+two sample angles. `graph.geodesic.distances()` computes graph shortest-path
+distances, and `isometry.geodesic.diagnostics()` summarizes their deviation
+from the reference after an optional global scale calibration.
+
+```{r geodesic-diagnostics}
+graph.distance <- graph.geodesic.distances(selected)
+angle.difference <- abs(outer(theta, theta, "-"))
+reference.distance <- pmin(
+  angle.difference,
+  2 * pi - angle.difference
+)
+
+round(isometry.geodesic.diagnostics(
+  graph.distance,
+  reference.distance
+), 3)
+```
+
+The relative stress summarizes overall discrepancy. The shortcut fraction is
+the fraction of calibrated graph distances that are shorter than their
+reference distances. The short-, middle-, and long-distance bias entries show
+whether distortion is concentrated at a particular distance scale.
+
+## Practical guidance
+
+No graph family is uniformly best. Mutual-kNN graphs are conservative and can
+disconnect in sparse regions; symmetric-kNN graphs are more connected but can
+introduce asymmetric-density links; adaptive-radius and continuous-kNN graphs
+adjust their support using local scales. Connectivity repair guarantees finite
+final geodesics, but bridge edges are modeling choices that should be inspected
+rather than hidden. Parameter sequences, lifecycle fields, graph summaries,
+and geodesic diagnostics are therefore intended to be used together.

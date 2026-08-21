@@ -19,3 +19,9 @@ A numeric matrix of shortest-path distances.
 \description{
 Computes Shortest Path Distances for Selected Vertices
 }
+\examples{
+graph <- list(2L, c(1L, 3L), 2L)
+lengths <- list(1, c(1, 2), 2)
+shortest.path(graph, lengths, vertices = 1:3)
+
+}

@@ -19,3 +19,10 @@ Data frame describing path availability and length by hop limit.
 \description{
 Compare Paths Across Hop Limits
 }
+\examples{
+graph <- list(2L, c(1L, 3L), 2L)
+lengths <- list(1, c(1, 2), 2)
+series <- create.path.graph.series(graph, lengths, h.values = 1:2)
+compare.paths(series, from = 1, to = 3)
+
+}

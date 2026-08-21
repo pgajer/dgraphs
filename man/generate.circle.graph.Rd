@@ -19,3 +19,9 @@ A list with \code{adj.list} and \code{weight.list}.
 \description{
 Generate a Weighted Circle Graph
 }
+\examples{
+circle <- generate.circle.graph(6, type = "uniform")
+circle$adj.list[[1]]
+circle$weight.list[[1]]
+
+}

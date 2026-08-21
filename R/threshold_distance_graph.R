@@ -7,6 +7,11 @@
 #'   weight lists.
 #'
 #' @return A list with `adj_list` and `weight_list`.
+#'
+#' @examples
+#' distances <- as.matrix(dist(matrix(c(0, 1, 3), ncol = 1)))
+#' create.threshold.distance.graph(distances, threshold = 1.5)
+#'
 #' @export
 create.threshold.distance.graph <- function(dist.matrix, threshold, include.names = TRUE) {
     if (!isSymmetric(unname(dist.matrix))) {

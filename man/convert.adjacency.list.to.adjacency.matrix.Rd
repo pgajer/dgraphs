@@ -26,3 +26,9 @@ Numeric adjacency matrix.
 \description{
 Convert an Adjacency List to an Adjacency Matrix
 }
+\examples{
+graph <- list(c(2L, 3L), 1L, 1L)
+weights <- list(c(1, 2), 1, 2)
+convert.adjacency.list.to.adjacency.matrix(graph, weights)
+
+}

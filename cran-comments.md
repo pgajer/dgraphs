@@ -30,6 +30,8 @@ These removals are intentional breaking changes and are documented in
 * macOS 26.6.1 (Apple Silicon), R-devel 4.7.0 (2026-06-24 r90190),
   Apple clang 21.0.0, GNU Fortran 14.2.0:
   0 errors | 0 warnings | 2 notes
+* GitHub Actions, Ubuntu, R-devel, R release, and R oldrel-1:
+  0 errors | 0 warnings | 0 notes on each configuration
 
 ## R CMD check results
 

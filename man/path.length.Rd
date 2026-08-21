@@ -15,3 +15,7 @@ Total Euclidean length of the path.
 \description{
 Compute Euclidean Path Length
 }
+\examples{
+path.length(rbind(c(0, 0), c(1, 0), c(1, 2)))
+
+}

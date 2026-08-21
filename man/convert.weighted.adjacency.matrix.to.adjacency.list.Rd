@@ -15,3 +15,8 @@ A list with \code{adjacency.list} and \code{weights.list}.
 \description{
 Convert a Weighted Adjacency Matrix to Lists
 }
+\examples{
+A <- matrix(c(0, 1, 0, 1, 0, 2, 0, 2, 0), nrow = 3)
+convert.weighted.adjacency.matrix.to.adjacency.list(A)
+
+}

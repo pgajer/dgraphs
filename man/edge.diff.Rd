@@ -18,3 +18,9 @@ each vertex.
 \description{
 Compute Edge Difference Between Two Graphs
 }
+\examples{
+graph1 <- list(c(2L, 3L), 1L, 1L)
+graph2 <- list(2L, 1L, integer(0))
+edge.diff(graph1, graph2)
+
+}

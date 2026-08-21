@@ -21,3 +21,8 @@ A list with \code{nn.index} and \code{nn.dist} matrices.
 \description{
 Estimate Geodesic Nearest Neighbors Within a Point Cloud
 }
+\examples{
+X <- cbind(seq(0, 1, length.out = 8), 0)
+geodesic.knn(X, k = 2, K = 3)
+
+}

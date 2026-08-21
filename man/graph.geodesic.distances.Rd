@@ -19,3 +19,9 @@ A numeric matrix of shortest-path distances.
 \description{
 Compute Graph Geodesic Distances from a Graph Object
 }
+\examples{
+X <- cbind(seq(0, 1, length.out = 6), 0)
+graph <- create.mknn.graph(X, k = 2, connect.components = TRUE)
+graph.geodesic.distances(graph, vertices = c(1, 6))
+
+}

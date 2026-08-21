@@ -8,6 +8,15 @@
 #'
 #' @return A list with `adj_list`, `weight_list`, and `grid_vertices`.
 #'
+#' @examples
+#' chain <- create.chain.graph(n.vertices = 3)
+#' grid <- create.grid.graph(
+#'   chain$adj.list,
+#'   chain$edge.lengths,
+#'   grid.size = 5
+#' )
+#' grid$grid_vertices
+#'
 #' @export
 create.grid.graph <- function(adj.list,
                               weight.list,

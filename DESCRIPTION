@@ -1,6 +1,6 @@
 Package: dgraphs
 Title: Data-Derived Graph Construction Utilities
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R: c(
     person("Peter", "Gajer", role = c("aut", "cre"),
            email = "pgajer@gmail.com"),
@@ -43,12 +43,16 @@ Depends:
 Imports:
     FNN,
     igraph (>= 2.2.0),
-    parallel
+    parallel,
+    Rcpp
 LinkingTo:
     Rcpp,
     RcppEigen
 Suggests:
+    knitr,
     Matrix,
+    rmarkdown,
     testthat (>= 3.0.0)
+VignetteBuilder: knitr
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0

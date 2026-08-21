@@ -21,3 +21,9 @@ A list with \code{adj.list}, \code{edge.lengths}, \code{x.sorted}, and \code{y.s
 \description{
 Create a Bi-kNN Chain Graph
 }
+\examples{
+chain <- create.bi.kNN.chain.graph(x = c(3, 1, 2, 4), k = 1)
+chain$adj.list
+chain$x.sorted
+
+}

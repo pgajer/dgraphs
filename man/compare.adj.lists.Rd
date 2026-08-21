@@ -18,3 +18,8 @@ ignoring order; otherwise \code{FALSE}.
 \description{
 Compare Two Adjacency Lists
 }
+\examples{
+graph <- list(c(2L, 3L), 1L, 1L)
+compare.adj.lists(graph, list(c(3L, 2L), 1L, 1L))
+
+}

@@ -15,3 +15,8 @@ An adjacency list for the star graph.
 \description{
 Create a Star Graph by Joining Chains
 }
+\examples{
+star <- create.star.graph(c(2, 3, 1))
+lengths(star)
+
+}

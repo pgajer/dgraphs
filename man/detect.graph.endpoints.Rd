@@ -121,3 +121,19 @@ Detects terminal arm tips in a graph by:
 The function works with terminal regions in an embedding; returned endpoints
 need not be degree-1 vertices.
 }
+\examples{
+chain <- create.chain.graph(n.vertices = 8)
+layout <- cbind(seq_len(8), 0, 0)
+endpoints <- detect.graph.endpoints(
+  chain$adj.list,
+  chain$edge.lengths,
+  layout,
+  k = c(2, 3),
+  min.neighborhood.size = 2,
+  detect.max.radius = 2,
+  detect.min.neighborhood.size = 2,
+  min.score.quantile = 0.5
+)
+endpoints$endpoints
+
+}

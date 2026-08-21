@@ -29,3 +29,13 @@ A list with \code{adj_list}, \code{weight_list}, and \code{grid_vertices}.
 \description{
 Create a Refined Graph with Approximately Uniform Edge Spacing
 }
+\examples{
+chain <- create.chain.graph(n.vertices = 3)
+grid <- create.grid.graph(
+  chain$adj.list,
+  chain$edge.lengths,
+  grid.size = 5
+)
+grid$grid_vertices
+
+}

@@ -21,3 +21,9 @@ A joined adjacency list using 1-based vertex indices.
 \description{
 Join Two Adjacency-List Graphs
 }
+\examples{
+first <- list(2L, 1L)
+second <- list(2L, 1L)
+join.graphs(first, second, i1 = 2, i2 = 1)
+
+}

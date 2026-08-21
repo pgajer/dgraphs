@@ -16,3 +16,8 @@ neighbors removed.
 \description{
 Convert a Directed Adjacency List to an Undirected Adjacency List
 }
+\examples{
+directed <- list(2L, integer(0), 1L)
+convert.to.undirected(directed)
+
+}

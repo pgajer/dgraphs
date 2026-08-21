@@ -6,6 +6,11 @@
 #'
 #' @return A numeric matrix of shortest-path distances.
 #'
+#' @examples
+#' graph <- list(2L, c(1L, 3L), 2L)
+#' lengths <- list(1, c(1, 2), 2)
+#' shortest.path(graph, lengths, vertices = 1:3)
+#'
 #' @export
 shortest.path <- function(graph, edge.lengths, vertices) {
     graph <- .dgraphs.validate.adj.list(graph)
@@ -31,6 +36,11 @@ shortest.path <- function(graph, edge.lengths, vertices) {
 #' @param h Integer maximum hop count.
 #'
 #' @return An object of class `"path.graph"`.
+#'
+#' @examples
+#' graph <- list(2L, c(1L, 3L), 2L)
+#' lengths <- list(1, c(1, 2), 2)
+#' create.path.graph(graph, lengths, h = 2)
 #'
 #' @export
 create.path.graph <- function(graph, edge.lengths, h) {
@@ -79,6 +89,12 @@ new.path.graph <- function(adj.list, edge.length.list, hop.list, shortest.paths)
 #' @param to Target vertex.
 #'
 #' @return Path information, or `NULL` when no stored path exists.
+#'
+#' @examples
+#' graph <- list(2L, c(1L, 3L), 2L)
+#' lengths <- list(1, c(1, 2), 2)
+#' pg <- create.path.graph(graph, lengths, h = 2)
+#' get.shortest.path(pg, from = 1, to = 3)
 #'
 #' @export
 get.shortest.path <- function(pg, from, to) {
@@ -137,6 +153,11 @@ summary.path.graph <- function(object, ...) {
 #' @param h.values Positive integer hop limits.
 #'
 #' @return A list of `"path.graph"` objects.
+#'
+#' @examples
+#' graph <- list(2L, c(1L, 3L), 2L)
+#' lengths <- list(1, c(1, 2), 2)
+#' create.path.graph.series(graph, lengths, h.values = 1:2)
 #'
 #' @export
 create.path.graph.series <- function(graph, edge.lengths, h.values) {

@@ -17,3 +17,8 @@ An adjacency list for the complete bipartite graph.
 \description{
 Create a Bipartite Graph
 }
+\examples{
+graph <- create.bipartite.graph(2, 3)
+graph[[1]]
+
+}

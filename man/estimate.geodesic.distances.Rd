@@ -21,3 +21,8 @@ Numeric matrix of graph shortest-path distances.
 \description{
 Estimate Pairwise Geodesic Distances
 }
+\examples{
+points <- cbind(seq(0, 1, length.out = 8), 0)
+estimate.geodesic.distances(points, k = 2)
+
+}

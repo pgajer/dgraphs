@@ -17,3 +17,9 @@ Symmetric weighted adjacency matrix with Euclidean edge lengths.
 \description{
 Convert Coordinates and Edges to a Weighted Adjacency Matrix
 }
+\examples{
+X <- rbind(c(0, 0), c(1, 0), c(1, 1))
+edges <- matrix(c(1, 2, 2, 3), ncol = 2, byrow = TRUE)
+graph.adj.mat(X, edges)
+
+}

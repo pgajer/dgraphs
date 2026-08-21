@@ -27,6 +27,11 @@ elapsed.time <- function(start.time,
 #'
 #' @return Numeric layout matrix with one row per embedded vertex.
 #'
+#' @examples
+#' set.seed(1)
+#' graph <- create.circular.graph(6)
+#' graph.embedding(graph, dim = 2, method = "fr")
+#'
 #' @export
 graph.embedding <- function(adj.list,
                             weights.list = NULL,
@@ -143,6 +148,16 @@ graph.embedding <- function(adj.list,
 #'
 #' @return Invisibly returns `NULL`; produces a plot as a side effect.
 #'
+#' @examples
+#' embedding <- rbind(c(0, 0), c(1, 0), c(1, 1), c(0, 1))
+#' graph <- create.circular.graph(4)
+#' plot2D.colored.graph(
+#'   embedding,
+#'   graph,
+#'   vertex.colors = 1:4,
+#'   add.legend = FALSE
+#' )
+#'
 #' @export
 plot2D.colored.graph <- function(embedding, adj.list, vertex.colors,
                                vertex.size = 1,
@@ -231,6 +246,11 @@ plot2D.colored.graph <- function(embedding, adj.list, vertex.colors,
 #'
 #' @return A list with `evalues`, `evectors`, and optionally `laplacian`.
 #'
+#' @examples
+#' graph <- create.circular.graph(8)
+#' spectrum <- graph.spectrum(graph, nev = 3)
+#' spectrum$evalues
+#'
 #' @export
 graph.spectrum <- function(graph,
                            nev = NULL,
@@ -313,6 +333,11 @@ graph.spectrum <- function(graph,
 #' @param evalues Optional eigenvalues used for scaling.
 #'
 #' @return Numeric spectral embedding matrix.
+#'
+#' @examples
+#' graph <- create.circular.graph(8)
+#' spectrum <- graph.spectrum(graph, nev = 4)
+#' graph.spectral.embedding(spectrum$evectors, dim = 2)
 #'
 #' @export
 graph.spectral.embedding <- function(evectors, dim, evalues = NULL) {

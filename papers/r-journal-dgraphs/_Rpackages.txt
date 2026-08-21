@@ -1,0 +1,8 @@
+dgraphs
+FNN
+dbscan
+igraph
+ggplot2
+knitr
+rmarkdown
+rjtools

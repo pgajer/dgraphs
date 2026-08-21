@@ -29,3 +29,14 @@ Numeric shortest-path distance.
 \description{
 Compute a Weighted Shortest-Path Distance
 }
+\examples{
+graph <- list(2L, c(1L, 3L), 2L)
+weights <- list(1, c(1, 2), 2)
+compute.graph.distance(
+  i = 1,
+  j = 3,
+  adj.list = graph,
+  edge.lengths = weights
+)
+
+}

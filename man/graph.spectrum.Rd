@@ -29,3 +29,9 @@ A list with \code{evalues}, \code{evectors}, and optionally \code{laplacian}.
 \description{
 Compute Graph Spectrum
 }
+\examples{
+graph <- create.circular.graph(8)
+spectrum <- graph.spectrum(graph, nev = 3)
+spectrum$evalues
+
+}

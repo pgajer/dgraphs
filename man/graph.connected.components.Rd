@@ -15,3 +15,8 @@ Integer vector of component IDs, one per vertex.
 \description{
 Assign Vertices to Connected Components
 }
+\examples{
+graph <- list(2L, 1L, integer(0))
+graph.connected.components(graph)
+
+}

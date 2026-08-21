@@ -15,3 +15,8 @@ An adjacency list for the complete graph on \code{n} vertices.
 \description{
 Create a Complete Graph
 }
+\examples{
+complete <- create.complete.graph(4)
+complete[[1]]
+
+}

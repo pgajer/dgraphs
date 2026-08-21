@@ -129,3 +129,19 @@ test_that("DG6c graph core endpoints run self-hosted", {
     expect_equal(endpoints$distance.to.core, c(0, 0, 2, 3))
     expect_false(endpoints$used.approx.eccentricity)
 })
+
+test_that("DG6c single-vertex geodesic statistics use R vertex indices", {
+    graph <- dgraphs::generate.circle.graph(8, type = "uniform")
+    result <- dgraphs::compute.vertex.geodesic.stats(
+        graph$adj.list,
+        graph$weight.list,
+        grid.vertex = 1,
+        min.radius = 0.3,
+        max.radius = 0.5,
+        n.steps = 2
+    )
+
+    expect_s3_class(result, "vertex_geodesic_stats")
+    expect_identical(attr(result, "vertex"), 1L)
+    expect_equal(nrow(result), 2L)
+})

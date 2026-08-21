@@ -19,3 +19,8 @@ Numeric vector of cumulative path distances normalized to end at 1.
 \description{
 Normalized Cumulative Distance Along a Vertex Path
 }
+\examples{
+vertices <- rbind(c(0, 0), c(1, 0), c(1, 2))
+path.dist(1:3, vertices)
+
+}

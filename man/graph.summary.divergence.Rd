@@ -57,3 +57,13 @@ divergence between the resulting probability mass functions.
 Currently the supported divergence is Jensen-Shannon divergence, implemented
 via \code{\link[=jensen.shannon.divergence]{jensen.shannon.divergence()}}.
 }
+\examples{
+path <- list(2L, c(1L, 3L), 2L)
+triangle <- list(c(2L, 3L), c(1L, 3L), c(1L, 2L))
+graph.summary.divergence(
+  path,
+  triangle,
+  summary = "degree_distribution"
+)
+
+}

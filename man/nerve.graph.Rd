@@ -17,3 +17,8 @@ A list with \code{adjacency.list}, \code{weights.list}, and \code{adjacency.matr
 \description{
 Construct the Nerve Graph of a Cover
 }
+\examples{
+cover <- list(c(1, 2, 3), c(3, 4), c(5, 6))
+nerve.graph(cover, n.cores = 1)$adjacency.list
+
+}

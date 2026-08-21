@@ -53,3 +53,16 @@ Analyzes how the number of geodesics scales with radius for each grid vertex.
 This function helps determine if collapsing/clustering geodesics is necessary
 and provides insights into the graph structure around grid vertices.
 }
+\examples{
+graph <- generate.circle.graph(8, type = "uniform")
+stats <- compute.geodesic.stats(
+  graph$adj.list,
+  graph$weight.list,
+  min.radius = 0.3,
+  max.radius = 0.5,
+  n.steps = 2,
+  n.packing.vertices = 4
+)
+stats$summary
+
+}

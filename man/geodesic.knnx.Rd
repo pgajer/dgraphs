@@ -24,3 +24,9 @@ A list with graph vertices, graph edges, \code{nn.index}, and \code{nn.dist}.
 \description{
 Estimate Geodesic Nearest Neighbors from Grid Points to Data Points
 }
+\examples{
+X.grid <- as.matrix(expand.grid(x = 0:2, y = 0:2))
+X <- rbind(c(0.2, 0.2), c(1.2, 0.8), c(1.8, 1.7))
+geodesic.knnx(X, X.grid, k = 2)
+
+}

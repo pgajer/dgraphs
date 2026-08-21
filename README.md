@@ -8,7 +8,7 @@ diagnostics, spectral embedding, endpoints, and paths are also provided.
 
 ## Installation
 
-Once the package is available from CRAN, install it with:
+Install the released package from CRAN with:
 
 ```r
 install.packages("dgraphs")
@@ -23,5 +23,12 @@ set.seed(1)
 x <- matrix(rnorm(80), ncol = 2)
 graph <- create.mknn.graph(x, k = 4)
 
-length(graph$adjacency.list)
+graph$n_edges
+```
+
+For an end-to-end introduction to graph construction, connectivity repair,
+parameter sequences, conversion, and diagnostics, run:
+
+```r
+vignette("data-derived-graph-workflow", package = "dgraphs")
 ```

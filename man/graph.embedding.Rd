@@ -32,3 +32,9 @@ Numeric layout matrix with one row per embedded vertex.
 \description{
 Embed Graph in 2D or 3D Space
 }
+\examples{
+set.seed(1)
+graph <- create.circular.graph(6)
+graph.embedding(graph, dim = 2, method = "fr")
+
+}

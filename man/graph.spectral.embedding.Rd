@@ -19,3 +19,9 @@ Numeric spectral embedding matrix.
 \description{
 Generate Spectral Embedding of a Graph
 }
+\examples{
+graph <- create.circular.graph(8)
+spectrum <- graph.spectrum(graph, nev = 4)
+graph.spectral.embedding(spectrum$evectors, dim = 2)
+
+}

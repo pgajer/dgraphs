@@ -5,6 +5,9 @@
 #'
 #' @return A chain graph adjacency list.
 #'
+#' @examples
+#' create.chain.graph.with.offset(4, offset = 0)
+#'
 #' @export
 create.chain.graph.with.offset <- function(n, offset = 0) {
 

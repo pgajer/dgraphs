@@ -87,3 +87,12 @@ neighborhood sizes, trimming metadata, and call parameters.
 Builds an iKNN graph sequence and selects \code{k} from structural edit-distance
 stability, label-mixing stability, or both.
 }
+\examples{
+set.seed(1)
+x <- matrix(rnorm(60), ncol = 2)
+selected <- build.iknn.graphs.and.selectk(
+  x, kmin = 2, kmax = 4, method = "edit",
+  n.cores = 1, verbose = FALSE
+)
+selected$k.opt.edit
+}

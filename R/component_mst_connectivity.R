@@ -1,29 +1,22 @@
 .graph.edge.table <- function(adj.list, weight.list) {
     n <- length(adj.list)
-    rows <- vector("list", sum(lengths(adj.list)))
-    cursor <- 0L
-    for (i in seq_len(n)) {
-        nbrs <- adj.list[[i]]
-        weights <- weight.list[[i]]
-        if (!length(nbrs)) {
-            next
-        }
-        for (pos in seq_along(nbrs)) {
-            j <- as.integer(nbrs[[pos]])
-            if (i < j) {
-                cursor <- cursor + 1L
-                rows[[cursor]] <- data.frame(
-                    from = i,
-                    to = j,
-                    weight = as.numeric(weights[[pos]])
-                )
-            }
-        }
-    }
-    if (cursor == 0L) {
+    degree <- lengths(adj.list)
+    if (!sum(degree)) {
         return(data.frame(from = integer(), to = integer(), weight = numeric()))
     }
-    do.call(rbind, rows[seq_len(cursor)])
+    if (length(weight.list) != n || !identical(lengths(weight.list), degree)) {
+        stop("Adjacency and weight lists must have matching lengths.", call. = FALSE)
+    }
+
+    from <- rep.int(seq_len(n), degree)
+    to <- as.integer(unlist(adj.list, recursive = FALSE, use.names = FALSE))
+    weight <- as.numeric(unlist(weight.list, recursive = FALSE, use.names = FALSE))
+    keep <- from < to
+    data.frame(
+        from = from[keep],
+        to = to[keep],
+        weight = weight[keep]
+    )
 }
 
 .graph.from.edge.table <- function(n, edges) {

@@ -17,3 +17,7 @@ Euclidean distance between \code{p1} and \code{p2}.
 \description{
 Euclidean Distance Between Two Points
 }
+\examples{
+euclidean.distance(c(0, 0), c(3, 4))
+
+}

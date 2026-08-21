@@ -15,3 +15,7 @@ Number of undirected edges.
 \description{
 Count Edges in an Undirected Adjacency List
 }
+\examples{
+count.edges(list(c(2L, 3L), 1L, 1L))
+
+}

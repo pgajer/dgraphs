@@ -10,6 +10,17 @@
 #'
 #' @return A `local_extrema` object.
 #'
+#' @examples
+#' chain <- create.chain.graph(n.vertices = 5)
+#' extrema <- detect.local.extrema(
+#'   chain$adj.list,
+#'   chain$edge.lengths,
+#'   y = c(1, 3, 1, 2, 0),
+#'   max.radius = 1,
+#'   min.neighborhood.size = 2
+#' )
+#' extrema$vertices
+#'
 #' @export
 detect.local.extrema <- function(adj.list,
                                  weight.list,
@@ -176,6 +187,17 @@ print.summary.local_extrema <- function(x, ...) {
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return Object-specific vertex indices.
+#'
+#' @examples
+#' chain <- create.chain.graph(n.vertices = 5)
+#' extrema <- detect.local.extrema(
+#'   chain$adj.list,
+#'   chain$edge.lengths,
+#'   y = c(1, 3, 1, 2, 0),
+#'   max.radius = 1,
+#'   min.neighborhood.size = 2
+#' )
+#' vertices(extrema, extrema$labels[[1]])
 #'
 #' @export
 vertices <- function(object, ...) {

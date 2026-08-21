@@ -1,7 +1,7 @@
 .dg6d.ensure.gflow.parity.source <- function() {
     gflow.path <- Sys.getenv(
         "DGRAPHS_GFLOW_PARITY_SOURCE",
-        "/Users/pgajer/current_projects/gflow"
+        file.path("..", "gflow")
     )
     if (file.exists(file.path(gflow.path, "DESCRIPTION")) &&
         requireNamespace("pkgload", quietly = TRUE)) {

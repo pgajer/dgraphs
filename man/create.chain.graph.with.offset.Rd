@@ -17,3 +17,7 @@ A chain graph adjacency list.
 \description{
 Create a Chain Graph with Offset Vertex Labels
 }
+\examples{
+create.chain.graph.with.offset(4, offset = 0)
+
+}

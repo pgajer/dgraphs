@@ -8,6 +8,10 @@ utils::globalVariables("all.edge.lengths")
 #' @return `TRUE` when each vertex has the same neighbor set in both lists,
 #'   ignoring order; otherwise `FALSE`.
 #'
+#' @examples
+#' graph <- list(c(2L, 3L), 1L, 1L)
+#' compare.adj.lists(graph, list(c(3L, 2L), 1L, 1L))
+#'
 #' @export
 compare.adj.lists <- function(adj.list1, adj.list2) {
     if (length(adj.list1) != length(adj.list2)) {
@@ -37,6 +41,10 @@ compare.adj.lists <- function(adj.list1, adj.list2) {
 #'
 #' @return An adjacency list with reciprocal edges added and duplicate
 #'   neighbors removed.
+#'
+#' @examples
+#' directed <- list(2L, integer(0), 1L)
+#' convert.to.undirected(directed)
 #'
 #' @export
 convert.to.undirected <- function(adj.list) {
@@ -78,6 +86,9 @@ convert.to.undirected <- function(adj.list) {
 #'
 #' @return The adjacency list with entries equal to their vertex index removed.
 #'
+#' @examples
+#' rm.self.loops(list(c(1L, 2L), c(1L, 2L)))
+#'
 #' @export
 rm.self.loops <- function(adj.list) {
     for (vertex in seq_along(adj.list)) {
@@ -97,6 +108,14 @@ rm.self.loops <- function(adj.list) {
 #'   distance-matrix deviation.
 #'
 #' @return Numeric distance-matrix deviation.
+#'
+#' @examples
+#' graph <- list(2L, c(1L, 3L), 2L)
+#' weights1 <- list(1, c(1, 1), 1)
+#' weights2 <- list(1, c(1, 2), 2)
+#' identical.vertex.set.weighted.graph.similarity(
+#'   graph, weights1, graph, weights2
+#' )
 #'
 #' @export
 identical.vertex.set.weighted.graph.similarity <- function(graph1.adj.list,
@@ -141,6 +160,11 @@ identical.vertex.set.weighted.graph.similarity <- function(graph1.adj.list,
 #' @return A list containing neighbors present in `graph1` but not `graph2` for
 #'   each vertex.
 #'
+#' @examples
+#' graph1 <- list(c(2L, 3L), 1L, 1L)
+#' graph2 <- list(2L, 1L, integer(0))
+#' edge.diff(graph1, graph2)
+#'
 #' @export
 edge.diff <- function(graph1, graph2) {
     if (!is.list(graph1) || !is.list(graph2)) {
@@ -170,6 +194,14 @@ edge.diff <- function(graph1, graph2) {
 #'   from 1 to `length(id.indices)`.
 #'
 #' @return A list with subgraph `adj_list` and `dist_list`.
+#'
+#' @examples
+#' graph <- list(
+#'   adj_list = list(c(2L, 3L), c(1L, 3L), c(1L, 2L)),
+#'   dist_list = list(c(1, 2), c(1, 1), c(2, 1))
+#' )
+#' create.subgraph(graph, id.indices = c(1, 3),
+#'                 use.sequential.indices = TRUE)
 #'
 #' @export
 create.subgraph <- function(S.graph,
@@ -248,6 +280,9 @@ create.subgraph <- function(S.graph,
 #'
 #' @return Number of undirected edges.
 #'
+#' @examples
+#' count.edges(list(c(2L, 3L), 1L, 1L))
+#'
 #' @export
 count.edges <- function(adj.list) {
     n.edges <- 0
@@ -266,6 +301,11 @@ count.edges <- function(adj.list) {
 #' @param n.cores Number of worker processes used to extract edge weights.
 #'
 #' @return Numeric vector of unique undirected edge weights.
+#'
+#' @examples
+#' graph <- list(c(2L, 3L), 1L, 1L)
+#' weights <- list(c(1, 2), 1, 2)
+#' get.edge.weights(graph, weights, n.cores = 1)
 #'
 #' @export
 get.edge.weights <- function(adj.list,
@@ -340,6 +380,11 @@ get.edge.weights <- function(adj.list,
 #' @param mc.cores Number of cores for `method = "parallel"`.
 #'
 #' @return Numeric vector of unique undirected edge lengths.
+#'
+#' @examples
+#' graph <- list(c(2L, 3L), 1L, 1L)
+#' lengths <- list(c(1, 2), 1, 2)
+#' extract.edge.lengths(graph, lengths)
 #'
 #' @export
 extract.edge.lengths <- function(adj.list,
@@ -425,6 +470,11 @@ extract.edge.lengths <- function(adj.list,
 #'
 #' @return Data frame with consecutive vertex pairs and their edge lengths.
 #'
+#' @examples
+#' graph <- list(2L, c(1L, 3L), 2L)
+#' lengths <- list(1, c(1, 2), 2)
+#' extract.trajectory.edge.lengths(c(1, 2, 3), graph, lengths)
+#'
 #' @export
 extract.trajectory.edge.lengths <- function(traj,
                                             adj.list,
@@ -507,6 +557,11 @@ extract.trajectory.edge.lengths <- function(traj,
 #' @param remove.self.loops Logical; if `TRUE`, remove diagonal entries.
 #'
 #' @return Numeric adjacency matrix.
+#'
+#' @examples
+#' graph <- list(c(2L, 3L), 1L, 1L)
+#' weights <- list(c(1, 2), 1, 2)
+#' convert.adjacency.list.to.adjacency.matrix(graph, weights)
 #'
 #' @export
 convert.adjacency.list.to.adjacency.matrix <- function(adj.list,
@@ -625,6 +680,11 @@ convert.adjacency.list.to.adjacency.matrix <- function(adj.list,
 #' @param n Optional target number of reachable vertices.
 #'
 #' @return List with `vertices`, effective `radius`, and aligned `dists`.
+#'
+#' @examples
+#' graph <- list(2L, c(1L, 3L), 2L)
+#' weights <- list(1, c(1, 2), 2)
+#' geodesic.disk(graph, weights, center.vertex = 2, radius = 2)
 #'
 #' @export
 geodesic.disk <- function(adj.list,

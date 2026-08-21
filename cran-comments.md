@@ -32,6 +32,15 @@ These removals are intentional breaking changes and are documented in
   0 errors | 0 warnings | 2 notes
 * GitHub Actions, Ubuntu, R-devel, R release, and R oldrel-1:
   0 errors | 0 warnings | 0 notes on each configuration
+* R-hub, R-devel, Linux, Windows, and macOS:
+  0 errors | 0 warnings | 0 notes on each configuration
+* Win-builder, Windows Server 2022, x86_64 UCRT:
+  - R-devel (2026-08-17 r90424):
+    0 errors | 0 warnings | 1 note
+  - R 4.6.1:
+    0 errors | 0 warnings | 1 note
+  - R 4.5.3:
+    0 errors | 0 warnings | 1 note
 
 ## R CMD check results
 
@@ -50,6 +59,10 @@ Days since last update: 1
 The second note is local-environment-only: the installed HTML Tidy is too old
 for R-devel's HTML-manual validation. The PDF and HTML manuals were both built
 successfully, and all Rd checks passed.
+
+The single Win-builder note on each R version is the same incoming-feasibility
+note shown above. All Win-builder examples, tests, vignettes, and PDF and HTML
+manual checks passed.
 
 ## Additional checks
 

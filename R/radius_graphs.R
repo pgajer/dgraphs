@@ -550,7 +550,7 @@ create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
     }
     if (identical(backend, "cpp")) {
         return(do.call(
-            cpp.create.rknn.graphs,
+            .cpp.create.rknn.graphs,
             c(list(X = X, k.values = k.values), args)
         ))
     }
@@ -603,43 +603,9 @@ create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
     out
 }
 
-#' Compute Adaptive Radius-kNN Graphs With Batched ANN Search
-#'
-#' @description
-#' Tentative C++-backed counterpart to `create.rknn.graphs()`. It builds one
-#' ANN kd-tree, computes nearest-neighbor distances through the maximal
-#' requested k value once, derives each requested `k.scale` from that shared
-#' result, and materializes adaptive-radius edge tables for all k values in
-#' C++. The existing R finalization path is then used for pruning, lifecycle
-#' branches, and optional component repair.
-#'
-#' This function is exported as a diagnostic helper while the native backend is
-#' being benchmarked and validated. Ordinary callers should use
-#' `create.rknn.graphs()` with the default `backend = "auto"` or with
-#' `backend = "cpp"` to request this native backend explicitly.
-#'
-#' @inheritParams create.rknn.graphs
-#'
-#' @return A `"rknn_graphs"` object with the same default structure as
-#'   `create.rknn.graphs()`. When `return.timing = TRUE`, timing is attached at
-#'   the graph-sequence level because the ANN setup and max-k scale search are
-#'   shared across k values.
-#'
-#' @examples
-#' X <- matrix(c(0, 1, 3, 4), ncol = 1)
-#' result <- cpp.create.rknn.graphs(
-#'   X,
-#'   k.values = c(1, 2),
-#'   graph.detail = "minimal",
-#'   prune.method = "none"
-#' )
-#' names(result$graphs)
-#'
-#' @seealso [create.rknn.graphs()]
-#'
-#' @export
-cpp.create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
-                                   k.values = NULL) {
+# Batched ANN backend for create.rknn.graphs().
+.cpp.create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
+                                    k.values = NULL) {
     X <- .validate.numeric.data.matrix(X)
     n <- nrow(X)
     k.values <- .normalize.rknn.graphs.k.values(kmin, kmax, k.values, n)
@@ -740,15 +706,15 @@ cpp.create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
     type <- take("type", "adaptive.radius")
     if (!is.character(type) || length(type) != 1L ||
         !identical(type, "adaptive.radius")) {
-        stop("'type' must be omitted or set to 'adaptive.radius' in cpp.create.rknn.graphs().",
+        stop("'type' must be omitted or set to 'adaptive.radius' for backend = 'cpp'.",
              call. = FALSE)
     }
     if ("k.scale" %in% names(args)) {
-        stop("'k.scale' is varied by cpp.create.rknn.graphs(); use 'kmin', 'kmax', or 'k.values'.",
+        stop("'k.scale' is varied by create.rknn.graphs(); use 'kmin', 'kmax', or 'k.values'.",
              call. = FALSE)
     }
     if ("radius" %in% names(args)) {
-        stop("'radius' is for fixed-radius graphs; cpp.create.rknn.graphs() varies k.scale for adaptive-radius graphs.",
+        stop("'radius' is for fixed-radius graphs; create.rknn.graphs() varies k.scale for adaptive-radius graphs.",
              call. = FALSE)
     }
 
@@ -767,7 +733,7 @@ cpp.create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
         c("ann", "all.pairs")
     )
     if (!identical(radius.search, "ann")) {
-        stop("'radius.search' must be omitted or set to 'ann' in cpp.create.rknn.graphs().",
+        stop("'radius.search' must be omitted or set to 'ann' for backend = 'cpp'.",
              call. = FALSE)
     }
     return.timing <- isTRUE(take("return.timing", FALSE))
@@ -882,8 +848,8 @@ cpp.create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
 #'
 #' @description
 #' Provides a compact table of graph characteristics for an
-#' `"rknn_graphs"` object created by [create.rknn.graphs()] or
-#' [cpp.create.rknn.graphs()]. The table reports final edge counts,
+#' `"rknn_graphs"` object created by [create.rknn.graphs()]. The table reports
+#' final edge counts,
 #' component-repair counts, degree summaries, and density/sparsity for each
 #' adaptive-radius `k.scale` value.
 #'
@@ -926,7 +892,7 @@ cpp.create.rknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
 #' )
 #' summary(graphs)
 #'
-#' @seealso [create.rknn.graphs()], [cpp.create.rknn.graphs()]
+#' @seealso [create.rknn.graphs()]
 #'
 #' @export
 summary.rknn_graphs <- function(object, ...) {
@@ -1115,117 +1081,6 @@ summary.rknn_graphs <- function(object, ...) {
     out$radius <- as.numeric(radius)
     out$graph_rule <- "fixed.radius"
     out
-}
-
-#' Deprecated Radius Graph Constructors
-#'
-#' @description
-#' `create.radius.graph()` and `create.adaptive.radius.graph()` are deprecated
-#' compatibility wrappers. Use `create.rknn.graph()` with `type = "fixed"` or
-#' `type = "adaptive.radius"` instead.
-#'
-#' @param X Numeric matrix or data frame with observations in rows.
-#' @param radius Fixed radius passed to `create.rknn.graph(type = "fixed")`.
-#' @param k.scale,radius.factor,radius.rule,radius.search Adaptive-radius
-#'   parameters passed to `create.rknn.graph(type = "adaptive.radius")`.
-#' @param return.timing,graph.detail Adaptive-radius output controls passed to
-#'   `create.rknn.graph()`.
-#' @param prune.method,max.path.edge.ratio.deviation.thld,path.edge.ratio.percentile,prune.tau,prune.local.k,with.pruned.edge.stats Geometric
-#'   pruning controls passed to `create.rknn.graph()`.
-#' @param connect.components,connect.method,bridge.k,bridge.k.max,bridge.growth Component
-#'   repair controls passed to `create.rknn.graph()`.
-#'
-#' @return A graph list produced by `create.rknn.graph()`. The fixed-radius
-#'   wrapper returns an object of class `"radius_graph"`; the adaptive-radius
-#'   wrapper returns an object of class `"adaptive_radius_graph"`. Each object
-#'   contains the final adjacency and weight lists, an edge matrix and edge
-#'   weights, graph-construction parameters, and component, pruning, and repair
-#'   diagnostics.
-#'
-#' @examples
-#' X <- matrix(c(0, 1, 3), ncol = 1)
-#' create.rknn.graph(X, type = "fixed", radius = 1.1)$edge_matrix
-#' create.rknn.graph(X, type = "adaptive.radius", k.scale = 1)$edge_matrix
-#'
-#' @name deprecated-radius-graph-constructors
-NULL
-
-#' @rdname deprecated-radius-graph-constructors
-#' @export
-create.radius.graph <- function(X,
-                                radius,
-                                prune.method = c("none", "local.geodesic", "global.geodesic.ratio"),
-                                max.path.edge.ratio.deviation.thld = 0.1,
-                                path.edge.ratio.percentile = 0.5,
-                                prune.tau = 1.05,
-                                prune.local.k = NULL,
-                                with.pruned.edge.stats = FALSE,
-                                connect.components = FALSE,
-                                connect.method = c("component.mst", "component.mst.ann", "global.mst"),
-                                bridge.k = NULL,
-                                bridge.k.max = NULL,
-                                bridge.growth = 2) {
-    .Deprecated("create.rknn.graph")
-    create.rknn.graph(
-        X = X,
-        type = "fixed",
-        radius = radius,
-        prune.method = prune.method,
-        max.path.edge.ratio.deviation.thld = max.path.edge.ratio.deviation.thld,
-        path.edge.ratio.percentile = path.edge.ratio.percentile,
-        prune.tau = prune.tau,
-        prune.local.k = prune.local.k,
-        with.pruned.edge.stats = with.pruned.edge.stats,
-        connect.components = connect.components,
-        connect.method = connect.method,
-        bridge.k = bridge.k,
-        bridge.k.max = bridge.k.max,
-        bridge.growth = bridge.growth
-    )
-}
-
-#' @rdname deprecated-radius-graph-constructors
-#' @export
-create.adaptive.radius.graph <- function(X,
-                                         k.scale,
-                                         radius.factor = 1,
-                                         radius.rule = c("max", "min", "geomean"),
-                                         radius.search = c("ann", "all.pairs"),
-                                         return.timing = FALSE,
-                                         graph.detail = c("full", "minimal"),
-                                         prune.method = c("none", "local.geodesic", "global.geodesic.ratio"),
-                                         max.path.edge.ratio.deviation.thld = 0.1,
-                                         path.edge.ratio.percentile = 0.5,
-                                         prune.tau = 1.05,
-                                         prune.local.k = NULL,
-                                         with.pruned.edge.stats = FALSE,
-                                         connect.components = FALSE,
-                                         connect.method = c("component.mst", "component.mst.ann", "global.mst"),
-                                         bridge.k = NULL,
-                                         bridge.k.max = NULL,
-                                         bridge.growth = 2) {
-    .Deprecated("create.rknn.graph")
-    create.rknn.graph(
-        X = X,
-        type = "adaptive.radius",
-        k.scale = k.scale,
-        radius.factor = radius.factor,
-        radius.rule = radius.rule,
-        radius.search = radius.search,
-        return.timing = return.timing,
-        graph.detail = graph.detail,
-        prune.method = prune.method,
-        max.path.edge.ratio.deviation.thld = max.path.edge.ratio.deviation.thld,
-        path.edge.ratio.percentile = path.edge.ratio.percentile,
-        prune.tau = prune.tau,
-        prune.local.k = prune.local.k,
-        with.pruned.edge.stats = with.pruned.edge.stats,
-        connect.components = connect.components,
-        connect.method = connect.method,
-        bridge.k = bridge.k,
-        bridge.k.max = bridge.k.max,
-        bridge.growth = bridge.growth
-    )
 }
 
 .create.adaptive.radius.graph <- function(X,

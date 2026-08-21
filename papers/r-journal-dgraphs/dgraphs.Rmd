@@ -1,6 +1,6 @@
 ---
 title: "dgraphs: Constructing, Selecting, and Diagnosing Data-Derived Graphs in R"
-date: "2026-08-20"
+date: "2026-08-21"
 abstract: >
   Data-derived graphs turn numerical observations into vertices and local
   proximity relations into edges. Small choices in the construction rule can
@@ -65,7 +65,7 @@ knitr::opts_chunk$set(
 library(dgraphs)
 library(ggplot2)
 
-stopifnot(packageVersion("dgraphs") >= "0.1.0.9000")
+stopifnot(packageVersion("dgraphs") >= "0.2.0")
 
 pipeline.raw <- utils::read.csv("data/pipeline-benchmark.csv")
 family.raw <- utils::read.csv("data/graph-family-benchmark.csv")

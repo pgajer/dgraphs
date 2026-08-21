@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-minimum <- package_version("0.1.1")
+minimum <- package_version("0.2.0")
 available <- utils::available.packages(
     repos = c(CRAN = "https://cloud.r-project.org"),
     filters = list()

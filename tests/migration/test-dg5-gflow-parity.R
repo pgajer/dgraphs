@@ -76,21 +76,12 @@ test_that("DG5 graph generator utilities match original gflow outputs", {
     )
 })
 
-test_that("DG5 graph edit and summary diagnostics match original gflow outputs", {
+test_that("DG5 graph summary diagnostics match original gflow outputs", {
     g1.adj <- list(c(2L, 3L), c(1L, 3L), c(1L, 2L))
     g1.w <- list(c(1, 2), c(1, 3), c(2, 3))
     g2.adj <- list(c(2L), c(1L, 3L), c(2L))
     g2.w <- list(1.5, c(1.5, 2.5), 2.5)
 
-    .dg5.expect.gflow.parity(
-        "graph.edit.distance",
-        graph1.adj.list = g1.adj,
-        graph1.weights = g1.w,
-        graph2.adj.list = g2.adj,
-        graph2.weights = g2.w,
-        edge.cost = 1,
-        weight.cost.factor = 0.1
-    )
     .dg5.expect.gflow.parity(
         "compute.graph.summary.pmf",
         graph = g1.adj,

@@ -603,20 +603,7 @@ graph.connected.components <- function(adj.list) {
     component
 }
 
-#' Convert Coordinates and Edges to a Weighted Adjacency Matrix
-#'
-#' @param X Numeric coordinate matrix.
-#' @param E Two-column matrix of 1-based edge endpoints.
-#'
-#' @return Symmetric weighted adjacency matrix with Euclidean edge lengths.
-#'
-#' @examples
-#' X <- rbind(c(0, 0), c(1, 0), c(1, 1))
-#' edges <- matrix(c(1, 2, 2, 3), ncol = 2, byrow = TRUE)
-#' graph.adj.mat(X, edges)
-#'
-#' @export
-graph.adj.mat <- function(X, E) {
+.graph.adj.mat <- function(X, E) {
     if (!is.matrix(X) || !is.numeric(X) || any(!is.finite(X))) {
         stop("'X' must be a finite numeric matrix.", call. = FALSE)
     }
@@ -820,44 +807,4 @@ compute.graph.diameter <- function(adj.list, weight.list) {
         farthest_vertices = farthest,
         diameter_path = path
     )
-}
-
-#' Convert an Adjacency List to igraph
-#'
-#' @param adj.list A 1-based adjacency list.
-#'
-#' @return An undirected `igraph` graph.
-#'
-#' @examples
-#' graph <- list(c(2L, 3L), 1L, 1L, integer(0))
-#' ig <- adjlist.to.igraph(graph)
-#' c(vertices = igraph::vcount(ig), edges = igraph::ecount(ig))
-#'
-#' @importFrom igraph graph_from_edgelist make_empty_graph add_vertices
-#' @export
-adjlist.to.igraph <- function(adj.list) {
-    if (!requireNamespace("igraph", quietly = TRUE)) {
-        stop("Package 'igraph' is required.", call. = FALSE)
-    }
-    adj.list <- .dgraphs.validate.adj.list(adj.list)
-    n <- length(adj.list)
-    edges <- vector("list", n)
-    for (v in seq_len(n)) {
-        w <- adj.list[[v]]
-        w <- w[w > v]
-        if (length(w) > 0L) {
-            edges[[v]] <- cbind(v, w)
-        }
-    }
-    ed <- do.call(rbind, edges)
-    if (is.null(ed) || nrow(ed) == 0L) {
-        g <- igraph::make_empty_graph(n = n, directed = FALSE)
-    } else {
-        storage.mode(ed) <- "integer"
-        g <- igraph::graph_from_edgelist(ed, directed = FALSE)
-        if (igraph::vcount(g) < n) {
-            g <- igraph::add_vertices(g, n - igraph::vcount(g))
-        }
-    }
-    g
 }

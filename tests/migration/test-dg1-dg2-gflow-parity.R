@@ -108,11 +108,6 @@ test_that("DG1 graph utilities match original gflow outputs", {
         adj.list = list(c(2L, 3L), c(1L), c(1L), integer(0))
     )
     .dg12.expect.gflow.parity(
-        "graph.adj.mat",
-        X = matrix(c(0, 0, 1, 0, 1, 1), ncol = 2, byrow = TRUE),
-        E = matrix(c(1, 2, 2, 3), ncol = 2, byrow = TRUE)
-    )
-    .dg12.expect.gflow.parity(
         "compute.graph.distance",
         i = 1,
         j = 4,
@@ -124,7 +119,6 @@ test_that("DG1 graph utilities match original gflow outputs", {
         adj.list = adj,
         weight.list = weights
     )
-    .dg12.expect.gflow.parity("adjlist.to.igraph", adj.list = adj)
 })
 
 test_that("DG2 path, grid, and pruning utilities match original gflow outputs", {

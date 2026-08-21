@@ -1,16 +1,4 @@
-#' Produce k-NN Distance and Index Matrices from a Distance Matrix
-#'
-#' @param d Symmetric distance matrix.
-#' @param k Number of nearest neighbors to return per row.
-#'
-#' @return A list with `nn.i` and `nn.d` matrices.
-#'
-#' @examples
-#' d <- as.matrix(dist(matrix(c(0, 1, 3), ncol = 1)))
-#' dist.to.knn(d, k = 1)
-#'
-#' @export
-dist.to.knn <- function(d, k) {
+.dist.to.knn <- function(d, k) {
     stopifnot(isSymmetric(d))
 
     n <- nrow(d)
@@ -72,18 +60,7 @@ path.length <- function(X) {
     path.len
 }
 
-#' Euclidean Distance Between Two Points
-#'
-#' @param p1 First numeric point.
-#' @param p2 Second numeric point.
-#'
-#' @return Euclidean distance between `p1` and `p2`.
-#'
-#' @examples
-#' euclidean.distance(c(0, 0), c(3, 4))
-#'
-#' @export
-euclidean.distance <- function(p1, p2) {
+.point.euclidean.distance <- function(p1, p2) {
     sqrt(sum((p1 - p2)^2))
 }
 
@@ -103,7 +80,7 @@ subdivide.path <- function(path, n.subdivision.pts) {
     n.pts <- dim(path)[1]
     edge.lengths <- sapply(
         seq(n.pts - 1),
-        function(i) euclidean.distance(path[i, ], path[i + 1, ])
+        function(i) .point.euclidean.distance(path[i, ], path[i + 1, ])
     )
     total.length <- sum(edge.lengths)
     subdiv.dist <- total.length / (n.subdivision.pts - 1)
@@ -171,7 +148,7 @@ geodesic.knn <- function(X, k, K = 5, G = NULL) {
     }
     stopifnot(k > 0)
     d <- estimate.geodesic.distances(X, K, G)
-    r <- dist.to.knn(d, k)
+    r <- .dist.to.knn(d, k)
     list(nn.index = r$nn.i, nn.dist = r$nn.d)
 }
 
@@ -340,7 +317,7 @@ geodesic.knnx <- function(X, X.grid, k, method = "knn.graph", K = 5) {
     }
     V <- rbind(X.grid, X)
     E <- rbind(E.grid, E)
-    A <- graph.adj.mat(V, E)
+    A <- .graph.adj.mat(V, E)
     G <- igraph::graph_from_adjacency_matrix(A, mode = "undirected", weighted = TRUE)
     d <- igraph::distances(G)
     dd <- as.numeric(d)

@@ -1,6 +1,6 @@
 .dg7.rknn.expect.cpp.ann.parity <- function(X, ..., tolerance = 1e-12) {
     r.graphs <- create.rknn.graphs(X, radius.search = "ann", backend = "r", ...)
-    cpp.graphs <- cpp.create.rknn.graphs(X, ...)
+    cpp.graphs <- dgraphs:::.cpp.create.rknn.graphs(X, ...)
     expect_equal(cpp.graphs, r.graphs, tolerance = tolerance)
     invisible(cpp.graphs)
 }
@@ -56,8 +56,13 @@ test_that("create.rknn.graphs is exported", {
     expect_true("create.rknn.graphs" %in% getNamespaceExports("dgraphs"))
 })
 
-test_that("cpp.create.rknn.graphs is exported", {
-    expect_true("cpp.create.rknn.graphs" %in% getNamespaceExports("dgraphs"))
+test_that("the batched C++ backend is private", {
+    expect_false("cpp.create.rknn.graphs" %in% getNamespaceExports("dgraphs"))
+    expect_true(exists(
+        ".cpp.create.rknn.graphs",
+        envir = asNamespace("dgraphs"),
+        inherits = FALSE
+    ))
 })
 
 test_that("summary.rknn_graphs reports graph characteristics", {
@@ -155,7 +160,7 @@ test_that("create.rknn.graphs uses C++ backend by default for ANN search", {
         graph.detail = "minimal",
         connect.components = FALSE
     )
-    cpp.graphs <- cpp.create.rknn.graphs(
+    cpp.graphs <- dgraphs:::.cpp.create.rknn.graphs(
         X,
         k.values = c(3, 1, 2),
         radius.factor = 1.13,
@@ -203,7 +208,7 @@ test_that("cpp.create.rknn.graphs matches R-level ANN backend", {
             graph.detail = "minimal",
             connect.components = FALSE
         )
-        cpp.graphs <- cpp.create.rknn.graphs(
+        cpp.graphs <- dgraphs:::.cpp.create.rknn.graphs(
             X,
             k.values = c(3, 1, 2),
             radius.factor = 1.13,
@@ -314,7 +319,7 @@ test_that("cpp.create.rknn.graphs forwards finalization controls", {
         connect.components = TRUE,
         connect.method = "component.mst"
     )
-    cpp.graphs <- cpp.create.rknn.graphs(
+    cpp.graphs <- dgraphs:::.cpp.create.rknn.graphs(
         X,
         kmin = 1,
         kmax = 2,
@@ -424,7 +429,7 @@ test_that("cpp.create.rknn.graphs reports shared native timing", {
         0.88, 0.72
     ), ncol = 2, byrow = TRUE)
 
-    graphs <- cpp.create.rknn.graphs(
+    graphs <- dgraphs:::.cpp.create.rknn.graphs(
         X,
         kmin = 1,
         kmax = 2,
@@ -511,19 +516,19 @@ test_that("cpp.create.rknn.graphs rejects non-ANN and unsupported controls", {
     X <- matrix(seq_len(12), ncol = 2)
 
     expect_error(
-        cpp.create.rknn.graphs(X, 1, 2, radius.search = "all.pairs"),
+        dgraphs:::.cpp.create.rknn.graphs(X, 1, 2, radius.search = "all.pairs"),
         "'radius.search' must be omitted"
     )
     expect_error(
-        cpp.create.rknn.graphs(X, 1, 2, k.scale = 1),
+        dgraphs:::.cpp.create.rknn.graphs(X, 1, 2, k.scale = 1),
         "'k.scale' is varied"
     )
     expect_error(
-        cpp.create.rknn.graphs(X, 1, 2, type = "fixed"),
+        dgraphs:::.cpp.create.rknn.graphs(X, 1, 2, type = "fixed"),
         "'type' must be omitted"
     )
     expect_error(
-        cpp.create.rknn.graphs(X, 1, 2, unknown.control = TRUE),
+        dgraphs:::.cpp.create.rknn.graphs(X, 1, 2, unknown.control = TRUE),
         "Unused argument"
     )
 })
@@ -567,7 +572,7 @@ test_that("radius graph constructors reject duplicate rows", {
         "duplicate rows"
     )
     expect_error(
-        cpp.create.rknn.graphs(
+        dgraphs:::.cpp.create.rknn.graphs(
             X,
             kmin = 1,
             kmax = 2,

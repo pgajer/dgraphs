@@ -141,31 +141,47 @@ test_that("DG6d graph.embedding matches gflow layouts with fixed seeds", {
                  ignore_attr = TRUE)
 })
 
-test_that("DG6d plot2D.colored.graph runs on non-interactive device like gflow", {
+test_that("DG6d plot2D.colored.graph renders without retaining gflow par side effects", {
     embedding <- matrix(c(0, 0, 1, 0, 1, 1, 0, 1), ncol = 2, byrow = TRUE)
     graph <- list(c(2L, 4L), c(1L, 3L), c(2L, 4L), c(1L, 3L))
     colors <- c(-1, 0, 1, 2)
 
-    d.file <- tempfile(fileext = ".pdf")
-    grDevices::pdf(d.file)
-    d.res <- tryCatch(
-        dgraphs::plot2D.colored.graph(embedding, graph, colors, add.legend = FALSE),
-        finally = grDevices::dev.off()
-    )
-
-    g.file <- tempfile(fileext = ".pdf")
-    grDevices::pdf(g.file)
-    g.res <- tryCatch(
-        .dg6d.gflow.function("plot2D.colored.graph")(
+    render.plot <- function(plot.function, file) {
+        grDevices::pdf(file)
+        on.exit(grDevices::dev.off(), add = TRUE)
+        par.before <- graphics::par(no.readonly = TRUE)
+        result <- plot.function(
             embedding,
             graph,
             colors,
             add.legend = FALSE
-        ),
-        finally = grDevices::dev.off()
+        )
+        par.after <- graphics::par(no.readonly = TRUE)
+        list(result = result, par.before = par.before, par.after = par.after)
+    }
+
+    d.file <- tempfile(fileext = ".pdf")
+    d.render <- render.plot(dgraphs::plot2D.colored.graph, d.file)
+    g.file <- tempfile(fileext = ".pdf")
+    g.render <- render.plot(
+        .dg6d.gflow.function("plot2D.colored.graph"),
+        g.file
     )
 
-    expect_equal(d.res, g.res, ignore_attr = TRUE)
+    expect_null(d.render$result)
+    expect_equal(
+        d.render$par.after[c("mar", "xpd")],
+        d.render$par.before[c("mar", "xpd")]
+    )
+
+    # The pinned gflow function returns the old xpd value from its final par()
+    # call and leaves its changed margins in place. dgraphs intentionally does
+    # neither, in accordance with CRAN's graphics-state policy.
+    expect_equal(g.render$result, list(xpd = FALSE))
+    expect_false(identical(g.render$par.after$mar, g.render$par.before$mar))
+
     expect_true(file.exists(d.file))
     expect_true(file.exists(g.file))
+    expect_gt(file.info(d.file)$size, 0)
+    expect_gt(file.info(g.file)$size, 0)
 })

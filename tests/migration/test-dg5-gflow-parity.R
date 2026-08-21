@@ -148,16 +148,45 @@ test_that("DG5 maximal packing and geodesic statistics match original gflow outp
         packing.precision = 0.01,
         verbose = FALSE
     )
-    .dg5.expect.gflow.parity(
-        "compute.vertex.geodesic.stats",
+    vertex.args <- list(
         adj.list = adj,
         weight.list = w,
-        grid.vertex = 3,
         min.radius = 0.2,
         max.radius = 0.5,
         n.steps = 2,
         n.packing.vertices = 3,
         packing.precision = 0.01
+    )
+    dgraphs.function <- get(
+        "compute.vertex.geodesic.stats",
+        envir = asNamespace("dgraphs"),
+        mode = "function",
+        inherits = FALSE
+    )
+    dgraphs.result <- suppressWarnings(do.call(
+        dgraphs.function,
+        c(vertex.args, list(grid.vertex = 3L))
+    ))
+    gflow.function <- .dg5.gflow.function("compute.vertex.geodesic.stats")
+    gflow.same.input <- suppressWarnings(do.call(
+        gflow.function,
+        c(vertex.args, list(grid.vertex = 3L))
+    ))
+    gflow.same.vertex <- suppressWarnings(do.call(
+        gflow.function,
+        c(vertex.args, list(grid.vertex = 4L))
+    ))
+
+    # The pinned gflow R wrapper and native wrapper both subtract one, so its
+    # public grid.vertex = 3 call analyzes vertex 2. dgraphs performs the
+    # 1-based to 0-based conversion once, in the native wrapper.
+    expect_identical(attr(dgraphs.result, "vertex"), 3L)
+    expect_identical(attr(gflow.same.input, "vertex"), 2L)
+    expect_equal(
+        .dg5.strip(dgraphs.result),
+        .dg5.strip(gflow.same.vertex),
+        tolerance = 1e-12,
+        ignore_attr = TRUE
     )
 })
 

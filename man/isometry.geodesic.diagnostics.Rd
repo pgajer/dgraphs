@@ -27,10 +27,11 @@ or equal to this value are excluded from relative metrics.}
 reference distances into short, middle, and long distance bands.}
 }
 \value{
-Named numeric vector with relative geodesic stress, signed residual
-bias, shortcut fraction, relative absolute residual quantiles, and
-median signed relative residuals in short/mid/long reference-distance
-bands.
+Named numeric vector with target-normalized graph-geodesic relative
+RMSE, signed residual bias, shortcut fraction, relative absolute residual
+quantiles, and median signed relative residuals in short/mid/long
+reference-distance bands. The relative-RMSE entry retains the historical
+name \code{rel_geodesic_stress}; it is not Kruskal's Stress-1.
 }
 \description{
 Computes signed and scale-regime diagnostics for comparing estimated graph

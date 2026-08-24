@@ -46,6 +46,12 @@ double adaptive_threshold(double sigma_i,
     return radius_factor * std::sqrt(sigma_i * sigma_j);
 }
 
+double inclusive_squared_radius(double radius) {
+    const double tol = 64.0 * std::numeric_limits<double>::epsilon();
+    const double expanded_radius = radius * (1.0 + tol) + tol;
+    return expanded_radius * expanded_radius;
+}
+
 void check_matrix(SEXP s_X, int& n, int& p) {
     if (!Rf_isMatrix(s_X) || TYPEOF(s_X) != REALSXP) {
         Rf_error("X must be a numeric matrix.");
@@ -257,7 +263,7 @@ extern "C" SEXP S_adaptive_radius_edges_ann(SEXP s_X,
         const double tol = 64.0 * std::numeric_limits<double>::epsilon();
         for (int i = 0; i < n; ++i) {
             const double search_radius = radius_factor * sigma[static_cast<size_t>(i)];
-            const double sq_radius = search_radius * search_radius;
+            const double sq_radius = inclusive_squared_radius(search_radius);
             int count = tree->annkFRSearch(data[i], sq_radius, 0, nullptr, nullptr, 0.0);
             if (count <= 0) {
                 continue;
@@ -453,12 +459,12 @@ extern "C" SEXP S_adaptive_radius_edges_ann_graphs(SEXP s_X,
                 sigma_i_by_k[k_pos] = sigma_i;
                 const double directional_radius = radius_factor * sigma_i;
                 directional_sq_radius_by_k[k_pos] =
-                    directional_radius * directional_radius;
+                    inclusive_squared_radius(directional_radius);
                 max_sigma_i = std::max(max_sigma_i, sigma_i);
             }
 
             const double search_radius = radius_factor * max_sigma_i;
-            const double sq_radius = search_radius * search_radius;
+            const double sq_radius = inclusive_squared_radius(search_radius);
             int count = tree->annkFRSearch(data[i], sq_radius, 0, nullptr, nullptr, 0.0);
             if (count <= 0) {
                 continue;

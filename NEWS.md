@@ -19,6 +19,12 @@
 
 ## Other changes
 
+* Fixes an ANN fixed-radius boundary issue that could omit adaptive-radius
+  edges lying exactly at a local-scale threshold. In particular, the
+  adaptive maximum-radius rule with factor one now reproduces symmetric-kNN
+  edges for exact, tie-free searches.
+* Clarifies that the historical `rel_geodesic_stress` diagnostic is a
+  target-normalized graph-geodesic relative RMSE, not Kruskal's Stress-1.
 * Adds a full workflow vignette covering graph construction, lifecycle
   diagnostics, connectivity repair, parameter sequences, conversion to
   `igraph`, and geodesic-isometry diagnostics.

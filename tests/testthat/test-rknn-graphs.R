@@ -5,6 +5,18 @@
     invisible(cpp.graphs)
 }
 
+.dg7.rknn.edge.keys <- function(graph) {
+    edges <- graph$edge_matrix
+    if (!nrow(edges)) {
+        return(character())
+    }
+    sort(sprintf(
+        "%d:%d",
+        pmin(edges[, 1L], edges[, 2L]),
+        pmax(edges[, 1L], edges[, 2L])
+    ))
+}
+
 test_that("create.rknn.graphs matches scalar adaptive-radius constructor", {
     X <- matrix(c(
         0.00, 0.00,
@@ -220,6 +232,55 @@ test_that("cpp.create.rknn.graphs matches R-level ANN backend", {
 
         expect_equal(cpp.graphs, r.graphs, tolerance = 1e-12)
     }
+})
+
+test_that("adaptive-max ANN includes kth-neighbor boundary edges", {
+    set.seed(20260820)
+    theta <- sort(c(
+        stats::runif(55L, 0, pi),
+        stats::runif(25L, pi, 2 * pi)
+    ))
+    X <- cbind(x = cos(theta), y = sin(theta)) +
+        matrix(stats::rnorm(160L, sd = 0.015), ncol = 2L)
+
+    symmetric <- create.sknn.graph(
+        X,
+        k = 6,
+        neighbor.method = "ann",
+        connect.components = FALSE
+    )
+    adaptive.ann <- create.rknn.graph(
+        X,
+        type = "adaptive.radius",
+        k.scale = 6,
+        radius.rule = "max",
+        radius.search = "ann",
+        connect.components = FALSE
+    )
+    adaptive.all.pairs <- create.rknn.graph(
+        X,
+        type = "adaptive.radius",
+        k.scale = 6,
+        radius.rule = "max",
+        radius.search = "all.pairs",
+        connect.components = FALSE
+    )
+    adaptive.batch <- create.rknn.graphs(
+        X,
+        k.values = 6,
+        radius.factor = 1,
+        radius.rule = "max",
+        radius.search = "ann",
+        backend = "cpp",
+        connect.components = FALSE
+    )$graphs[["6"]]
+
+    expected <- .dg7.rknn.edge.keys(symmetric)
+    expect_length(expected, 278L)
+    expect_identical(.dg7.rknn.edge.keys(adaptive.ann), expected)
+    expect_identical(.dg7.rknn.edge.keys(adaptive.all.pairs), expected)
+    expect_identical(.dg7.rknn.edge.keys(adaptive.batch), expected)
+    expect_equal(adaptive.ann$sigma, adaptive.all.pairs$sigma, tolerance = 1e-12)
 })
 
 test_that("cpp.create.rknn.graphs matches ANN backend for wider unordered k sweeps", {

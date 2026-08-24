@@ -33,6 +33,7 @@ REQUIRED = {
     "Makefile",
     "dgraphs.Rmd",
     "dgraphs.R",
+    "dgraphs.html",
     "dgraphs.tex",
     "dgraphs.pdf",
     "RJwrapper.tex",
@@ -75,8 +76,6 @@ def inspect_archive(archive_path: Path) -> str:
             errors.append(f"forbidden directory in archive: {relative}")
         if relative.suffix.lower() in FORBIDDEN_SUFFIXES:
             errors.append(f"forbidden build product in archive: {relative}")
-        if relative.name == "dgraphs.html":
-            errors.append("duplicate rendered HTML article is present")
     missing = sorted(REQUIRED.difference(relative_names))
     if missing:
         errors.append("missing required files: " + ", ".join(missing))

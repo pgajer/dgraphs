@@ -266,10 +266,11 @@ isometry.distance.correlations <- function(D.estimated,
 #' @param band.probs Numeric vector of two probabilities used to split
 #'   reference distances into short, middle, and long distance bands.
 #'
-#' @return Named numeric vector with relative geodesic stress, signed residual
-#'   bias, shortcut fraction, relative absolute residual quantiles, and
-#'   median signed relative residuals in short/mid/long reference-distance
-#'   bands.
+#' @return Named numeric vector with target-normalized graph-geodesic relative
+#'   RMSE, signed residual bias, shortcut fraction, relative absolute residual
+#'   quantiles, and median signed relative residuals in short/mid/long
+#'   reference-distance bands. The relative-RMSE entry retains the historical
+#'   name `rel_geodesic_stress`; it is not Kruskal's Stress-1.
 #'
 #' @examples
 #' D <- as.matrix(dist(1:4))

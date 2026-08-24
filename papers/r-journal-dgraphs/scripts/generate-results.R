@@ -163,20 +163,36 @@ benchmark.graph.families <- function() {
             seed = 15000L + 100L * s
         )
         truth <- circle.arc.distances(sample$theta)
-        upper <- upper.tri(truth)
-        truth.vector <- truth[upper]
 
         for (family in families) {
             elapsed <- system.time({
                 graph <- build.graph.family(family, sample$x, k)
             })[["elapsed"]]
-            igraph.graph <- dgraphs::as_igraph(graph)
-            graph.distances <- igraph::distances(
-                igraph.graph,
-                weights = igraph::E(igraph.graph)$weight
-            )[upper]
-            if (any(!is.finite(graph.distances))) {
+            final.distances <- dgraphs::graph.geodesic.distances(graph)
+            if (any(!is.finite(final.distances))) {
                 stop("Connectivity repair failed for ", family)
+            }
+            final.summary <- dgraphs::summarize.isometry.deviation(
+                final.distances,
+                truth,
+                scale = TRUE
+            )
+            final.diagnostics <- dgraphs::isometry.geodesic.diagnostics(
+                final.distances,
+                truth,
+                scale = TRUE
+            )
+            native.rel.rms.error <- NA_real_
+            if (graph$n_components_before == 1L) {
+                native.distances <- dgraphs::graph.geodesic.distances(
+                    graph,
+                    stage = "raw"
+                )
+                native.rel.rms.error <- dgraphs::isometry.rel.rms.error(
+                    native.distances,
+                    truth,
+                    scale = TRUE
+                )
             }
             at <- at + 1L
             rows[[at]] <- data.frame(
@@ -187,13 +203,16 @@ benchmark.graph.families <- function() {
                 repetition = scenarios$repetition[s],
                 k = k,
                 elapsed_seconds = elapsed,
-                edges = graph$n_edges,
-                components_before_repair = graph$n_components_before,
-                bridges_added = graph$n_components_before - graph$n_components_after,
-                normalized_mae = mean(abs(graph.distances - truth.vector)) /
-                    mean(truth.vector),
-                shortcut_fraction = mean(graph.distances < 0.9 * truth.vector),
-                distance_correlation = stats::cor(graph.distances, truth.vector)
+                native_edges = sum(lengths(graph$raw_adj_list)) / 2,
+                final_edges = graph$n_edges,
+                native_components = graph$n_components_before,
+                final_components = graph$n_components_after,
+                bridges_added = graph$n_mst_edges_added,
+                native_rel_rms_error = native.rel.rms.error,
+                final_rel_rms_error = final.summary$rel_rms_error,
+                final_shortcut_fraction =
+                    unname(final.diagnostics[["shortcut_fraction"]]),
+                final_distance_correlation = final.summary$pearson_cor
             )
         }
     }

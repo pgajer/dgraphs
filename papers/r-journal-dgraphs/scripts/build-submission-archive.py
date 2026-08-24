@@ -22,6 +22,7 @@ FILES = (
     "Makefile",
     "dgraphs.Rmd",
     "dgraphs.R",
+    "dgraphs.html",
     "dgraphs.tex",
     "dgraphs.pdf",
     "RJwrapper.tex",

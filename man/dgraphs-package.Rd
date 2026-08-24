@@ -17,11 +17,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Peter Gajer \email{pgajer@gmail.com}
+\strong{Maintainer}: Pawel Gajer \email{pgajer@gmail.com}
 
 Authors:
 \itemize{
-  \item Peter Gajer \email{pgajer@gmail.com}
+  \item Pawel Gajer \email{pgajer@gmail.com}
 }
 
 Other contributors:

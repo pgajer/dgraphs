@@ -1,15 +1,15 @@
 ---
 title: "Motivation letter: dgraphs"
 author: "Pawel Gajer"
-date: "2026-08-20"
+date: "2026-08-24"
 output: pdf_document
 geometry: margin=1in
 ---
 
 Dear Editors,
 
-Please consider the package article, “dgraphs: Constructing, Selecting, and
-Diagnosing Data-Derived Graphs in R,” for publication in *The R Journal*.
+Please consider the package article, “dgraphs: Constructing and Assessing
+Data-Derived Graphs in R,” for publication in *The R Journal*.
 The lowercase initial in `dgraphs` is intentional: the title retains the
 package's official spelling despite the title-case diagnostic from `rjtools`.
 
@@ -25,12 +25,22 @@ utilities, and `igraph` interoperability.
 The article's contribution is the software design and its reproducible use,
 not a claim to a new graph construction. It includes an end-to-end example,
 edge-set parity checks against `FNN` and `dbscan`, and a factor-specific
-comparison of graph geodesics under changes in sample size, density, and
-noise. The benchmark scripts, raw results, session metadata, and citation
-verification record accompany the source.
+comparison that separates native construction and connectivity repair before
+assessing final graph-geodesic fidelity. The benchmark scripts, raw results,
+session metadata, and citation verification record accompany the source.
 
-Version 0.2.0 of the package will be available on CRAN before this article is
-submitted and is developed publicly at <https://github.com/pgajer/dgraphs>.
+We intend to submit a separate companion package article about `grip` at the
+same time. The manuscripts use a shared two-stage notation but do not duplicate
+their software contributions. This `dgraphs` article covers construction of a
+data-derived graph and fidelity of data dissimilarities to graph geodesics
+($X\to G$, comparing $D_X$ with $D_G$). The `grip` article begins with a fixed
+graph and covers layout, scoring, and refinement of its coordinate
+representation ($G\to Z$, comparing $D_G$ with $D_{G,Z}$). Each package has
+its own code, examples, experiments, source archive, and motivation letter.
+
+Version 0.2.0 of `dgraphs` and the companion 0.2.0 release of `grip` will be
+available on CRAN before the articles are submitted. `dgraphs` is developed
+publicly at <https://github.com/pgajer/dgraphs>.
 The article is original, is not under review elsewhere, and has been prepared
 using the current R Journal article template and checking tools.
 

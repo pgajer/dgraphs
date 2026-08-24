@@ -4,6 +4,9 @@ This is a subsequent release of `dgraphs`. Version 0.2.0 deliberately removes
 deprecated, superseded, and low-level public entry points introduced in the
 initial 0.1.0 release.
 
+The maintainer's first name is corrected from "Peter" to "Pawel" in
+`Authors@R`; the maintainer and email address are otherwise unchanged.
+
 ## Changes in version 0.2.0
 
 * Removed the deprecated `create.radius.graph()` and
@@ -21,6 +24,11 @@ initial 0.1.0 release.
   `calculate.edit.distances()`, and `create.distance.plot()`.
 * Updated documentation, tests, installed-package self-containment checks,
   vignettes, and the package-paper materials for the revised API.
+* Fixed an ANN fixed-radius boundary issue. The adaptive maximum-radius rule
+  with factor one now reproduces symmetric-kNN edges for exact, tie-free
+  searches in both scalar and batched constructors.
+* Clarified that the historical `rel_geodesic_stress` result is a
+  target-normalized graph-geodesic relative RMSE, not Kruskal's Stress-1.
 
 These removals are intentional breaking changes and are documented in
 `NEWS.md`.
@@ -29,7 +37,7 @@ These removals are intentional breaking changes and are documented in
 
 * macOS 26.6.1 (Apple Silicon), R-devel 4.7.0 (2026-06-24 r90190),
   Apple clang 21.0.0, GNU Fortran 14.2.0:
-  0 errors | 0 warnings | 2 notes
+  0 errors | 0 warnings | 1 note
 * GitHub Actions, Ubuntu, R-devel, R release, and R oldrel-1:
   0 errors | 0 warnings | 0 notes on each configuration
 * R-hub, R-devel, Linux, Windows, and macOS:
@@ -44,19 +52,11 @@ These removals are intentional breaking changes and are documented in
 
 ## R CMD check results
 
-0 errors | 0 warnings | 2 notes
+0 errors | 0 warnings | 1 note
 
 ## Notes
 
-The local R-devel check reports this incoming-feasibility note:
-
-```
-Maintainer: 'Peter Gajer <pgajer@gmail.com>'
-
-Days since last update: 1
-```
-
-The second note is local-environment-only: the installed HTML Tidy is too old
+The note is local-environment-only: the installed HTML Tidy is too old
 for R-devel's HTML-manual validation. The PDF and HTML manuals were both built
 successfully, and all Rd checks passed.
 
@@ -66,7 +66,7 @@ manual checks passed.
 
 ## Additional checks
 
-* All 381 package expectations pass locally under R-devel.
+* All 387 package expectations pass locally under R-devel.
 * The source tarball contains no compiled objects or shared libraries.
 * The R Journal paper audit, including citation verification and the package
   article readiness scan, passes for version 0.2.0.

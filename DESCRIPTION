@@ -2,7 +2,7 @@ Package: dgraphs
 Title: Data-Derived Graph Construction Utilities
 Version: 0.2.0
 Authors@R: c(
-    person("Peter", "Gajer", role = c("aut", "cre"),
+    person("Pawel", "Gajer", role = c("aut", "cre"),
            email = "pgajer@gmail.com"),
     person("Sunil", "Arya", role = "ctb",
            comment = "ANN library"),

@@ -1,24 +1,24 @@
 ---
-title: "dgraphs: Constructing, Selecting, and Diagnosing Data-Derived Graphs in R"
-date: "2026-08-21"
+title: "dgraphs: Constructing and Assessing Data-Derived Graphs in R"
+date: "2026-08-24"
 abstract: >
-  Data-derived graphs turn numerical observations into vertices and local
-  proximity relations into edges. Small choices in the construction rule can
-  alter connectivity, graph geodesics, and downstream spectral analyses.
-  The dgraphs package provides mutual and symmetric k-nearest-neighbor graphs,
-  shared- and intersection-neighbor graphs, fixed and adaptive radius graphs,
-  continuous-kNN graphs, graph-geodesic iterations, and minimum-spanning-tree
-  completion in one R interface. Constructors preserve native, pruned, and
-  connectivity-repaired lifecycle stages instead of silently replacing the
-  original graph. Parameter sequences, structural stability summaries,
-  geodesic diagnostics, path utilities, spectral embeddings, and conversion
-  to igraph support an inspectable workflow from construction to analysis. We
-  describe the object design, demonstrate the workflow on a variable-density
-  circular point cloud, verify symmetric-kNN edge parity with FNN and dbscan,
-  and compare four construction families in a controlled geodesic experiment.
-  The package does not select a universally correct graph: its purpose is to
-  make graph assumptions and their consequences explicit and reproducible.
-draft: true
+  A data-derived graph represents observations by vertices and weighted edges,
+  raising the question of how faithfully its shortest-path geometry represents
+  the data geometry that an analysis is intended to preserve. The dgraphs
+  package constructs mutual and symmetric nearest-neighbor graphs, shared- and
+  intersection-neighbor graphs, fixed and adaptive radius graphs,
+  continuous-nearest-neighbor graphs, graph-geodesic iterations, and
+  minimum-spanning-tree completions. Constructors retain native, pruned, and
+  connectivity-repaired stages so that added support edges remain
+  distinguishable from the original neighborhood model. The package provides
+  target-normalized graph-geodesic relative error, distortion, correlation,
+  and distance-band diagnostics, together with parameter sequences, path and
+  spectral utilities, and conversion to igraph. We describe the software
+  design, demonstrate a construction-and-assessment workflow on a controlled
+  circular example, verify edge parity with FNN and dbscan, and compare four
+  graph families across sample size, sampling density, and noise. The aim is
+  not to prescribe a universally correct graph, but to expose construction and
+  repair choices and quantify their geometric consequences.
 author:
   - name: Pawel Gajer
     affiliation: University of Maryland School of Medicine
@@ -102,16 +102,52 @@ names(pipeline.summary)[names(pipeline.summary) == "elapsed_seconds"] <-
 
 family.summary <- stats::aggregate(
   cbind(
-    edges,
-    components_before_repair,
+    native_edges,
+    final_edges,
+    native_components,
+    final_components,
     bridges_added,
-    normalized_mae,
-    shortcut_fraction,
-    distance_correlation
+    final_rel_rms_error,
+    final_shortcut_fraction,
+    final_distance_correlation
   ) ~ family + n + density + noise,
   family.raw,
   stats::median
 )
+
+scenario.id <- interaction(
+  family.summary$n,
+  family.summary$density,
+  family.summary$noise,
+  drop = TRUE
+)
+family.summary$is.best <- ave(
+  family.summary$final_rel_rms_error,
+  scenario.id,
+  FUN = function(value) value == min(value)
+)
+
+family.lifecycle <- do.call(rbind, lapply(
+  split(family.raw, family.raw$family),
+  function(data) {
+    data.frame(
+      Family = data$family[[1L]],
+      Connected = sum(data$native_components == 1L),
+      Components = stats::median(data$native_components),
+      Bridges = stats::median(data$bridges_added),
+      `Final RelRMSE` = stats::median(data$final_rel_rms_error),
+      check.names = FALSE
+    )
+  }
+))
+winner.counts <- stats::aggregate(
+  is.best ~ family,
+  family.summary,
+  sum
+)
+family.lifecycle$Wins <- winner.counts$is.best[
+  match(family.lifecycle$Family, winner.counts$family)
+]
 
 set.seed(20260820)
 n.example <- 80L
@@ -124,6 +160,60 @@ X <- cbind(x = cos(theta), y = sin(theta)) +
 ```
 
 # Introduction
+
+Many analyses first represent observations by a graph and then represent that
+graph in low-dimensional coordinates. Fidelity has two corresponding parts:
+whether graph geodesics preserve the data dissimilarities of interest, and
+whether an embedding preserves the graph's intrinsic geometry. The
+`dgraphs` package addresses the first question; the companion \CRANpkg{grip}
+package addresses the second [@gripPackage]:
+
+$$
+X
+\xrightarrow[
+  D_X\ \text{versus}\ D_G
+]{
+  \substack{\texttt{dgraphs}\\
+  \text{construction and assessment}}
+}
+G
+\xrightarrow[
+  D_G\ \text{versus}\ D_{G,Z}
+]{
+  \substack{\texttt{grip}\\
+  \text{layout, scoring, and refinement}}
+}
+Z\subset\mathbb{R}^m.
+$$
+
+Here $X=\{x_1,\ldots,x_n\}$ denotes the observations,
+$G=(V,E,\ell)$ is a weighted graph on them, and $Z$ is a coordinate
+configuration for the vertices. The matrix $D_X=(d_{ij}^X)$ contains the data
+dissimilarities that the analysis aims to preserve. Depending on the
+application, these may be observed Euclidean distances, known intrinsic
+distances in a controlled example, or domain-specific dissimilarities. The
+matrix $D_G=(d_{ij}^G)$ contains weighted shortest-path distances in $G$, and
+$D_{G,Z}$ describes graph paths after embedding. This article concerns
+$D_X$ versus $D_G$; it does not assess the second transformation.
+
+With the profiled scale
+$\alpha=\sum_{i<j}d_{ij}^Gd_{ij}^X/\sum_{i<j}(d_{ij}^G)^2$, the primary
+fidelity loss used here is the target-normalized graph-geodesic relative RMSE
+
+$$
+\mathcal L_{X\to G}
+=
+\sqrt{
+  \frac{\sum_{i<j}(\alpha d_{ij}^G-d_{ij}^X)^2}
+       {\sum_{i<j}(d_{ij}^X)^2}
+}.
+$$
+
+This is the quantity returned by `isometry.rel.rms.error()` and the
+`rel_rms_error` field of `summarize.isometry.deviation()`. It is normalized by
+the target distances and is not Kruskal's Stress-1. Other package diagnostics
+describe correlation, multiplicative distortion, shortcuts, and bias across
+distance ranges.
 
 A data-derived graph has one vertex for each observation and edges determined
 from distances or neighbor relations. Such graphs are inputs to manifold
@@ -217,10 +307,12 @@ from $x_i$ to its $k$th neighbor. The principal undirected rules are:
 \]
 
 The adaptive rules use `min`, `max`, or geometric-mean choices for $f$; the
-geometric-mean case is CkNN. The package also provides intersection-kNN graphs,
-which retain information about shared neighborhoods, and iterated
-graph-geodesic constructions that replace the ambient distance by shortest
-paths on a preceding graph.
+geometric-mean case is CkNN. With $\delta=1$, the maximum-radius rule is
+equivalent to symmetric kNN under exact, tie-free neighbor calculations. The
+package tests this identity across its exact and ANN-backed implementations.
+The package also provides intersection-kNN graphs, which retain information
+about shared neighborhoods, and iterated graph-geodesic constructions that
+replace the ambient distance by shortest paths on a preceding graph.
 
 Every current constructor returns aligned `adj_list` and `weight_list` fields.
 Weights are Euclidean edge lengths unless a documented function states
@@ -250,7 +342,8 @@ accessible.kable(
     "connectivity repair. Rows distinguish native, operation-order, and final",
     "representations so repair edges are not mistaken for neighborhood edges."
   ),
-  row.names = FALSE
+  row.names = FALSE,
+  position = "H"
 )
 ```
 
@@ -259,62 +352,151 @@ path finite but does not make that bridge part of the native neighborhood
 model. Keeping both stages permits downstream code to distinguish a support
 edge from a repair edge.
 
-# An inspectable construction workflow
+# A construction-and-assessment workflow
 
 We use a noisy circular point cloud with unequal sample counts on the two
-semicircles. The known circular ordering supplies a reference geodesic, while
-the density imbalance stresses globally scaled constructions.
+semicircles. Its known circular ordering supplies $D_X$ through shorter-arc
+distances, while the density imbalance challenges globally scaled
+constructions. A compact constructor comparison uses a nominal neighborhood
+scale of seven. Fixed-radius construction uses the median seventh-neighbor
+distance.
 
 ```{r candidate-graphs}
+pairwise.distance <- as.matrix(stats::dist(X))
+diag(pairwise.distance) <- Inf
+fixed.radius <- stats::median(
+  apply(pairwise.distance, 1L, sort, partial = 7L)[7L, ]
+)
+
 graphs <- list(
   mutual = create.mknn.graph(
-    X, k = 6, connect.components = TRUE
+    X, k = 7, connect.components = TRUE
   ),
   symmetric = create.sknn.graph(
-    X, k = 6, neighbor.method = "ann", connect.components = TRUE
+    X, k = 7, neighbor.method = "ann", connect.components = TRUE
   ),
   continuous = create.cknn.graph(
-    X, k.scale = 6, delta = 1, connect.components = TRUE
+    X, k.scale = 7, delta = 1, connect.components = TRUE
   ),
-  adaptive.max = create.rknn.graph(
-    X, type = "adaptive.radius", k.scale = 6,
-    radius.rule = "max", connect.components = TRUE
+  fixed.radius = create.rknn.graph(
+    X, type = "fixed", radius = fixed.radius, connect.components = TRUE
   )
 )
 ```
 
-```{r candidate-summary, echo=FALSE, tab.alt="Four-row table comparing mutual kNN, symmetric kNN, continuous kNN, and adaptive maximum-radius graphs by edge count, connected components before and after repair, and the number of bridge edges. Symmetric kNN is connected without repair in this example; the other rows show any required bridges."}
+```{r candidate-summary, echo=FALSE, tab.alt="Four-row table comparing mutual kNN, symmetric kNN, continuous kNN, and fixed-radius graphs at nominal scale seven. It reports native edges and components, bridge edges, and final edges and components. Symmetric kNN is natively connected; each other graph requires one bridge."}
 candidate.summary <- do.call(rbind, lapply(names(graphs), function(name) {
   graph <- graphs[[name]]
   data.frame(
     graph = name,
-    edges = graph$n_edges,
-    raw_components = graph$n_components_before,
-    final_components = graph$n_components_after,
-    bridges = graph$n_mst_edges_added
+    native_edges = sum(lengths(graph$raw_adj_list)) / 2,
+    native_components = graph$n_components_before,
+    bridges = graph$n_mst_edges_added,
+    final_edges = graph$n_edges,
+    final_components = graph$n_components_after
   )
 }))
 names(candidate.summary) <- c(
-  "Graph", "Edges", "Raw components", "Final components", "Bridges"
+  "Graph", "Native edges", "Native comp.", "Bridges",
+  "Final edges", "Final comp."
 )
 accessible.kable(
   candidate.summary,
   caption = paste(
-    "Candidate graphs for the variable-density circle. Edge counts describe",
-    "graph size; component and bridge columns show how much connectivity repair",
-    "contributes to each final graph."
+    "Candidate graphs at nominal scale seven. Native edge and component counts",
+    "describe the constructor before repair; bridge and final columns show the",
+    "effect of component-MST completion. Only symmetric kNN is natively",
+    "connected in this example."
   ),
-  row.names = FALSE
+  row.names = FALSE,
+  position = "H"
 )
 ```
 
-The edge count is descriptive rather than an objective to maximize. The
-component and bridge columns reveal how much of the final connected graph came
-from repair.
+The edge count is descriptive rather than an objective to maximize. The stage
+columns separate the neighborhood rule from component repair. In particular,
+the final graph for a disconnected native construction represents a
+constructor-plus-repair procedure.
 
-```{r workflow-figure, echo=FALSE, fig.pos="H", fig.cap="Continuous-kNN graph on a variable-density circular point cloud. Gray segments are final graph edges; blue points are observations. The constructor retains native and repaired stages separately.", fig.alt="A circular point cloud with denser sampling on the upper semicircle. Gray edges connect nearby blue points around the circle."}
-selected <- graphs$continuous
-edge.matrix <- convert.adjacency.to.edge.matrix(selected$adj_list)$edge.matrix
+We next vary $k$ for symmetric kNN. The controlled reference permits a stated
+selection rule: restrict attention to natively connected candidates and select
+the smallest target-normalized graph-geodesic relative RMSE. This use of known
+arc distances is specific to the example; an applied analysis needs a
+scientifically justified reference or sensitivity criterion.
+
+```{r parameter-sequence, results="hide"}
+angle.difference <- abs(outer(theta, theta, "-"))
+reference.distance <- pmin(angle.difference, 2 * pi - angle.difference)
+k.values <- 3:9
+
+symmetric.sequence <- stats::setNames(lapply(k.values, function(k) {
+  create.sknn.graph(
+    X,
+    k = k,
+    neighbor.method = "ann",
+    connect.components = TRUE
+  )
+}), k.values)
+
+symmetric.statistics <- do.call(
+  "rbind",
+  lapply(symmetric.sequence, function(graph) {
+    final.distance <- graph.geodesic.distances(graph)
+    native.rel.rms <- if (graph$n_components_before == 1L) {
+      isometry.rel.rms.error(
+        graph.geodesic.distances(graph, stage = "raw"),
+        reference.distance,
+        scale = TRUE
+      )
+    } else {
+      NA_real_
+    }
+    data.frame(
+      k = graph$k,
+      native_edges = sum(lengths(graph$raw_adj_list)) / 2,
+      native_components = graph$n_components_before,
+      bridges = graph$n_mst_edges_added,
+      native_rel_rmse = native.rel.rms,
+      final_rel_rmse = isometry.rel.rms.error(
+        final.distance,
+        reference.distance,
+        scale = TRUE
+      )
+    )
+  })
+)
+
+eligible <- symmetric.statistics$native_components == 1L
+selected.row <- which(eligible)[which.min(
+  symmetric.statistics$final_rel_rmse[eligible]
+)]
+selected.k <- symmetric.statistics$k[[selected.row]]
+selected <- symmetric.sequence[[as.character(selected.k)]]
+```
+
+```{r parameter-table, echo=FALSE, tab.alt="Seven-row symmetric-kNN parameter table for k values three through nine. It reports native edges, native components, bridge edges, and target-normalized relative RMSE before and after repair. Native loss is unavailable for disconnected graphs. The first natively connected graph, k seven, has the lowest eligible final loss."}
+names(symmetric.statistics) <- c(
+  "k", "Native edges", "Native components", "Bridges",
+  "Native RelRMSE", "Final RelRMSE"
+)
+accessible.kable(
+  symmetric.statistics,
+  caption = paste(
+    "Symmetric-kNN candidates over seven neighborhood scales. Relative RMSE",
+    "compares graph geodesics with known shorter-arc distances after scale",
+    "calibration. Native values are undefined when the native graph is",
+    "disconnected. Under the stated rule, k =", selected.k, "is selected."
+  ),
+  row.names = FALSE,
+  digits = 3,
+  position = "H"
+)
+```
+
+```{r workflow-figure, echo=FALSE, fig.pos="!htbp", fig.cap="Selected symmetric-kNN graph on the variable-density circular point cloud. Gray segments are native neighborhood edges and blue points are observations. The selected k = 7 graph is natively connected, so component repair adds no bridge. Selection used the lowest target-normalized graph-geodesic relative RMSE among natively connected candidates.", fig.alt="A circular point cloud with denser sampling on the upper semicircle. Gray symmetric-nearest-neighbor edges connect blue observations around the circle without a component-repair bridge."}
+native.edge.matrix <- convert.adjacency.to.edge.matrix(
+  selected$raw_adj_list
+)$edge.matrix
 
 graphics::plot(
   X,
@@ -325,54 +507,26 @@ graphics::plot(
   ylab = "Coordinate 2"
 )
 graphics::segments(
-  X[edge.matrix[, 1L], 1L], X[edge.matrix[, 1L], 2L],
-  X[edge.matrix[, 2L], 1L], X[edge.matrix[, 2L], 2L],
+  X[native.edge.matrix[, 1L], 1L], X[native.edge.matrix[, 1L], 2L],
+  X[native.edge.matrix[, 2L], 1L], X[native.edge.matrix[, 2L], 2L],
   col = grDevices::adjustcolor("grey30", alpha.f = 0.42)
 )
 graphics::points(X, pch = 19, col = "#1F5A94")
 ```
 
-Plural constructors make parameter sweeps explicit and return a statistics
-table rather than requiring users to reconstruct diagnostics from each object.
+Several graph families also provide plural constructors that return aligned
+objects and structural statistics over a parameter sequence. For
+intersection-kNN sequences, `compute.stability.metrics()` compares consecutive
+graphs using edit distance and Jensen--Shannon divergence between graph-summary
+distributions. `build.iknn.graphs.and.selectk()` adds rules based on structural
+stability, label mixing, or both, returning the full curves, chosen indices,
+and selection evidence.
 
-```{r parameter-sequence, results="hide"}
-radius.sequence <- create.rknn.graphs(
-  X,
-  k.values = 3:7,
-  radius.search = "ann",
-  connect.components = TRUE
-)
-radius.statistics <- radius.sequence$k_statistics[, c(
-  "k", "n_edges_before_pruning", "n_components_before",
-  "n_mst_edges_added", "n_components_after"
-)]
-```
-
-```{r parameter-table, echo=FALSE, tab.alt="Five-row parameter-sequence table for k values three through seven, reporting native edges, native connected components, bridge edges, and final connected components. Increasing k adds edges and generally reduces the repair needed for connectivity."}
-colnames(radius.statistics) <- c(
-  "k", "Native edges", "Native components", "Bridges", "Final components"
-)
-accessible.kable(
-  radius.statistics,
-  caption = paste(
-    "Adaptive-radius sequence over five neighborhood scales. Native edge and",
-    "component counts are reported separately from MST bridges and final",
-    "connectivity, exposing the effect of scale before repair."
-  ),
-  row.names = FALSE
-)
-```
-
-For intersection-kNN sequences, `compute.stability.metrics()` compares
-consecutive graphs using edit distance and Jensen--Shannon divergence between
-graph-summary distributions. `build.iknn.graphs.and.selectk()` adds explicit
-selection rules based on structural stability, label mixing, or both. These
-functions return the full curves, chosen indices, and the evidence used for
-selection.
+\FloatBarrier
 
 # Geodesics, summaries, and interoperability
 
-The final continuous-kNN graph can be converted directly to an `igraph`
+The selected symmetric-kNN graph can be converted directly to an `igraph`
 object. Conversion preserves isolated vertices, vertex names when available,
 edge lengths in the `weight` attribute, and graph-specific attributes such as
 intersection size when present.
@@ -393,32 +547,39 @@ degree.summary$pmf
 
 `graph.geodesic.distances()` computes weighted shortest-path distances. For
 the circular example, the shorter angular arc is a known reference. The
-isometry diagnostics quantify scale-adjusted stress, distance correlation,
-shortcut frequency, and bias over distance ranges.
+isometry summary reports the profiled scale, target-normalized relative RMSE,
+distance correlations, multiplicative distortion, shortcut frequency, and
+bias over distance ranges.
 
 ```{r geodesic-diagnostics, results="hide"}
 graph.distance <- graph.geodesic.distances(selected)
-angle.difference <- abs(outer(theta, theta, "-"))
-reference.distance <- pmin(angle.difference, 2 * pi - angle.difference)
-
-geodesic.diagnostics <- round(isometry.geodesic.diagnostics(
+geodesic.summary <- summarize.isometry.deviation(
   graph.distance,
-  reference.distance
-), 3)
+  reference.distance,
+  scale = TRUE
+)
+geodesic.diagnostics <- round(unlist(geodesic.summary[c(
+  "scale", "rel_rms_error", "rel_abs_error_median", "rel_abs_error_q95",
+  "distortion_q05", "distortion_median", "distortion_q95",
+  "pearson_cor", "spearman_cor", "shortcut_fraction",
+  "short_band_bias", "mid_band_bias", "long_band_bias"
+)]), 3)
 ```
 
-```{r geodesic-table, echo=FALSE, tab.alt="Two-column table of scale-adjusted geodesic diagnostics for the selected continuous-kNN graph. Rows report calibration scale, relative errors, distance correlations, distortion quantiles, shortcut frequency, and distance-range bias summaries."}
+```{r geodesic-table, echo=FALSE, tab.alt="Two-column table of scale-adjusted geodesic diagnostics for the selected symmetric-kNN graph. Rows report calibration scale, target-normalized relative RMSE, relative absolute error, distortion quantiles, distance correlations, shortcut frequency, and distance-range bias."}
 accessible.kable(
   data.frame(
     Metric = names(geodesic.diagnostics),
     Value = as.numeric(geodesic.diagnostics)
   ),
   caption = paste(
-    "Geodesic fidelity of the selected continuous-kNN graph relative to known",
-    "shorter-arc distances. The rows summarize calibration, error, correlation,",
-    "distortion, shortcuts, and distance-range bias."
+    "Geodesic fidelity of the selected symmetric-kNN graph relative to known",
+    "shorter-arc distances. Relative RMSE is target-normalized after profiled",
+    "scale calibration; the remaining rows describe relative error, distortion,",
+    "correlation, shortcuts, and distance-range bias."
   ),
-  row.names = FALSE
+  row.names = FALSE,
+  position = "H"
 )
 ```
 
@@ -426,7 +587,7 @@ The same representation supports path extraction, endpoint scoring, local
 extrema, graph spectra, and spectral embeddings. Their interpretation still
 depends on connectivity, repair edges, and geodesic distortion.
 
-# Comparative validation
+# Comparing graph constructions with common diagnostics
 
 ## Symmetric-kNN edge parity and timing scope
 
@@ -439,7 +600,7 @@ compute Euclidean edge weights. Each scenario was warmed up and timed three
 times. All `r nrow(pipeline.raw)` retained runs reproduced exactly the same
 undirected edge set; ties were absent in these continuous random data.
 
-```{r pipeline-timing, echo=FALSE, fig.pos="H", fig.cap="End-to-end symmetric-kNN graph construction times; points are medians of three runs. FNN was fastest in all tested scenarios. dgraphs remained within the same order of magnitude while also assembling lifecycle diagnostics, and it was slightly faster than the dbscan pipeline at 1,500 and 3,000 observations in 50 dimensions. Times were measured on the recorded single-process R-devel system.", fig.alt="Faceted line plots of construction time by sample size for dgraphs, FNN, and dbscan in 2, 10, and 50 dimensions. FNN is fastest throughout. Runtime increases with sample size and dimension; dgraphs and dbscan are close in 50 dimensions."}
+```{r pipeline-timing, echo=FALSE, fig.pos="!htbp", fig.cap="End-to-end symmetric-kNN graph construction times; points are medians of three runs. FNN was fastest in all tested scenarios. dgraphs remained within the same order of magnitude while also assembling lifecycle diagnostics. Times were measured with one process on the release-R system recorded in the accompanying benchmark metadata.", fig.alt="Faceted line plots of construction time by sample size for dgraphs, FNN, and dbscan in 2, 10, and 50 dimensions. FNN is fastest throughout, while dgraphs and dbscan have similar orders of growth. Runtime increases with sample size and dimension."}
 ggplot(
   pipeline.summary,
   aes(x = n, y = median_seconds, color = backend)
@@ -478,33 +639,73 @@ shorter-arc distance is known. We varied sample size (100 or 200), angular
 density (uniform or uneven), and coordinate noise (0.005 or 0.05), with three
 replicates per setting. Mutual-kNN, symmetric-kNN, CkNN, and fixed-radius graphs
 used a nominal scale of six neighbors. The fixed radius was the median sixth-
-neighbor distance. Exact component-MST repair was enabled for every family.
+neighbor distance. Each constructor first produced its native graph; exact
+component-MST repair was then applied only when that graph was disconnected.
+
+Native component counts and bridge counts evaluate the construction rule
+before and during repair. The fidelity plot instead evaluates the connected
+final graph. Its target-normalized graph-geodesic relative RMSE therefore
+describes the complete constructor-plus-repair procedure whenever bridges were
+needed. A native all-pairs geodesic loss is intentionally not reported for a
+disconnected graph because its infinite between-component distances do not
+define the finite loss used here.
 
 The experiment evaluates sensitivity rather than establishing a general
-ordering. Symmetric-kNN produced the fewest disconnected native graphs and the
-smallest displayed median geodesic error in these settings, while the other
-families more often required repair. The magnitude of the differences and the
-ordering among the remaining families changed with density, noise, and sample
-size. The raw replicate-level results, generation script, edge-parity checks,
-and session metadata accompany the article so that the comparison can be
-audited or extended.
+ordering. Symmetric-kNN attained the lowest scenario median most often and was
+natively connected more often than the other families in these settings. The
+magnitude of the differences and the ordering among the remaining families
+changed with density, noise, and sample size. The raw replicate-level results,
+generation script, edge-parity checks, and session metadata accompany the
+article so that the comparison can be audited or extended.
 
-```{r family-fidelity, echo=FALSE, fig.pos="!t", fig.cap="Median normalized absolute geodesic error across graph families; lower values indicate closer agreement with known circular arc distances. Symmetric-kNN has the lowest displayed median in every setting, with the largest separation under uneven sampling. Each point summarizes three replicates, and connectivity repair was enabled for all graphs; the result is specific to this controlled circle experiment.", fig.alt="Four faceted line plots comparing normalized geodesic error for mutual kNN, symmetric kNN, continuous kNN, and fixed-radius graphs at 100 and 200 points. Symmetric kNN is lowest in each density and noise panel, especially under uneven density."}
+```{r family-fidelity, echo=FALSE, fig.pos="!htbp", fig.cap="Final target-normalized graph-geodesic relative RMSE across graph families; lower values indicate closer agreement with known circular arc distances after profiled scale calibration. Faint points are individual replicates and lines connect three-replicate scenario medians. Component-MST repair was applied when a native graph was disconnected, so these values assess the complete constructor-plus-repair procedure. Symmetric kNN attains the lowest scenario median most often in this controlled experiment.", fig.alt="Four faceted plots compare final target-normalized graph-geodesic relative RMSE for mutual kNN, symmetric kNN, continuous kNN, and fixed-radius graphs at 100 and 200 observations. Faint symbols show replicates and connected symbols show medians. Symmetric kNN most often has the lowest median, but the ordering varies by density, noise, and sample size."}
 ggplot(
-  family.summary,
-  aes(x = n, y = normalized_mae, color = family)
+  family.raw,
+  aes(
+    x = n,
+    y = final_rel_rms_error,
+    color = family,
+    shape = family
+  )
 ) +
-  geom_line(linewidth = 0.65) +
-  geom_point(size = 1.8) +
+  geom_point(
+    alpha = 0.28,
+    size = 1.5,
+    position = position_jitter(width = 2.5, height = 0)
+  ) +
+  geom_line(
+    data = family.summary,
+    aes(linetype = family, group = family),
+    linewidth = 0.7
+  ) +
+  geom_point(data = family.summary, size = 2) +
   facet_grid(noise ~ density, labeller = label_both) +
   scale_color_brewer(palette = "Dark2") +
   labs(
     x = "Observations",
-    y = "Median normalized absolute error",
-    color = "Graph family"
+    y = "Final graph-geodesic relative RMSE",
+    color = "Graph family",
+    shape = "Graph family",
+    linetype = "Graph family"
   ) +
   theme_bw(base_size = 9.5) +
   theme(legend.position = "bottom")
+```
+
+```{r family-lifecycle-table, echo=FALSE, tab.alt="Four-row table separating native connectivity and repair from final geodesic fidelity for mutual kNN, symmetric kNN, continuous kNN, and fixed-radius graphs. It reports the number of natively connected replicate runs, median native components, median bridge edges, median final relative RMSE, and the number of scenario medians won."}
+accessible.kable(
+  family.lifecycle,
+  caption = paste(
+    "Construction and repair results across 24 replicate runs per graph",
+    "family. Connected is the number of natively connected runs; Components",
+    "and Bridges are medians. Final relative RMSE includes component-MST repair",
+    "when needed. Wins counts the lowest median among eight combinations of",
+    "sample size, density, and noise; ties, if any, count for each family."
+  ),
+  row.names = FALSE,
+  digits = 3,
+  position = "H"
+)
 ```
 
 \FloatBarrier
@@ -513,18 +714,28 @@ ggplot(
 
 `dgraphs` assumes finite numerical observations and currently centers its fast
 native constructors on Euclidean distance. ANN-backed searches are exact at
-the supported tolerance; deterministic ties can still be backend-dependent and
-should be tested with `neighbor.method = "exact"` when tie semantics matter.
+the supported tolerance, including points on an adaptive-radius boundary;
+deterministic ties can still be backend-dependent and should be tested with
+`neighbor.method = "exact"` when tie semantics matter.
 Some pruning methods are experimental and are labeled as such in the help
 pages. Connectivity repair guarantees a connected final graph when possible,
 but it does not validate that the added bridges represent scientific
-continuity. Likewise, a stable parameter curve does not prove that a graph
-recovers a latent manifold.
+continuity. A fidelity score for a repaired graph assesses both its native
+constructor and the repair rule. Likewise, a stable parameter curve does not
+prove that a graph recovers a latent manifold.
 
 The package is therefore most useful when graph construction is treated as a
 modeling decision. Users should compare lifecycle stages, inspect repair
 edges, examine parameter sequences, and evaluate downstream quantities against
 domain-specific references or sensitivity analyses.
+
+The package stops at the first transformation in the opening diagram:
+constructing $G$ and comparing $D_X$ with $D_G$. The companion `grip` work
+begins with an already specified graph and assesses coordinate representations
+through $D_G$ versus $D_{G,Z}$. Keeping these stages separate makes graph-model
+error distinguishable from layout error.
+
+\FloatBarrier
 
 # Summary and availability
 
@@ -539,4 +750,10 @@ vignette("data-derived-graph-workflow", package = "dgraphs")
 ```
 
 The article source, benchmark scripts, raw CSV results, and citation
-verification record are maintained with the package repository.
+verification record are maintained with the package repository. Figures and
+tables were generated with `ggplot2` [@ggplot2Book] and `knitr`
+[@knitrPackage]; the article was rendered with `rmarkdown`
+[@rmarkdownPackage] and checked with `rjtools` [@rjtoolsPackage]. A companion
+article on `grip` applies the second-stage notation in the opening diagram; the
+two manuscripts cover distinct transformations and are intended for separate,
+coordinated submissions.

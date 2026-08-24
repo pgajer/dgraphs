@@ -1,14 +1,46 @@
 #!/usr/bin/env Rscript
 
-minimum <- package_version("0.2.0")
+required <- c(dgraphs = "0.2.0", grip = "0.2.0")
 available <- utils::available.packages(
     repos = c(CRAN = "https://cloud.r-project.org"),
     filters = list()
 )
-if (!"dgraphs" %in% rownames(available)) stop("dgraphs is not listed in the CRAN index")
-public <- package_version(available["dgraphs", "Version"])
-if (public < minimum) {
-    stop("R Journal submission gate: CRAN has dgraphs ", public,
-         "; publish version ", minimum, " or later before submitting the article")
+missing <- setdiff(names(required), rownames(available))
+if (length(missing)) {
+    stop("R Journal submission gate: not listed in the CRAN index: ",
+         paste(missing, collapse = ", "))
 }
-message("Public-version gate passed: CRAN dgraphs ", public)
+
+public <- vapply(
+    names(required),
+    function(package) available[package, "Version"],
+    character(1L)
+)
+outdated <- names(required)[
+    vapply(
+        names(required),
+        function(package) {
+            package_version(public[[package]]) < package_version(required[[package]])
+        },
+        logical(1L)
+    )
+]
+if (length(outdated)) {
+    details <- paste0(
+        outdated,
+        " ",
+        public[outdated],
+        " (requires >= ",
+        required[outdated],
+        ")"
+    )
+    stop(
+        "Coordinated R Journal submission gate: publish both 0.2.0 releases ",
+        "before submitting the companion articles; CRAN currently has ",
+        paste(details, collapse = ", ")
+    )
+}
+message(
+    "Coordinated public-version gate passed: ",
+    paste(paste0(names(public), " ", public), collapse = ", ")
+)

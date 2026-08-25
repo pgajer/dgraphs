@@ -7,13 +7,32 @@ if (length(arguments) != 1L || !grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", arguments)
 expected <- arguments[[1L]]
 if (is.na(as.Date(expected))) stop("Invalid expected submission date: ", expected)
 
-rmd <- readLines("dgraphs.Rmd", warn = FALSE)
-date.line <- grep('^date: *"?[0-9]{4}-[0-9]{2}-[0-9]{2}"? *$', rmd, value = TRUE)
-if (length(date.line) != 1L) stop("Could not identify one manuscript YAML date")
-source.date <- sub('^date: *"?([0-9]{4}-[0-9]{2}-[0-9]{2})"? *$', '\\1', date.line)
-if (!identical(source.date, expected)) {
-    stop("Manuscript date is ", source.date, "; expected ", expected,
-         ". Update dgraphs.Rmd immediately before final submission.")
+source.files <- c(
+    article = "dgraphs.Rmd",
+    `motivation letter` = "motivation-letter/motivation-letter.md"
+)
+source.files <- source.files[file.exists(source.files)]
+for (label in names(source.files)) {
+    source <- readLines(source.files[[label]], warn = FALSE)
+    date.line <- grep(
+        '^date: *"?[0-9]{4}-[0-9]{2}-[0-9]{2}"? *$',
+        source,
+        value = TRUE
+    )
+    if (length(date.line) != 1L) {
+        stop("Could not identify one YAML date in ", source.files[[label]])
+    }
+    source.date <- sub(
+        '^date: *"?([0-9]{4}-[0-9]{2}-[0-9]{2})"? *$',
+        '\\1',
+        date.line
+    )
+    if (!identical(source.date, expected)) {
+        stop(
+            label, " date is ", source.date, "; expected ", expected,
+            ". Update the dated source immediately before final submission."
+        )
+    }
 }
 
 html <- paste(readLines("dgraphs.html", warn = FALSE), collapse = "\n")

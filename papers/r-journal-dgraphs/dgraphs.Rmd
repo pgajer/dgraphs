@@ -11,7 +11,7 @@ abstract: >
   minimum-spanning-tree completions. Constructors retain native, pruned, and
   connectivity-repaired stages so that added support edges remain
   distinguishable from the original neighborhood model. The package provides
-  target-normalized graph-geodesic relative error, distortion, correlation,
+  target-normalized graph-geodesic relative RMSE, distortion, correlation,
   and distance-band diagnostics, together with parameter sequences, path and
   spectral utilities, and conversion to igraph. We describe the software
   design, demonstrate a construction-and-assessment workflow on a controlled
@@ -44,6 +44,9 @@ packages:
     - dbscan
     - igraph
     - ggplot2
+    - knitr
+    - rmarkdown
+    - rjtools
   bioc:
     - bluster
 ---
@@ -145,7 +148,7 @@ winner.counts <- stats::aggregate(
   family.summary,
   sum
 )
-family.lifecycle$Wins <- winner.counts$is.best[
+family.lifecycle[["Lowest-loss scenarios"]] <- winner.counts$is.best[
   match(family.lifecycle$Family, winner.counts$family)
 ]
 
@@ -165,7 +168,7 @@ Many analyses first represent observations by a graph and then represent that
 graph in low-dimensional coordinates. Fidelity has two corresponding parts:
 whether graph geodesics preserve the data dissimilarities of interest, and
 whether an embedding preserves the graph's intrinsic geometry. The
-`dgraphs` package addresses the first question; the companion \CRANpkg{grip}
+\CRANpkg{dgraphs} addresses the first question; the companion \CRANpkg{grip}
 package addresses the second [@gripPackage]:
 
 $$
@@ -183,18 +186,23 @@ G
   \substack{\texttt{grip}\\
   \text{layout, scoring, and refinement}}
 }
-Z\subset\mathbb{R}^m.
+Z\subset\mathbb{R}^m,
 $$
 
-Here $X=\{x_1,\ldots,x_n\}$ denotes the observations,
-$G=(V,E,\ell)$ is a weighted graph on them, and $Z$ is a coordinate
-configuration for the vertices. The matrix $D_X=(d_{ij}^X)$ contains the data
-dissimilarities that the analysis aims to preserve. Depending on the
-application, these may be observed Euclidean distances, known intrinsic
-distances in a controlled example, or domain-specific dissimilarities. The
-matrix $D_G=(d_{ij}^G)$ contains weighted shortest-path distances in $G$, and
-$D_{G,Z}$ describes graph paths after embedding. This article concerns
-$D_X$ versus $D_G$; it does not assess the second transformation.
+where $X=\{x_1,\ldots,x_n\}$ denotes the observed data, $G=(V,E,\ell)$ is
+the weighted graph constructed on those observations, and
+$Z=\{z_1,\ldots,z_n\}\subset\mathbb{R}^m$ is the corresponding coordinate
+configuration for the vertices of $G$, with $m\geq 2$. For each vertex pair
+$i<j$, let $d_{ij}^G$ be its shortest-path distance in $G$ and choose an
+input-graph geodesic $\gamma_{ij}$ that realizes that distance. The matrix
+$D_X=(d_{ij}^X)$ contains the data dissimilarities that the analysis aims to
+preserve. Depending on the application, these may be observed Euclidean
+distances, known intrinsic distances in a controlled example, or
+domain-specific dissimilarities. The matrix $D_G=(d_{ij}^G)$ contains weighted
+shortest-path distances in $G$, whereas $D_{G,Z}=(d_{ij}^{G,Z})$ contains the
+embedded lengths of the selected input-graph geodesics $\gamma_{ij}$. This
+article concerns $D_X$ versus $D_G$; it does not assess the second
+transformation.
 
 With the profiled scale
 $\alpha=\sum_{i<j}d_{ij}^Gd_{ij}^X/\sum_{i<j}(d_{ij}^G)^2$, the primary
@@ -228,7 +236,7 @@ Several R packages efficiently find nearest neighbors. \CRANpkg{FNN} exposes
 kd-tree, cover-tree, and brute-force searches [@fnnPackage], while
 \CRANpkg{dbscan} supplies fast spatial indexing together with density-based
 clustering methods [@hahsler2019dbscan]. \CRANpkg{igraph} provides a broad
-graph-analysis and visualization system [@igraph2023]. These packages are
+graph-analysis and visualization system [@igraphPackage]. These packages are
 complementary to \CRANpkg{dgraphs}: the latter focuses on constructing and
 comparing data-derived graph families, retaining construction stages, and
 diagnosing the geometry of the resulting graph [@dgraphsPackage].
@@ -244,7 +252,7 @@ about the software design and workflow; it does not propose a new graph rule.
 
 # Positioning and design choices
 
-`dgraphs` is intended for analysts and method developers whose downstream
+\CRANpkg{dgraphs} is intended for analysts and method developers whose downstream
 result depends on the graph construction itself. Its role begins after a data
 matrix has been assembled and ends with an explicit graph, its construction
 history, and diagnostics that can be passed to another method. Users who need
@@ -255,7 +263,7 @@ Bioconductor package \BIOpkg{bluster} constructs kNN and shared-neighbor
 `igraph` objects for community detection, allows the neighbor-search backend to
 be selected through BiocNeighbors, and supports threaded construction
 [@blusterPackage]. These are closer alternatives than a general graph library.
-`dgraphs` differs by treating comparisons among graph rules, construction
+\CRANpkg{dgraphs} differs by treating comparisons among graph rules, construction
 stages, repair order, and geodesic consequences as part of the returned
 analysis rather than as preprocessing for one clustering algorithm.
 
@@ -271,12 +279,13 @@ algorithms already available in \CRANpkg{igraph}.
 
 R performs argument validation, result assembly, and lifecycle bookkeeping;
 nearest-neighbor search and the main construction kernels use C or C++ through
-Rcpp. The runtime dependencies are limited to FNN, igraph, parallel, and Rcpp,
-with RcppEigen used at compilation. The primary constructors are currently
+Rcpp [@eddelbuettelFrancois2011]. The runtime dependencies are limited to FNN,
+igraph, parallel, and Rcpp, with RcppEigen used at compilation
+[@batesEddelbuettel2013]. The primary constructors are currently
 single-process, and the benchmarks in this article use one process. A few
 stand-alone utilities expose worker counts, but graph construction itself does
 not. Thus, `bluster` is a better fit when threaded kNN or shared-neighbor graph
-construction is the main requirement, while `dgraphs` favors deterministic
+construction is the main requirement, while \CRANpkg{dgraphs} favors deterministic
 cross-family diagnostics and lifecycle retention.
 
 For $n$ observations in $p$ dimensions and $m$ retained edges, the input matrix
@@ -289,6 +298,52 @@ return all pairwise graph distances necessarily allocate an $n$-by-$n$ result.
 For larger data, users can select ANN-backed constructors, request minimal graph
 detail when supported, and avoid retaining parameter sequences or all-pairs
 diagnostics that are not needed.
+
+The public API is organized around four recurring tasks. Table 1 lists a
+representative subset rather than every exported method.
+
+```{r api-map-table, echo=FALSE, tab.alt="Four-row map of the dgraphs public API. The rows group representative functions for graph construction and parameter sequences, lifecycle pruning and repair, data-versus-graph assessment, and conversion, path, and spectral analysis."}
+api.break <- if (knitr::is_latex_output()) " \\\\ " else "<br>"
+api.code <- function(value) {
+  if (knitr::is_latex_output()) {
+    value <- gsub("_", "\\_", value, fixed = TRUE)
+    paste0("\\texttt{", value, "}")
+  } else {
+    paste0("<code>", value, "</code>")
+  }
+}
+api.wrap <- function(...) {
+  value <- paste(vapply(c(...), api.code, character(1L)), collapse = api.break)
+  if (knitr::is_latex_output()) paste0("\\shortstack[l]{", value, "}") else value
+}
+api.map <- data.frame(
+  Task = c(
+    "Construction and parameter sequences",
+    "Lifecycle, pruning, and repair",
+    "Data-to-graph assessment",
+    "Conversion, paths, and spectra"
+  ),
+  `Representative functions` = c(
+    api.wrap("create.sknn.graph()", "create.rknn.graphs()"),
+    api.wrap("wgraph.prune.long.edges()", "create.cmst.graph()"),
+    api.wrap("graph.geodesic.distances()", "summarize.isometry.deviation()"),
+    api.wrap("as_igraph()", "get.shortest.path()", "graph.spectrum()")
+  ),
+  check.names = FALSE
+)
+accessible.kable(
+  api.map,
+  caption = paste(
+    "Representative public functions grouped by task. Constructors return",
+    "lifecycle-aware graph objects; assessment functions compare data",
+    "dissimilarities with graph geodesics; conversion and analysis utilities",
+    "connect those objects to downstream graph workflows."
+  ),
+  row.names = FALSE,
+  escape = FALSE,
+  position = "H"
+)
+```
 
 # Graph rules and object lifecycle
 
@@ -309,7 +364,10 @@ from $x_i$ to its $k$th neighbor. The principal undirected rules are:
 The adaptive rules use `min`, `max`, or geometric-mean choices for $f$; the
 geometric-mean case is CkNN. With $\delta=1$, the maximum-radius rule is
 equivalent to symmetric kNN under exact, tie-free neighbor calculations. The
-package tests this identity across its exact and ANN-backed implementations.
+package tests this identity across its exact and current zero-epsilon
+ANN-backed implementations. Other adaptive rules are alternatives rather than
+uniform improvements: CkNN is deliberately sensitive to local sampling
+density, and changing $f$ or $\delta$ changes the candidate edge set.
 The package also provides intersection-kNN graphs, which retain information
 about shared neighborhoods, and iterated graph-geodesic constructions that
 replace the ambient distance by shortest paths on a preceding graph.
@@ -593,12 +651,16 @@ depends on connectivity, repair edges, and geodesic distortion.
 
 We compared complete symmetric-kNN graph pipelines using `k = 10` on Gaussian
 data with 500, 1,500, or 3,000 observations and 2, 10, or 50 dimensions. The
-`dgraphs` pipeline used its bundled ANN kd-tree and returned a lifecycle graph
+\CRANpkg{dgraphs} used its bundled ANN kd-tree and returned a lifecycle graph
 object. The \CRANpkg{FNN} and \CRANpkg{dbscan} pipelines performed kd-tree
 queries and then used the same R helper to union directed neighbor pairs and
 compute Euclidean edge weights. Each scenario was warmed up and timed three
 times. All `r nrow(pipeline.raw)` retained runs reproduced exactly the same
 undirected edge set; ties were absent in these continuous random data.
+Figure 2 reads the recorded runs from `data/pipeline-benchmark.csv`; the
+publication supplement contains that file, the generating script
+`scripts/generate-results.R`, and the software environment record
+`data/benchmark-session.txt`.
 
 ```{r pipeline-timing, echo=FALSE, fig.pos="!htbp", fig.cap="End-to-end symmetric-kNN graph construction times; points are medians of three runs. FNN was fastest in all tested scenarios. dgraphs remained within the same order of magnitude while also assembling lifecycle diagnostics. Times were measured with one process on the release-R system recorded in the accompanying benchmark metadata.", fig.alt="Faceted line plots of construction time by sample size for dgraphs, FNN, and dbscan in 2, 10, and 50 dimensions. FNN is fastest throughout, while dgraphs and dbscan have similar orders of growth. Runtime increases with sample size and dimension."}
 ggplot(
@@ -624,13 +686,13 @@ ggplot(
 The timing comparison is intentionally scoped to the returned graph, not only
 nearest-neighbor lookup. It should not be read as a general benchmark of ANN
 libraries. The edge-parity result shows that users can move
-between a neighbor-search workflow and the richer `dgraphs` graph object
+between a neighbor-search workflow and the richer \CRANpkg{dgraphs} graph object
 without changing the symmetric-kNN rule on these tie-free data. In the largest
 scenario ($n=3{,}000$, $p=50$), median elapsed times were
 `r sprintf("%.3f", subset(pipeline.summary, backend == "FNN" & n == 3000 & dimension == 50)$median_seconds)`,
 `r sprintf("%.3f", subset(pipeline.summary, backend == "dgraphs" & n == 3000 & dimension == 50)$median_seconds)`,
 and `r sprintf("%.3f", subset(pipeline.summary, backend == "dbscan" & n == 3000 & dimension == 50)$median_seconds)`
-seconds for FNN, `dgraphs`, and dbscan, respectively.
+seconds for FNN, \CRANpkg{dgraphs}, and dbscan, respectively.
 
 ## Construction families under density imbalance
 
@@ -657,6 +719,9 @@ magnitude of the differences and the ordering among the remaining families
 changed with density, noise, and sample size. The raw replicate-level results,
 generation script, edge-parity checks, and session metadata accompany the
 article so that the comparison can be audited or extended.
+Figure 3 and Table 6 read `data/graph-family-benchmark.csv`; the publication
+supplement contains that file together with the same generation script and
+environment record described above.
 
 ```{r family-fidelity, echo=FALSE, fig.pos="!htbp", fig.cap="Final target-normalized graph-geodesic relative RMSE across graph families; lower values indicate closer agreement with known circular arc distances after profiled scale calibration. Faint points are individual replicates and lines connect three-replicate scenario medians. Component-MST repair was applied when a native graph was disconnected, so these values assess the complete constructor-plus-repair procedure. Symmetric kNN attains the lowest scenario median most often in this controlled experiment.", fig.alt="Four faceted plots compare final target-normalized graph-geodesic relative RMSE for mutual kNN, symmetric kNN, continuous kNN, and fixed-radius graphs at 100 and 200 observations. Faint symbols show replicates and connected symbols show medians. Symmetric kNN most often has the lowest median, but the ordering varies by density, noise, and sample size."}
 ggplot(
@@ -692,18 +757,31 @@ ggplot(
   theme(legend.position = "bottom")
 ```
 
-```{r family-lifecycle-table, echo=FALSE, tab.alt="Four-row table separating native connectivity and repair from final geodesic fidelity for mutual kNN, symmetric kNN, continuous kNN, and fixed-radius graphs. It reports the number of natively connected replicate runs, median native components, median bridge edges, median final relative RMSE, and the number of scenario medians won."}
+```{r family-lifecycle-table, echo=FALSE, tab.alt="Four-row table separating native connectivity and repair from final geodesic fidelity for mutual kNN, symmetric kNN, continuous kNN, and fixed-radius graphs. It reports the number of natively connected replicate runs, median native components, median bridge edges, median final relative RMSE, and the number of scenarios in which each family had the lowest median loss."}
+family.lifecycle.display <- family.lifecycle
+names(family.lifecycle.display)[
+  names(family.lifecycle.display) == "Final RelRMSE"
+] <- "Final RMSE"
+names(family.lifecycle.display)[
+  names(family.lifecycle.display) == "Lowest-loss scenarios"
+] <- if (knitr::is_latex_output()) {
+  "\\shortstack{Lowest-loss\\\\scenarios}"
+} else {
+  "Lowest-loss<br>scenarios"
+}
 accessible.kable(
-  family.lifecycle,
+  family.lifecycle.display,
   caption = paste(
     "Construction and repair results across 24 replicate runs per graph",
     "family. Connected is the number of natively connected runs; Components",
     "and Bridges are medians. Final relative RMSE includes component-MST repair",
-    "when needed. Wins counts the lowest median among eight combinations of",
-    "sample size, density, and noise; ties, if any, count for each family."
+    "when needed. Lowest-loss scenarios counts the lowest median among eight",
+    "combinations of sample size, density, and noise; ties, if any, count for",
+    "each family."
   ),
   row.names = FALSE,
   digits = 3,
+  escape = FALSE,
   position = "H"
 )
 ```
@@ -712,11 +790,13 @@ accessible.kable(
 
 # Scope and limitations
 
-`dgraphs` assumes finite numerical observations and currently centers its fast
-native constructors on Euclidean distance. ANN-backed searches are exact at
-the supported tolerance, including points on an adaptive-radius boundary;
-deterministic ties can still be backend-dependent and should be tested with
-`neighbor.method = "exact"` when tie semantics matter.
+\CRANpkg{dgraphs} assumes finite numerical observations and currently centers
+its fast native constructors on Euclidean distance. In the reported tie-free
+tests, the current zero-epsilon ANN implementation matched exact/reference
+edge sets, including adaptive-radius boundary cases. This is an empirical
+parity result, not a general exactness guarantee; deterministic ties can be
+backend-dependent and should be tested with `neighbor.method = "exact"` when
+tie semantics matter.
 Some pruning methods are experimental and are labeled as such in the help
 pages. Connectivity repair guarantees a connected final graph when possible,
 but it does not validate that the added bridges represent scientific
@@ -730,30 +810,34 @@ edges, examine parameter sequences, and evaluate downstream quantities against
 domain-specific references or sensitivity analyses.
 
 The package stops at the first transformation in the opening diagram:
-constructing $G$ and comparing $D_X$ with $D_G$. The companion `grip` work
+constructing $G$ and comparing $D_X$ with $D_G$. The companion \CRANpkg{grip} work
 begins with an already specified graph and assesses coordinate representations
 through $D_G$ versus $D_{G,Z}$. Keeping these stages separate makes graph-model
 error distinguishable from layout error.
 
 \FloatBarrier
 
-# Summary and availability
+# Summary
 
 \CRANpkg{dgraphs} integrates graph construction, lifecycle-aware repair,
 parameter selection, diagnostics, and `igraph` interoperability in one R
 package. The software is available from CRAN and developed at
 <https://github.com/pgajer/dgraphs>. The end-to-end package vignette can be
-opened with:
-
-```{r vignette-command, eval=FALSE}
-vignette("data-derived-graph-workflow", package = "dgraphs")
-```
+opened with `vignette("data-derived-graph-workflow", package = "dgraphs")`.
 
 The article source, benchmark scripts, raw CSV results, and citation
-verification record are maintained with the package repository. Figures and
-tables were generated with `ggplot2` [@ggplot2Book] and `knitr`
-[@knitrPackage]; the article was rendered with `rmarkdown`
-[@rmarkdownPackage] and checked with `rjtools` [@rjtoolsPackage]. A companion
-article on `grip` applies the second-stage notation in the opening diagram; the
-two manuscripts cover distinct transformations and are intended for separate,
-coordinated submissions.
+verification record are maintained with the package repository. Workflow,
+candidate, parameter-sequence, and geodesic results are evaluated during
+rendering; Figures 2--3 and Table 6 summarize the precomputed benchmark CSVs
+identified in their respective sections. A companion article on
+\CRANpkg{grip} applies the second-stage notation in the opening diagram. The
+present article covers construction and $D_X$ versus $D_G$ assessment, whereas
+that article begins from a specified graph and concerns $D_G$ versus
+$D_{G,Z}$.
+
+# Acknowledgments
+
+Figures and tables were generated with \CRANpkg{ggplot2} [@ggplot2Book] and
+\CRANpkg{knitr} [@knitrPackage]. The article was rendered with
+\CRANpkg{rmarkdown} [@rmarkdownPackage] and checked with
+\CRANpkg{rjtools} [@rjtoolsPackage].

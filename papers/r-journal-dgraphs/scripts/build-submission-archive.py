@@ -40,6 +40,7 @@ FILES = (
     "dgraphs_files/figure-latex/family-fidelity-1.pdf",
     "scripts/check-citation-verification.py",
     "scripts/check-public-version.R",
+    "scripts/check-submission-date.R",
     "scripts/generate-results.R",
     "scripts/readiness-scan.py",
     "scripts/render-paper.R",

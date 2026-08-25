@@ -16,6 +16,9 @@ TEXT = [
     ROOT / "motivation-letter" / "motivation-letter.md",
     ROOT / "data" / "benchmark-session.txt",
 ]
+supplement_readme = ROOT / "supplement" / "README.md"
+if supplement_readme.exists():
+    TEXT.append(supplement_readme)
 TEXT.extend(sorted((ROOT / "scripts").glob("*.R")))
 TEXT.extend(path for path in sorted((ROOT / "scripts").glob("*.py"))
             if path.name != Path(__file__).name)
@@ -40,12 +43,12 @@ for path in TEXT:
 
 rmd_source = (ROOT / "dgraphs.Rmd").read_text(encoding="utf-8")
 table_alt_chunks = re.findall(r"^```\{r [^\n]*\btab\.alt=", rmd_source, re.MULTILINE)
-if len(table_alt_chunks) != 5:
+if len(table_alt_chunks) != 6:
     errors.append(
-        f"expected five table chunks with tab.alt metadata; found {len(table_alt_chunks)}"
+        f"expected six table chunks with tab.alt metadata; found {len(table_alt_chunks)}"
     )
-if rmd_source.count("accessible.kable(") != 5:
-    errors.append("expected five tables rendered through accessible.kable()")
+if rmd_source.count("accessible.kable(") != 6:
+    errors.append("expected six tables rendered through accessible.kable()")
 if re.search(r"(?m)^draft\s*:", rmd_source):
     errors.append("article YAML still marks the manuscript as a draft")
 if "normalized_mae" in rmd_source or "Stress-1" not in rmd_source:
@@ -99,15 +102,28 @@ else:
     tex_text = tex.read_text(encoding="utf-8", errors="replace")
     if tex_text.count(r"\includegraphics") < 3:
         errors.append("generated TeX contains fewer than three plot inclusions")
-    if len(re.findall(r"\\caption\{\\label\{tab:", tex_text)) < 5:
-        errors.append("generated TeX contains fewer than five captioned tables")
+    if len(re.findall(r"\\caption\{\\label\{tab:", tex_text)) < 6:
+        errors.append("generated TeX contains fewer than six captioned tables")
 
-for log in sorted(ROOT.glob("*.log")) + sorted((ROOT / "build").glob("*.log")):
+fragment_log = ROOT / "dgraphs.log"
+if fragment_log.exists():
+    errors.append(
+        "non-authoritative standalone fragment log remains: dgraphs.log"
+    )
+
+authoritative_logs = [ROOT / "RJwrapper.log"]
+authoritative_logs.extend(sorted((ROOT / "build").glob("*.log")))
+for log in authoritative_logs:
+    if not log.exists():
+        errors.append(f"missing authoritative log: {log.relative_to(ROOT)}")
+        continue
     content = log.read_text(encoding="utf-8", errors="replace")
     for pattern, label in [
         (r"undefined references", "undefined references"),
         (r"Citation [`'][^`']+['`].*undefined", "undefined citation"),
         (r"Overfull \\hbox", "overfull box"),
+        (r"Undefined control sequence", "undefined control sequence"),
+        (r"Fatal error occurred", "fatal TeX error"),
     ]:
         if re.search(pattern, content, re.IGNORECASE):
             errors.append(f"{log.relative_to(ROOT)}: {label}")
@@ -116,8 +132,8 @@ if html.exists():
     html_text = html.read_text(encoding="utf-8", errors="replace")
     if re.search(r"citeproc-not-found|data-cites=\"\"", html_text):
         errors.append("rendered HTML contains unresolved citations")
-    if html_text.count("<table aria-label=") < 5:
-        errors.append("rendered HTML contains fewer than five accessible tables")
+    if html_text.count("<table aria-label=") < 6:
+        errors.append("rendered HTML contains fewer than six accessible tables")
 
 if errors:
     print("R Journal readiness scan failed:")

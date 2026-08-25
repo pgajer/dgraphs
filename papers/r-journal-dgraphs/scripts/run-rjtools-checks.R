@@ -56,8 +56,7 @@ checks <- list(
     package_labels = rjtools::check_pkg_label(stage),
     package_availability = rjtools::check_packages_available(stage),
     bibliography = rjtools::check_bib_doi(stage),
-    csl = rjtools::check_csl(stage),
-    date = rjtools::check_date(stage, file.path(stage, "dgraphs.tex"))
+    csl = rjtools::check_csl(stage)
 )
 
 results <- getOption("check.log.journal")$results
@@ -68,4 +67,8 @@ if (any(grepl("ERROR|FAIL", as.character(flat), ignore.case = TRUE))) {
     stop("rjtools reported an error; see ", logfile,
          " and build/rjtools-results.txt")
 }
-message("All applicable rjtools checks completed without an error status.")
+message(
+    "All durable rjtools checks completed without an error status. ",
+    "Run make submission-date SUBMISSION_DATE=YYYY-MM-DD on the actual ",
+    "submission date."
+)

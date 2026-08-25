@@ -30,17 +30,19 @@ rmarkdown::render(
     clean = FALSE,
     quiet = TRUE
 )
-rmarkdown::render(
-    input = "motivation-letter/motivation-letter.md",
-    output_file = "motivation-letter.pdf",
-    output_dir = "motivation-letter",
-    clean = TRUE,
-    quiet = TRUE
-)
+letter.source <- "motivation-letter/motivation-letter.md"
+if (file.exists(letter.source)) {
+    rmarkdown::render(
+        input = letter.source,
+        output_file = "motivation-letter.pdf",
+        output_dir = "motivation-letter",
+        clean = TRUE,
+        quiet = TRUE
+    )
+}
 
 required.outputs <- c(
     "dgraphs.html", "dgraphs.pdf", "dgraphs.tex", "dgraphs.R",
-    "motivation-letter/motivation-letter.pdf",
     file.path(
         "dgraphs_files", "figure-latex",
         c(
@@ -50,6 +52,12 @@ required.outputs <- c(
         )
     )
 )
+if (file.exists(letter.source)) {
+    required.outputs <- c(
+        required.outputs,
+        "motivation-letter/motivation-letter.pdf"
+    )
+}
 missing.outputs <- required.outputs[!file.exists(required.outputs)]
 if (length(missing.outputs)) {
     stop("Article build did not create: ", paste(missing.outputs, collapse = ", "))
@@ -57,6 +65,11 @@ if (length(missing.outputs)) {
 
 file.copy("dgraphs.pdf", "output/pdf/dgraphs-r-journal.pdf", overwrite = TRUE)
 file.copy("dgraphs.html", "output/html/dgraphs-r-journal.html", overwrite = TRUE)
+
+# dgraphs.tex is an article fragment whose TeX root is RJwrapper.tex. Some
+# render paths leave a failed standalone fragment log; it is non-authoritative
+# and must not be retained or used by release checks.
+if (file.exists("dgraphs.log")) unlink("dgraphs.log")
 
 elapsed <- proc.time()[["elapsed"]] - started
 writeLines(c(

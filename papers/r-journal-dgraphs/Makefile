@@ -6,9 +6,12 @@ PACKAGE_TARBALL := $(firstword $(wildcard package/dgraphs_*.tar.gz))
 R_ENV := env R_MAKEVARS_USER=/dev/null R_LIBS=$(LIBRARY)
 PREFLIGHT_ZIP := dist/dgraphs-r-journal-submission-preflight.zip
 SUBMISSION_ZIP := dist/dgraphs-r-journal-submission.zip
+SUPPLEMENT_PREFLIGHT_ZIP := dist/dgraphs-r-journal-supplement-preflight.zip
+SUPPLEMENT_ZIP := dist/dgraphs-r-journal-supplement.zip
 
 .PHONY: package-install benchmark render citation-check rj-check audit reproduce \
-	public-version submission-zip-preflight submission-zip clean
+	public-version submission-date supplement-zip-preflight supplement-zip \
+	submission-zip-preflight submission-zip clean
 
 package-install:
 	mkdir -p $(LIBRARY)
@@ -34,7 +37,7 @@ citation-check: render
 		--tex dgraphs.tex \
 		--bib RJreferences.bib \
 		--html citation_verification.html \
-		--log dgraphs.log
+		--log RJwrapper.log
 
 rj-check: render
 	$(R_ENV) Rscript scripts/run-rjtools-checks.R
@@ -47,16 +50,34 @@ reproduce: audit
 public-version:
 	Rscript scripts/check-public-version.R
 
+submission-date: render
+	@if [ -z "$(SUBMISSION_DATE)" ]; then \
+		echo "Set SUBMISSION_DATE=YYYY-MM-DD for the final same-day gate." >&2; \
+		exit 1; \
+	fi
+	$(R_ENV) Rscript scripts/check-submission-date.R $(SUBMISSION_DATE)
+
+supplement-zip-preflight: package-install
+	python3 scripts/build-supplement-archive.py --output $(SUPPLEMENT_PREFLIGHT_ZIP)
+	$(R_ENV) python3 scripts/verify-supplement-archive.py \
+		--execute $(SUPPLEMENT_PREFLIGHT_ZIP)
+
+supplement-zip: public-version package-install
+	python3 scripts/build-supplement-archive.py --output $(SUPPLEMENT_ZIP)
+	$(R_ENV) python3 scripts/verify-supplement-archive.py \
+		--execute $(SUPPLEMENT_ZIP)
+
 submission-zip-preflight: audit
 	python3 scripts/build-submission-archive.py --output $(PREFLIGHT_ZIP)
 	python3 scripts/verify-submission-archive.py $(PREFLIGHT_ZIP)
 
-submission-zip: public-version audit
+submission-zip: public-version submission-date audit supplement-zip
 	python3 scripts/build-submission-archive.py --output $(SUBMISSION_ZIP)
 	python3 scripts/verify-submission-archive.py $(SUBMISSION_ZIP)
 
 clean:
 	rm -rf build output library dist
 	rm -f dgraphs.R dgraphs.html dgraphs.knit.md dgraphs.log dgraphs.pdf dgraphs.tex
+	rm -f RJwrapper.log
 	rm -f RJwrapper.brf
 	rm -f motivation-letter/motivation-letter.pdf figures/*.pdf figures/*.png

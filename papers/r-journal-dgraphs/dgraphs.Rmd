@@ -189,7 +189,7 @@ G
 Z\subset\mathbb{R}^m,
 $$
 
-where $X=\{x_1,\ldots,x_n\}$ denotes the observed data, $G=(V,E,\ell)$ is
+\noindent where $X=\{x_1,\ldots,x_n\}$ denotes the observed data, $G=(V,E,\ell)$ is
 the weighted graph constructed on those observations, and
 $Z=\{z_1,\ldots,z_n\}\subset\mathbb{R}^m$ is the corresponding coordinate
 configuration for the vertices of $G$, with $m\geq 2$. For each vertex pair

@@ -169,7 +169,20 @@ graph in low-dimensional coordinates. Fidelity has two corresponding parts:
 whether graph geodesics preserve the data dissimilarities of interest, and
 whether an embedding preserves the graph's intrinsic geometry. The
 \CRANpkg{dgraphs} addresses the first question; the companion \CRANpkg{grip}
-package addresses the second [@gripPackage]:
+package addresses the second [@gripPackage]. Let
+$X=\{x_1,\ldots,x_n\}$ denote the observed data, let $G=(V,E,\ell)$ be the
+weighted graph constructed on those observations, and let
+$Z=\{z_1,\ldots,z_n\}\subset\mathbb{R}^m$, with $m\geq 2$, be a coordinate
+configuration for the vertices of $G$. For each vertex pair $i<j$, let
+$d_{ij}^X$ be the data dissimilarity of interest and let $d_{ij}^G$ be the
+shortest-path distance in $G$. Choose an input-graph geodesic $\gamma_{ij}$
+that realizes $d_{ij}^G$, and let $d_{ij}^{G,Z}$ be the length of that selected
+geodesic after its vertices are placed at $Z$. We write
+$D_X=(d_{ij}^X)$, $D_G=(d_{ij}^G)$, and
+$D_{G,Z}=(d_{ij}^{G,Z})$. Depending on the application, the entries of $D_X$
+may be observed Euclidean distances, known intrinsic distances in a controlled
+example, or domain-specific dissimilarities. These objects define two fidelity
+stages:
 
 $$
 X
@@ -189,27 +202,16 @@ G
 Z\subset\mathbb{R}^m,
 $$
 
-\noindent where $X=\{x_1,\ldots,x_n\}$ denotes the observed data, $G=(V,E,\ell)$ is
-the weighted graph constructed on those observations, and
-$Z=\{z_1,\ldots,z_n\}\subset\mathbb{R}^m$ is the corresponding coordinate
-configuration for the vertices of $G$, with $m\geq 2$. For each vertex pair
-$i<j$, let $d_{ij}^G$ be its shortest-path distance in $G$ and choose an
-input-graph geodesic $\gamma_{ij}$ that realizes that distance. The matrix
-$D_X=(d_{ij}^X)$ contains the data dissimilarities that the analysis aims to
-preserve. Depending on the application, these may be observed Euclidean
-distances, known intrinsic distances in a controlled example, or
-domain-specific dissimilarities. The matrix $D_G=(d_{ij}^G)$ contains weighted
-shortest-path distances in $G$, whereas $D_{G,Z}=(d_{ij}^{G,Z})$ contains the
-embedded lengths of the selected input-graph geodesics $\gamma_{ij}$. This
-article concerns $D_X$ versus $D_G$; it does not assess the second
-transformation.
+\noindent where this article concerns $D_X$ versus $D_G$ in the $X\to G$
+stage; it does not assess the second transformation.
 
 With the profiled scale
-$\alpha=\sum_{i<j}d_{ij}^Gd_{ij}^X/\sum_{i<j}(d_{ij}^G)^2$, the primary
+$\alpha=\sum_{i<j}d_{ij}^Gd_{ij}^X/\sum_{i<j}(d_{ij}^G)^2$, which rescales
+the graph distances toward the fixed data-distance target, the primary
 fidelity loss used here is the target-normalized graph-geodesic relative RMSE
 
 $$
-\mathcal L_{X\to G}
+\operatorname{RelRMSE}_{X\to G}
 =
 \sqrt{
   \frac{\sum_{i<j}(\alpha d_{ij}^G-d_{ij}^X)^2}
@@ -761,7 +763,11 @@ ggplot(
 family.lifecycle.display <- family.lifecycle
 names(family.lifecycle.display)[
   names(family.lifecycle.display) == "Final RelRMSE"
-] <- "Final RMSE"
+] <- if (knitr::is_latex_output()) {
+  "\\shortstack{Final\\\\RelRMSE}"
+} else {
+  "Final<br>RelRMSE"
+}
 names(family.lifecycle.display)[
   names(family.lifecycle.display) == "Lowest-loss scenarios"
 ] <- if (knitr::is_latex_output()) {

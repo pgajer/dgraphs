@@ -11,11 +11,21 @@ audit_artifacts/
 *.o
 *.so
 *.dll
+*.dylib
+*.a
 *.tar.gz
+*.tgz
+*.zip
+*.pdf
+*.gif
 *.aux
+*.bbl
+*.blg
+*.brf
 *.log
 *.out
 *.toc
+*.knit.md
 *.fdb_latexmk
 *.fls
 *.synctex.gz
@@ -23,3 +33,4 @@ audit_artifacts/
 *.Rcheck/
 /dev/phase_handoffs/
 /dev/audits/
+/docs/html/

@@ -4,21 +4,20 @@ date: "2026-08-24"
 abstract: >
   A data-derived graph represents observations by vertices and weighted edges,
   raising the question of how faithfully its shortest-path geometry represents
-  the data geometry that an analysis is intended to preserve. The dgraphs
-  package constructs mutual and symmetric nearest-neighbor graphs, shared- and
-  intersection-neighbor graphs, fixed and adaptive radius graphs,
-  continuous-nearest-neighbor graphs, graph-geodesic iterations, and
-  minimum-spanning-tree completions. Constructors retain native, pruned, and
-  connectivity-repaired stages so that added support edges remain
-  distinguishable from the original neighborhood model. The package provides
-  target-normalized graph-geodesic relative RMSE, distortion, correlation,
-  and distance-band diagnostics, together with parameter sequences, path and
-  spectral utilities, and conversion to igraph. We describe the software
-  design, demonstrate a construction-and-assessment workflow on a controlled
-  circular example, verify edge parity with FNN and dbscan, and compare four
-  graph families across sample size, sampling density, and noise. The aim is
-  not to prescribe a universally correct graph, but to expose construction and
-  repair choices and quantify their geometric consequences.
+  the intrinsic data geometry that an analysis is intended to preserve. For
+  real observations that geometry is generally unknown. The dgraphs package
+  therefore supports direct fidelity assessment in controlled synthetic data,
+  where the generating geometry is known, and sensitivity-based comparison
+  when it is not. It constructs several nearest-neighbor and radius graph
+  families and retains native, pruned, and connectivity-repaired stages so
+  that added support edges remain distinguishable from the neighborhood model.
+  Target-normalized graph-geodesic relative RMSE, distortion, correlation,
+  distance-band diagnostics, parameter sequences, and graph utilities support
+  reproducible comparisons. Examples treat circular and branching synthetic
+  models as small calibration families, verify edge parity with FNN and dbscan,
+  and show how conclusions depend on geometry, sampling density, noise, and
+  graph scale. The aim is to expose and assess graph-construction decisions,
+  not to prescribe a universally correct graph.
 author:
   - name: Pawel Gajer
     affiliation: University of Maryland School of Medicine
@@ -164,25 +163,96 @@ X <- cbind(x = cos(theta), y = sin(theta)) +
 
 # Introduction
 
-Many analyses first represent observations by a graph and then represent that
-graph in low-dimensional coordinates. Fidelity has two corresponding parts:
-whether graph geodesics preserve the data dissimilarities of interest, and
-whether an embedding preserves the graph's intrinsic geometry. The
-\CRANpkg{dgraphs} addresses the first question; the companion \CRANpkg{grip}
-package addresses the second [@gripPackage]. Let
-$X=\{x_1,\ldots,x_n\}$ denote the observed data, let $G=(V,E,\ell)$ be the
+Many methods replace observations by a neighborhood graph before performing
+embedding, clustering, trajectory reconstruction, or another downstream
+analysis. This replacement is not neutral: the graph's edges and weights
+determine which routes are available and therefore determine its shortest-path
+geometry. Isomap made this construction explicit by using shortest paths in a
+neighborhood graph to estimate intrinsic geodesic distances before applying
+classical multidimensional scaling [@tenenbaum2000]. The quality of the graph
+estimate depends on the graph rule, its scale, the sampling distribution, and
+the geometry of the data.
+
+Let $D_X=(d_{ij}^X)$ denote the intrinsic pairwise distances in the data
+geometry that the analysis is intended to represent. For real data, $D_X$ is
+generally unknown, and the shortest-path distance matrix $D_G$ of a
+data-derived graph is used as an estimate of it. In controlled synthetic
+examples, the generating model can make $D_X$ known, allowing the discrepancy
+between $D_X$ and $D_G$ to be evaluated directly. By examining this discrepancy
+across synthetic datasets representing different geometries, sampling
+densities, noise levels, and sample sizes, graph constructors can be calibrated
+for corresponding classes of real data.
+
+A calibration family can be written as
+
+$$
+\mathcal M=\{M_\theta:\theta\in\Theta\},
+$$
+
+where each scenario $M_\theta$ produces a synthetic dataset $X_\theta$ and a
+known intrinsic distance matrix $D_{X,\theta}$. The parameter $\theta$ can vary
+topology, sampling density, measurement noise, ambient dimension, sample size,
+bottlenecks, holes, shortcuts, and other application-specific distortions. For
+each dataset, \CRANpkg{dgraphs} constructs candidates
+$G_{a,\lambda}(X_\theta)$, where $a$ identifies the graph family and $\lambda$
+its scale or tuning parameter, and evaluates the discrepancy between
+$D_{X,\theta}$ and $D_{G_{a,\lambda}}$. Results over the family identify
+constructors and parameter regions that warrant further consideration; their
+transfer to real data remains conditional on how well the synthetic family
+represents the application.
+
+```{r calibration-family, echo=FALSE, fig.pos="H", fig.width=10, fig.height=3.2, fig.cap="Simulation-based calibration of data-derived graph construction. A scenario from a data-generating family supplies both observations and known intrinsic distances. Candidate graph families and parameter values are compared through the data-to-graph loss. The resulting evidence can guide construction for analogous real data, where the intrinsic distance matrix is unknown; the dashed arrow denotes model-based calibration rather than validation.", fig.alt="A left-to-right schematic shows a data-generating scenario producing synthetic observations and known intrinsic distances, candidate dgraphs constructions, and a data-to-graph loss. A dashed arrow leads from the calibration result to analogous real data whose intrinsic distances are unknown."}
+op <- graphics::par(mar = c(0.3, 0.3, 0.3, 0.3), xpd = NA)
+graphics::plot(c(0, 1), c(0, 1), type = "n", axes = FALSE, xlab = "", ylab = "")
+
+draw.box <- function(xleft, ybottom, xright, ytop, label,
+                     border = "#1F5A94", fill = "#EEF4FA", cex = 0.88) {
+  graphics::rect(xleft, ybottom, xright, ytop,
+                 border = border, col = fill, lwd = 1.3)
+  graphics::text((xleft + xright) / 2, (ybottom + ytop) / 2,
+                 labels = label, cex = cex)
+}
+draw.arrow <- function(x0, y0, x1, y1, lty = 1) {
+  graphics::arrows(x0, y0, x1, y1, length = 0.08,
+                   angle = 22, lwd = 1.2, lty = lty, col = "#30343B")
+}
+
+draw.box(0.02, 0.56, 0.18, 0.88, expression(M[theta]))
+draw.box(0.25, 0.56, 0.48, 0.88,
+         expression((X[theta] * "," * D[X*","*theta]) ~~ "known"))
+draw.box(0.55, 0.56, 0.75, 0.88,
+         expression(G[a*","*lambda](X[theta])))
+draw.box(0.82, 0.56, 0.98, 0.88,
+         expression(L[X %->% G]))
+draw.arrow(0.18, 0.72, 0.25, 0.72)
+draw.arrow(0.48, 0.72, 0.55, 0.72)
+draw.arrow(0.75, 0.72, 0.82, 0.72)
+
+draw.box(0.30, 0.06, 0.72, 0.31,
+         expression("analogous real data:" ~~ D[X] ~~ "unknown"),
+         border = "#666666", fill = "#F3F3F3", cex = 0.9)
+draw.arrow(0.90, 0.56, 0.72, 0.24, lty = 2)
+graphics::text(0.83, 0.36, "model-based calibration", cex = 0.75,
+               col = "#30343B")
+graphics::par(op)
+```
+
+This article uses two controlled calibration families: noisy circles and
+branching Y-shaped data. They demonstrate the workflow rather than define a
+universal model class. A constructor that performs well for a noisy circle need
+not be preferable for a branching trajectory or for heterogeneous
+compositional data.
+
+Let $X=\{x_1,\ldots,x_n\}$ denote the observed data, let $G=(V,E,\ell)$ be the
 weighted graph constructed on those observations, and let
 $Z=\{z_1,\ldots,z_n\}\subset\mathbb{R}^m$, with $m\geq 2$, be a coordinate
-configuration for the vertices of $G$. For each vertex pair $i<j$, let
-$d_{ij}^X$ be the data dissimilarity of interest and let $d_{ij}^G$ be the
-shortest-path distance in $G$. Choose an input-graph geodesic $\gamma_{ij}$
-that realizes $d_{ij}^G$, and let $d_{ij}^{G,Z}$ be the length of that selected
-geodesic after its vertices are placed at $Z$. We write
-$D_X=(d_{ij}^X)$, $D_G=(d_{ij}^G)$, and
-$D_{G,Z}=(d_{ij}^{G,Z})$. Depending on the application, the entries of $D_X$
-may be observed Euclidean distances, known intrinsic distances in a controlled
-example, or domain-specific dissimilarities. These objects define two fidelity
-stages:
+configuration for the vertices of $G$.
+
+Write $D_G=(d_{ij}^G)$. For each vertex pair $i<j$, choose an input-graph
+geodesic $\gamma_{ij}$ that realizes $d_{ij}^G$, and let $d_{ij}^{G,Z}$ be the
+length of that selected geodesic after its vertices are placed at $Z$. Write
+$D_{G,Z}=(d_{ij}^{G,Z})$. The two transformations and the roles of the packages
+are
 
 $$
 X
@@ -199,11 +269,15 @@ G
   \substack{\texttt{grip}\\
   \text{layout, scoring, and refinement}}
 }
-Z\subset\mathbb{R}^m,
+Z\subset\mathbb{R}^m.
 $$
 
-\noindent where this article concerns $D_X$ versus $D_G$ in the $X\to G$
-stage; it does not assess the second transformation.
+The \CRANpkg{dgraphs} package supports the first objective through controlled
+examples with known $D_X$, graph-family construction and parameter exploration,
+and diagnostics comparing $D_X$ with $D_G$. The same tools apply to externally
+generated synthetic datasets and known distance targets. This article does not
+assess the subsequent graph-to-embedding transformation, which is addressed by
+the companion \CRANpkg{grip} package [@gripPackage].
 
 With the profiled scale
 $\alpha=\sum_{i<j}d_{ij}^Gd_{ij}^X/\sum_{i<j}(d_{ij}^G)^2$, which rescales
@@ -412,14 +486,14 @@ path finite but does not make that bridge part of the native neighborhood
 model. Keeping both stages permits downstream code to distinguish a support
 edge from a repair edge.
 
-# A construction-and-assessment workflow
+# Calibration on a controlled circular model
 
-We use a noisy circular point cloud with unequal sample counts on the two
-semicircles. Its known circular ordering supplies $D_X$ through shorter-arc
-distances, while the density imbalance challenges globally scaled
-constructions. A compact constructor comparison uses a nominal neighborhood
-scale of seven. Fixed-radius construction uses the median seventh-neighbor
-distance.
+The first example is one member of a calibration family: a noisy circular point
+cloud with unequal sample counts on the two semicircles. Its generating model
+supplies $D_X$ through known shorter-arc distances, while the density imbalance
+challenges globally scaled constructions. A compact constructor comparison
+uses a nominal neighborhood scale of seven. Fixed-radius construction uses the
+median seventh-neighbor distance.
 
 ```{r candidate-graphs}
 pairwise.distance <- as.matrix(stats::dist(X))
@@ -478,11 +552,12 @@ columns separate the neighborhood rule from component repair. In particular,
 the final graph for a disconnected native construction represents a
 constructor-plus-repair procedure.
 
-We next vary $k$ for symmetric kNN. The controlled reference permits a stated
-selection rule: restrict attention to natively connected candidates and select
-the smallest target-normalized graph-geodesic relative RMSE. This use of known
-arc distances is specific to the example; an applied analysis needs a
-scientifically justified reference or sensitivity criterion.
+We next vary $k$ for symmetric kNN. Because the generating geometry is known,
+the calibration experiment permits a stated selection rule: restrict attention
+to natively connected candidates and select the smallest target-normalized
+graph-geodesic relative RMSE. For real data, where $D_X$ is unknown, the same
+choice would require calibration against a relevant synthetic family or a
+separate sensitivity criterion.
 
 ```{r parameter-sequence, results="hide"}
 angle.difference <- abs(outer(theta, theta, "-"))
@@ -696,15 +771,16 @@ scenario ($n=3{,}000$, $p=50$), median elapsed times were
 and `r sprintf("%.3f", subset(pipeline.summary, backend == "dbscan" & n == 3000 & dimension == 50)$median_seconds)`
 seconds for FNN, \CRANpkg{dgraphs}, and dbscan, respectively.
 
-## Construction families under density imbalance
+## A small circular calibration family
 
-A second experiment used noisy samples from a unit circle, where the true
-shorter-arc distance is known. We varied sample size (100 or 200), angular
-density (uniform or uneven), and coordinate noise (0.005 or 0.05), with three
-replicates per setting. Mutual-kNN, symmetric-kNN, CkNN, and fixed-radius graphs
-used a nominal scale of six neighbors. The fixed radius was the median sixth-
-neighbor distance. Each constructor first produced its native graph; exact
-component-MST repair was then applied only when that graph was disconnected.
+The single circular workflow is expanded into a small calibration family by
+varying sample size (100 or 200), angular density (uniform or uneven), and
+coordinate noise (0.005 or 0.05), with three replicates per setting. The known
+shorter-arc distance supplies $D_X$ for every scenario. Mutual-kNN,
+symmetric-kNN, CkNN, and fixed-radius graphs use a nominal scale of six
+neighbors. The fixed radius is the median sixth-neighbor distance. Each
+constructor first produces its native graph; exact component-MST repair is then
+applied only when that graph is disconnected.
 
 Native component counts and bridge counts evaluate the construction rule
 before and during repair. The fidelity plot instead evaluates the connected
@@ -714,14 +790,15 @@ needed. A native all-pairs geodesic loss is intentionally not reported for a
 disconnected graph because its infinite between-component distances do not
 define the finite loss used here.
 
-The experiment evaluates sensitivity rather than establishing a general
-ordering. Symmetric-kNN attained the lowest scenario median most often and was
-natively connected more often than the other families in these settings. The
-magnitude of the differences and the ordering among the remaining families
-changed with density, noise, and sample size. The raw replicate-level results,
-generation script, edge-parity checks, and session metadata accompany the
-article so that the comparison can be audited or extended.
-Figure 3 and Table 6 read `data/graph-family-benchmark.csv`; the publication
+This calibration family evaluates sensitivity rather than establishing a
+general ordering. Symmetric-kNN attained the lowest scenario median most often
+and was natively connected more often than the other families in these
+settings. The magnitude of the differences and the ordering among the
+remaining families changed with density, noise, and sample size. The raw
+replicate-level results, generation script, edge-parity checks, and session
+metadata accompany the article so that the comparison can be audited or
+extended. Figure \@ref(fig:family-fidelity) and Table
+\@ref(tab:family-lifecycle-table) read `data/graph-family-benchmark.csv`; the publication
 supplement contains that file together with the same generation script and
 environment record described above.
 
@@ -792,6 +869,182 @@ accessible.kable(
 )
 ```
 
+## A branching calibration family
+
+The circle has one closed one-dimensional topology. To check whether its
+constructor ordering transfers to a different geometry, we also use Y-shaped
+data whose intrinsic distance runs along three branches through a common
+center. The calibration family varies balanced versus uneven branch sampling,
+coordinate noise (0.005, 0.015, or 0.03), and neighborhood scale (4, 6, or 8),
+with three replicates per scenario. For points on one branch, $D_X$ is their
+radial separation; for points on different branches, it is the sum of their
+distances to the center.
+
+```{r branching-calibration, echo=FALSE, results="hide"}
+generate.branching.model <- function(arm.n, noise, seed) {
+  set.seed(seed)
+  arm <- rep(seq_along(arm.n), arm.n)
+  radius <- unlist(
+    lapply(arm.n, function(n) seq(0.04, 1, length.out = n)),
+    use.names = FALSE
+  )
+  angle <- c(pi / 2, 7 * pi / 6, 11 * pi / 6)
+  coords <- rbind(
+    c(0, 0),
+    cbind(radius * cos(angle[arm]), radius * sin(angle[arm]))
+  )
+  coords[-1, ] <- coords[-1, ] +
+    matrix(stats::rnorm(2 * sum(arm.n), sd = noise), ncol = 2)
+
+  arm <- c(0L, arm)
+  radius <- c(0, radius)
+  radius.sum <- outer(radius, radius, "+")
+  radius.difference <- abs(outer(radius, radius, "-"))
+  same.arm <- outer(arm, arm, "==") & outer(arm, arm, function(a, b) a != 0L & b != 0L)
+  intrinsic.distance <- radius.sum
+  intrinsic.distance[same.arm] <- radius.difference[same.arm]
+  diag(intrinsic.distance) <- 0
+
+  list(coords = coords, intrinsic.distance = intrinsic.distance)
+}
+
+branching.settings <- expand.grid(
+  sampling = c("balanced", "uneven"),
+  noise = c(0.005, 0.015, 0.03),
+  k = c(4L, 6L, 8L),
+  replicate = seq_len(3L),
+  stringsAsFactors = FALSE
+)
+
+branching.rows <- vector("list", nrow(branching.settings) * 4L)
+row.index <- 0L
+for (scenario.index in seq_len(nrow(branching.settings))) {
+  scenario <- branching.settings[scenario.index, ]
+  arm.n <- if (identical(scenario$sampling, "balanced")) {
+    c(25L, 25L, 25L)
+  } else {
+    c(40L, 22L, 13L)
+  }
+  model <- generate.branching.model(
+    arm.n = arm.n,
+    noise = scenario$noise,
+    seed = 20260900L + scenario.index
+  )
+  pairwise.distance <- as.matrix(stats::dist(model$coords))
+  diag(pairwise.distance) <- Inf
+  fixed.radius <- stats::median(
+    apply(
+      pairwise.distance,
+      1L,
+      sort,
+      partial = scenario$k
+    )[scenario$k, ]
+  )
+  candidates <- list(
+    mutual = create.mknn.graph(
+      model$coords, k = scenario$k, connect.components = TRUE
+    ),
+    symmetric = create.sknn.graph(
+      model$coords, k = scenario$k,
+      neighbor.method = "exact", connect.components = TRUE
+    ),
+    continuous = create.cknn.graph(
+      model$coords, k.scale = scenario$k,
+      delta = 1, connect.components = TRUE
+    ),
+    fixed.radius = create.rknn.graph(
+      model$coords, type = "fixed", radius = fixed.radius,
+      connect.components = TRUE
+    )
+  )
+
+  for (family in names(candidates)) {
+    graph <- candidates[[family]]
+    row.index <- row.index + 1L
+    branching.rows[[row.index]] <- data.frame(
+      sampling = scenario$sampling,
+      noise = scenario$noise,
+      k = scenario$k,
+      replicate = scenario$replicate,
+      family = family,
+      native.connected = graph$n_components_before == 1L,
+      bridges = graph$n_mst_edges_added,
+      rel.rmse = isometry.rel.rms.error(
+        graph.geodesic.distances(graph),
+        model$intrinsic.distance,
+        scale = TRUE
+      ),
+      stringsAsFactors = FALSE
+    )
+  }
+}
+branching.raw <- do.call(rbind, branching.rows)
+branching.scenario <- stats::aggregate(
+  rel.rmse ~ sampling + noise + k + family,
+  branching.raw,
+  stats::median
+)
+branching.scenario$id <- interaction(
+  branching.scenario$sampling,
+  branching.scenario$noise,
+  branching.scenario$k,
+  drop = TRUE
+)
+branching.scenario$lowest <- ave(
+  branching.scenario$rel.rmse,
+  branching.scenario$id,
+  FUN = function(value) value == min(value)
+)
+
+branching.summary <- do.call(rbind, lapply(
+  split(branching.raw, branching.raw$family),
+  function(data) {
+    data.frame(
+      Family = data$family[[1L]],
+      `Connected runs` = sum(data$native.connected),
+      `Repaired runs` = sum(data$bridges > 0L),
+      `Median RelRMSE` = stats::median(data$rel.rmse),
+      check.names = FALSE
+    )
+  }
+))
+branching.winners <- stats::aggregate(
+  lowest ~ family,
+  branching.scenario,
+  sum
+)
+branching.summary[["Lowest-loss scenarios"]] <- branching.winners$lowest[
+  match(branching.summary$Family, branching.winners$family)
+]
+```
+
+```{r branching-calibration-table, echo=FALSE, tab.alt="Four-row table summarizing mutual kNN, symmetric kNN, continuous kNN, and fixed-radius graph performance across 54 branching-model runs per family. It reports native connectivity, median bridge count, median graph-geodesic relative RMSE, and the number of 18 scenarios in which each family has the lowest median loss."}
+branching.summary.display <- branching.summary
+names(branching.summary.display) <- c(
+  "Family", "Connected", "Repaired", "RelRMSE", "Lowest-loss"
+)
+accessible.kable(
+  branching.summary.display,
+  caption = paste(
+    "Branching-model calibration across 18 combinations of sampling balance,",
+    "noise, and graph scale, with three replicates per combination. Connected",
+    "and Repaired count native connectivity and component-MST repair among 54",
+    "runs per family; RelRMSE is the median. Lowest-loss counts scenarios with the smallest",
+    "three-replicate median relative RMSE among the four graph families; ties,",
+    "if any, count for each family."
+  ),
+  row.names = FALSE,
+  digits = 3,
+  position = "H"
+)
+```
+
+Unlike the circular calibration, the branching family does not favor one graph
+rule consistently: the lowest-loss count is distributed across the candidate
+families and changes with sampling balance, noise, and $k$. This is why the
+circle results should not be transferred to branching applications without a
+corresponding calibration model.
+
 \FloatBarrier
 
 # Scope and limitations
@@ -807,13 +1060,18 @@ Some pruning methods are experimental and are labeled as such in the help
 pages. Connectivity repair guarantees a connected final graph when possible,
 but it does not validate that the added bridges represent scientific
 continuity. A fidelity score for a repaired graph assesses both its native
-constructor and the repair rule. Likewise, a stable parameter curve does not
-prove that a graph recovers a latent manifold.
+constructor and the repair rule.
 
-The package is therefore most useful when graph construction is treated as a
-modeling decision. Users should compare lifecycle stages, inspect repair
-edges, examine parameter sequences, and evaluate downstream quantities against
-domain-specific references or sensitivity analyses.
+For real data, \CRANpkg{dgraphs} cannot identify the unknown intrinsic matrix
+$D_X$ from the observations alone. It supports transparent graph construction,
+comparison with a supplied reference geometry when one is scientifically
+available, simulation-based calibration, and sensitivity analysis. A stable
+parameter curve or a low discrepancy against an operational reference does not
+by itself prove recovery of the intrinsic data geometry. The package is
+therefore most useful when graph construction is treated as a modeling
+decision: users can compare lifecycle stages, inspect repair edges, examine
+parameter sequences, and evaluate conclusions across plausible construction
+choices.
 
 The package stops at the first transformation in the opening diagram:
 constructing $G$ and comparing $D_X$ with $D_G$. The companion \CRANpkg{grip} work
@@ -826,16 +1084,20 @@ error distinguishable from layout error.
 # Summary
 
 \CRANpkg{dgraphs} integrates graph construction, lifecycle-aware repair,
-parameter selection, diagnostics, and `igraph` interoperability in one R
-package. The software is available from CRAN and developed at
+parameter exploration, geometric diagnostics, simulation-based calibration,
+and `igraph` interoperability in one R package. Its controlled examples show
+how known synthetic $D_X$ can be used to evaluate $D_G$ and why constructor
+rankings should be interpreted within the geometry and sampling regime that
+generated them. The software is available from CRAN and developed at
 <https://github.com/pgajer/dgraphs>. The end-to-end package vignette can be
 opened with `vignette("data-derived-graph-workflow", package = "dgraphs")`.
 
 The article source, benchmark scripts, raw CSV results, and citation
 verification record are maintained with the package repository. Workflow,
 candidate, parameter-sequence, and geodesic results are evaluated during
-rendering; Figures 2--3 and Table 6 summarize the precomputed benchmark CSVs
-identified in their respective sections. A companion article on
+rendering; Figures \@ref(fig:pipeline-timing)--\@ref(fig:family-fidelity) and
+Table \@ref(tab:family-lifecycle-table) summarize the precomputed benchmark
+CSVs identified in their respective sections. A companion article on
 \CRANpkg{grip} applies the second-stage notation in the opening diagram. The
 present article covers construction and $D_X$ versus $D_G$ assessment, whereas
 that article begins from a specified graph and concerns $D_G$ versus

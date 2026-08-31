@@ -13,15 +13,17 @@ extern "C" {
     SEXP S_mstree(SEXP X);
 }
 
-struct edge_t {
+namespace {
+
+struct mst_edge_t {
     int from;
     int to;
     double dist;
-    edge_t(int f, int t, double d) : from(f), to(t), dist(d) {}
+    mst_edge_t(int f, int t, double d) : from(f), to(t), dist(d) {}
 };
 
-struct compare_edge_t {
-    bool operator()(const edge_t& e1, const edge_t& e2) {
+struct compare_mst_edge_t {
+    bool operator()(const mst_edge_t& e1, const mst_edge_t& e2) {
         return e1.dist > e2.dist;
     }
 };
@@ -49,13 +51,13 @@ struct compare_edge_t {
  * @param nr_X The number of points (rows) in the data matrix.
  * @param nc_X The number of dimensions (columns) for each point in the data matrix.
  *
- * @return A vector of edge_t structures representing the edges in the Minimum Spanning Tree.
- *         Each edge_t contains the indices of the two points it connects and the distance between them.
+ * @return A vector of mst_edge_t structures representing the edges in the Minimum Spanning Tree.
+ *         Each mst_edge_t contains the indices of the two points it connects and the distance between them.
  *
  * @note The function uses Euclidean distance as the distance metric. If a different metric is needed,
  *       modifications to the distance calculation would be required.
  *
- * @see edge_t, compare_edge_t
+ * @see mst_edge_t, compare_mst_edge_t
  *
  * Time Complexity: O(n^2 log n), where n is the number of points.
  * Space Complexity: O(n), where n is the number of points.
@@ -64,7 +66,7 @@ struct compare_edge_t {
  *       point is added to the MST, which accounts for the stated time
  *       complexity.
  */
-std::vector<edge_t> data_mstree(const std::vector<double>& X, int nr_X, int nc_X) {
+std::vector<mst_edge_t> data_mstree(const std::vector<double>& X, int nr_X, int nc_X) {
 
     // Convert flat X to ANNpointArray
     ANNpointArray data_pts = annAllocPts(nr_X, nc_X);
@@ -80,8 +82,8 @@ std::vector<edge_t> data_mstree(const std::vector<double>& X, int nr_X, int nc_X
     // Initialize MST algorithm
     std::vector<bool> inMST(nr_X, false);
     std::unordered_set<int> tree_vertices;
-    std::vector<edge_t> result;
-    std::priority_queue<edge_t, std::vector<edge_t>, compare_edge_t> pq;
+    std::vector<mst_edge_t> result;
+    std::priority_queue<mst_edge_t, std::vector<mst_edge_t>, compare_mst_edge_t> pq;
 
     // Variables for nearest neighbor search
     ANNidxArray nn_idx = new ANNidx[nr_X];  // Allocate for maximum possible k
@@ -98,7 +100,7 @@ std::vector<edge_t> data_mstree(const std::vector<double>& X, int nr_X, int nc_X
             for (int i = 0; i < nr_X; i++) {
                 const int candidate = nn_idx[i];
                 if (!inMST[candidate]) {
-                    pq.push(edge_t(v, candidate, std::sqrt(nn_dist[i])));
+                    pq.push(mst_edge_t(v, candidate, std::sqrt(nn_dist[i])));
                     break;  // We only need the closest non-MST point
                 }
             }
@@ -109,7 +111,7 @@ std::vector<edge_t> data_mstree(const std::vector<double>& X, int nr_X, int nc_X
     add_edges();
 
     while (!pq.empty() && (int)result.size() < nr_X - 1) {
-        edge_t e = pq.top();
+        mst_edge_t e = pq.top();
         pq.pop();
 
         if (inMST[e.to]) continue;
@@ -132,6 +134,8 @@ std::vector<edge_t> data_mstree(const std::vector<double>& X, int nr_X, int nc_X
 
     return result;
 }
+
+} // namespace
 
 /**
  * @brief R interface for computing Minimum Spanning Tree using Prim's algorithm.
@@ -199,7 +203,7 @@ SEXP S_mstree(SEXP X) {
     std::vector<double> x_vec(REAL(X), REAL(X) + nr_X * nc_X);
 
     // Call data_mstree
-    std::vector<edge_t> mst = data_mstree(x_vec, nr_X, nc_X);
+    std::vector<mst_edge_t> mst = data_mstree(x_vec, nr_X, nc_X);
 
     // Create result matrix
     SEXP result;

@@ -19,6 +19,11 @@
 
 ## Other changes
 
+* Fixes a C++ One Definition Rule violation reported by CRAN's special
+  link-time-optimization check. The minimum-spanning-tree implementation now
+  uses a privately scoped edge type, and an unused conflicting intersection-kNN
+  helper type has been removed. This does not change the R API or graph
+  semantics.
 * Fixes an ANN fixed-radius boundary issue that could omit adaptive-radius
   edges lying exactly at a local-scale threshold. In particular, the
   adaptive maximum-radius rule with factor one now reproduces symmetric-kNN

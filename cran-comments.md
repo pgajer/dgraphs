@@ -1,6 +1,15 @@
 ## Submission
 
-This is a subsequent release of `dgraphs`. Version 0.2.0 deliberately removes
+This is a resubmission of `dgraphs` 0.2.0 after the automated CRAN pretest.
+The regular Windows and Debian incoming checks were OK, but the special LTO
+check reported a C++ One Definition Rule warning because two translation units
+defined different global structures named `edge_t`. I removed the unused
+intersection-kNN helper structure that supplied one definition, renamed the
+minimum-spanning-tree structure descriptively, and placed the MST implementation
+details in an unnamed namespace. This removes the conflicting external type
+definitions without changing the R API or graph semantics.
+
+Version 0.2.0 deliberately removes
 deprecated, superseded, and low-level public entry points introduced in the
 initial 0.1.0 release.
 
@@ -29,12 +38,17 @@ The maintainer's first name is corrected from "Peter" to "Pawel" in
   searches in both scalar and batched constructors.
 * Clarified that the historical `rel_geodesic_stress` result is a
   target-normalized graph-geodesic relative RMSE, not Kruskal's Stress-1.
+* Fixed the C++ `edge_t` One Definition Rule violation reported by CRAN's
+  special LTO check.
 
 These removals are intentional breaking changes and are documented in
 `NEWS.md`.
 
 ## Test environments
 
+* Local special-LTO reproduction on macOS 26.6.1, R-devel 4.7.0,
+  GCC 16.1.0, with `-flto=auto -Wodr`: installation completed without an ODR
+  diagnostic
 * macOS 26.6.1 (Apple Silicon), R-devel 4.7.0 (2026-06-24 r90190),
   Apple clang 21.0.0, GNU Fortran 14.2.0:
   0 errors | 0 warnings | 1 note

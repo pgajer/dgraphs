@@ -1228,65 +1228,6 @@ SEXP S_create_single_iknn_graph(SEXP s_X,
 //
 // -----------------------------------------------------------------------------------------------
 
-struct edge_t {
-    size_t start; ///< start index of an edge
-    size_t end;   ///< end index of an edge; start < end
-};
-
-struct birth_death_time_t {
-    size_t birth_time;
-    size_t death_time;
-};
-
-// Hash function for edge_t
-struct edge_hash {
-    std::size_t operator()(const edge_t& e) const {
-        return std::hash<size_t>()(e.start) ^ (std::hash<size_t>()(e.end) << 1);
-    }
-};
-
-// Equality comparison for edge_t
-bool operator==(const edge_t& lhs, const edge_t& rhs) {
-    return lhs.start == rhs.start && lhs.end == rhs.end;
-}
-
-// Helper function to create R matrix from birth_death_map
-SEXP convert_birth_death_map_to_matrix(
-    const std::unordered_map<edge_t, birth_death_time_t, edge_hash>& birth_death_map) {
-
-    // Create matrix
-    SEXP result;
-    PROTECT(result = Rf_allocMatrix(REALSXP, birth_death_map.size(), 4));
-    double* data = REAL(result);
-
-    size_t row = 0;
-    for (const auto& entry : birth_death_map) {
-        // Convert to 1-based indexing for R
-        data[row] = entry.first.start + 1;
-        data[row + birth_death_map.size()] = entry.first.end + 1;
-        data[row + 2 * birth_death_map.size()] = entry.second.birth_time - 1; // note that kmin, kmax values set in R are incremented in C++ by 1, to account for the fact that ANN library includes the ref vertex in its set of kNN's
-        data[row + 3 * birth_death_map.size()] = entry.second.death_time - 1;
-        row++;
-    }
-
-    // Set column names properly
-    SEXP dimnames = PROTECT(Rf_allocVector(VECSXP, 2));
-    SET_VECTOR_ELT(dimnames, 0, R_NilValue);  // NULL for row names
-
-    SEXP colnames = PROTECT(Rf_allocVector(STRSXP, 4));
-    SET_STRING_ELT(colnames, 0, Rf_mkChar("start"));
-    SET_STRING_ELT(colnames, 1, Rf_mkChar("end"));
-    SET_STRING_ELT(colnames, 2, Rf_mkChar("birth_time"));
-    SET_STRING_ELT(colnames, 3, Rf_mkChar("death_time"));
-    SET_VECTOR_ELT(dimnames, 1, colnames);
-
-    Rf_setAttrib(result, R_DimNamesSymbol, dimnames);
-
-    UNPROTECT(3);
-
-    return result;
-}
-
 // Helper function to convert pruned graph to R representation
 SEXP create_R_graph_representation(
     const std::vector<std::vector<std::pair<int, int>>>& pruned_graph,

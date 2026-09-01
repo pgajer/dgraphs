@@ -278,6 +278,8 @@ and diagnostics comparing $D_X$ with $D_G$. The same tools apply to externally
 generated synthetic datasets and known distance targets. This article does not
 assess the subsequent graph-to-embedding transformation, which is addressed by
 the companion \CRANpkg{grip} package [@gripPackage].
+The 0.2.0 releases of both \CRANpkg{dgraphs} and \CRANpkg{grip} are available
+from CRAN.
 
 With the profiled scale
 $\alpha=\sum_{i<j}d_{ij}^Gd_{ij}^X/\sum_{i<j}(d_{ij}^G)^2$, which rescales

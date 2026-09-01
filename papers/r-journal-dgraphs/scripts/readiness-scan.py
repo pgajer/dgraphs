@@ -42,13 +42,17 @@ for path in TEXT:
             errors.append(f"{path.relative_to(ROOT)}:{line}: {label}: {match.group(0)!r}")
 
 rmd_source = (ROOT / "dgraphs.Rmd").read_text(encoding="utf-8")
+expected_table_count = 7
 table_alt_chunks = re.findall(r"^```\{r [^\n]*\btab\.alt=", rmd_source, re.MULTILINE)
-if len(table_alt_chunks) != 6:
+if len(table_alt_chunks) != expected_table_count:
     errors.append(
-        f"expected six table chunks with tab.alt metadata; found {len(table_alt_chunks)}"
+        f"expected {expected_table_count} table chunks with tab.alt metadata; "
+        f"found {len(table_alt_chunks)}"
     )
-if rmd_source.count("accessible.kable(") != 6:
-    errors.append("expected six tables rendered through accessible.kable()")
+if rmd_source.count("accessible.kable(") != expected_table_count:
+    errors.append(
+        f"expected {expected_table_count} tables rendered through accessible.kable()"
+    )
 if re.search(r"(?m)^draft\s*:", rmd_source):
     errors.append("article YAML still marks the manuscript as a draft")
 if "normalized_mae" in rmd_source or "Stress-1" not in rmd_source:
@@ -102,8 +106,10 @@ else:
     tex_text = tex.read_text(encoding="utf-8", errors="replace")
     if tex_text.count(r"\includegraphics") < 3:
         errors.append("generated TeX contains fewer than three plot inclusions")
-    if len(re.findall(r"\\caption\{\\label\{tab:", tex_text)) < 6:
-        errors.append("generated TeX contains fewer than six captioned tables")
+    if len(re.findall(r"\\caption\{\\label\{tab:", tex_text)) < expected_table_count:
+        errors.append(
+            f"generated TeX contains fewer than {expected_table_count} captioned tables"
+        )
 
 fragment_log = ROOT / "dgraphs.log"
 if fragment_log.exists():
@@ -132,8 +138,10 @@ if html.exists():
     html_text = html.read_text(encoding="utf-8", errors="replace")
     if re.search(r"citeproc-not-found|data-cites=\"\"", html_text):
         errors.append("rendered HTML contains unresolved citations")
-    if html_text.count("<table aria-label=") < 6:
-        errors.append("rendered HTML contains fewer than six accessible tables")
+    if html_text.count("<table aria-label=") < expected_table_count:
+        errors.append(
+            f"rendered HTML contains fewer than {expected_table_count} accessible tables"
+        )
 
 if errors:
     print("R Journal readiness scan failed:")

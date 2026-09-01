@@ -20,13 +20,15 @@ abstract: >
   decisions, not to prescribe a universally correct graph.
 author:
   - name: Pawel Gajer
-    affiliation: University of Maryland School of Medicine
-    address:
-      - Center for Advanced Microbiome Research and Innovation
-      - Institute for Genome Sciences
-      - Department of Microbiology and Immunology
-      - Baltimore, Maryland, USA
+    affiliation: Center for Advanced Microbiome Research and Innovation (CAMRI), Institute for Genome Sciences, Department of Microbiology and Immunology, University of Maryland School of Medicine
+    address: Baltimore, Maryland, USA
+    orcid: 0000-0002-0974-7798
     email: pgajer@gmail.com
+  - name: Jacques Ravel
+    affiliation: Center for Advanced Microbiome Research and Innovation (CAMRI), Institute for Genome Sciences, Department of Microbiology and Immunology, University of Maryland School of Medicine
+    address: Baltimore, Maryland, USA
+    orcid: 0000-0002-0851-2233
+    email: jravel@som.umaryland.edu
 type: package
 output:
   rjtools::rjournal_article:

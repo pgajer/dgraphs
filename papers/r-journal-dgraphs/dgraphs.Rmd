@@ -2,22 +2,22 @@
 title: "dgraphs: Constructing and Assessing Data-Derived Graphs in R"
 date: "2026-08-24"
 abstract: >
-  A data-derived graph represents observations by vertices and weighted edges,
-  raising the question of how faithfully its shortest-path geometry represents
-  the intrinsic data geometry that an analysis is intended to preserve. For
-  real observations that geometry is generally unknown. The dgraphs package
-  therefore supports direct fidelity assessment in controlled synthetic data,
-  where the generating geometry is known, and sensitivity-based comparison
-  when it is not. It constructs several nearest-neighbor and radius graph
-  families and retains native, pruned, and connectivity-repaired stages so
-  that added support edges remain distinguishable from the neighborhood model.
-  Target-normalized graph-geodesic relative RMSE, distortion, correlation,
-  distance-band diagnostics, parameter sequences, and graph utilities support
-  reproducible comparisons. Examples treat circular and branching synthetic
-  models as small calibration families, verify edge parity with FNN and dbscan,
-  and show how conclusions depend on geometry, sampling density, noise, and
-  graph scale. The aim is to expose and assess graph-construction decisions,
-  not to prescribe a universally correct graph.
+  A data-derived graph represents observations as vertices and weighted edges,
+  but its suitability for geometry-preserving analyses depends on how
+  faithfully its shortest paths represent the intended intrinsic data
+  geometry. For real observations, that geometry is generally unknown. The
+  dgraphs package supports direct fidelity assessment with controlled
+  synthetic data, where the generating geometry is known, and
+  sensitivity-based comparison when that geometry is unknown. It constructs
+  nearest-neighbor and radius graph families and retains native, pruned, and
+  connectivity-repaired stages, keeping added support edges distinguishable
+  from the neighborhood model. Target-normalized graph-geodesic relative RMSE,
+  distortion, correlation, distance-band diagnostics, parameter sequences,
+  and graph utilities support reproducible comparisons. Circular and branching
+  examples serve as calibration families, verify edge parity with FNN and
+  dbscan, and show how conclusions vary with geometry, sampling density, noise,
+  and graph scale. The aim is to expose and assess graph-construction
+  decisions, not to prescribe a universally correct graph.
 author:
   - name: Pawel Gajer
     affiliation: University of Maryland School of Medicine

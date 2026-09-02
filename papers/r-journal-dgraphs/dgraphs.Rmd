@@ -173,26 +173,13 @@ the geometry of the data.
 Let $X=\{x_1,\ldots,x_n\}$ denote the observed data, and let
 $D_X=(d_{ij}^X)$ denote the intrinsic pairwise distances in the data geometry
 that the analysis is intended to represent. Let $G=(V,E,\ell)$ be a weighted
-graph constructed on the observations. For real data, $D_X$ is generally
-unknown, and the graph's shortest-path distance matrix $D_G=(d_{ij}^G)$ is used
-as an estimate of it. In controlled synthetic examples, the generating model
-can make $D_X$ known, allowing the discrepancy between $D_X$ and $D_G$ to be
-evaluated directly. By examining this discrepancy across synthetic datasets
-representing different geometries, sampling densities, noise levels, and
-sample sizes, graph constructors can be calibrated for corresponding classes
-of real data.
-
-The $X\to G$ construction is not restricted to Euclidean data. Given a
-nonnegative, symmetric dissimilarity $\rho$, neighborhoods may be defined using
-$\rho(x_i,x_j)$, with the same values assigned as graph edge lengths. For
-relative-abundance data, for example, $\rho$ may be Jensen--Shannon distance
-(the square root of Jensen--Shannon divergence) or another domain-appropriate
-dissimilarity [@lin1991; @endres2003]. Once the resulting weighted graph has
-been constructed, the definitions of $D_G$, $D_{G,Z}$, and the $G\to Z$
-fidelity criteria are unchanged. The built-in ANN-backed constructors studied
-here use Euclidean distances between numeric coordinates; for other
-dissimilarities, the weighted neighborhood graph may be formed externally and
-then passed to the package's graph and isometry utilities.
+graph constructed on the observations, with shortest-path distance matrix
+$D_G=(d_{ij}^G)$. When $D_X$ is unknown, as it generally is for real data, the
+fidelity of the $X\to G$ construction cannot be evaluated directly. Controlled
+synthetic examples can make $D_X$ known, permitting direct comparison with
+$D_G$. Repeating this comparison across geometries, sampling densities, noise
+levels, and sample sizes supports calibration of graph constructors for
+analogous classes of real data.
 
 A calibration family can be written as
 
@@ -283,9 +270,11 @@ $$
 The \CRANpkg{dgraphs} package supports the first objective through controlled
 examples with known $D_X$, graph-family construction and parameter exploration,
 and diagnostics comparing $D_X$ with $D_G$. The same tools apply to externally
-generated synthetic datasets and known distance targets. This article does not
-assess the subsequent graph-to-embedding transformation, which is addressed by
-the companion \CRANpkg{grip} package [@gripPackage].
+generated synthetic datasets and known distance targets. Once a construction
+has been calibrated for a class of data---or a set of plausible constructions
+has been retained---it supplies the working graph geometry for the $G\to Z$
+analysis addressed by the companion \CRANpkg{grip} package [@gripPackage]; the
+present article does not assess that second transformation.
 The 0.2.0 releases of both \CRANpkg{dgraphs} and \CRANpkg{grip} are available
 from CRAN.
 
@@ -1060,12 +1049,24 @@ corresponding calibration model.
 # Scope and limitations
 
 \CRANpkg{dgraphs} assumes finite numerical observations and currently centers
-its fast native constructors on Euclidean distance. In the reported tie-free
-tests, the current zero-epsilon ANN implementation matched exact/reference
-edge sets, including adaptive-radius boundary cases. This is an empirical
-parity result, not a general exactness guarantee; deterministic ties can be
-backend-dependent and should be tested with `neighbor.method = "exact"` when
-tie semantics matter.
+its fast native constructors on Euclidean distance.
+
+The construction of $G$ need not begin with Euclidean distances. Given a
+nonnegative, symmetric dissimilarity $\rho$, neighborhoods may be defined using
+$\rho(x_i,x_j)$, with the same values assigned as graph edge lengths. For
+relative-abundance data, for example, $\rho$ may be Jensen--Shannon distance
+(the square root of Jensen--Shannon divergence) or another domain-appropriate
+dissimilarity [@lin1991; @endres2003]. This choice changes the geometry
+supplied by the $X\to G$ stage, but not the subsequent definitions of $D_G$,
+$D_{G,Z}$, or the $G\to Z$ fidelity criteria. With the current package,
+weighted neighborhood graphs based on other dissimilarities must be formed
+externally before they are passed to the graph and isometry utilities.
+
+In the reported tie-free tests, the current zero-epsilon ANN implementation
+matched exact/reference edge sets, including adaptive-radius boundary cases.
+This is an empirical parity result, not a general exactness guarantee;
+deterministic ties can be backend-dependent and should be tested with
+`neighbor.method = "exact"` when tie semantics matter.
 Some pruning methods are experimental and are labeled as such in the help
 pages. Connectivity repair guarantees a connected final graph when possible,
 but it does not validate that the added bridges represent scientific

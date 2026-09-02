@@ -10,14 +10,9 @@ abstract: >
   synthetic data, where the generating geometry is known, and
   sensitivity-based comparison when that geometry is unknown. It constructs
   nearest-neighbor and radius graph families and retains native, pruned, and
-  connectivity-repaired stages, keeping added support edges distinguishable
-  from the neighborhood model. Target-normalized graph-geodesic relative RMSE,
-  distortion, correlation, distance-band diagnostics, parameter sequences,
-  and graph utilities support reproducible comparisons. Circular and branching
-  examples serve as calibration families, verify edge parity with FNN and
-  dbscan, and show how conclusions vary with geometry, sampling density, noise,
-  and graph scale. The aim is to expose and assess graph-construction
-  decisions, not to prescribe a universally correct graph.
+  connectivity-repaired stages. Target-normalized graph-geodesic relative
+  RMSE, distortion, correlation, distance-band diagnostics, parameter
+  sequences, and graph utilities support reproducible comparisons.
 author:
   - name: Pawel Gajer
     affiliation: Center for Advanced Microbiome Research and Innovation (CAMRI), Institute for Genome Sciences, Department of Microbiology and Immunology, University of Maryland School of Medicine
@@ -175,15 +170,29 @@ classical multidimensional scaling [@tenenbaum2000]. The quality of the graph
 estimate depends on the graph rule, its scale, the sampling distribution, and
 the geometry of the data.
 
-Let $D_X=(d_{ij}^X)$ denote the intrinsic pairwise distances in the data
-geometry that the analysis is intended to represent. For real data, $D_X$ is
-generally unknown, and the shortest-path distance matrix $D_G$ of a
-data-derived graph is used as an estimate of it. In controlled synthetic
-examples, the generating model can make $D_X$ known, allowing the discrepancy
-between $D_X$ and $D_G$ to be evaluated directly. By examining this discrepancy
-across synthetic datasets representing different geometries, sampling
-densities, noise levels, and sample sizes, graph constructors can be calibrated
-for corresponding classes of real data.
+Let $X=\{x_1,\ldots,x_n\}$ denote the observed data, and let
+$D_X=(d_{ij}^X)$ denote the intrinsic pairwise distances in the data geometry
+that the analysis is intended to represent. Let $G=(V,E,\ell)$ be a weighted
+graph constructed on the observations. For real data, $D_X$ is generally
+unknown, and the graph's shortest-path distance matrix $D_G=(d_{ij}^G)$ is used
+as an estimate of it. In controlled synthetic examples, the generating model
+can make $D_X$ known, allowing the discrepancy between $D_X$ and $D_G$ to be
+evaluated directly. By examining this discrepancy across synthetic datasets
+representing different geometries, sampling densities, noise levels, and
+sample sizes, graph constructors can be calibrated for corresponding classes
+of real data.
+
+The $X\to G$ construction is not restricted to Euclidean data. Given a
+nonnegative, symmetric dissimilarity $\rho$, neighborhoods may be defined using
+$\rho(x_i,x_j)$, with the same values assigned as graph edge lengths. For
+relative-abundance data, for example, $\rho$ may be Jensen--Shannon distance
+(the square root of Jensen--Shannon divergence) or another domain-appropriate
+dissimilarity [@lin1991; @endres2003]. Once the resulting weighted graph has
+been constructed, the definitions of $D_G$, $D_{G,Z}$, and the $G\to Z$
+fidelity criteria are unchanged. The built-in ANN-backed constructors studied
+here use Euclidean distances between numeric coordinates; for other
+dissimilarities, the weighted neighborhood graph may be formed externally and
+then passed to the package's graph and isometry utilities.
 
 A calibration family can be written as
 
@@ -225,7 +234,7 @@ draw.box(0.25, 0.56, 0.48, 0.88,
 draw.box(0.55, 0.56, 0.75, 0.88,
          expression(G[a*","*lambda](X[theta])))
 draw.box(0.82, 0.56, 0.98, 0.88,
-         expression(L[X %->% G]))
+         expression(plain(RelRMSE)[X %->% G]))
 draw.arrow(0.18, 0.72, 0.25, 0.72)
 draw.arrow(0.48, 0.72, 0.55, 0.72)
 draw.arrow(0.75, 0.72, 0.82, 0.72)
@@ -245,16 +254,13 @@ universal model class. A constructor that performs well for a noisy circle need
 not be preferable for a branching trajectory or for heterogeneous
 compositional data.
 
-Let $X=\{x_1,\ldots,x_n\}$ denote the observed data, let $G=(V,E,\ell)$ be the
-weighted graph constructed on those observations, and let
+For comparison with the companion graph-to-embedding stage, let
 $Z=\{z_1,\ldots,z_n\}\subset\mathbb{R}^m$, with $m\geq 2$, be a coordinate
-configuration for the vertices of $G$.
-
-Write $D_G=(d_{ij}^G)$. For each vertex pair $i<j$, choose an input-graph
-geodesic $\gamma_{ij}$ that realizes $d_{ij}^G$, and let $d_{ij}^{G,Z}$ be the
-length of that selected geodesic after its vertices are placed at $Z$. Write
-$D_{G,Z}=(d_{ij}^{G,Z})$. The two transformations and the roles of the packages
-are
+configuration for the vertices of $G$. For each vertex pair $i<j$, choose an
+input-graph geodesic $\gamma_{ij}$ that realizes $d_{ij}^G$, and let
+$d_{ij}^{G,Z}$ be the length of that selected geodesic after its vertices are
+placed at $Z$. The matrix $D_{G,Z}=(d_{ij}^{G,Z})$ collects these fixed-path
+lengths. The two transformations and the roles of the packages are
 
 $$
 X

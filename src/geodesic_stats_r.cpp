@@ -119,8 +119,7 @@ extern "C" SEXP S_compute_geodesic_stats(
 
     // helper: attach dimnames to a matrix in a local scope
     auto set_dimnames = [](SEXP mat, R_xlen_t nrow, R_xlen_t ncol,
-                           const std::vector<size_t>& row_ids,
-                           const std::vector<double>& col_radii) {
+                           const std::vector<size_t>& row_ids) {
         SEXP rownames = PROTECT(Rf_allocVector(STRSXP, nrow));
         for (R_xlen_t i = 0; i < nrow; ++i) {
             char buf[32];
@@ -129,7 +128,7 @@ extern "C" SEXP S_compute_geodesic_stats(
         }
         SEXP colnames = PROTECT(Rf_allocVector(STRSXP, ncol));
         for (R_xlen_t j = 0; j < ncol; ++j) {
-            // use radius index (1-based); if you prefer actual numeric radius, format col_radii[j]
+            // Columns use one-based radius indices.
             char buf[32];
             std::snprintf(buf, sizeof(buf), "%lld", (long long)(j + 1));
             SET_STRING_ELT(colnames, j, Rf_mkChar(buf));
@@ -158,7 +157,7 @@ extern "C" SEXP S_compute_geodesic_stats(
                 }
             }
         }
-        set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec, stats.radii);
+        set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec);
         SET_VECTOR_ELT(result, 2, m);
         UNPROTECT(1);
     }
@@ -180,7 +179,7 @@ extern "C" SEXP S_compute_geodesic_stats(
                 }
             }
         }
-        set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec, stats.radii);
+        set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec);
         SET_VECTOR_ELT(result, 3, m);
         UNPROTECT(1);
     }
@@ -188,27 +187,6 @@ extern "C" SEXP S_compute_geodesic_stats(
     // 4: path_overlap (list of 7 matrices)
     {
         SEXP overlap_list = PROTECT(Rf_allocVector(VECSXP, 7));
-
-        // auto make_overlap_matrix = [&](auto getter) -> SEXP {
-        //     SEXP m = PROTECT(Rf_allocMatrix(REALSXP, n_grid_vertices, n_radii));
-        //     double* mp = REAL(m);
-        //     const R_xlen_t N = n_grid_vertices * n_radii;
-        //     for (R_xlen_t idx = 0; idx < N; ++idx) mp[idx] = 0.0;
-
-        //     for (R_xlen_t r = 0; r < n_radii; ++r) {
-        //         const auto& omap = stats.paths_overlap[(size_t)r];
-        //         for (R_xlen_t i = 0; i < n_grid_vertices; ++i) {
-        //             size_t v = grid_vertices_vec[(size_t)i];
-        //             auto it = omap.find(v);
-        //             if (it != omap.end()) {
-        //                 mp[i + r * n_grid_vertices] = getter(it->second);
-        //             }
-        //         }
-        //     }
-        //     set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec, stats.radii);
-        //     UNPROTECT(1); // m was protected, but we'll return it; keep it protected by caller
-        //     return m;
-        // };
 
         // Build and insert each matrix; protect/unprotect inside scope of overlap_list
         {
@@ -224,7 +202,7 @@ extern "C" SEXP S_compute_geodesic_stats(
                     if (it != omap.end()) mp[i + r * n_grid_vertices] = it->second.min;
                 }
             }
-            set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec, stats.radii);
+            set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec);
             SET_VECTOR_ELT(overlap_list, 0, m);
             UNPROTECT(1);
         }
@@ -241,7 +219,7 @@ extern "C" SEXP S_compute_geodesic_stats(
                     if (it != omap.end()) mp[i + r * n_grid_vertices] = it->second.p05;
                 }
             }
-            set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec, stats.radii);
+            set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec);
             SET_VECTOR_ELT(overlap_list, 1, m);
             UNPROTECT(1);
         }
@@ -258,7 +236,7 @@ extern "C" SEXP S_compute_geodesic_stats(
                     if (it != omap.end()) mp[i + r * n_grid_vertices] = it->second.p25;
                 }
             }
-            set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec, stats.radii);
+            set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec);
             SET_VECTOR_ELT(overlap_list, 2, m);
             UNPROTECT(1);
         }
@@ -275,7 +253,7 @@ extern "C" SEXP S_compute_geodesic_stats(
                     if (it != omap.end()) mp[i + r * n_grid_vertices] = it->second.median;
                 }
             }
-            set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec, stats.radii);
+            set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec);
             SET_VECTOR_ELT(overlap_list, 3, m);
             UNPROTECT(1);
         }
@@ -292,7 +270,7 @@ extern "C" SEXP S_compute_geodesic_stats(
                     if (it != omap.end()) mp[i + r * n_grid_vertices] = it->second.p75;
                 }
             }
-            set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec, stats.radii);
+            set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec);
             SET_VECTOR_ELT(overlap_list, 4, m);
             UNPROTECT(1);
         }
@@ -309,7 +287,7 @@ extern "C" SEXP S_compute_geodesic_stats(
                     if (it != omap.end()) mp[i + r * n_grid_vertices] = it->second.p95;
                 }
             }
-            set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec, stats.radii);
+            set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec);
             SET_VECTOR_ELT(overlap_list, 5, m);
             UNPROTECT(1);
         }
@@ -326,7 +304,7 @@ extern "C" SEXP S_compute_geodesic_stats(
                     if (it != omap.end()) mp[i + r * n_grid_vertices] = it->second.max;
                 }
             }
-            set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec, stats.radii);
+            set_dimnames(m, n_grid_vertices, n_radii, grid_vertices_vec);
             SET_VECTOR_ELT(overlap_list, 6, m);
             UNPROTECT(1);
         }

@@ -44,8 +44,8 @@ inline void report_error(const char* file, int line, const char* format, ...) {
     // Calculate total required size
     size_t total_len = static_cast<size_t>(loc_len) + static_cast<size_t>(msg_len);
 
-    // Allocate final message buffer with exact required size plus null terminator
-    char final_message[8192];  // Keep your original max size
+    // Bounded buffer for the combined location and message.
+    char final_message[8192];
     if (total_len >= sizeof(final_message)) {
         Rf_error("Combined error message too long");
         return;

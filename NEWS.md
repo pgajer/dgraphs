@@ -1,3 +1,10 @@
+# dgraphs 0.2.1
+
+* Fixes summaries of empty `detect.local.extrema()` results by retaining the
+  requested maxima/minima setting in a scalar `detect.maxima` component.
+  Legacy empty objects without this metadata report an unknown (`NA`) type
+  instead of being incorrectly labeled as minima.
+
 # dgraphs 0.2.0
 
 ## Breaking API changes

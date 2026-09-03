@@ -8,7 +8,14 @@
 #' @param detect.maxima Logical; if `TRUE`, detect maxima, otherwise minima.
 #' @param custom.prefix Optional label prefix.
 #'
-#' @return A `local_extrema` object.
+#' @return A `local_extrema` object. Its scalar logical `detect.maxima` component
+#'   records whether maxima or minima were requested, even when no extrema are
+#'   found. The per-extremum `is_maxima` and `type` vectors are empty in that case.
+#'
+#' @details
+#' Summaries use the recorded detection setting for empty results. Empty objects
+#' saved by older versions lack this setting; their summaries report `NA` for
+#' the extrema type because it cannot be recovered from empty vectors.
 #'
 #' @examples
 #' chain <- create.chain.graph(n.vertices = 5)
@@ -45,7 +52,8 @@ detect.local.extrema <- function(adj.list,
         min.neighborhood.size < 1L) {
         stop("'min.neighborhood.size' must be a positive integer.", call. = FALSE)
     }
-    if (!is.logical(detect.maxima) || length(detect.maxima) != 1L) {
+    if (!is.logical(detect.maxima) || length(detect.maxima) != 1L ||
+        is.na(detect.maxima)) {
         stop("'detect.maxima' must be a scalar logical.", call. = FALSE)
     }
     if (!is.null(custom.prefix) &&
@@ -106,7 +114,8 @@ detect.local.extrema <- function(adj.list,
         is_maxima = rep(isTRUE(detect.maxima), length(vertices)),
         type = rep(if (detect.maxima) "Maximum" else "Minimum", length(vertices)),
         labels = labels,
-        neighborhood_vertices = neighborhood.vertices
+        neighborhood_vertices = neighborhood.vertices,
+        detect.maxima = detect.maxima
     )
     class(result) <- "local_extrema"
     result
@@ -132,9 +141,16 @@ summary.local_extrema <- function(object, ...) {
     }
     n.extrema <- length(object$vertices)
     if (n.extrema == 0L) {
+        extrema.type <- if (isTRUE(object$detect.maxima)) {
+            "Maximum"
+        } else if (isFALSE(object$detect.maxima)) {
+            "Minimum"
+        } else {
+            NA_character_
+        }
         result <- list(
             n_extrema = 0L,
-            extrema_type = if (any(object$is_maxima)) "Maximum" else "Minimum",
+            extrema_type = extrema.type,
             fn_values_summary = NA,
             neighborhood_sizes_summary = NA,
             radius_summary = NA,

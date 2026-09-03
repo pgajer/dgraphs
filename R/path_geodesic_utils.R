@@ -632,6 +632,13 @@ create.plm.graph <- function(graph, edge.lengths, h) {
     res
 }
 
+#' Print a Path-Length-Metric Graph
+#'
+#' @param x A `path.graph.plm` object from [create.plm.graph()].
+#' @param ... Unused.
+#' @return Invisibly returns `x` unchanged after printing its vertex, edge and
+#'   stored-path counts and maximum path length.
+#' @inherit create.plm.graph examples
 #' @export
 print.path.graph.plm <- function(x, ...) {
     cat("PLM Path Graph\n")

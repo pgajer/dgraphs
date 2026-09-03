@@ -540,6 +540,13 @@ find.optimal.k.from.birth.death <- function(birth.death.matrix, kmin, kmax, matr
 #' @return Invisibly returns `TRUE` after producing the stability diagnostic
 #'   plot.
 #'
+#' @examples
+#' set.seed(1)
+#' X <- matrix(rnorm(60), ncol = 2)
+#' graphs <- create.iknn.graphs(X, kmin = 2, kmax = 4,
+#'   compute.full = TRUE, n.cores = 1, verbose = FALSE)
+#' stability <- compute.stability.metrics(graphs)
+#' plot(stability, with.pwlm = FALSE)
 #' @export
 plot.iknn_stability_metrics <- function(x, ...) {
     plot.IkNNgraphs(x, ...)
@@ -561,6 +568,11 @@ plot.iknn_stability_metrics <- function(x, ...) {
 #' @param ... Additional arguments passed to plot.
 #'
 #' @return Invisibly returns `TRUE`.
+#' @examples
+#' diagnostics <- structure(list(k.values = 2:4, edit.distances = c(0.3, 0.2),
+#'   n.edges.in.pruned.graph = c(6, 8, 10), js.div = c(0.1, 0.05)),
+#'   class = "IkNNgraphs")
+#' plot(diagnostics, with.pwlm = FALSE)
 #' @export
 plot.IkNNgraphs <- function(x,
                             type = "diag",
@@ -1082,6 +1094,11 @@ cst.graph.mixing.stats <- function(igraph.obj = NULL,
 #' @return Invisibly returns `NULL` after producing the requested diagnostic
 #'   panels.
 #'
+#' @examples
+#' mixing <- structure(list(mixing.matrix = matrix(c(4, 1, 1, 4), 2,
+#'   dimnames = list(c("A", "B"), c("A", "B")))),
+#'   class = "cst_graph_mixing_stats")
+#' plot(mixing, which = "mixing.matrix")
 #' @export
 plot.cst_graph_mixing_stats <- function(x,
                                         which = c("null.homophily", "null.assortativity", "mixing.matrix", "conductance"),
@@ -1805,6 +1822,12 @@ build.iknn.graphs.and.selectk <- function(X,
 #' @return Invisibly returns `x`, unchanged, after printing its selected
 #'   neighborhood sizes and trimming status.
 #'
+#' @examples
+#' set.seed(1)
+#' X <- matrix(rnorm(60), ncol = 2)
+#' selected <- build.iknn.graphs.and.selectk(X, kmin = 2, kmax = 4,
+#'   method = "edit", n.cores = 1, verbose = FALSE)
+#' print(selected)
 #' @export
 print.build_iknn_graphs_and_selectk <- function(x, ...) {
     if (!inherits(x, "build_iknn_graphs_and_selectk")) stop("x must be class 'build_iknn_graphs_and_selectk'.")
@@ -1831,6 +1854,12 @@ print.build_iknn_graphs_and_selectk <- function(x, ...) {
 #' @return Invisibly returns `x`, unchanged, after producing the requested
 #'   panels. If `which` is empty, invisibly returns `NULL` without plotting.
 #'
+#' @examples
+#' set.seed(1)
+#' X <- matrix(rnorm(60), ncol = 2)
+#' selected <- build.iknn.graphs.and.selectk(X, kmin = 2, kmax = 4,
+#'   method = "edit", n.cores = 1, verbose = FALSE)
+#' plot(selected, which = "connect")
 #' @export
 plot.build_iknn_graphs_and_selectk <- function(x,
                                                which = c("connect", "edit", "mixing"),

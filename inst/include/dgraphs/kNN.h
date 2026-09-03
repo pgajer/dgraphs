@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <Eigen/Sparse>
+#include <Eigen/SparseCore>
 
 // Leak-proof result: flat row-major buffers inside std::vector.
 struct knn_result_t {

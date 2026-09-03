@@ -5,6 +5,7 @@
 #include <limits>
 
 #include <ANN/ANN.h>
+#include "dgraphs/ann_raii.hpp"
 
 #include <R.h>
 #include <Rinternals.h>
@@ -69,7 +70,8 @@ struct compare_mst_edge_t {
 std::vector<mst_edge_t> data_mstree(const std::vector<double>& X, int nr_X, int nc_X) {
 
     // Convert flat X to ANNpointArray
-    ANNpointArray data_pts = annAllocPts(nr_X, nc_X);
+    ann_dataset_t dataset(nr_X, nc_X);
+    ANNpointArray data_pts = dataset.points;
     for (int i = 0; i < nr_X; i++) {
         for (int j = 0; j < nc_X; j++) {
             data_pts[i][j] = X[i +  nr_X * j];
@@ -77,7 +79,8 @@ std::vector<mst_edge_t> data_mstree(const std::vector<double>& X, int nr_X, int 
     }
 
     // Build kd-tree
-    ANNkd_tree* kd_tree = new ANNkd_tree(data_pts, nr_X, nc_X);
+    dataset.tree = new ANNkd_tree(data_pts, nr_X, nc_X);
+    ANNkd_tree* kd_tree = dataset.tree;
 
     // Initialize MST algorithm
     std::vector<bool> inMST(nr_X, false);
@@ -86,8 +89,8 @@ std::vector<mst_edge_t> data_mstree(const std::vector<double>& X, int nr_X, int 
     std::priority_queue<mst_edge_t, std::vector<mst_edge_t>, compare_mst_edge_t> pq;
 
     // Variables for nearest neighbor search
-    ANNidxArray nn_idx = new ANNidx[nr_X];  // Allocate for maximum possible k
-    ANNdistArray nn_dist = new ANNdist[nr_X];
+    std::vector<ANNidx> nn_idx(nr_X);
+    std::vector<ANNdist> nn_dist(nr_X);
 
     // Start from the first point
     inMST[0] = true;
@@ -96,7 +99,7 @@ std::vector<mst_edge_t> data_mstree(const std::vector<double>& X, int nr_X, int 
     // Function to add edges from points in MST to points not in MST
     auto add_edges = [&]() {
         for (const auto &v : tree_vertices) {
-            kd_tree->annkSearch(data_pts[v], nr_X, nn_idx, nn_dist, 0);
+            kd_tree->annkSearch(data_pts[v], nr_X, nn_idx.data(), nn_dist.data(), 0);
             for (int i = 0; i < nr_X; i++) {
                 const int candidate = nn_idx[i];
                 if (!inMST[candidate]) {
@@ -124,13 +127,6 @@ std::vector<mst_edge_t> data_mstree(const std::vector<double>& X, int nr_X, int 
         // Add edges from the newly updated MST
         add_edges();
     }
-
-    // Clean up
-    delete[] nn_idx;
-    delete[] nn_dist;
-    delete kd_tree;
-    annDeallocPts(data_pts);
-    annClose(); // Close ANN
 
     return result;
 }

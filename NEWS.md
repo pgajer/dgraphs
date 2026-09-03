@@ -1,5 +1,17 @@
 # dgraphs 0.2.1
 
+* Removed global compiler-warning suppression and unsupported native OpenMP
+  branches. Native graph construction remains serial, including in custom
+  builds with OpenMP enabled; compatibility arguments are retained.
+* ANN errors now propagate as R errors instead of silently continuing.
+  Native entry points catch C++ exceptions, ANN point and tree ownership is
+  exception-safe in nearest-neighbor and MST helpers, and the native kNN entry
+  validates dimensions, finite coordinates and neighborhood size.
+* Documented all registered S3 methods and added runnable method examples.
+  The documentation-coverage test now includes registered methods.
+* `compare.adj.lists()` is silent by default; use `verbose = TRUE` to print
+  vertices whose neighbor sets differ.
+
 * Fixes summaries of empty `detect.local.extrema()` results by retaining the
   requested maxima/minima setting in a scalar `detect.maxima` component.
   Legacy empty objects without this metadata report an unknown (`NA`) type

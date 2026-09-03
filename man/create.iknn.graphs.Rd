@@ -80,16 +80,15 @@ exceeds this threshold, capped by \code{pca.dim}.}
 \code{knn.metric = "linf.simplex"} to identify active simplex faces and
 validate that \code{max(row) = 1}.}
 
-\item{n.cores}{Integer or \code{NULL}. Number of CPU cores. \code{NULL} uses the
-maximum available (OpenMP build only).}
+\item{n.cores}{Integer or \code{NULL}. Retained for compatibility; native graph
+construction is serial and uses one core.}
 
-\item{parallel.mode}{Character execution mode for graph construction:
+\item{parallel.mode}{Character execution-mode request, retained for compatibility:
 \code{"auto"}, \code{"k"}, \code{"bucket"}, \code{"hybrid"} (or alias \code{"bucket.prune"}).
-\code{"hybrid"} performs
-bucket-parallel graph build and then k-parallel pruning in batches.}
+All requests use serial graph construction.}
 
-\item{hybrid.batch.size}{Positive integer batch size used when
-\code{parallel.mode = "hybrid"}.}
+\item{hybrid.batch.size}{Positive integer retained for compatibility;
+unused during serial construction.}
 
 \item{verbose}{Logical; print progress and timing.}
 

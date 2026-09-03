@@ -1,86 +1,53 @@
-## Submission
+## Update to dgraphs 0.2.1
 
-This is a resubmission of `dgraphs` 0.2.0 after the automated CRAN pretest.
-The regular Windows and Debian incoming checks were OK, but the special LTO
-check reported a C++ One Definition Rule warning because two translation units
-defined different global structures named `edge_t`. I removed the unused
-intersection-kNN helper structure that supplied one definition, renamed the
-minimum-spanning-tree structure descriptively, and placed the MST implementation
-details in an unnamed namespace. This removes the conflicting external type
-definitions without changing the R API or graph semantics.
+This maintenance update fixes the type reported by summaries of empty local
+extrema and hardens native error handling. ANN errors now propagate through
+C++ exceptions to registered R entry points rather than returning silently.
+Point/tree ownership and native kNN input validation were strengthened.
 
-Version 0.2.0 deliberately removes
-deprecated, superseded, and low-level public entry points introduced in the
-initial 0.1.0 release.
+Global compiler-diagnostic suppression and unsupported native OpenMP branches
+were removed. Native graph construction remains serial, as in the standard
+0.2.0 build. Compatibility arguments remain accepted. Every exported function
+and registered S3 method now has documented results and runnable examples.
+Adjacency-list comparisons are silent unless `verbose = TRUE` is requested.
 
-The maintainer's first name is corrected from "Peter" to "Pawel" in
-`Authors@R`; the maintainer and email address are otherwise unchanged.
+The 0.2.0 fix for CRAN's LTO One Definition Rule diagnostic is preserved:
+the unused conflicting `edge_t` was removed, and the MST helper type remains
+renamed and confined to an unnamed namespace. No public functions are removed
+in 0.2.1 and graph scoring/edge conventions are unchanged.
 
-## Changes in version 0.2.0
+## Completed checks (2026-09-03)
 
-* Removed the deprecated `create.radius.graph()` and
-  `create.adaptive.radius.graph()` wrappers. Their supported replacement is
-  `create.rknn.graph()` with `type = "fixed"` or
-  `type = "adaptive.radius"`, respectively.
-* Removed the temporary public `cpp.create.rknn.graphs()` backend entry point.
-  Its supported replacement is `create.rknn.graphs(backend = "cpp")`.
-* Internalized three low-level helpers that were not intended as public API:
-  `dist.to.knn()`, `euclidean.distance()`, and `graph.adj.mat()`.
-* Removed the superseded `adjlist.to.igraph()` function and extended
-  `as_igraph()` to convert bare adjacency lists with optional aligned weights.
-* Removed four unused functions belonging to an incomplete graph-edit
-  workflow: `graph.edit.distance()`, `load.graph.data()`,
-  `calculate.edit.distances()`, and `create.distance.plot()`.
-* Updated documentation, tests, installed-package self-containment checks,
-  vignettes, and the package-paper materials for the revised API.
-* Fixed an ANN fixed-radius boundary issue. The adaptive maximum-radius rule
-  with factor one now reproduces symmetric-kNN edges for exact, tie-free
-  searches in both scalar and batched constructors.
-* Clarified that the historical `rel_geodesic_stress` result is a
-  target-normalized graph-geodesic relative RMSE, not Kruskal's Stress-1.
-* Fixed the C++ `edge_t` One Definition Rule violation reported by CRAN's
-  special LTO check.
+* macOS 26.6.1, Apple Silicon, R-devel 4.7.0 (2026-06-24 r90190),
+  Apple Clang 21 and GNU Fortran 14.2:
+  full `R CMD check --as-cran`: 0 errors, 0 warnings, 2 notes.
+  Examples, tests, vignettes and PDF manual passed.
+* 432 test expectations: no failures, warnings or skips, under both the
+  standard Clang build and a GCC 16.1 build with link-time optimization.
+* Standalone ANN error-path tests passed with Clang AddressSanitizer and
+  UndefinedBehaviorSanitizer, and with GCC 16.1.
+* Documentation coverage includes all 86 exports and 36 registered S3 methods.
 
-These removals are intentional breaking changes and are documented in
-`NEWS.md`.
+## Notes and compiler diagnostics
 
-## Test environments
+The incoming-feasibility note reports three days since the previous update.
+This is a release-timing consideration, not an environment-only note. The
+candidate is being prepared for a later submission; the interval and test
+evidence must be refreshed at submission time.
 
-* Local special-LTO reproduction on macOS 26.6.1, R-devel 4.7.0,
-  GCC 16.1.0, with `-flto=auto -Wodr`: installation completed without an ODR
-  diagnostic
-* macOS 26.6.1 (Apple Silicon), R-devel 4.7.0 (2026-06-24 r90190),
-  Apple clang 21.0.0, GNU Fortran 14.2.0:
-  0 errors | 0 warnings | 1 note
-* GitHub Actions, Ubuntu, R-devel, R release, and R oldrel-1:
-  0 errors | 0 warnings | 0 notes on each configuration
-* R-hub, R-devel, Linux, Windows, and macOS:
-  0 errors | 0 warnings | 0 notes on each configuration
-* Win-builder, Windows Server 2022, x86_64 UCRT:
-  - R-devel (2026-08-17 r90424):
-    0 errors | 0 warnings | 1 note
-  - R 4.6.1:
-    0 errors | 0 warnings | 1 note
-  - R 4.5.3:
-    0 errors | 0 warnings | 1 note
+The other local note reports outdated HTML Tidy. Manuals build successfully,
+but this local HTML validator does not supply validation evidence.
 
-## R CMD check results
+With suppression removed, the installed RcppEigen 0.3.4.0.2 headers expose an
+unused-variable warning in SparseCore/TriangularSolver.h under Clang and
+class-memaccess warnings in Eigen NEON headers under GCC. GCC's additional
+`-Wextra` flags also report standard R/Rcpp native-registration function-pointer
+casts. These diagnostics remain visible; none is suppressed by the package.
+No ODR diagnostic was reported in the GCC LTO build.
 
-0 errors | 0 warnings | 1 note
+## Evidence to refresh before upload
 
-## Notes
-
-The note is local-environment-only: the installed HTML Tidy is too old
-for R-devel's HTML-manual validation. The PDF and HTML manuals were both built
-successfully, and all Rd checks passed.
-
-The single Win-builder note on each R version is the same incoming-feasibility
-note shown above. All Win-builder examples, tests, vignettes, and PDF and HTML
-manual checks passed.
-
-## Additional checks
-
-* All 387 package expectations pass locally under R-devel.
-* The source tarball contains no compiled objects or shared libraries.
-* The R Journal paper audit, including citation verification and the package
-  article readiness scan, passes for version 0.2.0.
+Current external Linux/Windows/macOS and R release/devel/oldrelease results,
+downstream comparisons, and the maintainer's confirmation of the copyright
+holder name must be recorded before this file is used for submission. Historical
+0.2.0 platform results are not presented as checks of this candidate.

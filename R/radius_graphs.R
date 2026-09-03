@@ -1293,6 +1293,22 @@ create.cknn.graph <- function(X,
     g
 }
 
+#' Print Graph Constructor Results
+#'
+#' @param x A graph or graph-sequence object returned by the corresponding
+#'   constructor.
+#' @param ... Unused.
+#' @return The input object `x`, invisibly and unchanged. Prints vertex and
+#'   edge counts, construction parameters, and connectivity information when
+#'   present; for a sequence, prints the graph count and neighborhood sizes.
+#' @examples
+#' X <- cbind(seq_len(8), sin(seq_len(8)))
+#' print(create.rknn.graph(X, type = "fixed", radius = 2))
+#' print(create.cknn.graph(X, k.scale = 2))
+#' print(create.rknn.graph(X, type = "adaptive.radius", k.scale = 2))
+#' print(create.rknn.graphs(X, kmin = 2, kmax = 3))
+#' print(create.sknn.graph(X, k = 2))
+#' @name print.graph.constructors
 #' @export
 print.radius_graph <- function(x, ...) {
     cat("Fixed-radius graph\n")
@@ -1304,6 +1320,7 @@ print.radius_graph <- function(x, ...) {
     invisible(x)
 }
 
+#' @rdname print.graph.constructors
 #' @export
 print.cknn_graph <- function(x, ...) {
     cat("Continuous-kNN graph\n")
@@ -1316,6 +1333,7 @@ print.cknn_graph <- function(x, ...) {
     invisible(x)
 }
 
+#' @rdname print.graph.constructors
 #' @export
 print.rknn_graphs <- function(x, ...) {
     cat("Adaptive-radius graph sequence\n")
@@ -1325,6 +1343,7 @@ print.rknn_graphs <- function(x, ...) {
     invisible(x)
 }
 
+#' @rdname print.graph.constructors
 #' @export
 print.adaptive_radius_graph <- function(x, ...) {
     cat("Adaptive-radius graph\n")

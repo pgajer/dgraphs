@@ -28,7 +28,12 @@
 
 #include <cstdlib>						// C standard lib defs
 #include <ANN/ANNx.h>					// all ANN includes
+// Modified for dgraphs, 2026-09-03: exception-safe point allocation and
+// exception-based error propagation. Upstream copyright and license retained.
 #include <ANN/ANNperf.h>				// ANN performance 
+#include <memory>
+#include <stdexcept>
+#include <string>
 
 using namespace std;					// make std:: accessible
 
@@ -116,12 +121,14 @@ ANNpoint annAllocPt(int dim, ANNcoord c)		// allocate 1 point
    
 ANNpointArray annAllocPts(int n, int dim)		// allocate n pts in dim
 {
-	ANNpointArray pa = new ANNpoint[n];			// allocate points
-	ANNpoint	  p  = new ANNcoord[n*dim];		// allocate space for coords
+	if (n <= 0 || dim <= 0) annError("point dimensions must be positive", ANNabort);
+	std::unique_ptr<ANNpoint[]> pa(new ANNpoint[n]);
+	std::unique_ptr<ANNcoord[]> p(new ANNcoord[static_cast<size_t>(n) * dim]);
 	for (int i = 0; i < n; i++) {
-		pa[i] = &(p[i*dim]);
+		pa[i] = &(p[static_cast<size_t>(i) * dim]);
 	}
-	return pa;
+	p.release();
+	return pa.release();
 }
 
 void annDeallocPt(ANNpoint &p)					// deallocate 1 point
@@ -166,15 +173,11 @@ ANNbool ANNorthRect::inside(int dim, ANNpoint p)
 //	Error handler
 //----------------------------------------------------------------------
 
-void annError(const char*, ANNerr level)
+void annError(const char* msg, ANNerr level)
 {
-	if (level == ANNabort) {
-		//cerr << "ANN: ERROR------->" << msg << "<-------------ERROR\n";
-		//exit(1);
-	}
-	else {
-		//cerr << "ANN: WARNING----->" << msg << "<-------------WARNING\n";
-	}
+	// Escalate both fatal errors and warnings rather than continue with a
+	// potentially invalid tree. Registered R entry points translate exceptions.
+	throw std::runtime_error(std::string(level == ANNabort ? "ANN error: " : "ANN warning: ") + msg);
 }
 
 //----------------------------------------------------------------------

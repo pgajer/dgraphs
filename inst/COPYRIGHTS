@@ -6,6 +6,10 @@ License: LGPL-2.1-or-later
 Copyright (c) 1997-2010 University of Maryland, Sunil Arya, and David M. Mount
 The upstream copyright and license notice is included in
 inst/licenses/ANN-Copyright-Notice.txt.
+dgraphs modifies ANN's point allocation and error handler (2026-09-03):
+allocation is exception-safe and errors throw C++ exceptions rather than
+returning silently or terminating the process. These modifications retain
+ANN's LGPL-2.1-or-later license.
 
 Spectra (https://spectralib.org/)
 License: MPL-2.0

@@ -6,7 +6,7 @@
 #include <string>
 
 #include <Eigen/Dense>
-#include <Eigen/Sparse>
+#include <Eigen/SparseCore>
 
 #include <R.h>
 #include <Rinternals.h>

@@ -134,6 +134,25 @@ detect.local.extrema <- function(adj.list,
     g
 }
 
+#' Summarize Local Extrema
+#'
+#' @param object A `local_extrema` object from [detect.local.extrema()].
+#' @param x A `summary.local_extrema` object returned by `summary()`.
+#' @param ... Unused.
+#' @return `summary()` returns a list of class `summary.local_extrema` with
+#'   `n_extrema`, `extrema_type`, summaries of function values, neighborhood
+#'   sizes and radii, and the data frame `extrema_details` (labels, vertex
+#'   indices, values, radii and neighborhood sizes). With no extrema, numerical
+#'   summaries are `NA` and the data frame is empty; the type is `NA` for legacy
+#'   empty objects without detection-type metadata. `print()` prints this
+#'   summary and invisibly returns `x` unchanged.
+#' @examples
+#' chain <- create.chain.graph(n.vertices = 5)
+#' extrema <- detect.local.extrema(chain$adj.list, chain$edge.lengths,
+#'   y = c(1, 3, 1, 2, 0), max.radius = 1, min.neighborhood.size = 2)
+#' summary(extrema)
+#' print(summary(extrema))
+#' @name summary.local_extrema
 #' @export
 summary.local_extrema <- function(object, ...) {
     if (!inherits(object, "local_extrema")) {
@@ -184,6 +203,7 @@ summary.local_extrema <- function(object, ...) {
     result
 }
 
+#' @rdname summary.local_extrema
 #' @export
 print.summary.local_extrema <- function(x, ...) {
     cat("Local Extrema Detection Summary\n")
@@ -220,6 +240,14 @@ vertices <- function(object, ...) {
     UseMethod("vertices")
 }
 
+#' Extract a Local-Extremum Neighborhood
+#'
+#' @inheritParams vertices
+#' @param label Character scalar identifying an extremum in `object$labels`.
+#' @param include.center Logical; include the extremum vertex itself.
+#' @return An integer vector of one-based vertex indices in the selected
+#'   extremum's stored neighborhood, optionally excluding its center.
+#' @inherit vertices examples
 #' @export
 vertices.local_extrema <- function(object, label, include.center = TRUE, ...) {
     if (!inherits(object, "local_extrema")) {

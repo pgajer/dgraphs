@@ -9,9 +9,6 @@
 #include <utility>
 #include <vector>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 using Rcpp::IntegerMatrix;
 using Rcpp::List;
@@ -472,9 +469,6 @@ Rcpp::List dgraphs_rcpp_compute_graph_endpoint_scores(const List& adj_list,
   std::vector<double> distance_scale_storage(static_cast<size_t>(n_vertices * n_scales), NA_REAL);
   std::vector<int> neighborhood_size_storage(static_cast<size_t>(n_vertices * n_scales), 0);
 
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic)
-#endif
   for (int vertex = 0; vertex < n_vertices; ++vertex) {
     std::vector<NeighborEntry> neighbors = truncated_dijkstra(
         adj, weight, vertex, use_k_neighborhood, max_k, max_radius);

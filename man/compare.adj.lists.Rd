@@ -4,12 +4,15 @@
 \alias{compare.adj.lists}
 \title{Compare Two Adjacency Lists}
 \usage{
-compare.adj.lists(adj.list1, adj.list2)
+compare.adj.lists(adj.list1, adj.list2, verbose = FALSE)
 }
 \arguments{
 \item{adj.list1}{First adjacency list.}
 
 \item{adj.list2}{Second adjacency list.}
+
+\item{verbose}{Logical; print the indices of vertices with different
+neighbor sets. Defaults to \code{FALSE}.}
 }
 \value{
 \code{TRUE} when each vertex has the same neighbor set in both lists,

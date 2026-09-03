@@ -1,6 +1,31 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
+#include <cstdio>
+#include <exception>
+
+namespace {
+
+// Catch after native stack unwinding, then raise an R error after the exception
+// itself has been destroyed. No C++ exception may cross R's C call frames.
+template <auto Function> struct r_call_boundary;
+template <typename... Args, SEXP (*Function)(Args...)>
+struct r_call_boundary<Function> {
+    static SEXP call(Args... args) {
+        char message[1024];
+        try {
+            return Function(args...);
+        } catch (const std::exception& error) {
+            std::snprintf(message, sizeof(message), "%s", error.what());
+        } catch (...) {
+            std::snprintf(message, sizeof(message), "Unknown native dgraphs exception");
+        }
+        Rf_error("%s", message);
+        return R_NilValue;
+    }
+};
+
+} // namespace
 
 extern "C" {
 
@@ -163,37 +188,37 @@ SEXP S_wgraph_prune_long_edges(SEXP s_adj_list,
                                SEXP s_verbose);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"S_adaptive_radius_edges_ann", (DL_FUNC) &S_adaptive_radius_edges_ann, 4},
-    {"S_adaptive_radius_edges_ann_graphs", (DL_FUNC) &S_adaptive_radius_edges_ann_graphs, 4},
-    {"S_compute_mstree_total_length", (DL_FUNC) &S_compute_mstree_total_length, 1},
-    {"S_create_geodesic_iknn_graph", (DL_FUNC) &S_create_geodesic_iknn_graph, 3},
-    {"S_create_iknn_graphs", (DL_FUNC) &S_create_iknn_graphs, 17},
-    {"S_create_mknn_graph", (DL_FUNC) &S_create_mknn_graph, 2},
-    {"S_create_mknn_graphs", (DL_FUNC) &S_create_mknn_graphs, 7},
-    {"S_create_mst_completion_graph", (DL_FUNC) &S_create_mst_completion_graph, 3},
-    {"S_create_maximal_packing", (DL_FUNC) &S_create_maximal_packing, 5},
-    {"S_create_path_graph_plus", (DL_FUNC) &S_create_path_graph_plus, 3},
-    {"S_create_path_graph_plm", (DL_FUNC) &S_create_path_graph_plm, 3},
-    {"S_create_path_graph_series", (DL_FUNC) &S_create_path_graph_series, 3},
-    {"S_create_single_iknn_graph", (DL_FUNC) &S_create_single_iknn_graph, 13},
-    {"S_create_sknn_graph", (DL_FUNC) &S_create_sknn_graph, 16},
-    {"S_create_uniform_grid_graph", (DL_FUNC) &S_create_uniform_grid_graph, 5},
-    {"S_graph_connected_components", (DL_FUNC) &S_graph_connected_components, 1},
-    {"S_graph_spectrum", (DL_FUNC) &S_graph_spectrum, 2},
-    {"S_graph_spectrum_plus", (DL_FUNC) &S_graph_spectrum_plus, 3},
-    {"S_compute_geodesic_stats", (DL_FUNC) &S_compute_geodesic_stats, 9},
-    {"S_compute_vertex_geodesic_stats", (DL_FUNC) &S_compute_vertex_geodesic_stats, 8},
-    {"S_geodesic_core_endpoints", (DL_FUNC) &S_geodesic_core_endpoints, 9},
-    {"_dgraphs_rcpp_compute_graph_endpoint_scores", (DL_FUNC) &_dgraphs_rcpp_compute_graph_endpoint_scores, 9},
-    {"_dgraphs_rcpp_graph_greedy_maxima_suppression_by_scale", (DL_FUNC) &_dgraphs_rcpp_graph_greedy_maxima_suppression_by_scale, 5},
-    {"_dgraphs_rcpp_graph_multi_source_support_by_scale", (DL_FUNC) &_dgraphs_rcpp_graph_multi_source_support_by_scale, 4},
-    {"S_kNN", (DL_FUNC) &S_kNN, 2},
-    {"S_linf_simplex_knn", (DL_FUNC) &S_linf_simplex_knn, 3},
-    {"S_mstree", (DL_FUNC) &S_mstree, 1},
-    {"S_prune_graph_global_geodesic_ratio", (DL_FUNC) &S_prune_graph_global_geodesic_ratio, 5},
-    {"S_prune_graph_local_geodesic", (DL_FUNC) &S_prune_graph_local_geodesic, 6},
-    {"S_shortest_path", (DL_FUNC) &S_shortest_path, 3},
-    {"S_wgraph_prune_long_edges", (DL_FUNC) &S_wgraph_prune_long_edges, 5},
+    {"S_adaptive_radius_edges_ann", (DL_FUNC) &r_call_boundary<S_adaptive_radius_edges_ann>::call, 4},
+    {"S_adaptive_radius_edges_ann_graphs", (DL_FUNC) &r_call_boundary<S_adaptive_radius_edges_ann_graphs>::call, 4},
+    {"S_compute_mstree_total_length", (DL_FUNC) &r_call_boundary<S_compute_mstree_total_length>::call, 1},
+    {"S_create_geodesic_iknn_graph", (DL_FUNC) &r_call_boundary<S_create_geodesic_iknn_graph>::call, 3},
+    {"S_create_iknn_graphs", (DL_FUNC) &r_call_boundary<S_create_iknn_graphs>::call, 17},
+    {"S_create_mknn_graph", (DL_FUNC) &r_call_boundary<S_create_mknn_graph>::call, 2},
+    {"S_create_mknn_graphs", (DL_FUNC) &r_call_boundary<S_create_mknn_graphs>::call, 7},
+    {"S_create_mst_completion_graph", (DL_FUNC) &r_call_boundary<S_create_mst_completion_graph>::call, 3},
+    {"S_create_maximal_packing", (DL_FUNC) &r_call_boundary<S_create_maximal_packing>::call, 5},
+    {"S_create_path_graph_plus", (DL_FUNC) &r_call_boundary<S_create_path_graph_plus>::call, 3},
+    {"S_create_path_graph_plm", (DL_FUNC) &r_call_boundary<S_create_path_graph_plm>::call, 3},
+    {"S_create_path_graph_series", (DL_FUNC) &r_call_boundary<S_create_path_graph_series>::call, 3},
+    {"S_create_single_iknn_graph", (DL_FUNC) &r_call_boundary<S_create_single_iknn_graph>::call, 13},
+    {"S_create_sknn_graph", (DL_FUNC) &r_call_boundary<S_create_sknn_graph>::call, 16},
+    {"S_create_uniform_grid_graph", (DL_FUNC) &r_call_boundary<S_create_uniform_grid_graph>::call, 5},
+    {"S_graph_connected_components", (DL_FUNC) &r_call_boundary<S_graph_connected_components>::call, 1},
+    {"S_graph_spectrum", (DL_FUNC) &r_call_boundary<S_graph_spectrum>::call, 2},
+    {"S_graph_spectrum_plus", (DL_FUNC) &r_call_boundary<S_graph_spectrum_plus>::call, 3},
+    {"S_compute_geodesic_stats", (DL_FUNC) &r_call_boundary<S_compute_geodesic_stats>::call, 9},
+    {"S_compute_vertex_geodesic_stats", (DL_FUNC) &r_call_boundary<S_compute_vertex_geodesic_stats>::call, 8},
+    {"S_geodesic_core_endpoints", (DL_FUNC) &r_call_boundary<S_geodesic_core_endpoints>::call, 9},
+    {"_dgraphs_rcpp_compute_graph_endpoint_scores", (DL_FUNC) &r_call_boundary<_dgraphs_rcpp_compute_graph_endpoint_scores>::call, 9},
+    {"_dgraphs_rcpp_graph_greedy_maxima_suppression_by_scale", (DL_FUNC) &r_call_boundary<_dgraphs_rcpp_graph_greedy_maxima_suppression_by_scale>::call, 5},
+    {"_dgraphs_rcpp_graph_multi_source_support_by_scale", (DL_FUNC) &r_call_boundary<_dgraphs_rcpp_graph_multi_source_support_by_scale>::call, 4},
+    {"S_kNN", (DL_FUNC) &r_call_boundary<S_kNN>::call, 2},
+    {"S_linf_simplex_knn", (DL_FUNC) &r_call_boundary<S_linf_simplex_knn>::call, 3},
+    {"S_mstree", (DL_FUNC) &r_call_boundary<S_mstree>::call, 1},
+    {"S_prune_graph_global_geodesic_ratio", (DL_FUNC) &r_call_boundary<S_prune_graph_global_geodesic_ratio>::call, 5},
+    {"S_prune_graph_local_geodesic", (DL_FUNC) &r_call_boundary<S_prune_graph_local_geodesic>::call, 6},
+    {"S_shortest_path", (DL_FUNC) &r_call_boundary<S_shortest_path>::call, 3},
+    {"S_wgraph_prune_long_edges", (DL_FUNC) &r_call_boundary<S_wgraph_prune_long_edges>::call, 5},
     {NULL, NULL, 0}
 };
 

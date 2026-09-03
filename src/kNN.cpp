@@ -1,4 +1,5 @@
 #include "dgraphs/kNN.h"
+#include "dgraphs/ann_raii.hpp"
 
 #include <vector>
 #include <cmath>
@@ -26,19 +27,14 @@ knn_result_t kNN(const std::vector<std::vector<double>>& X, int k) {
     if (k > n)       throw std::invalid_argument("kNN(): k cannot exceed n");
 
     // Build ANN dataset
-    ANNpointArray dataPts = annAllocPts(n, d);
+    ann_dataset_t dataset(n, d);
+    ANNpointArray dataPts = dataset.points;
     for (int i = 0; i < n; ++i)
         for (int j = 0; j < d; ++j)
             dataPts[i][j] = X[i][j];
 
-    ANNkd_tree* kdTree = nullptr;
-    try {
-        kdTree = new ANNkd_tree(dataPts, n, d);
-    } catch (...) {
-        annDeallocPts(dataPts);
-        annClose();
-        throw;
-    }
+    dataset.tree = new ANNkd_tree(dataPts, n, d);
+    ANNkd_tree* kdTree = dataset.tree;
 
     // Scratch buffers
     std::vector<ANNidx>  nnIdx(static_cast<size_t>(k));
@@ -59,17 +55,15 @@ knn_result_t kNN(const std::vector<std::vector<double>>& X, int k) {
         }
     }
 
-    delete kdTree;
-    annDeallocPts(dataPts);
-    annClose();
-
     return out;
 }
 
 // Direct ANN implementation. The caller must protect the returned object.
 SEXP S_kNN(SEXP RX, SEXP Rk) {
 
-    if (!Rf_isMatrix(RX)) { Rf_error("S_kNN: RX must be a matrix"); }
+    if (!Rf_isMatrix(RX) || TYPEOF(RX) != REALSXP) {
+        Rf_error("S_kNN: RX must be a numeric matrix");
+    }
     const int k = Rf_asInteger(Rk);
 
     SEXP s_dim = PROTECT(Rf_getAttrib(RX, R_DimSymbol));
@@ -81,15 +75,22 @@ SEXP S_kNN(SEXP RX, SEXP Rk) {
     const int d = INTEGER(s_dim)[1];
     UNPROTECT(1); // s_dim
 
+    if (n < 1 || d < 1 || k == NA_INTEGER || k < 1 || k > n) {
+        Rf_error("S_kNN: require positive matrix dimensions and 1 <= k <= nrow(X)");
+    }
+
     const double* X = REAL(RX);
-    ANNpointArray dataPts = annAllocPts(n, d);
+    for (R_xlen_t i = 0; i < XLENGTH(RX); ++i) {
+        if (!R_FINITE(X[i])) Rf_error("S_kNN: X must contain only finite values");
+    }
+    ann_dataset_t dataset(n, d);
+    ANNpointArray dataPts = dataset.points;
     for (int i = 0; i < n; ++i)
         for (int j = 0; j < d; ++j)
             dataPts[i][j] = X[i + n * j];
 
-    ANNkd_tree* kdTree = nullptr;
-    try { kdTree = new ANNkd_tree(dataPts, n, d); }
-    catch (...) { annDeallocPts(dataPts); annClose(); Rf_error("S_kNN: kd-tree build failed"); }
+    dataset.tree = new ANNkd_tree(dataPts, n, d);
+    ANNkd_tree* kdTree = dataset.tree;
 
     std::vector<ANNidx>  nnIdx(static_cast<size_t>(k));
     std::vector<ANNdist> nnDist(static_cast<size_t>(k));
@@ -115,10 +116,6 @@ SEXP S_kNN(SEXP RX, SEXP Rk) {
                 REAL(nn_d)[i + n * j]    = ANN_ROOT(static_cast<double>(nnDist[j]));
             }
         }
-
-        delete kdTree;
-        annDeallocPts(dataPts);
-        annClose();
 
         SET_VECTOR_ELT(res, 0, nn_i);
         SET_VECTOR_ELT(res, 1, nn_d);

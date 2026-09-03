@@ -60,16 +60,15 @@
 #'     \code{knn.metric = "linf.simplex"} to identify active simplex faces and
 #'     validate that \code{max(row) = 1}.
 #'
-#' @param n.cores Integer or `NULL`. Number of CPU cores. `NULL` uses the
-#'     maximum available (OpenMP build only).
+#' @param n.cores Integer or `NULL`. Retained for compatibility; native graph
+#'     construction is serial and uses one core.
 #'
-#' @param parallel.mode Character execution mode for graph construction:
+#' @param parallel.mode Character execution-mode request, retained for compatibility:
 #'     `"auto"`, `"k"`, `"bucket"`, `"hybrid"` (or alias `"bucket.prune"`).
-#'     `"hybrid"` performs
-#'     bucket-parallel graph build and then k-parallel pruning in batches.
+#'     All requests use serial graph construction.
 #'
-#' @param hybrid.batch.size Positive integer batch size used when
-#'     `parallel.mode = "hybrid"`.
+#' @param hybrid.batch.size Positive integer retained for compatibility;
+#'     unused during serial construction.
 #'
 #' @param knn.cache.path Optional character scalar path to a binary kNN cache file.
 #'     Used only when `knn.cache.mode != "none"`.

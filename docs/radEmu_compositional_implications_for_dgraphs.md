@@ -1,8 +1,16 @@
 # radEmu Implications for dgraphs
 
-Generated: 2026-06-25
-Canonical source: `~/current_projects/dgraphs/docs/radEmu_compositional_implications_for_dgraphs.md`
-Shared note: `~/.codex/notes/references/compositional_data/radEmu_bias_identifiability.md`
+Written: 2026-06-25; public-source provenance checked: 2026-09-03.
+
+Source basis: McLaren, Willis and Callahan (2019),
+[Consistent and correctable bias in metagenomic sequencing experiments](https://doi.org/10.7554/eLife.46923),
+and Clausen, Teichman and Willis (2025),
+[Estimating Fold Changes from Partially Observed Outcomes with Applications in Microbial Metagenomics](https://arxiv.org/abs/2402.05231v2)
+(the version-2 radEmu preprint) [@mclaren2019; @clausen2025].
+See [BibTeX metadata](compositional-references.bib) and
+[claim-level verification](compositional-citation-verification.html).
+The graph implications and proposed stress tests below are deductions from
+these measurement models, not graph-construction results reported by the papers.
 
 ## Main Implication
 

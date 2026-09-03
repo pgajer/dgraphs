@@ -50,7 +50,7 @@ set_wgraph_t set_wgraph_t::prune_long_edges(double threshold_percentile) const {
     std::vector<Edge> all_edges;
     all_edges.reserve(adjacency_list.size() * 5);  // Rough estimate of edges
 
-    // Using for_each with parallel execution policy
+    // Traverse vertices using the package's serial execution policy.
     std::vector<size_t> vertices(adjacency_list.size());
     std::iota(vertices.begin(), vertices.end(), 0);
 

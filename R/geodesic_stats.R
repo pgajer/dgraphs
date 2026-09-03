@@ -240,6 +240,11 @@ summary.geodesic_stats <- function(object, type = c("rays", "composite", "overla
 #'
 #' @return The object invisibly.
 #'
+#' @examples
+#' graph <- generate.circle.graph(8, type = "uniform")
+#' stats <- compute.geodesic.stats(graph$adj.list, graph$weight.list,
+#'   min.radius = 0.3, max.radius = 0.5, n.steps = 2, n.packing.vertices = 4)
+#' print(stats)
 #' @export
 print.geodesic_stats <- function(x, ...) {
     cat("Geodesic Statistics Analysis\n")

@@ -13,7 +13,7 @@ rd.node.text <- function(node) {
     paste(unlist(node, recursive = TRUE, use.names = FALSE), collapse = "")
 }
 
-test_that("every exported function has a nonempty example", {
+test_that("every exported function and registered S3 method has an example", {
     source.root <- normalizePath(
         file.path(testthat::test_path(), "..", ".."),
         mustWork = FALSE
@@ -27,6 +27,11 @@ test_that("every exported function has a nonempty example", {
             "\\1",
             namespace.lines[grepl("^export\\(", namespace.lines)]
         )
+        registered.methods <- sub(
+            "^S3method\\(([^,]+),([^,]+)\\)$", "\\1.\\2",
+            namespace.lines[grepl("^S3method\\(", namespace.lines)]
+        )
+        exported.functions <- c(exported.functions, registered.methods)
         rd.db <- lapply(
             list.files(
                 file.path(source.root, "man"),
@@ -42,6 +47,9 @@ test_that("every exported function has a nonempty example", {
             function(name) is.function(getExportedValue("dgraphs", name)),
             logical(1)
         )]
+        methods <- getNamespaceInfo(asNamespace("dgraphs"), "S3methods")
+        exported.functions <- c(exported.functions, paste(methods[, 1L],
+                                                        methods[, 2L], sep = "."))
         rd.db <- tools::Rd_db("dgraphs")
     }
 

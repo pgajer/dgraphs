@@ -163,7 +163,7 @@ set_wgraph_t create_mknn_graph(const knn_search_result_t& knn_results, int k) {
  *
  * @note
  * - The function computes k-nearest neighbors only once with the maximum k value for efficiency
- * - Parallelization is implemented using OpenMP for processing multiple k values simultaneously
+ * - Graphs are processed serially; progress reporting stays on R's main thread
  * - MkNN graphs are naturally more sparse than standard kNN graphs, containing only reciprocal connections
  * - Geometric pruning preserves graph connectivity while reducing redundant connections
  * - All indices in returned R objects are 1-based (R convention)
@@ -210,8 +210,8 @@ SEXP S_create_mknn_graphs(
     std::vector<int> k_values(kmax - kmin + 1);
     std::iota(k_values.begin(), k_values.end(), kmin);
 
-    // Parallel processing of graph creation and pruning
-    if (verbose) Rprintf("Starting parallel graph processing\n");
+    // Process graph creation and pruning on R's main thread.
+    if (verbose) Rprintf("Starting graph processing\n");
     auto parallel_start_time = std::chrono::steady_clock::now();
 
     // Compute kNN once for maximum k
@@ -225,32 +225,16 @@ SEXP S_create_mknn_graphs(
     std::vector<std::vector<double>> k_statistics(kmax - kmin + 1);
     std::vector<edge_pruning_stats_t> all_edge_pruning_stats(kmax - kmin + 1);
 
-    // --- Thread setup (works with/without OpenMP) ---
-    const int max_threads = dgraphs_get_max_threads();   // =1 when no OpenMP
-    int num_threads = max_threads;                      // or clamp a user-supplied n_cores here
-    dgraphs_set_num_threads(num_threads);                 // no-op when no OpenMP
-
     if (verbose) {
-#if defined(_OPENMP)
-        Rprintf("Using %d OpenMP thread%s\n", num_threads, (num_threads == 1 ? "" : "s"));
-#else
-        Rprintf("OpenMP not enabled; running single-threaded.\n");
-#endif
+        Rprintf("Running single-threaded.\n");
     }
 
-    // --- Parallel region (serial when no OpenMP) ---
     const int nK = (kmax - kmin + 1);
 
-#if defined(_OPENMP)
-#pragma omp parallel for schedule(dynamic)
-#endif
     for (int k_idx = 0; k_idx < nK; ++k_idx) {
         const int k = kmin + k_idx;
 
         if (verbose) {
-#if defined(_OPENMP)
-#pragma omp critical
-#endif
             {
                 REprintf("\rProcessing k=%d (%d of %d) - %d%%",
                          k, k_idx + 1, nK, static_cast<int>((100.0 * (k_idx + 1)) / nK));
@@ -309,7 +293,7 @@ SEXP S_create_mknn_graphs(
     }
 
     if (verbose) {
-        elapsed_time(parallel_start_time, "\rParallel processing completed", true);
+        elapsed_time(parallel_start_time, "\rGraph processing completed", true);
     }
 
     // Set up a start time for creating return list objects

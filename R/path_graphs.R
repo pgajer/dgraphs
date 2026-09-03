@@ -120,6 +120,20 @@ get.shortest.path <- function(pg, from, to) {
     list(path = path, length = path.length, hops = length(path) - 1L)
 }
 
+#' Inspect a Path Graph
+#'
+#' @param x,object A `path.graph` object from [create.path.graph()].
+#' @param ... Unused.
+#' @return `print()` invisibly returns its unchanged input after printing graph
+#'   counts. `summary()` prints and invisibly returns a named list containing
+#'   `n.vertices`, `n.paths`, `avg.path.length` (number of vertices per stored
+#'   path, or `NA` if no paths), and `avg.degree` (mean adjacency-list length).
+#' @examples
+#' chain <- create.chain.graph(n.vertices = 5)
+#' paths <- create.path.graph(chain$adj.list, chain$edge.lengths, h = 2)
+#' print(paths)
+#' summary(paths)
+#' @name inspect.path.graph
 #' @export
 print.path.graph <- function(x, ...) {
     cat("Path graph object\n")
@@ -129,6 +143,7 @@ print.path.graph <- function(x, ...) {
     invisible(x)
 }
 
+#' @rdname inspect.path.graph
 #' @export
 summary.path.graph <- function(object, ...) {
     n.paths <- length(object$shortest.paths$paths)

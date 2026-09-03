@@ -333,7 +333,7 @@ void iknn_graph_t::print(size_t vertex_index_shift,
         return;
     }
 
-    // Calculate total edges (existing code is correct but could be more readable)
+    // Count each undirected edge once.
     size_t total_edges = 0;
     for (const auto& vertex_neighbors : graph) {
         total_edges += vertex_neighbors.size();
@@ -829,20 +829,7 @@ SEXP S_create_single_iknn_graph(SEXP s_X,
         Rf_error("knn.cache.path must be provided when knn.cache.mode is not 'none'.");
     }
 
-    int num_threads = dgraphs_get_num_procs();
-    if (num_threads < 1) {
-        num_threads = 1;
-    }
-    dgraphs_set_num_threads(num_threads);
-
-    if (verbose) {
-#if defined(_OPENMP)
-        Rprintf("Using %d OpenMP thread%s for single-k graph construction\n",
-                num_threads, (num_threads == 1 ? "" : "s"));
-#else
-        Rprintf("OpenMP not enabled; running single-threaded.\n");
-#endif
-    }
+    if (verbose) Rprintf("Running single-threaded.\n");
 
     auto stage_start = std::chrono::steady_clock::now();
     print_stage_running("compute_knn", verbose);
@@ -902,8 +889,8 @@ SEXP S_create_single_iknn_graph(SEXP s_X,
     print_stage_running("graph_build (inverted index)", verbose);
     auto iknn_graph = create_iknn_graph_inverted_index(knn_results,
                                                        k,
-                                                       true,
-                                                       num_threads);
+                                                       false,
+                                                       1);
     print_stage_done("graph_build (inverted index)", stage_start, verbose);
 
     // ---- Count total edges (undirected stored twice)
@@ -1438,73 +1425,15 @@ iknn_graph_t create_iknn_graph_inverted_index(const knn_search_result_t& knn_res
                                               bool use_bucket_parallel,
     int num_threads) {
     const size_t n_points = knn_results.n_points;
-#ifdef _OPENMP
-    size_t bucket_pair_work = 0;
-    auto buckets = build_inverted_knn_index(knn_results, k, &bucket_pair_work);
-#else
     auto buckets = build_inverted_knn_index(knn_results, k, nullptr);
-#endif
 
     edge_accumulator_map_t edge_map;
 
-#ifdef _OPENMP
-    // Small workloads run faster in serial due to OpenMP overhead.
-    constexpr size_t k_min_parallel_pair_work = 200000;
-    const bool try_parallel = use_bucket_parallel &&
-                              num_threads > 1 &&
-                              bucket_pair_work >= k_min_parallel_pair_work;
-
-    if (try_parallel) {
-        const int thread_count = std::max(1, std::min(num_threads, dgraphs_get_max_threads()));
-        if (thread_count > 1) {
-            std::vector<edge_accumulator_map_t> local_maps(static_cast<size_t>(thread_count));
-
-#pragma omp parallel num_threads(thread_count) default(none) shared(buckets, local_maps)
-            {
-                edge_accumulator_map_t& local_map = local_maps[static_cast<size_t>(dgraphs_get_thread_num())];
-
-#pragma omp for schedule(dynamic, 1)
-                for (int bucket_idx = 0; bucket_idx < static_cast<int>(buckets.size()); ++bucket_idx) {
-                    process_bucket(buckets[static_cast<size_t>(bucket_idx)], local_map);
-                }
-            }
-
-            size_t total_entries = 0;
-            for (const auto& local_map : local_maps) {
-                total_entries += local_map.size();
-            }
-            edge_map.reserve(total_entries);
-
-            for (auto& local_map : local_maps) {
-                for (const auto& kv : local_map) {
-                    const auto it = edge_map.find(kv.first);
-                    if (it == edge_map.end()) {
-                        edge_map.emplace(kv.first, kv.second);
-                    } else {
-                        it->second.isize += kv.second.isize;
-                        if (kv.second.min_dist < it->second.min_dist) {
-                            it->second.min_dist = kv.second.min_dist;
-                        }
-                    }
-                }
-            }
-        } else {
-            for (const auto& bucket : buckets) {
-                process_bucket(bucket, edge_map);
-            }
-        }
-    } else {
-        for (const auto& bucket : buckets) {
-            process_bucket(bucket, edge_map);
-        }
-    }
-#else
     (void)use_bucket_parallel;
     (void)num_threads;
     for (const auto& bucket : buckets) {
         process_bucket(bucket, edge_map);
     }
-#endif
 
     iknn_graph_t res(n_points);
     std::vector<size_t> degree_counts(n_points, 0);
@@ -2046,7 +1975,7 @@ void prune_iknn_graph_and_collect_stats(
  *
  * @note
  * - The function computes k-nearest neighbors only once with the maximum k value for efficiency
- * - Parallelization is implemented using OpenMP for processing multiple k values simultaneously
+ * - Construction and pruning run serially on R\'s main thread
  * - The function uses intersection size and geometric distance for edge pruning decisions
  * - Edge pruning preserves graph connectivity while reducing redundant connections
  * - All indices in returned R objects are 1-based (R convention)
@@ -2184,90 +2113,24 @@ SEXP S_create_iknn_graphs(
         Rf_error("knn.cache.path must be provided when knn.cache.mode is not 'none'.");
     }
 
-    // --- n_cores handling (no R API used in parallel region)
-    int num_threads = 1;
-
-    // Parse s_n_cores safely
-    if (!Rf_isNull(s_n_cores)) {
-        if (!Rf_isInteger(s_n_cores) || Rf_length(s_n_cores) < 1) {
-            Rf_error("n_cores must be NULL or a length-1 integer.");
-        }
-        int req = INTEGER(s_n_cores)[0];
-        if (req == NA_INTEGER) {
-            Rf_error("n_cores cannot be NA.");
-        }
-        if (req > 0) num_threads = req;
-    } else {
-        num_threads = dgraphs_get_num_procs();
+    // Compatibility parameters are validated but native construction is serial.
+    if (!Rf_isNull(s_n_cores) &&
+        (!Rf_isInteger(s_n_cores) || Rf_length(s_n_cores) != 1 ||
+         INTEGER(s_n_cores)[0] == NA_INTEGER)) {
+        Rf_error("n_cores must be NULL or a non-missing integer scalar.");
     }
-
-    const int max_t = dgraphs_get_num_procs();
-    if (num_threads > max_t) num_threads = max_t;
-    if (num_threads < 1)     num_threads = 1;
-
-    // Set threads (no-op if OpenMP is absent)
-    dgraphs_set_num_threads(num_threads);
-
-#if defined(_OPENMP)
-    const bool openmp_available = true;
-#else
-    const bool openmp_available = false;
-#endif
+    (void)hybrid_batch_size;
 
     // --- Precompute / allocate (pure C++; no R API here)
     std::vector<int> k_values(kmax - kmin + 1);
     std::iota(k_values.begin(), k_values.end(), kmin);
     const int n_k_values = static_cast<int>(k_values.size());
-    const bool can_parallel = openmp_available && (num_threads > 1);
-
-    iknn_execution_mode_t execution_mode = iknn_execution_mode_t::serial;
-    if (can_parallel) {
-        switch (requested_parallel_mode) {
-            case iknn_parallel_mode_t::k:
-                execution_mode = (n_k_values > 1)
-                    ? iknn_execution_mode_t::k_parallel
-                    : iknn_execution_mode_t::bucket;
-                break;
-            case iknn_parallel_mode_t::bucket:
-                execution_mode = iknn_execution_mode_t::bucket;
-                break;
-            case iknn_parallel_mode_t::hybrid:
-                execution_mode = (n_k_values > 1)
-                    ? iknn_execution_mode_t::hybrid
-                    : iknn_execution_mode_t::bucket;
-                break;
-            case iknn_parallel_mode_t::auto_mode:
-            default: {
-                const bool prefer_hybrid =
-                    (n_k_values > 1) &&
-                    (n_vertices >= 20000) &&
-                    (n_k_values < num_threads);
-                if (n_k_values == 1) {
-                    execution_mode = iknn_execution_mode_t::bucket;
-                } else if (prefer_hybrid) {
-                    execution_mode = iknn_execution_mode_t::hybrid;
-                } else {
-                    execution_mode = iknn_execution_mode_t::k_parallel;
-                }
-                break;
-            }
-        }
-    }
-
-    const int effective_hybrid_batch_size = std::max(1, std::min(hybrid_batch_size, n_k_values));
+    const iknn_execution_mode_t execution_mode = iknn_execution_mode_t::serial;
     const bool do_geometric_prune = (max_path_edge_ratio_thld > 1.0);
 
     // Messaging
     if (verbose) {
-#if defined(_OPENMP)
-        Rprintf("\tUsing %d OpenMP thread%s\n", num_threads, (num_threads == 1 ? "" : "s"));
-#else
-        if (!Rf_isNull(s_n_cores) && num_threads > 1) {
-            Rprintf("\tOpenMP not enabled; running single-threaded.\n");
-        } else {
-            Rprintf("\tRunning single-threaded.\n");
-        }
-#endif
+        Rprintf("\tRunning single-threaded.\n");
         Rprintf("Processing k values from %d to %d for %d vertices\n", kmin - 1, kmax - 1, n_vertices);
         if (knn_cache_mode != knn_cache_mode_t::none) {
             Rprintf("kNN cache mode: %s (%s)\n",
@@ -2279,22 +2142,7 @@ SEXP S_create_iknn_graphs(
                     100.0 * (1.0 - threshold_percentile));
         }
         Rprintf("Requested parallel.mode: %s\n", iknn_parallel_mode_label(requested_parallel_mode));
-        if (n_k_values == 1 && num_threads > 1) {
-            Rprintf("WARNING: kmin == kmax. Parallelism over k has one task and cannot saturate multiple cores.\n");
-        }
-        if (!can_parallel && num_threads > 1) {
-            Rprintf("NOTE: OpenMP parallel execution is unavailable; running serially.\n");
-        }
-        if (requested_parallel_mode == iknn_parallel_mode_t::k && n_k_values == 1 && can_parallel) {
-            Rprintf("Requested parallel.mode='k' with one k; using bucket mode instead.\n");
-        }
-        if (requested_parallel_mode == iknn_parallel_mode_t::hybrid && n_k_values == 1 && can_parallel) {
-            Rprintf("Requested parallel.mode='hybrid' with one k; using bucket mode instead.\n");
-        }
         Rprintf("Parallel mode: %s\n", iknn_execution_mode_label(execution_mode));
-        if (execution_mode == iknn_execution_mode_t::hybrid) {
-            Rprintf("Hybrid batch size: %d\n", effective_hybrid_batch_size);
-        }
         Rprintf("Starting graph processing\n");
     }
 
@@ -2379,157 +2227,7 @@ SEXP S_create_iknn_graphs(
     auto graph_processing_stage_start = std::chrono::steady_clock::now();
     print_stage_running("graph_build/geometric_prune/isize_prune", verbose);
 
-#ifdef _OPENMP
-    if (execution_mode == iknn_execution_mode_t::k_parallel) {
-#pragma omp parallel for schedule(dynamic) default(none) \
-    shared(k_values, knn_results, max_path_edge_ratio_thld, path_edge_ratio_percentile, \
-           threshold_percentile, max_alt_path_length, with_isize_pruning, \
-           with_edge_pruning_stats, na_real, geom_pruned_graphs, isize_pruned_graphs, \
-           all_edge_pruning_stats, k_statistics) \
-    reduction(+:graph_build_seconds, geom_prune_seconds, isize_prune_seconds)
-        for (int k_idx = 0; k_idx < static_cast<int>(k_values.size()); ++k_idx) {
-            const int k = k_values[static_cast<size_t>(k_idx)];
-
-            auto stage_start = std::chrono::steady_clock::now();
-            iknn_graph_t iknn_graph = create_iknn_graph_inverted_index(knn_results, k, false, 1);
-            graph_build_seconds += std::chrono::duration<double>(
-                std::chrono::steady_clock::now() - stage_start
-            ).count();
-
-            double local_geom_prune_seconds = 0.0;
-            double local_isize_prune_seconds = 0.0;
-            prune_iknn_graph_and_collect_stats(
-                iknn_graph,
-                max_path_edge_ratio_thld,
-                path_edge_ratio_percentile,
-                threshold_percentile,
-                max_alt_path_length,
-                with_isize_pruning,
-                with_edge_pruning_stats,
-                false,
-                na_real,
-                geom_pruned_graphs[static_cast<size_t>(k_idx)],
-                with_isize_pruning ? &isize_pruned_graphs[static_cast<size_t>(k_idx)] : nullptr,
-                with_edge_pruning_stats ? &all_edge_pruning_stats[static_cast<size_t>(k_idx)] : nullptr,
-                k_statistics[static_cast<size_t>(k_idx)],
-                local_geom_prune_seconds,
-                local_isize_prune_seconds
-            );
-            geom_prune_seconds += local_geom_prune_seconds;
-            isize_prune_seconds += local_isize_prune_seconds;
-        }
-    } else
-#endif
-    if (execution_mode == iknn_execution_mode_t::bucket) {
-        for (int k_idx = 0; k_idx < static_cast<int>(k_values.size()); ++k_idx) {
-            const int k = k_values[static_cast<size_t>(k_idx)];
-
-            auto stage_start = std::chrono::steady_clock::now();
-            iknn_graph_t iknn_graph = create_iknn_graph_inverted_index(knn_results, k, true, num_threads);
-            graph_build_seconds += std::chrono::duration<double>(
-                std::chrono::steady_clock::now() - stage_start
-            ).count();
-
-            double local_geom_prune_seconds = 0.0;
-            double local_isize_prune_seconds = 0.0;
-            prune_iknn_graph_and_collect_stats(
-                iknn_graph,
-                max_path_edge_ratio_thld,
-                path_edge_ratio_percentile,
-                threshold_percentile,
-                max_alt_path_length,
-                with_isize_pruning,
-                with_edge_pruning_stats,
-                verbose && n_k_values == 1,
-                na_real,
-                geom_pruned_graphs[static_cast<size_t>(k_idx)],
-                with_isize_pruning ? &isize_pruned_graphs[static_cast<size_t>(k_idx)] : nullptr,
-                with_edge_pruning_stats ? &all_edge_pruning_stats[static_cast<size_t>(k_idx)] : nullptr,
-                k_statistics[static_cast<size_t>(k_idx)],
-                local_geom_prune_seconds,
-                local_isize_prune_seconds
-            );
-            geom_prune_seconds += local_geom_prune_seconds;
-            isize_prune_seconds += local_isize_prune_seconds;
-        }
-    } else if (execution_mode == iknn_execution_mode_t::hybrid) {
-        const int batch_size = effective_hybrid_batch_size;
-        for (int batch_start = 0; batch_start < n_k_values; batch_start += batch_size) {
-            const int batch_end = std::min(batch_start + batch_size, n_k_values);
-            std::vector<iknn_graph_t> batch_graphs;
-            batch_graphs.reserve(static_cast<size_t>(batch_end - batch_start));
-
-            for (int k_idx = batch_start; k_idx < batch_end; ++k_idx) {
-                const int k = k_values[static_cast<size_t>(k_idx)];
-                auto stage_start = std::chrono::steady_clock::now();
-                batch_graphs.emplace_back(create_iknn_graph_inverted_index(knn_results, k, true, num_threads));
-                graph_build_seconds += std::chrono::duration<double>(
-                    std::chrono::steady_clock::now() - stage_start
-                ).count();
-            }
-
-#ifdef _OPENMP
-            if (batch_graphs.size() > 1) {
-#pragma omp parallel for schedule(dynamic) default(none) \
-    shared(batch_graphs, batch_start, max_path_edge_ratio_thld, path_edge_ratio_percentile, \
-           threshold_percentile, max_alt_path_length, with_isize_pruning, \
-           with_edge_pruning_stats, na_real, geom_pruned_graphs, isize_pruned_graphs, \
-           all_edge_pruning_stats, k_statistics) \
-    reduction(+:geom_prune_seconds, isize_prune_seconds)
-                for (int batch_idx = 0; batch_idx < static_cast<int>(batch_graphs.size()); ++batch_idx) {
-                    const int k_idx = batch_start + batch_idx;
-                    double local_geom_prune_seconds = 0.0;
-                    double local_isize_prune_seconds = 0.0;
-                    prune_iknn_graph_and_collect_stats(
-                        batch_graphs[static_cast<size_t>(batch_idx)],
-                        max_path_edge_ratio_thld,
-                        path_edge_ratio_percentile,
-                        threshold_percentile,
-                        max_alt_path_length,
-                        with_isize_pruning,
-                        with_edge_pruning_stats,
-                        false,
-                        na_real,
-                        geom_pruned_graphs[static_cast<size_t>(k_idx)],
-                        with_isize_pruning ? &isize_pruned_graphs[static_cast<size_t>(k_idx)] : nullptr,
-                        with_edge_pruning_stats ? &all_edge_pruning_stats[static_cast<size_t>(k_idx)] : nullptr,
-                        k_statistics[static_cast<size_t>(k_idx)],
-                        local_geom_prune_seconds,
-                        local_isize_prune_seconds
-                    );
-                    geom_prune_seconds += local_geom_prune_seconds;
-                    isize_prune_seconds += local_isize_prune_seconds;
-                }
-            } else
-#endif
-            {
-                for (int batch_idx = 0; batch_idx < static_cast<int>(batch_graphs.size()); ++batch_idx) {
-                    const int k_idx = batch_start + batch_idx;
-                    double local_geom_prune_seconds = 0.0;
-                    double local_isize_prune_seconds = 0.0;
-                    prune_iknn_graph_and_collect_stats(
-                        batch_graphs[static_cast<size_t>(batch_idx)],
-                        max_path_edge_ratio_thld,
-                        path_edge_ratio_percentile,
-                        threshold_percentile,
-                        max_alt_path_length,
-                        with_isize_pruning,
-                        with_edge_pruning_stats,
-                        false,
-                        na_real,
-                        geom_pruned_graphs[static_cast<size_t>(k_idx)],
-                        with_isize_pruning ? &isize_pruned_graphs[static_cast<size_t>(k_idx)] : nullptr,
-                        with_edge_pruning_stats ? &all_edge_pruning_stats[static_cast<size_t>(k_idx)] : nullptr,
-                        k_statistics[static_cast<size_t>(k_idx)],
-                        local_geom_prune_seconds,
-                        local_isize_prune_seconds
-                    );
-                    geom_prune_seconds += local_geom_prune_seconds;
-                    isize_prune_seconds += local_isize_prune_seconds;
-                }
-            }
-        }
-    } else {
+    {
         for (int k_idx = 0; k_idx < static_cast<int>(k_values.size()); ++k_idx) {
             const int k = k_values[static_cast<size_t>(k_idx)];
 

@@ -50,3 +50,9 @@ Invisibly returns \code{TRUE}.
 \description{
 Plot Diagnostics for Intersection k-NN Graph Analysis
 }
+\examples{
+diagnostics <- structure(list(k.values = 2:4, edit.distances = c(0.3, 0.2),
+  n.edges.in.pruned.graph = c(6, 8, 10), js.div = c(0.1, 0.05)),
+  class = "IkNNgraphs")
+plot(diagnostics, with.pwlm = FALSE)
+}

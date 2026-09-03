@@ -1,6 +1,7 @@
 #pragma once
 
-// Some SDKs leak macros that break OpenMP pragmas; sanitize.
+// Preserve compatibility with native clients while using serial execution.
+// Some SDKs define macros that conflict with C++ headers.
 #ifdef match
 #  undef match
 #endif
@@ -8,17 +9,7 @@
 #  undef check
 #endif
 
-#ifdef _OPENMP
-  #include <omp.h>
-  static inline int  dgraphs_get_max_threads(void)    { return omp_get_max_threads(); }
-  static inline int  dgraphs_get_thread_num(void)     { return omp_get_thread_num(); }
-  static inline int  dgraphs_in_parallel(void)        { return omp_in_parallel(); }
-  static inline int  dgraphs_get_num_procs(void)      { return omp_get_num_procs(); }
-  static inline int  dgraphs_get_thread_limit(void)   { return omp_get_thread_limit(); }
-  static inline void dgraphs_set_dynamic(int on)      { omp_set_dynamic(on ? 1 : 0); }
-  static inline void dgraphs_set_num_threads(int n)   { if (n > 0) omp_set_num_threads(n); }
-#else
-  // Stubs for builds without OpenMP
+  // Native graph construction remains serial even when the compiler enables OpenMP.
   static inline int  dgraphs_get_max_threads(void)    { return 1; }
   static inline int  dgraphs_get_thread_num(void)     { return 0; }
   static inline int  dgraphs_in_parallel(void)        { return 0; }
@@ -26,4 +17,3 @@
   static inline int  dgraphs_get_thread_limit(void)   { return 1; }
   static inline void dgraphs_set_dynamic(int on)      { (void)on; }
   static inline void dgraphs_set_num_threads(int n)   { (void)n; }
-#endif

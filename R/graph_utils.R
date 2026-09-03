@@ -4,6 +4,8 @@ utils::globalVariables("all.edge.lengths")
 #'
 #' @param adj.list1 First adjacency list.
 #' @param adj.list2 Second adjacency list.
+#' @param verbose Logical; print the indices of vertices with different
+#'   neighbor sets. Defaults to `FALSE`.
 #'
 #' @return `TRUE` when each vertex has the same neighbor set in both lists,
 #'   ignoring order; otherwise `FALSE`.
@@ -13,7 +15,7 @@ utils::globalVariables("all.edge.lengths")
 #' compare.adj.lists(graph, list(c(3L, 2L), 1L, 1L))
 #'
 #' @export
-compare.adj.lists <- function(adj.list1, adj.list2) {
+compare.adj.lists <- function(adj.list1, adj.list2, verbose = FALSE) {
     if (length(adj.list1) != length(adj.list2)) {
         return(FALSE)
     }
@@ -28,9 +30,11 @@ compare.adj.lists <- function(adj.list1, adj.list2) {
     if (length(vertices.with.different.neighbors) == 0) {
         return(TRUE)
     } else {
-        cat("FALSE: Vertices with neighbor sets not the same: ")
-        cat(vertices.with.different.neighbors)
-        cat("\n")
+        if (isTRUE(verbose)) {
+            cat("FALSE: Vertices with neighbor sets not the same: ")
+            cat(vertices.with.different.neighbors)
+            cat("\n")
+        }
         return(FALSE)
     }
 }

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compositional-data note: citation verification</title>
+<style>
+body { margin: 0; color: #1d2733; background: #f7f8fa; font: 16px/1.6 system-ui, sans-serif; }
+main { max-width: 900px; margin: auto; padding: 28px 20px; }
+section { background: white; border: 1px solid #d8dde6; padding: 20px; margin: 20px 0; }
+h1, h2 { line-height: 1.25; } a { color: #165599; overflow-wrap: anywhere; }
+dt { font-weight: bold; } dd { margin: 0 0 12px; }
+</style>
+</head>
+<body><main>
+<h1>Compositional-data note: citation verification</h1>
+<p>Verification date: 2026-09-03. This is a source-evidence record, not a new
+experiment. “Verified” means that the specified source supports the stated
+measurement-model claim; the note's graph recommendations are deductions.</p>
+<p><a href="radEmu_compositional_implications_for_dgraphs.md">Canonical note</a> ·
+<a href="compositional-references.bib">BibTeX metadata</a></p>
+<section data-citation-key="mclaren2019" data-status="verified">
+<h2>mclaren2019 — verified</h2><dl>
+<dt>Metadata</dt><dd>Michael R. McLaren, Amy D. Willis and Benjamin J. Callahan.
+Consistent and correctable bias in metagenomic sequencing experiments.
+eLife 8:e46923 (2019). DOI: 10.7554/eLife.46923.</dd>
+<dt>Context and supported claim</dt><dd>Main Implication and Consequences for
+Graph Construction: observed proportions combine biological composition with
+taxon-specific efficiencies and normalization; ratios and proportions respond
+differently to this bias.</dd>
+<dt>Source evidence</dt><dd>Results, “A mathematical model of MGS bias,” equations
+1–2 model observed composition as actual composition multiplied by relative
+efficiencies. The following normalization and ratio discussion explains why
+composition changes affect proportions. The graph-distance warning follows
+from applying distances to these distorted observations.</dd>
+<dt>Source</dt><dd><a data-source-link href="https://elifesciences.org/articles/46923">Publisher full text</a></dd>
+<dt>Verifier notes</dt><dd>Checked against publisher full text on 2026-09-03.
+Condition-dependent efficiencies and aggregation in the note are explicit
+extensions of the multiplicative model, not claimed empirical findings here.</dd>
+</dl></section>
+<section data-citation-key="clausen2025" data-status="verified">
+<h2>clausen2025 — verified</h2><dl>
+<dt>Metadata</dt><dd>David S. Clausen, Sarah Teichman and Amy D. Willis.
+Estimating Fold Changes from Partially Observed Outcomes with Applications in
+Microbial Metagenomics. arXiv:2402.05231v2, 14 March 2025.</dd>
+<dt>Context and supported claim</dt><dd>Main Implication and Practical Rule:
+sample- and category-specific measurement perturbations limit direct inference
+about underlying biological quantities without identifying assumptions.</dd>
+<dt>Source evidence</dt><dd>Section 2.2, equations 1–5 and Lemma 1 distinguish
+unobserved means from observed means with multiplicative sample and category
+effects, and identify equivalence classes rather than unrestricted absolute
+effects. Section 1 identifies radEmu as the implementing software.</dd>
+<dt>Source</dt><dd><a data-source-link href="https://arxiv.org/html/2402.05231v2">Versioned full text</a></dd>
+<dt>Verifier notes</dt><dd>Checked against version 2 full text on 2026-09-03.
+Metadata deliberately describes this preprint, not a later journal version.
+The note does not claim that this paper validates graph constructors.</dd>
+</dl></section>
+</main></body></html>

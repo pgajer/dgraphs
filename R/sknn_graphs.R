@@ -442,6 +442,7 @@ create.sknn.graph <- function(X,
     result
 }
 
+#' @rdname print.graph.constructors
 #' @export
 print.sknn_graph <- function(x, ...) {
     cat("Symmetric kNN graph\n")

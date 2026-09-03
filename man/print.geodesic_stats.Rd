@@ -17,3 +17,9 @@ The object invisibly.
 \description{
 Prints a brief overview of the geodesic statistics.
 }
+\examples{
+graph <- generate.circle.graph(8, type = "uniform")
+stats <- compute.geodesic.stats(graph$adj.list, graph$weight.list,
+  min.radius = 0.3, max.radius = 0.5, n.steps = 2, n.packing.vertices = 4)
+print(stats)
+}

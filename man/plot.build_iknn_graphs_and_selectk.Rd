@@ -33,3 +33,10 @@ panels. If \code{which} is empty, invisibly returns \code{NULL} without plotting
 \description{
 Plot method for build_iknn_graphs_and_selectk
 }
+\examples{
+set.seed(1)
+X <- matrix(rnorm(60), ncol = 2)
+selected <- build.iknn.graphs.and.selectk(X, kmin = 2, kmax = 4,
+  method = "edit", n.cores = 1, verbose = FALSE)
+plot(selected, which = "connect")
+}

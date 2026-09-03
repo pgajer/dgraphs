@@ -243,7 +243,7 @@ extern "C" SEXP S_adaptive_radius_edges_ann(SEXP s_X,
     } catch (...) {
         annDeallocPts(data);
         annClose();
-        Rf_error("ANN kd-tree construction failed.");
+        throw;
     }
     const auto setup_end = std::chrono::steady_clock::now();
 
@@ -294,7 +294,7 @@ extern "C" SEXP S_adaptive_radius_edges_ann(SEXP s_X,
         delete tree;
         annDeallocPts(data);
         annClose();
-        Rf_error("ANN adaptive-radius edge construction failed.");
+        throw;
     }
 
     delete tree;
@@ -414,7 +414,7 @@ extern "C" SEXP S_adaptive_radius_edges_ann_graphs(SEXP s_X,
     } catch (...) {
         annDeallocPts(data);
         annClose();
-        Rf_error("ANN kd-tree construction failed.");
+        throw;
     }
     const auto setup_end = std::chrono::steady_clock::now();
 
@@ -505,7 +505,7 @@ extern "C" SEXP S_adaptive_radius_edges_ann_graphs(SEXP s_X,
         delete tree;
         annDeallocPts(data);
         annClose();
-        Rf_error("ANN adaptive-radius graph sequence construction failed.");
+        throw;
     }
 
     delete tree;

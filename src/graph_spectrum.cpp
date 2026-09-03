@@ -17,7 +17,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
-#include <Eigen/Sparse>
+#include <Eigen/SparseCore>
 #include <Spectra/SymEigsSolver.h>
 #include <Spectra/MatOp/SparseSymMatProd.h>
 #include <Spectra/MatOp/DenseSymMatProd.h>

@@ -215,6 +215,19 @@ create.iterated.iknn.graphs <- function(X,
     result
 }
 
+#' Summarize Iterated Intersection k-NN Graphs
+#'
+#' @param object An object from [create.iterated.iknn.graphs()].
+#' @param ... Unused.
+#' @return A data frame with one row per iteration and neighborhood size,
+#'   reporting vertex, edge and connected-component counts and mean, minimum
+#'   and maximum degree. This is the object's stored `summary` component.
+#' @examples
+#' set.seed(1)
+#' X <- matrix(rnorm(30), ncol = 2)
+#' out <- create.iterated.iknn.graphs(X, kmin = 2, kmax = 3,
+#'   n.iterations = 1, verbose = FALSE)
+#' summary(out)
 #' @export
 summary.iterated_iknn_graphs <- function(object, ...) {
     if (!inherits(object, "iterated_iknn_graphs")) {

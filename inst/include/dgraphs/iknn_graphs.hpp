@@ -70,8 +70,8 @@ private:
  *
  * @param knn_result Flat kNN result with row-major [n x k_full] buffers.
  * @param k Number of neighbors from each row to use (k <= knn_result.k).
- * @param use_bucket_parallel Enable bucket-level OpenMP parallelism when available.
- * @param num_threads Requested OpenMP thread count.
+ * @param use_bucket_parallel Compatibility argument; construction is serial.
+ * @param num_threads Compatibility argument; construction uses one thread.
  */
 iknn_graph_t create_iknn_graph_from_knn_result(
     const knn_result_t& knn_result,

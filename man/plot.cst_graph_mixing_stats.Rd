@@ -24,3 +24,9 @@ panels.
 \description{
 Plot method for cst_graph_mixing_stats
 }
+\examples{
+mixing <- structure(list(mixing.matrix = matrix(c(4, 1, 1, 4), 2,
+  dimnames = list(c("A", "B"), c("A", "B")))),
+  class = "cst_graph_mixing_stats")
+plot(mixing, which = "mixing.matrix")
+}

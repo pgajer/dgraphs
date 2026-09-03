@@ -30,10 +30,17 @@ detect.local.extrema(
 \item{custom.prefix}{Optional label prefix.}
 }
 \value{
-A \code{local_extrema} object.
+A \code{local_extrema} object. Its scalar logical \code{detect.maxima} component
+records whether maxima or minima were requested, even when no extrema are
+found. The per-extremum \code{is_maxima} and \code{type} vectors are empty in that case.
 }
 \description{
 Detect Local Extrema in a Graph
+}
+\details{
+Summaries use the recorded detection setting for empty results. Empty objects
+saved by older versions lack this setting; their summaries report \code{NA} for
+the extrema type because it cannot be recovered from empty vectors.
 }
 \examples{
 chain <- create.chain.graph(n.vertices = 5)

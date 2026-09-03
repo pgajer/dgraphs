@@ -20,13 +20,26 @@ in 0.2.1 and graph scoring/edge conventions are unchanged.
 
 * macOS 26.6.1, Apple Silicon, R-devel 4.7.0 (2026-06-24 r90190),
   Apple Clang 21 and GNU Fortran 14.2:
-  full `R CMD check --as-cran`: 0 errors, 0 warnings, 2 notes.
-  Examples, tests, vignettes and PDF manual passed.
+  full `R CMD check --as-cran`: 0 errors, 0 warnings, 1 note.
+  Examples, tests, vignettes, PDF manual and HTML validation passed. HTML Tidy
+  5.8.0 was selected explicitly with `R_TIDYCMD=/opt/homebrew/bin/tidy`.
 * 432 test expectations: no failures, warnings or skips, under both the
   standard Clang build and a GCC 16.1 build with link-time optimization.
 * Standalone ANN error-path tests passed with Clang AddressSanitizer and
   UndefinedBehaviorSanitizer, and with GCC 16.1.
 * Documentation coverage includes all 86 exports and 36 registered S3 methods.
+* GitHub Actions on Ubuntu, R 4.6.1, R-devel (2026-09-02 r90473) and
+  R 4.5.3: 0 errors, 0 warnings, 0 notes for each configuration.
+* R-hub Linux, R-devel (2026-09-02 r90473), GCC 13.3, and Windows,
+  R-devel (2026-09-02 r90474 UCRT), GCC 14.3: both report Status: OK.
+* Fresh isolated installations and test suites of owned downstream packages:
+  gflow (1006 passes, 10 skips), gflowx (1568 passes, 3 skips), geosmooth
+  (12058 passes, 1 skip), and gflowui (1579 passes, 1 skip), with no failures
+  or warnings. Skips are declared by those packages. gflow's source-only
+  documentation test required regenerating its help files; the failure also
+  reproduced against dgraphs 0.2.0. gflowx/gflowui required current optional
+  ivue in the isolated library. No downstream source fixes were required.
+* Current CRAN metadata lists no hard reverse dependencies.
 
 ## Notes and compiler diagnostics
 
@@ -35,8 +48,9 @@ This is a release-timing consideration, not an environment-only note. The
 candidate is being prepared for a later submission; the interval and test
 evidence must be refreshed at submission time.
 
-The other local note reports outdated HTML Tidy. Manuals build successfully,
-but this local HTML validator does not supply validation evidence.
+An initial environment note about Apple's old HTML Tidy was resolved for the
+final check by selecting the already-installed modern validator explicitly.
+No user startup file was modified.
 
 With suppression removed, the installed RcppEigen 0.3.4.0.2 headers expose an
 unused-variable warning in SparseCore/TriangularSolver.h under Clang and
@@ -47,7 +61,9 @@ No ODR diagnostic was reported in the GCC LTO build.
 
 ## Evidence to refresh before upload
 
-Current external Linux/Windows/macOS and R release/devel/oldrelease results,
-downstream comparisons, and the maintainer's confirmation of the copyright
-holder name must be recorded before this file is used for submission. Historical
-0.2.0 platform results are not presented as checks of this candidate.
+The final-source R-hub macOS result and Win-builder responses are being
+collected. The final tarball was accepted for Win-builder release, devel and
+oldrelease. These are pending evidence, not completed checks.
+The maintainer must confirm the copyright-holder name before this file is used
+for submission. Historical 0.2.0 platform results are not presented as checks
+of this candidate.

@@ -325,7 +325,7 @@ SEXP S_convert_adjacency_to_edge_matrix(SEXP s_graph, SEXP s_weights) {
     }
 
     // ---- Core computation (no R allocations inside) ----
-    // result.first  : vector<pair<int,int>> edges (0-based or 1-based per your core)
+    // result.first  : vector<pair<int,int>> edges with zero-based vertex indices
     // result.second : vector<double> weights (may be empty for unweighted)
     auto result = convert_adjacency_to_edge_matrix(adj_vect, weight_list);
 

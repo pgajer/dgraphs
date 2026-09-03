@@ -1,32 +1,8 @@
 /*!
-  Creating Intersetion Weighted kNN graph (IWkNN graph)
-
-  Two points are connected by an edge in this graph if and only if they share at
-  least one common point within their respective k-nearest neighbor sets. In
-  other words, there's an intersection between their k-nearest neighborhoods.
-
-  \textbf{Characteristics:}
-
-  * \textbf{Reciprocity:} This connection is inherently reciprocal. If point A is within the k-nearest neighbors of point B, then point B will also be within the k-nearest neighbors of point A. This generally results in an undirected graph.
-  * \textbf{Sensitivity to k:} The choice of the parameter k significantly influences the structure of this graph. Larger values of k tend to create denser graphs with more connections.
-  * \textbf{Focus on Shared Neighbors:} This variant emphasizes points that are "locally similar," meaning they share commonalities within their local neighborhoods.
-
-  \textbf{Potential Use Cases:}
-
-  * \textbf{Clustering and Community Detection:} This type of graph could be valuable in identifying densely connected clusters of points that share neighbors, indicating groups exhibiting similar characteristics.
-  * \textbf{Outlier Detection:}  Points with abnormally few connections in this graph might indicate potential outliers, as they don't consistently appear in the k-nearest neighborhoods of other points.
-  * \textbf{Collaborative Filtering:} This construct might be applicable in recommendation systems where you want to emphasize items that have been "liked" by users with overlapping tastes.
-
-  \textbf{Caveats:}
-
-  * \textbf{Computational Cost:} Constructing this graph can be computationally more demanding than a standard k-NN graph because you need to compare k-nearest neighbor sets.
-  * \textbf{Data Density:}  In very sparse datasets, this construct might lead to highly disconnected graphs.
-
-  \textbf{Relationship with Other Graphs:}
-
-  It's interesting to note that this graph would likely be denser than a Mutual k-Nearest Neighbor Graph (Mk-NN).  In an Mk-NN, two points need to be *each other's* k-nearest neighbors, while in this variant they just need to share at least one common neighbor in their sets.
-
-*/
+ * Intersection-weighted kNN graphs connect two vertices when their
+ * nearest-neighbor sets share a vertex. Each undirected edge records the
+ * intersection size and the minimum summed distance through a shared neighbor.
+ */
 
 #include "dgraphs/omp_compat.h"
 #include "dgraphs/iknn_graphs.hpp"

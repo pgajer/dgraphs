@@ -11,6 +11,10 @@ were removed. Native graph construction remains serial, as in the standard
 and registered S3 method now has documented results and runnable examples.
 Adjacency-list comparisons are silent unless `verbose = TRUE` is requested.
 
+The copyright-holder name in LICENSE is corrected to Pawel Gajer, matching
+Authors@R, following the maintainer's confirmation. The maintainer email is
+pgajer@gmail.com.
+
 The 0.2.0 fix for CRAN's LTO One Definition Rule diagnostic is preserved:
 the unused conflicting `edge_t` was removed, and the MST helper type remains
 renamed and confined to an unnamed namespace. No public functions are removed
@@ -32,6 +36,8 @@ in 0.2.1 and graph scoring/edge conventions are unchanged.
   R 4.5.3: 0 errors, 0 warnings, 0 notes for each configuration.
 * R-hub Linux, R-devel (2026-09-02 r90473), GCC 13.3, and Windows,
   R-devel (2026-09-02 r90474 UCRT), GCC 14.3: both report Status: OK.
+* R-hub macOS 15.7.9, Intel, R-devel 4.7.0, Apple Clang 17:
+  Status: OK.
 * Fresh isolated installations and test suites of owned downstream packages:
   gflow (1006 passes, 10 skips), gflowx (1568 passes, 3 skips), geosmooth
   (12058 passes, 1 skip), and gflowui (1579 passes, 1 skip), with no failures
@@ -61,9 +67,9 @@ No ODR diagnostic was reported in the GCC LTO build.
 
 ## Evidence to refresh before upload
 
-The final-source R-hub macOS result and Win-builder responses are being
-collected. The final tarball was accepted for Win-builder release, devel and
-oldrelease. These are pending evidence, not completed checks.
-The maintainer must confirm the copyright-holder name before this file is used
-for submission. Historical 0.2.0 platform results are not presented as checks
-of this candidate.
+Win-builder responses are being collected for the source before the
+copyright-name correction. That tarball was accepted for Win-builder release,
+devel and oldrelease. These are pending evidence, not completed checks.
+The completed external/downstream checks predate the copyright-name correction;
+the rebuilt candidate differs only in LICENSE and the generated Packaged timestamp.
+Historical 0.2.0 platform results are not presented as checks of this candidate.

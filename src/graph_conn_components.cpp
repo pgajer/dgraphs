@@ -45,8 +45,6 @@ std::vector<int> union_find(const std::vector<std::vector<int>>& adj_vect) {
     // Initialization - each vertex is its own parent initially
     std::vector<int> parent(n_vertices);
     std::iota(parent.begin(), parent.end(), 0);
-    // for (int i = 0; i < n_vertices; ++i)
-    //     parent[i] = i;
 
     // Find the root of a given vertex (with path compression)
     // 1. **Base Case (Root Found):**

@@ -225,7 +225,6 @@ void vect_wgraph_t::print(const std::string& name,
     total_edges /= 2;  // Each edge is counted twice in undirected graph
 
     // Print graph summary
-    //Rprintf("\nWeighted graph");
     if (!name.empty()) {
         Rprintf("\n\nvect_wgraph_t: '%s'\n", name.c_str());
     } else {

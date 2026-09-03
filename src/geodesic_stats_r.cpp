@@ -358,8 +358,6 @@ extern "C" SEXP S_compute_vertex_geodesic_stats(
     SEXP n_packing_vertices_sexp,
     SEXP packing_precision_sexp
 ) {
-    //R_CheckUserInterrupt();
-
     // Graph inputs (container-first)
     std::vector<std::vector<int>>    adj_list    = convert_adj_list_from_R(adj_list_sexp);
     std::vector<std::vector<double>> weight_list = convert_weight_list_from_R(weight_list_sexp);

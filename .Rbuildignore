@@ -13,4 +13,6 @@
 ^cran-comments\.md$
 ^docs$
 ^dev$
+^build$
+^Makefile$
 ^papers$

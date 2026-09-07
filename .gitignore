@@ -34,3 +34,4 @@ audit_artifacts/
 /dev/phase_handoffs/
 /dev/audits/
 /docs/html/
+/build/

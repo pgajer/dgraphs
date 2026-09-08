@@ -6,6 +6,7 @@
 \alias{print.cknn_graph}
 \alias{print.rknn_graphs}
 \alias{print.adaptive_radius_graph}
+\alias{print.sknn_graphs}
 \alias{print.sknn_graph}
 \title{Print Graph Constructor Results}
 \usage{
@@ -16,6 +17,8 @@
 \method{print}{rknn_graphs}(x, ...)
 
 \method{print}{adaptive_radius_graph}(x, ...)
+
+\method{print}{sknn_graphs}(x, ...)
 
 \method{print}{sknn_graph}(x, ...)
 }

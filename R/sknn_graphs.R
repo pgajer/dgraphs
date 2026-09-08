@@ -78,6 +78,14 @@
 #'   backend for the kNN construction itself.
 #' @param ann.eps Non-negative numeric scalar reserved for approximate ANN
 #'   search. Currently only `0` is supported.
+#' @param knn.index Optional integer matrix of precomputed, one-based, ordered
+#'   non-self neighbor indices. It must have `nrow(X)` rows and at least `k`
+#'   columns. This is supported only with `neighbor.method = "ann"` and is
+#'   primarily useful when constructing several graphs from one cached search.
+#' @param graph.detail Character scalar. `"full"` returns the complete graph
+#'   lifecycle object. `"minimal"` skips lifecycle branch construction and is
+#'   allowed only with `prune.method = "none"`, `prune.edges = FALSE`, and
+#'   `connect.components = FALSE`.
 #' @param bridge.k Integer scalar or `NULL`. Initial number of ANN neighbors
 #'   to use for sparse inter-component bridge search when
 #'   `connect.method = "component.mst.ann"`. Defaults to `max(k, 10)`, capped
@@ -90,6 +98,8 @@
 #'
 #' @return A list of class `"sknn_graph"` with adjacency lists, weights, edge
 #'   matrix, kNN index matrix, component diagnostics, and any MST edges added.
+#'   With `graph.detail = "minimal"`, the raw and pruned fields refer to the
+#'   same unmodified graph and repaired lifecycle branches are omitted.
 #'   The graph lifecycle fields are:
 #'   \describe{
 #'     \item{raw_adj_list, raw_weight_list}{The native sKNN graph before pruning
@@ -131,6 +141,8 @@ create.sknn.graph <- function(X,
                               edge.weight = c("distance"),
                               neighbor.method = c("exact", "ann"),
                               ann.eps = 0,
+                              knn.index = NULL,
+                              graph.detail = c("full", "minimal"),
                               bridge.k = NULL,
                               bridge.k.max = NULL,
                               bridge.growth = 2) {
@@ -191,12 +203,24 @@ create.sknn.graph <- function(X,
     connect.method <- match.arg(connect.method)
     edge.weight <- match.arg(edge.weight)
     neighbor.method <- match.arg(neighbor.method)
+    graph.detail <- match.arg(graph.detail)
     if (!is.numeric(ann.eps) || length(ann.eps) != 1L || !is.finite(ann.eps) ||
         ann.eps < 0) {
         stop("'ann.eps' must be a finite non-negative numeric scalar.", call. = FALSE)
     }
     if (identical(neighbor.method, "ann") && !identical(as.numeric(ann.eps), 0)) {
         stop("'ann.eps' values greater than 0 are not yet supported.", call. = FALSE)
+    }
+    if (identical(graph.detail, "minimal") &&
+        (!identical(prune.method, "none") || isTRUE(connect.components))) {
+        stop(paste0(
+            "graph.detail = 'minimal' requires prune.method = 'none', ",
+            "prune.edges = FALSE, and connect.components = FALSE."
+        ), call. = FALSE)
+    }
+    if (!is.null(knn.index) && !identical(neighbor.method, "ann")) {
+        stop("'knn.index' is supported only with neighbor.method = 'ann'.",
+             call. = FALSE)
     }
     if (!is.numeric(bridge.growth) || length(bridge.growth) != 1L ||
         !is.finite(bridge.growth) || bridge.growth <= 1) {
@@ -232,8 +256,22 @@ create.sknn.graph <- function(X,
     neighbor.method.id <- switch(neighbor.method,
                                  exact = 0L,
                                  ann = 1L)
-    knn.index <- matrix(integer(0), nrow = 0L, ncol = 0L)
-    if (identical(neighbor.method, "ann")) {
+    if (!is.null(knn.index)) {
+        if (!is.matrix(knn.index) || !is.numeric(knn.index) ||
+            nrow(knn.index) != n || ncol(knn.index) < k ||
+            any(!is.finite(knn.index)) || any(knn.index != floor(knn.index)) ||
+            any(knn.index < 1L) || any(knn.index > n)) {
+            stop(paste0(
+                "'knn.index' must be an integer-valued matrix with nrow(X) ",
+                "rows, at least k columns, and values between 1 and nrow(X)."
+            ), call. = FALSE)
+        }
+        knn.index <- knn.index[, seq_len(k), drop = FALSE]
+        storage.mode(knn.index) <- "integer"
+    } else {
+        knn.index <- matrix(integer(0), nrow = 0L, ncol = 0L)
+    }
+    if (identical(neighbor.method, "ann") && !nrow(knn.index)) {
         raw.knn <- .Call(
             "S_kNN",
             X,
@@ -291,6 +329,18 @@ create.sknn.graph <- function(X,
         as.logical(with.pruned.edge.stats),
         PACKAGE = "dgraphs"
     )
+    if (identical(graph.detail, "minimal")) {
+        result$raw_adj_list <- result$adj_list
+        result$raw_weight_list <- result$weight_list
+        result$pruned_adj_list <- result$adj_list
+        result$pruned_weight_list <- result$weight_list
+        result$edge.weight <- edge.weight
+        result$prune_method <- prune.method
+        result$graph_detail <- graph.detail
+        result$lifecycle_branches <- FALSE
+        class(result) <- c("sknn_graph", "list")
+        return(result)
+    }
     raw.result <- .Call(
         "S_create_sknn_graph",
         X,
@@ -438,8 +488,123 @@ create.sknn.graph <- function(X,
     )
     result$edge.weight <- edge.weight
     result$prune_method <- prune.method
+    result$graph_detail <- graph.detail
+    result$lifecycle_branches <- TRUE
     class(result) <- c("sknn_graph", "list")
     result
+}
+
+#' Compute a Series of Symmetric k-Nearest Neighbor Graphs
+#'
+#' @description
+#' Constructs symmetric k-nearest neighbor graphs for several values of `k`
+#' while performing one bundled ANN search at the largest requested value. The
+#' ordered non-self neighbor matrix is sliced for each graph, so lower-k graphs
+#' use exactly the same neighbor ranking as the largest graph.
+#'
+#' @param X Numeric matrix or data frame with observations in rows.
+#' @param kmin,kmax Integer scalars defining an inclusive sequence of `k`
+#'   values. Ignored when `k.values` is supplied.
+#' @param ... Named arguments forwarded to [create.sknn.graph()]. The `k` and
+#'   `knn.index` arguments cannot be supplied. `neighbor.method` must be
+#'   `"ann"` if supplied.
+#' @param k.values Optional non-empty vector of distinct integer `k` values.
+#'
+#' @return A list of class `"sknn_graphs"` with components `graphs`, a named
+#'   list of `"sknn_graph"` objects, and `k_statistics`, a data frame of edge
+#'   and component counts. Attributes record the requested values and number of
+#'   vertices.
+#'
+#' @examples
+#' set.seed(1)
+#' X <- matrix(rnorm(60), ncol = 3)
+#' graphs <- create.sknn.graphs(
+#'   X,
+#'   k.values = c(2, 4),
+#'   graph.detail = "minimal"
+#' )
+#' graphs$k_statistics
+#'
+#' @seealso [create.sknn.graph()]
+#'
+#' @export
+create.sknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
+                               k.values = NULL) {
+    X <- .validate.numeric.data.matrix(X)
+    n <- nrow(X)
+    k.values <- .normalize.rknn.graphs.k.values(kmin, kmax, k.values, n)
+    args <- list(...)
+    if (length(args) && (is.null(names(args)) || any(!nzchar(names(args))))) {
+        stop("All arguments in '...' must be named.", call. = FALSE)
+    }
+    if ("k" %in% names(args)) {
+        stop("'k' is varied by create.sknn.graphs(); use 'kmin', 'kmax', or 'k.values'.",
+             call. = FALSE)
+    }
+    if ("knn.index" %in% names(args)) {
+        stop("'knn.index' is computed once by create.sknn.graphs().",
+             call. = FALSE)
+    }
+    if ("neighbor.method" %in% names(args)) {
+        neighbor.method <- match.arg(args$neighbor.method, c("exact", "ann"))
+        if (!identical(neighbor.method, "ann")) {
+            stop("create.sknn.graphs() requires neighbor.method = 'ann'.",
+                 call. = FALSE)
+        }
+        args$neighbor.method <- NULL
+    }
+
+    max.k <- max(k.values)
+    raw.knn <- .Call(
+        "S_kNN",
+        X,
+        as.integer(max.k + 1L),
+        PACKAGE = "dgraphs"
+    )$indices
+    knn.index <- matrix(NA_integer_, nrow = n, ncol = max.k)
+    for (i in seq_len(n)) {
+        non.self <- raw.knn[i, raw.knn[i, ] != (i - 1L)]
+        if (length(non.self) < max.k) {
+            stop("ANN kNN search returned too few non-self neighbors.", call. = FALSE)
+        }
+        knn.index[i, ] <- non.self[seq_len(max.k)] + 1L
+    }
+
+    graphs <- vector("list", length(k.values))
+    names(graphs) <- as.character(k.values)
+    for (i in seq_along(k.values)) {
+        k <- k.values[[i]]
+        graphs[[i]] <- do.call(
+            create.sknn.graph,
+            c(list(
+                X = X,
+                k = k,
+                neighbor.method = "ann",
+                knn.index = knn.index[, seq_len(k), drop = FALSE]
+            ), args)
+        )
+    }
+
+    out <- list(
+        graphs = graphs,
+        k_statistics = .rknn.graphs.k.statistics(graphs, k.values)
+    )
+    attr(out, "kmin") <- min(k.values)
+    attr(out, "kmax") <- max(k.values)
+    attr(out, "k.values") <- k.values
+    attr(out, "n_vertices") <- n
+    attr(out, "graph_rule") <- "symmetric.knn"
+    class(out) <- c("sknn_graphs", "list")
+    out
+}
+
+#' @rdname print.graph.constructors
+#' @export
+print.sknn_graphs <- function(x, ...) {
+    cat("Symmetric kNN graph series\n")
+    cat("Number of vertices:", attr(x, "n_vertices"), "\n")
+    cat("k values:", paste(attr(x, "k.values"), collapse = ", "), "\n")
+    invisible(x)
 }
 
 #' @rdname print.graph.constructors

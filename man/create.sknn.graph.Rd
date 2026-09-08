@@ -19,6 +19,8 @@ create.sknn.graph(
   edge.weight = c("distance"),
   neighbor.method = c("exact", "ann"),
   ann.eps = 0,
+  knn.index = NULL,
+  graph.detail = c("full", "minimal"),
   bridge.k = NULL,
   bridge.k.max = NULL,
   bridge.growth = 2
@@ -74,6 +76,16 @@ backend for the kNN construction itself.}
 \item{ann.eps}{Non-negative numeric scalar reserved for approximate ANN
 search. Currently only \code{0} is supported.}
 
+\item{knn.index}{Optional integer matrix of precomputed, one-based, ordered
+non-self neighbor indices. It must have \code{nrow(X)} rows and at least \code{k}
+columns. This is supported only with \code{neighbor.method = "ann"} and is
+primarily useful when constructing several graphs from one cached search.}
+
+\item{graph.detail}{Character scalar. \code{"full"} returns the complete graph
+lifecycle object. \code{"minimal"} skips lifecycle branch construction and is
+allowed only with \code{prune.method = "none"}, \code{prune.edges = FALSE}, and
+\code{connect.components = FALSE}.}
+
 \item{bridge.k}{Integer scalar or \code{NULL}. Initial number of ANN neighbors
 to use for sparse inter-component bridge search when
 \code{connect.method = "component.mst.ann"}. Defaults to \code{max(k, 10)}, capped
@@ -89,6 +101,8 @@ factor for bridge candidate neighborhoods.}
 \value{
 A list of class \code{"sknn_graph"} with adjacency lists, weights, edge
 matrix, kNN index matrix, component diagnostics, and any MST edges added.
+With \code{graph.detail = "minimal"}, the raw and pruned fields refer to the
+same unmodified graph and repaired lifecycle branches are omitted.
 The graph lifecycle fields are:
 \describe{
 \item{raw_adj_list, raw_weight_list}{The native sKNN graph before pruning

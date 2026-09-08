@@ -1,5 +1,10 @@
 # dgraphs 0.2.1
 
+* Adds `create.sknn.graphs()` for constructing a sequence of symmetric-kNN
+  graphs from one cached ANN search. `create.sknn.graph()` now also accepts a
+  validated precomputed neighbor matrix and supports
+  `graph.detail = "minimal"` for scalable fitting workflows that do not need
+  repaired lifecycle branches.
 * Removed global compiler-warning suppression and unsupported native OpenMP
   branches. Native graph construction remains serial, including in custom
   builds with OpenMP enabled; compatibility arguments are retained.

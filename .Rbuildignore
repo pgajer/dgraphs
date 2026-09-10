@@ -17,3 +17,4 @@
 ^Makefile$
 ^papers$
 ^reports$
+^\.git$

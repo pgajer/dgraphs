@@ -35,3 +35,8 @@ audit_artifacts/
 /dev/audits/
 /docs/html/
 /build/
+
+# Manuscripts and their study assets live in the private manuscript repository.
+/papers/
+/reports/
+/dev/papers/

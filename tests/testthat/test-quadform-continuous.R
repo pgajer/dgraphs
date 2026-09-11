@@ -101,11 +101,19 @@ local({
   test_that("continuous paths outside the declared rectangle are not clipped", {
     for(method in methods){
       z<-run(method,diag(1.2,2),c(.3,-.8),c(.3,.8),
-        list(kind="box",lower=c(-.3,-1),upper=c(.3,1)))
+        list(kind="box",lower=c(-.3,-1),upper=c(.3,1)),list(initial_bends=0))
       expect_identical(z$status,"unsupported")
       expect_identical(z$termination,"stationary_paths_outside_domain")
       expect_true(is.na(z$length));expect_equal(nrow(z$path),0)
+      expect_gt(z$backend_result$diagnostics$start_1_outside_x,.3)
     }
+  })
+  test_that("mixed unresolved and outside starts are not called unsupported", {
+    z<-run("geodesic_shooting",diag(1.2,2),c(.3,-.8),c(.3,.8),
+      list(kind="box",lower=c(-.3,-1),upper=c(.3,1)))
+    expect_identical(z$status,"failed")
+    expect_identical(z$termination,"no_feasible_path_some_starts_unresolved")
+    expect_true(is.na(z$length));expect_equal(nrow(z$path),0)
   })
   test_that("multiple stationary branches are compared without claiming global optimality", {
     for(method in methods){
@@ -118,13 +126,32 @@ local({
       expect_equal(z$length,ref$length,tolerance=2e-6)
       expect_false(z$global_optimality_certified)
     }
-    # More curvature exposes distinct basins: shooting may retain the axial
-    # stationary path. This is a limitation, not a global-minimum assertion.
+    # The resolved curved branch must remain available on a steeper bowl.
     ctl<-list(max_nodes=4097L,max_path_vertices=65537L,max_evaluations=2000000L)
     z<-run("geodesic_collocation",diag(8,2),c(-.9,0),c(.9,0),control=ctl)
-    expect_identical(z$status,"partial")
-    expect_identical(z$termination,"some_starts_unresolved")
+    expect_identical(z$status,"candidate")
+    expect_identical(z$termination,"stationary_path_converged")
     expect_true(is.finite(z$length))
+    ref<-run("paraboloid_clairaut",diag(8,2),c(-.9,0),c(.9,0))
+    expect_equal(z$length,ref$length,tolerance=2e-6)
+  })
+  test_that("local residual refinement resolves steep radial curves", {
+    for(method in methods){
+      z<-run(method,diag(8,2),c(0,0),c(.6,.8),control=list(initial_bends=0))
+      ref<-run("paraboloid_clairaut",diag(8,2),c(0,0),c(.6,.8))
+      expect_identical(z$status,"candidate")
+      expect_equal(z$length,ref$length,tolerance=2e-6)
+      expect_lte(z$backend_result$diagnostics$solution_nodes,1025)
+      expect_lte(nrow(z$path),4097)
+      expect_lte(z$backend_result$diagnostics$equation_residual_estimate,1e-6)
+    }
+    z<-run("geodesic_collocation",diag(2),c(0,0),c(38.4,51.2),
+      list(kind="ball",center=c(0,0),radius=64),
+      list(initial_bends=0,max_nodes=4097L,max_path_vertices=65537L,max_evaluations=4000000L))
+    ref<-run("paraboloid_clairaut",diag(2),c(0,0),c(38.4,51.2),
+      list(kind="ball",center=c(0,0),radius=64))
+    expect_identical(z$status,"candidate");expect_equal(z$length,ref$length,tolerance=2e-6)
+    expect_lte(z$backend_result$diagnostics$endpoint_residual,64e-8)
   })
   test_that("no state files or random-stream changes are introduced", {
     old<-get0(".Random.seed",envir=.GlobalEnv,inherits=FALSE)

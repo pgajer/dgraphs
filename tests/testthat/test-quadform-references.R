@@ -113,6 +113,16 @@ local({
     z<-run("radius_graph",control=list(vertices=rbind(c(-.45,-.2),c(-.45,-.2),c(.4,-.1)),radius=2))
     expect_identical(z$status,"candidate");expect_equal(z$backend_result$diagnostics$vertices,2)
   })
+  test_that("thin mesh rejections retain an informative nonzero angle",{
+    skip_if_not_installed("geometry")
+    z<-run("polyhedral_mesh",a=c(0,0),b=c(1e-9,2e-9),control=list(resolution=9L))
+    expect_identical(z$termination,"mesh_degenerate_triangle")
+    d<-z$backend_result$diagnostics
+    angle<-min(d$rejected_triangle_angle,pi-d$rejected_triangle_angle)
+    expect_gt(angle,0);expect_lt(angle,d$required_minimum_triangle_angle)
+    expect_lt(d$endpoint_separation_over_mesh_scale,1e-8)
+    expect_equal(nrow(z$path),0);expect_true(is.na(z$length))
+  })
   test_that("endpoint reversal and R random state are preserved",{
     skip_if_not_installed("geometry")
     set.seed(74);before<-.Random.seed

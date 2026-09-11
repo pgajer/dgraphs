@@ -129,6 +129,10 @@
 #'   is 1e-6 times edge length. Live intervals and propagation counts are
 #'   bounded; user interrupts release owned intervals before propagating to R.
 #'   Degenerate triangles or unresolved numerical invariants return no path.
+#'   In particular, inserting very close endpoints can create angles below
+#'   the mesh engine's 1e-5-radian limit. Rejections retain the offending
+#'   angle and the endpoint separation relative to mesh scale; endpoints
+#'   are never merged or moved to make the triangulation pass.
 #'
 #'   For `polyhedral_surface_polyline`, `surface_path` is a path across flat
 #'   mesh triangles and `path` is its domain projection. `length` measures
@@ -153,7 +157,8 @@
 #'   A zero initial bend starts with a flat surface and continues through
 #'   increasing multiples of A to the requested surface. The initial step is
 #'   `1/continuation_steps`; successful steps grow by 1.5 and unsuccessful
-#'   steps halve. Nonzero bends are additional direct starts on the full
+#'   steps halve. Collocation refines and checks the equation residual at
+#'   each continuation stage before advancing. Nonzero bends are additional direct starts on the full
 #'   surface. If delta joins the normalized endpoints and J rotates by 90
 #'   degrees, shooting starts with velocity `delta + bend * J delta`;
 #'   collocation starts with the curve
@@ -165,17 +170,25 @@
 #'   `ode_tolerance` bounds a sampled, componentwise scaled residual of
 #'   cubic Hermite state interpolation, not a rigorous solution error.
 #'   Intervals are tested at fractions 0.2113248654, 0.5 and 0.7886751346.
-#'   Collocation doubles the mesh resolution when needed; shooting reduces
-#'   the maximum integration step. Shooting's relative integration tolerance
+#'   Only intervals that fail this check are bisected. Collocation resolves
+#'   the enlarged system; shooting integrates from each affected interval's
+#'   left state to its midpoint, retaining the existing nodes. Shooting's relative integration tolerance
 #'   is `integration_tolerance`, with absolute tolerance one hundredth of it.
 #'   `iterations` limits each Newton solve; `max_evaluations` counts equation
 #'   evaluations across all starts, continuation and residual checks.
+#'   Collocation's Newton stopping test divides each differential-equation
+#'   row by one plus the Simpson-weighted absolute right-hand side; endpoint
+#'   rows retain scale one. The Newton step and backtracking merit function
+#'   remain unscaled. This avoids imposing an unattainable absolute equation
+#'   tolerance on steep surfaces without relaxing endpoint accuracy.
 #'
 #'   Continuous candidates are converted to lifted domain polylines.
 #'   Recursive cubic Bezier control-hull checks establish containment of the
 #'   interpolated domain curve using floating-point arithmetic. Midpoint and
 #'   quarter-point subdivision compares lifted-connector lengths using a
 #'   total allowance of `path_tolerance` times the direct connector length.
+#'   Each accepted section emits its coarse connector; midpoint and quarter
+#'   points are used for the check, not automatically added to the output.
 #'   This is a refinement diagnostic, not a certified discretization bound.
 #'   `length_error_estimate` concerns only the returned polyline's length.
 #'   Endpoint residuals are measured before fixing the returned endpoints
@@ -187,7 +200,10 @@
 #'   fallback to a different method and no boundary-following solver.
 #'   A retained candidate with unresolved starts or an exhausted overall
 #'   budget is `partial`; no usable path gives `failed`, or `unsupported`
-#'   when rejected solutions leave the domain. These methods do not handle
+#'   when all completed attempts leave the domain and none remains unresolved.
+#'   A mixture of outside curves and unresolved starts is `failed`, not
+#'   evidence that the geometry is unsupported. The first observed outside
+#'   point is retained for each rejected start. These methods do not handle
 #'   more than one quadratic form or domain dimension other than two.
 #'   Nontrivial pairs require endpoint separation between 1e-100 and 1e100, maximum
 #'   absolute entry of `2 * separation * A` at most 2048 and maximum absolute

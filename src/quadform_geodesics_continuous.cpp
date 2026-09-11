@@ -18,7 +18,7 @@ using Clock = std::chrono::steady_clock;
 using State = std::array<double,12>;
 struct Stop { std::string reason; };
 struct Unresolved { std::string reason; };
-struct Outside {};
+struct Outside { qgn::Point point; };
 struct Budget {
   const Options& o;
   Clock::time_point start = Clock::now();
@@ -110,24 +110,28 @@ Vec hermite(const Vec& a,const Vec& b,const Vec& fa,const Vec& fb,double h,doubl
   if(derivative)return ((6*s2-6*s)*a+(-6*s2+6*s)*b)/h+(3*s2-4*s+1)*fa+(3*s2-2*s)*fb;
   return (2*s3-3*s2+1)*a+(-2*s3+3*s2)*b+h*((s3-2*s2+s)*fa+(s3-s2)*fb);
 }
-struct Interval {Vec r;Mat left,right;};
+struct Interval {Vec r,scale;Mat left,right;};
 Interval interval(const Geometry& g,const Vec& a,const Vec& b,double h,double lambda,Budget& budget,bool jacobian){
   Mat ja,jb,jm;Vec fa=g.rhs(a,lambda,jacobian?&ja:nullptr,budget);
   Vec fb=g.rhs(b,lambda,jacobian?&jb:nullptr,budget);
   Vec middle=(a+b)/2+h*(fa-fb)/8;
   Vec fm=g.rhs(middle,lambda,jacobian?&jm:nullptr,budget);
   Interval z;z.r=(b-a)/h-(fa+4*fm+fb)/6;
+  z.scale=Vec::Ones()+(fa.cwiseAbs()+4*fm.cwiseAbs()+fb.cwiseAbs())/6;
   if(jacobian){Mat id=Mat::Identity();
     z.left=-id/h-(ja+4*jm*(id/2+h*ja/8))/6;
     z.right=id/h-(jb+4*jm*(id/2-h*jb/8))/6;}
   return z;
 }
 Eigen::VectorXd equations(const Geometry& g,const Curve& c,const V2& a,const V2& b,
-                          double lambda,Budget& budget,std::vector<Eigen::Triplet<double>>* entries){
+                          double lambda,Budget& budget,std::vector<Eigen::Triplet<double>>* entries,
+                          Eigen::VectorXd* scales=nullptr){
   int n=static_cast<int>(c.y.size()),end=4*(n-1);Eigen::VectorXd r(4*n);
+  if(scales)*scales=Eigen::VectorXd::Ones(4*n);
   for(int i=0;i<n-1;++i){
     auto z=interval(g,c.y[i],c.y[i+1],c.t[i+1]-c.t[i],lambda,budget,entries!=nullptr);
     r.segment<4>(4*i)=z.r;
+    if(scales)scales->segment<4>(4*i)=z.scale;
     if(entries)for(int j=0;j<4;++j)for(int k=0;k<4;++k){
       entries->emplace_back(4*i+j,4*i+k,z.left(j,k));
       entries->emplace_back(4*i+j,4*(i+1)+k,z.right(j,k));}
@@ -140,8 +144,13 @@ bool collocate(const Geometry& g,Curve& curve,const V2& a,const V2& b,double lam
   const double tol=std::min(budget.o.ode_tolerance*.01,budget.o.endpoint_tolerance*.1);
   for(int it=0;it<budget.o.iterations;++it){
     ++budget.newton;std::vector<Eigen::Triplet<double>> entries;
-    auto r=equations(g,curve,a,b,lambda,budget,&entries);double error=r.lpNorm<Eigen::Infinity>();
-    if(error<=tol)return true;
+    Eigen::VectorXd scales;
+    auto r=equations(g,curve,a,b,lambda,budget,&entries,&scales);
+    if(r.cwiseQuotient(scales).lpNorm<Eigen::Infinity>()<=tol)return true;
+    // Scale the stopping test, not the Newton merit function. Changing the
+    // line-search weights can collapse distinct starting curves onto the
+    // same stationary branch. Endpoint residuals retain scale one.
+    double error=r.lpNorm<Eigen::Infinity>();
     Eigen::SparseMatrix<double> jac(r.size(),r.size());jac.setFromTriplets(entries.begin(),entries.end());
     Eigen::SparseLU<Eigen::SparseMatrix<double>> lu;
     budget.poll();lu.compute(jac);if(lu.info()!=Eigen::Success)return false;
@@ -155,28 +164,59 @@ bool collocate(const Geometry& g,Curve& curve,const V2& a,const V2& b,double lam
     }
     if(!accepted)return false;
   }
-  return equations(g,curve,a,b,lambda,budget,nullptr).lpNorm<Eigen::Infinity>()<=tol;
+  Eigen::VectorXd scales;
+  auto r=equations(g,curve,a,b,lambda,budget,nullptr,&scales);
+  return r.cwiseQuotient(scales).lpNorm<Eigen::Infinity>()<=tol;
 }
-double residual(const Geometry& g,const Curve& curve,double lambda,Budget& budget){
+double residual(const Geometry& g,const Curve& curve,double lambda,Budget& budget,
+                std::vector<bool>* refine=nullptr){
   double result=0;
+  if(refine)refine->clear();
   for(size_t i=1;i<curve.y.size();++i){
     const auto& a=curve.y[i-1];const auto& b=curve.y[i];double h=curve.t[i]-curve.t[i-1];
     Vec fa=g.rhs(a,lambda,nullptr,budget),fb=g.rhs(b,lambda,nullptr,budget);
+    double local=0;
     for(double s:{.2113248654051871,.5,.7886751345948129}){
       Vec y=hermite(a,b,fa,fb,h,s),dy=hermite(a,b,fa,fb,h,s,true);
       Vec f=g.rhs(y,lambda,nullptr,budget);
-      result=std::max(result,((dy-f).array().abs()/(1+f.array().abs())).maxCoeff());
+      local=std::max(local,((dy-f).array().abs()/(1+f.array().abs())).maxCoeff());
     }
+    result=std::max(result,local);
+    if(refine)refine->push_back(local>budget.o.ode_tolerance);
   }
   return result;
 }
-void subdivide(const Geometry& g,Curve& c,double lambda,Budget& budget){
-  if(2*c.y.size()-1>static_cast<size_t>(budget.o.max_nodes))throw Unresolved{"node_limit"};
+void subdivide(const Geometry& g,Curve& c,double lambda,Budget& budget,
+               const std::vector<bool>& refine,bool shooting=false){
+  if(c.y.size()+std::count(refine.begin(),refine.end(),true)>
+     static_cast<size_t>(budget.o.max_nodes))throw Unresolved{"node_limit"};
   Curve out;
   for(size_t i=1;i<c.y.size();++i){
     Vec a=c.y[i-1],b=c.y[i],fa=g.rhs(a,lambda,nullptr,budget),fb=g.rhs(b,lambda,nullptr,budget);
     out.t.push_back(c.t[i-1]);out.y.push_back(a);
-    out.t.push_back((c.t[i-1]+c.t[i])/2);out.y.push_back(hermite(a,b,fa,fb,c.t[i]-c.t[i-1],.5));
+    if(refine[i-1]){
+      double middle=(c.t[i-1]+c.t[i])/2;
+      if(middle==c.t[i-1]||middle==c.t[i])throw Unresolved{"integration_step_underflow"};
+      Vec value=hermite(a,b,fa,fb,c.t[i]-c.t[i-1],.5);
+      if(shooting){
+        // Obtain new shooting nodes from the ODE, not from the interpolant
+        // whose residual triggered refinement. Existing nodes stay fixed.
+        using S=std::array<double,4>;
+        S y;for(int k=0;k<4;++k)y[k]=a[k];
+        auto system=[&](const S& s,S& dy,double){Vec v;
+          for(int k=0;k<4;++k)v[k]=s[k];auto f=g.rhs(v,lambda,nullptr,budget);
+          for(int k=0;k<4;++k)dy[k]=f[k];};
+        using Stepper=boost::numeric::odeint::runge_kutta_dopri5<S>;
+        auto stepper=boost::numeric::odeint::make_controlled(budget.o.integration_tolerance/100,
+          budget.o.integration_tolerance,Stepper());
+        double t=c.t[i-1],dt=(middle-t)/4;
+        while(t<middle){budget.poll();dt=std::min(dt,middle-t);
+          if(!(dt>0)||t+dt==t)throw Unresolved{"integration_step_underflow"};
+          stepper.try_step(system,y,t,dt);++budget.steps;}
+        for(int k=0;k<4;++k)value[k]=y[k];
+      }
+      out.t.push_back(middle);out.y.push_back(value);
+    }
   }
   out.t.push_back(c.t.back());out.y.push_back(c.y.back());c=std::move(out);
 }
@@ -186,6 +226,16 @@ Curve initial(const V2& a,const V2& b,int n,double bend){
     y.head<2>()=a+t*delta+bend*std::sin(pi*t)*normal;
     y.tail<2>()=delta+bend*pi*std::cos(pi*t)*normal;c.t.push_back(t);c.y.push_back(y);}
   c.y.front().head<2>()=a;c.y.back().head<2>()=b;return c;
+}
+
+bool collocate_refined(const Geometry& g,Curve& curve,const V2& a,const V2& b,
+                       double lambda,Budget& budget){
+  if(!collocate(g,curve,a,b,lambda,budget))return false;
+  std::vector<bool> refine;
+  while(true){curve.residual=residual(g,curve,lambda,budget,&refine);
+    if(curve.residual<=budget.o.ode_tolerance)return true;
+    subdivide(g,curve,lambda,budget,refine);
+    if(!collocate(g,curve,a,b,lambda,budget))return false;}
 }
 
 // A cubic Bezier curve lies in the convex hull of its four controls. Splitting
@@ -202,7 +252,7 @@ void polygon(const std::array<double,4>& A,const qgn::Domain& domain,const Bezie
   bool contained=true;for(auto p:q)contained=contained&&domain.inside(p);
   auto halves=split(q);auto middle=halves.first[3];
   auto quarter=split(halves.first).first[3],third=split(halves.second).first[3];
-  for(auto p:{q[0],quarter,middle,third,q[3]})if(!domain.inside(p))throw Outside{};
+  for(auto p:{q[0],quarter,middle,third,q[3]})if(!domain.inside(p))throw Outside{p};
   auto coarse=qgn::connector_length(A,q[0],q[3]),left=qgn::connector_length(A,q[0],middle),
        right=qgn::connector_length(A,middle,q[3]);
   if(!coarse.ok||!left.ok||!right.ok)throw Unresolved{"length_evaluation_failed"};
@@ -216,8 +266,10 @@ void polygon(const std::array<double,4>& A,const qgn::Domain& domain,const Bezie
   double difference=std::abs(left.length+right.length-coarse.length)+
     std::abs(fine-left.length-right.length);
   if(contained&&difference<=allowance){
-    if(path.size()+4>static_cast<size_t>(budget.o.max_path_vertices))throw Unresolved{"path_vertex_limit"};
-    path.insert(path.end(),points.begin()+1,points.end());discrepancy+=difference;return;
+    if(path.size()+1>static_cast<size_t>(budget.o.max_path_vertices))throw Unresolved{"path_vertex_limit"};
+    // The accepted coarse connector is the curve approximation being tested.
+    // Quarter points diagnose its discrepancy; they need not all be emitted.
+    path.push_back(q[3]);discrepancy+=difference;return;
   }
   if(depth==0)throw Unresolved{contained?"path_resolution_limit":"domain_unresolved"};
   polygon(A,domain,halves.first,allowance/2,depth-1,budget,path,discrepancy);
@@ -274,7 +326,10 @@ qgm::Result solve(const std::array<double,4>& A,const qgn::Domain& domain,
             curve=initial(a,b,o.initial_nodes,0);double lambda=0,step=1.0/o.continuation_steps;
             for(int stage=0;stage<o.continuation_attempts&&lambda<1;++stage){
               ++budget.stages;double target=std::min(1.0,lambda+step);V2 v=velocity;Curve c=curve;
-              try{ok=collocation?collocate(g,c,a,b,target,budget):shoot(g,a,b,target,v,budget);}
+              // A coarse collocation root can belong to a discretization
+              // branch that disappears upon refinement. Qualify each
+              // continuation stage before using it to seed the next one.
+              try{ok=collocation?collocate_refined(g,c,a,b,target,budget):shoot(g,a,b,target,v,budget);}
               catch(const Unresolved&){ok=false;}
               if(ok){lambda=target;velocity=v;curve=std::move(c);step=std::min(step*1.5,1.0-lambda);}
               else step/=2;
@@ -288,28 +343,33 @@ qgm::Result solve(const std::array<double,4>& A,const qgn::Domain& domain,
             velocity+=o.bends[attempt]*V2(-delta[1],delta[0]);
             if(!shoot(g,a,b,1,velocity,budget))throw Unresolved{"newton_failed"};
           }
+          std::vector<bool> refine;
           if(collocation){
-            while(true){curve.residual=residual(g,curve,1,budget);
+            while(true){curve.residual=residual(g,curve,1,budget,&refine);
               if(curve.residual<=o.ode_tolerance)break;
-              subdivide(g,curve,1,budget);if(!collocate(g,curve,a,b,1,budget))throw Unresolved{"newton_failed"};}
+              subdivide(g,curve,1,budget,refine);if(!collocate(g,curve,a,b,1,budget))throw Unresolved{"newton_failed"};}
             curve.endpoint=std::max((curve.y.front().head<2>()-a).norm(),(curve.y.back().head<2>()-b).norm());
           }else{
-            double step=1.0/32;
-            do {
-              V2 end;curve=integrate(g,a,velocity,1,budget,true,&end,nullptr,step);
-              curve.endpoint=(end-b).norm();curve.residual=residual(g,curve,1,budget);step/=2;
-            } while(curve.residual>o.ode_tolerance);
+            V2 end;curve=integrate(g,a,velocity,1,budget,true,&end);
+            curve.endpoint=(end-b).norm();
+            while(true){curve.residual=residual(g,curve,1,budget,&refine);
+              if(curve.residual<=o.ode_tolerance)break;
+              subdivide(g,curve,1,budget,refine,true);}
+            curve.endpoint=(end-b).norm();
           }
           if(curve.endpoint>o.endpoint_tolerance)throw Unresolved{"endpoint_residual"};
           ++converged;auto candidate=publish(A,g,curve,from,to,budget);++feasible;
           attempts[key]="candidate";lengths[key+"_length"]=candidate.length;
           if(best.status!="candidate"||candidate.length+candidate.error<best.length-best.error){
             best=std::move(candidate);best.numbers["selected_start"]=attempt+1;}
-        }catch(const Outside&){last="stationary_path_outside_domain";outside=true;attempts[key]=last;}
+        }catch(const Outside& e){last="stationary_path_outside_domain";outside=true;attempts[key]=last;
+          lengths[key+"_outside_x"]=e.point[0];lengths[key+"_outside_y"]=e.point[1];}
         catch(const Unresolved& e){last=e.reason;attempts[key]=last;unresolved=true;}
       }
       if(best.status!="candidate"){
-        best.status=outside?"unsupported":"failed";best.termination=outside?"stationary_paths_outside_domain":last;
+        best.status=outside&&!unresolved?"unsupported":"failed";
+        best.termination=outside&&!unresolved?"stationary_paths_outside_domain":
+          outside?"no_feasible_path_some_starts_unresolved":last;
       }else if(unresolved){
         best.status="partial";best.termination="some_starts_unresolved";
       }

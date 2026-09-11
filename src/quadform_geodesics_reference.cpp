@@ -98,15 +98,24 @@ Rcpp::List solve(Rcpp::NumericMatrix A,Rcpp::NumericVector from,Rcpp::NumericVec
       for(auto p:points){p.push_back(height(A,p));if(!std::isfinite(p.back()))throw Limit{"height_overflow"};
         for(int j=0;j<3;++j){double v=p[j]-origin[j];xyz.push_back(v);scale=std::max(scale,std::abs(v));}}
       if(!(scale>=1e-100&&scale<=1e100))throw Limit{"mesh_numeric_scope"};
+      diagnostics["endpoint_separation_over_mesh_scale"]=norm(a,b)/scale;
+      diagnostics["required_minimum_triangle_angle"]=1e-5;
       for(auto& v:xyz)v/=scale;
       std::vector<unsigned> faces;std::map<std::array<int,2>,int> incidence;std::vector<bool> used(points.size(),false);
       for(int i=0;i<cells.nrow();++i){budget.poll();std::array<int,3> t{{cells(i,0)-1,cells(i,1)-1,cells(i,2)-1}};
         for(int j=0;j<3;++j){int p=t[j],q=t[(j+1)%3],r=t[(j+2)%3];if(p==q||p==r)Rcpp::stop("Repeated triangle vertex");
           std::array<int,2> e{{std::min(p,q),std::max(p,q)}};if(++incidence[e]>2)Rcpp::stop("Nonmanifold mesh edge");
-          double dot=0,n1=0,n2=0;for(int k=0;k<3;++k){double u=xyz[3*q+k]-xyz[3*p+k],v=xyz[3*r+k]-xyz[3*p+k];dot+=u*v;n1+=u*u;n2+=v*v;}
+          double dot=0,n1=0,n2=0;std::array<double,3> u,v;
+          for(int k=0;k<3;++k){u[k]=xyz[3*q+k]-xyz[3*p+k];v[k]=xyz[3*r+k]-xyz[3*p+k];dot+=u[k]*v[k];n1+=u[k]*u[k];n2+=v[k]*v[k];}
           if(!(n1>1e-100&&n2>1e-100))throw Limit{"mesh_degenerate_triangle"};
-          double angle=std::acos(std::max(-1.,std::min(1.,dot/std::sqrt(n1*n2))));
-          if(!(angle>1e-5&&angle<std::acos(-1.)-1e-5))throw Limit{"mesh_degenerate_triangle"};
+          // atan2 retains the angle of a very thin triangle; acos(dot)
+          // can round it to zero before the engine's angle guard is applied.
+          double cross=std::hypot(std::hypot(u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2]),u[0]*v[1]-u[1]*v[0]);
+          double angle=std::atan2(cross,dot);
+          if(!(angle>1e-5&&angle<std::acos(-1.)-1e-5)){
+            diagnostics["rejected_triangle"]=i+1;diagnostics["rejected_triangle_angle"]=angle;
+            diagnostics["message"]="Lifted triangulation exceeds the mesh engine's thin-triangle limit; endpoints were not moved or merged.";
+            throw Limit{"mesh_degenerate_triangle"};}
           used[p]=true;faces.push_back(p);}}
       if(std::find(used.begin(),used.end(),false)!=used.end())throw Limit{"mesh_unused_vertex"};
       auto solved=mesh_path(xyz,faces,source,target,

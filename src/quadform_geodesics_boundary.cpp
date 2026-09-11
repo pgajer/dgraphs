@@ -71,6 +71,7 @@ qgm::Result solve(const std::array<double,4>& A,const qgn::Domain& domain,
   try{
     s.poll();s.best=qgm::direct_result(A,from,to,"initial_connector");
     if(s.best.path.empty())throw Limit{"length_evaluation_failed"};
+    s.best.numbers["initial_connector_length"]=s.best.length;
     if(from==to||std::all_of(A.begin(),A.end(),[](double x){return x==0;})){
       s.best.termination=from==to?"identity":"flat";
     }else{
@@ -108,9 +109,10 @@ qgm::Result solve(const std::array<double,4>& A,const qgn::Domain& domain,
           check(nlopt_set_xtol_abs1(raw,o.position_tolerance));check(nlopt_set_initial_step1(raw,o.initial_step));
           check(nlopt_set_maxeval(raw,std::min(o.evaluations_per_start,o.max_evaluations-s.evaluations)));
           if(std::isfinite(o.max_seconds))check(nlopt_set_maxtime(raw,std::max(1e-12,o.max_seconds-s.elapsed())));
-          double value=0;int result=nlopt_optimize(raw,x.data(),&value);++starts;
+          int before=s.evaluations;double value=0;int result=nlopt_optimize(raw,x.data(),&value);++starts;
           opt.reset();s.active=nullptr;if(s.exception)std::rethrow_exception(s.exception);
           std::string key="start_"+std::to_string(starts);codes[key+"_optimizer_code"]=result;
+          codes[key+"_evaluations"]=s.evaluations-before;
           lengths[key+"_best_length"]=s.best.length;
           if(result<=0||result==NLOPT_MAXEVAL_REACHED||result==NLOPT_MAXTIME_REACHED)incomplete=true;
         }
@@ -125,6 +127,7 @@ qgm::Result solve(const std::array<double,4>& A,const qgn::Domain& domain,
   s.best.numbers["objective_evaluations"]=s.evaluations;s.best.numbers["feasible_evaluations"]=s.feasible;
   s.best.numbers["accepted_improvements"]=s.improvements;s.best.numbers["completed_starts"]=starts;
   s.best.numbers["completed_levels"]=levels;s.best.numbers["elapsed_seconds"]=s.elapsed();
+  s.best.numbers["endpoint_separation_over_domain_scale"]=std::hypot(to[0]-from[0],to[1]-from[1])/scale;
   s.best.labels["optimizer"]="NLopt_COBYLA";s.best.labels["domain_check"]="all_vertices_then_convex_segments";
   s.best.labels["optimality"]="local_candidate_not_global_certificate";
   if(reversed)std::reverse(s.best.path.begin(),s.best.path.end());return s.best;

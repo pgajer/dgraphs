@@ -64,6 +64,12 @@ test_that("simplex and clustered samples retain allocation metadata", {
   expect_identical(sum(a$region=="zero"), 5L)
   expect_identical(a$intrinsic.dim.by.region,c(interior=2L,zero=1L))
   expect_identical(a$codimension.by.region,c(interior=1L,zero=2L))
+  expect_identical(a$declared.regions,c("interior","zero"))
+  expect_identical(a$observed.regions,c("interior","zero"))
+  no.zero <- sample.synthetic.geometry(synthetic.simplex(3),
+    synthetic.sampling.dirichlet.zeros(rep(1,3),0,1L), 20, seed=5)
+  expect_identical(no.zero$observed.regions,"interior")
+  expect_identical(no.zero$declared.regions,c("interior","zero"))
   b <- sample.synthetic.geometry(synthetic.quadform(2,2),
     synthetic.sampling.clustered(3,4,within.sd=.1), seed=5)
   expect_identical(b$n, 12L)

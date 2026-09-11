@@ -112,7 +112,7 @@ validate.synthetic.sampling <- function(sampling, geometry = NULL) {
 #' @return A `synthetic_geometry_sample` list containing `predictors`, `latent`,
 #'   `latent.mask`, `region`, `frame.matrix`, the specifications, dimensions,
 #'   `intrinsic.dim.by.region` and `codimension.by.region` for simplex strata,
-#'   `n`, and `sample` (the original sampler payload). `rng` contains the
+#'   `declared.regions`, `observed.regions`, `n`, and `sample` (the original sampler payload). `rng` contains the
 #'   effective plan, states after each draw, and `final.state` for explicit
 #'   continuation by a caller. The result has no truth or response fields.
 #' @examples
@@ -174,9 +174,13 @@ sample.synthetic.geometry <- function(geometry, sampling, n = NULL,
       interior = geometry$parameters$parts - 1L,
       zero = geometry$parameters$parts - length(sampling$parameters$zero.parts) - 1L) else NULL
     dimension <- if (is.null(by.region)) geometry$parameters$intrinsic.dim else NA_integer_
+    declared <- if (!is.null(by.region)) names(by.region) else
+      if (is.null(sample$region)) NULL else unique(sample$region)
+    observed <- if (is.null(sample$region)) NULL else declared[declared %in% sample$region]
     structure(list(predictors = X, latent = sample$latent, latent.mask = sample$latent.mask,
       region = sample$region, n = n, intrinsic.dim = dimension,
       intrinsic.dim.by.region = by.region,
+      declared.regions = declared, observed.regions = observed,
       codimension = if (is.null(by.region)) ncol(X) - dimension else NA_integer_,
       codimension.by.region = if (is.null(by.region)) NULL else ncol(X) - by.region,
       ambient.dim = geometry$parameters$ambient.dim, frame.matrix = frame,

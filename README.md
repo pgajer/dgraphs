@@ -32,3 +32,22 @@ parameter sequences, conversion, and diagnostics, run:
 ```r
 vignette("data-derived-graph-workflow", package = "dgraphs")
 ```
+
+## Synthetic geometry (development version)
+
+The development version supplies reusable surfaces, curves and point samplers.
+For example, construct a graph on a quadratic saddle:
+
+```r
+surface <- synthetic.quadform(2, 3, list(diag(c(1, -1))))
+points <- sample.synthetic.geometry(surface,
+  synthetic.sampling.uniform.disk(1), n = 100, seed = 4101)
+graph <- create.mknn.graph(points$predictors, k = 6)
+```
+
+Geometry-only samples contain coordinates, geometric metadata and reproducible
+random-state information. Statistical truth, responses, named recipe registries
+and dataset identities remain in geosmooth. Existing geosmooth geometry names
+are temporarily reexported for compatibility. The development Geometry Lab app
+is documented in `dev/apps/embedding-explorer/README.md`; it is not installed
+with the R package.

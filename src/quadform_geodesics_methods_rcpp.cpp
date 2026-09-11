@@ -1,4 +1,5 @@
 #include "quadform_geodesics_methods.h"
+#include "quadform_geodesics_continuous.h"
 #include "quadform_geodesics_exact.h"
 #include <Rcpp.h>
 #include <cmath>
@@ -46,6 +47,30 @@ Rcpp::List rcpp_quadform_geodesics_method(Rcpp::NumericMatrix A,
     o.domain_depth=qgn::scalar(control,"domain_check_depth",0,20,true);
     o.angle_tolerance=qgn::scalar(control,"angle_tolerance",1e-15,1e-8,false);
     s=qgm::clairaut(a,d,u,v,o);
+  }else if(method=="geodesic_shooting"||method=="geodesic_collocation"){
+    qgc::Options c;c.max_seconds=o.max_seconds;
+    c.ode_tolerance=qgn::scalar(control,"ode_tolerance",1e-10,1e-2,false);
+    c.endpoint_tolerance=qgn::scalar(control,"endpoint_tolerance",1e-12,1e-3,false);
+    c.path_tolerance=qgn::scalar(control,"path_tolerance",1e-10,1e-2,false);
+    if(method=="geodesic_shooting")c.integration_tolerance=qgn::scalar(control,"integration_tolerance",1e-13,1e-5,false);
+    c.iterations=qgn::scalar(control,"iterations",1,100,true);
+    c.continuation_steps=qgn::scalar(control,"continuation_steps",1,128,true);
+    c.continuation_attempts=qgn::scalar(control,"continuation_attempts",1,1024,true);
+    c.initial_nodes=qgn::scalar(control,"initial_nodes",3,257,true);
+    c.max_nodes=qgn::scalar(control,"max_nodes",3,4097,true);
+    if(c.max_nodes<c.initial_nodes)Rcpp::stop("max_nodes must be at least initial_nodes");
+    c.max_path_vertices=qgn::scalar(control,"max_path_vertices",3,65537,true);
+    c.max_evaluations=qgn::scalar(control,"max_evaluations",0,10000000,true);
+    c.domain_depth=qgn::scalar(control,"domain_check_depth",0,24,true);
+    Rcpp::NumericVector bends=control["initial_bends"];
+    if(bends.hasAttribute("dim"))Rcpp::stop("initial_bends must be a vector");
+    if(bends.size()<1||bends.size()>9)Rcpp::stop("initial_bends must contain 1 to 9 values");
+    c.bends.clear();for(double b:bends){
+      if(!std::isfinite(b)||std::abs(b)>4)Rcpp::stop("initial_bends must be finite and between -4 and 4");
+      if(std::find(c.bends.begin(),c.bends.end(),b)!=c.bends.end())Rcpp::stop("initial_bends must be distinct");
+      c.bends.push_back(b);
+    }
+    s=qgc::solve(a,d,u,v,c,method=="geodesic_collocation");
   }else Rcpp::stop("Unknown native geodesic method");
   Rcpp::NumericMatrix lifted(s.path.size(),3);
   for(size_t i=0;i<s.path.size();++i){

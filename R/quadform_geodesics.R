@@ -9,7 +9,8 @@
 #' @param domain A list with `kind = "ball"`, `center` and `radius`, or
 #'   `kind = "box"`, `lower` and `upper`. The domain is closed and convex.
 #' @param method One of `"single_point"`, `"local_network"`, `"best_of_six"`,
-#'   `"grid_dijkstra"` or `"paraboloid_clairaut"`. No partial matching.
+#'   `"grid_dijkstra"`, `"paraboloid_clairaut"`, `"geodesic_shooting"` or
+#'   `"geodesic_collocation"`. No partial matching.
 #' @param control Named list of method-specific controls; unknown names are
 #'   errors. Refinements accept the corresponding lower-level function's
 #'   controls, with `cache_edges = 0` and `trace = FALSE` by default.
@@ -20,6 +21,16 @@
 #'   Clairaut controls are `iterations = 80` (1--256), `path_samples = 257`
 #'   (3--4097), `domain_check_depth = 16` (0--20),
 #'   `angle_tolerance = 1e-12` (1e-15--1e-8) and `max_seconds = Inf`.
+#'   The two continuous methods accept `ode_tolerance = 1e-6` (1e-10--1e-2),
+#'   `endpoint_tolerance = 1e-8` (1e-12--1e-3), `path_tolerance = 1e-7`
+#'   (1e-10--1e-2), `iterations = 30` (1--100), `continuation_steps = 8`
+#'   (1--128), `continuation_attempts = 128` (1--1024), `initial_nodes = 17`
+#'   (3--257), `max_nodes = 1025` (initial_nodes--4097),
+#'   `max_path_vertices = 4097` (3--65537), `max_evaluations = 500000`
+#'   (0--10000000), `domain_check_depth = 20` (0--24),
+#'   `initial_bends = c(0,-1,1)` (1--9 distinct values between -4 and 4),
+#'   and `max_seconds = Inf`. Shooting additionally accepts
+#'   `integration_tolerance = 1e-10` (1e-13--1e-5).
 #'   Time and calculation limits apply to each pair, not the whole batch.
 #' @param return.paths Whether to retain paths, including those in nested
 #'   refinement results. Default `FALSE`. No files or checkpoints are written.
@@ -53,6 +64,61 @@
 #'   1e6) are explicitly unsupported. These restrictions do not apply to flat,
 #'   coincident or apex cases.
 #'
+#'   Shooting adjusts the initial velocity of the geodesic equation using
+#'   its variational equations and damped Newton iterations. Integration uses
+#'   Boost's controlled Dormand--Prince 5(4) stepper. Collocation independently
+#'   solves the four-state boundary-value equations with fourth-order
+#'   Lobatto collocation, a sparse analytic Jacobian and damped Newton steps.
+#'   Both use the equation
+#'   \deqn{u''=-\frac{2Au}{1+\|2Au\|^2}(u'^T(2A)u').}
+#'   Coordinates are translated to the canonical first endpoint and divided
+#'   by the domain-coordinate distance between endpoints. Thus endpoint
+#'   tolerance is relative to that distance, not to the domain's diameter.
+#'
+#'   A zero initial bend starts with a flat surface and continues through
+#'   increasing multiples of A to the requested surface. The initial step is
+#'   `1/continuation_steps`; successful steps grow by 1.5 and unsuccessful
+#'   steps halve. Nonzero bends are additional direct starts on the full
+#'   surface. If delta joins the normalized endpoints and J rotates by 90
+#'   degrees, shooting starts with velocity `delta + bend * J delta`;
+#'   collocation starts with the curve
+#'   `a + t * delta + bend * sin(pi*t) * J delta`, with its derivative.
+#'   `initial_nodes` sets the initial collocation mesh; shooting uses adaptive
+#'   integration nodes. The shortest accepted start is retained, with
+#'   overlapping numerical length-error intervals resolved by start order.
+#'
+#'   `ode_tolerance` bounds a sampled, componentwise scaled residual of
+#'   cubic Hermite state interpolation, not a rigorous solution error.
+#'   Intervals are tested at fractions 0.2113248654, 0.5 and 0.7886751346.
+#'   Collocation doubles the mesh resolution when needed; shooting reduces
+#'   the maximum integration step. Shooting's relative integration tolerance
+#'   is `integration_tolerance`, with absolute tolerance one hundredth of it.
+#'   `iterations` limits each Newton solve; `max_evaluations` counts equation
+#'   evaluations across all starts, continuation and residual checks.
+#'
+#'   Continuous candidates are converted to lifted domain polylines.
+#'   Recursive cubic Bezier control-hull checks establish containment of the
+#'   interpolated domain curve using floating-point arithmetic. Midpoint and
+#'   quarter-point subdivision compares lifted-connector lengths using a
+#'   total allowance of `path_tolerance` times the direct connector length.
+#'   This is a refinement diagnostic, not a certified discretization bound.
+#'   `length_error_estimate` concerns only the returned polyline's length.
+#'   Endpoint residuals are measured before fixing the returned endpoints
+#'   exactly; reported residuals have the original domain-coordinate units.
+#'
+#'   A stationary path need not be the shortest path. The diagnostics retain
+#'   each start's outcome, the selected start, equation and endpoint residuals,
+#'   and the direct connector length for comparison. There is no silent
+#'   fallback to a different method and no boundary-following solver.
+#'   A retained candidate with unresolved starts or an exhausted overall
+#'   budget is `partial`; no usable path gives `failed`, or `unsupported`
+#'   when rejected solutions leave the domain. These methods do not handle
+#'   more than one quadratic form or domain dimension other than two.
+#'   Nontrivial pairs require endpoint separation between 1e-100 and 1e100, maximum
+#'   absolute entry of `2 * separation * A` at most 2048 and maximum absolute
+#'   component of `2 * A * canonical_from` at most 1e6. Out-of-scope cases
+#'   return `unsupported`; flat and coincident pairs bypass these restrictions.
+#'
 #'   For `analytic_clairaut_curve`, `path` is a sampled display of the curve,
 #'   not a polyline whose length equals `length`. `curve_parameters` describe
 #'   the authoritative curve; the numerical endpoint residual is retained.
@@ -68,7 +134,9 @@
 #'   straight segments. All numerical error estimates are nonrigorous.
 #'   The historical development adapter registry is independent of this
 #'   package interface and is not activated by these methods.
-#'   Grid and Clairaut results are symmetric under endpoint reversal. A single
+#'   Grid, Clairaut and continuous results are symmetric under endpoint reversal
+#'   when calculation limits, rather than wall-clock timing, determine completion.
+#'   A single
 #'   randomized refinement run is not required to be: its internal orientation
 #'   is randomized relative to the supplied endpoints. The wrapper preserves
 #'   the lower-level solver's behavior and seed semantics.
@@ -76,7 +144,8 @@
 quadform_geodesics <- function(A, from, to, domain, method,
                               control = list(), return.paths = FALSE) {
   methods <- c("single_point", "local_network", "best_of_six",
-               "grid_dijkstra", "paraboloid_clairaut")
+               "grid_dijkstra", "paraboloid_clairaut",
+               "geodesic_shooting", "geodesic_collocation")
   if (missing(method) || !is.character(method) || length(method) != 1L ||
       is.na(method) || !method %in% methods)
     stop("method must explicitly name one of: ", paste(methods, collapse = ", "))
@@ -133,9 +202,16 @@ quadform_geodesics <- function(A, from, to, domain, method,
     defaults <- list(grid_size = c(33L, 33L), direction_radius = 2L,
       endpoint_neighbors = 8L, include_direct = TRUE, max_edges = 1000000,
       keep_graph = FALSE, max_seconds = Inf)
-  } else {
+  } else if (method == "paraboloid_clairaut") {
     defaults <- list(iterations = 80L, path_samples = 257L,
       domain_check_depth = 16L, angle_tolerance = 1e-12, max_seconds = Inf)
+  } else {
+    defaults <- list(ode_tolerance = 1e-6, endpoint_tolerance = 1e-8,
+      path_tolerance = 1e-7, iterations = 30L, continuation_steps = 8L,
+      continuation_attempts = 128L, initial_nodes = 17L, max_nodes = 1025L,
+      max_path_vertices = 4097L, max_evaluations = 500000L,
+      domain_check_depth = 20L, initial_bends = c(0, -1, 1), max_seconds = Inf)
+    if (method == "geodesic_shooting") defaults$integration_tolerance <- 1e-10
   }
   unknown <- setdiff(names(control), names(defaults))
   if (length(unknown)) stop("Unsupported controls for ", method, ": ", paste(unknown, collapse = ", "))

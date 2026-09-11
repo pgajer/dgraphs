@@ -24,7 +24,8 @@ of domain coordinates. Rows define pairs; no recycling or Cartesian product.}
 \code{kind = "box"}, \code{lower} and \code{upper}. The domain is closed and convex.}
 
 \item{method}{One of \code{"single_point"}, \code{"local_network"}, \code{"best_of_six"},
-\code{"grid_dijkstra"} or \code{"paraboloid_clairaut"}. No partial matching.}
+\code{"grid_dijkstra"}, \code{"paraboloid_clairaut"}, \code{"geodesic_shooting"} or
+\code{"geodesic_collocation"}. No partial matching.}
 
 \item{control}{Named list of method-specific controls; unknown names are
 errors. Refinements accept the corresponding lower-level function's
@@ -36,6 +37,16 @@ Grid controls are \code{grid_size = c(33,33)} (3--257 per axis),
 Clairaut controls are \code{iterations = 80} (1--256), \code{path_samples = 257}
 (3--4097), \code{domain_check_depth = 16} (0--20),
 \code{angle_tolerance = 1e-12} (1e-15--1e-8) and \code{max_seconds = Inf}.
+The two continuous methods accept \code{ode_tolerance = 1e-6} (1e-10--1e-2),
+\code{endpoint_tolerance = 1e-8} (1e-12--1e-3), \code{path_tolerance = 1e-7}
+(1e-10--1e-2), \code{iterations = 30} (1--100), \code{continuation_steps = 8}
+(1--128), \code{continuation_attempts = 128} (1--1024), \code{initial_nodes = 17}
+(3--257), \code{max_nodes = 1025} (initial_nodes--4097),
+\code{max_path_vertices = 4097} (3--65537), \code{max_evaluations = 500000}
+(0--10000000), \code{domain_check_depth = 20} (0--24),
+\code{initial_bends = c(0,-1,1)} (1--9 distinct values between -4 and 4),
+and \code{max_seconds = Inf}. Shooting additionally accepts
+\code{integration_tolerance = 1e-10} (1e-13--1e-5).
 Time and calculation limits apply to each pair, not the whole batch.}
 
 \item{return.paths}{Whether to retain paths, including those in nested
@@ -76,6 +87,61 @@ maximum above 1e100, or twice absolute curvature times maximum radius above
 1e6) are explicitly unsupported. These restrictions do not apply to flat,
 coincident or apex cases.
 
+Shooting adjusts the initial velocity of the geodesic equation using
+its variational equations and damped Newton iterations. Integration uses
+Boost's controlled Dormand--Prince 5(4) stepper. Collocation independently
+solves the four-state boundary-value equations with fourth-order
+Lobatto collocation, a sparse analytic Jacobian and damped Newton steps.
+Both use the equation
+\deqn{u''=-\frac{2Au}{1+\|2Au\|^2}(u'^T(2A)u').}
+Coordinates are translated to the canonical first endpoint and divided
+by the domain-coordinate distance between endpoints. Thus endpoint
+tolerance is relative to that distance, not to the domain's diameter.
+
+A zero initial bend starts with a flat surface and continues through
+increasing multiples of A to the requested surface. The initial step is
+\code{1/continuation_steps}; successful steps grow by 1.5 and unsuccessful
+steps halve. Nonzero bends are additional direct starts on the full
+surface. If delta joins the normalized endpoints and J rotates by 90
+degrees, shooting starts with velocity \verb{delta + bend * J delta};
+collocation starts with the curve
+\verb{a + t * delta + bend * sin(pi*t) * J delta}, with its derivative.
+\code{initial_nodes} sets the initial collocation mesh; shooting uses adaptive
+integration nodes. The shortest accepted start is retained, with
+overlapping numerical length-error intervals resolved by start order.
+
+\code{ode_tolerance} bounds a sampled, componentwise scaled residual of
+cubic Hermite state interpolation, not a rigorous solution error.
+Intervals are tested at fractions 0.2113248654, 0.5 and 0.7886751346.
+Collocation doubles the mesh resolution when needed; shooting reduces
+the maximum integration step. Shooting's relative integration tolerance
+is \code{integration_tolerance}, with absolute tolerance one hundredth of it.
+\code{iterations} limits each Newton solve; \code{max_evaluations} counts equation
+evaluations across all starts, continuation and residual checks.
+
+Continuous candidates are converted to lifted domain polylines.
+Recursive cubic Bezier control-hull checks establish containment of the
+interpolated domain curve using floating-point arithmetic. Midpoint and
+quarter-point subdivision compares lifted-connector lengths using a
+total allowance of \code{path_tolerance} times the direct connector length.
+This is a refinement diagnostic, not a certified discretization bound.
+\code{length_error_estimate} concerns only the returned polyline's length.
+Endpoint residuals are measured before fixing the returned endpoints
+exactly; reported residuals have the original domain-coordinate units.
+
+A stationary path need not be the shortest path. The diagnostics retain
+each start's outcome, the selected start, equation and endpoint residuals,
+and the direct connector length for comparison. There is no silent
+fallback to a different method and no boundary-following solver.
+A retained candidate with unresolved starts or an exhausted overall
+budget is \code{partial}; no usable path gives \code{failed}, or \code{unsupported}
+when rejected solutions leave the domain. These methods do not handle
+more than one quadratic form or domain dimension other than two.
+Nontrivial pairs require endpoint separation between 1e-100 and 1e100, maximum
+absolute entry of \code{2 * separation * A} at most 2048 and maximum absolute
+component of \code{2 * A * canonical_from} at most 1e6. Out-of-scope cases
+return \code{unsupported}; flat and coincident pairs bypass these restrictions.
+
 For \code{analytic_clairaut_curve}, \code{path} is a sampled display of the curve,
 not a polyline whose length equals \code{length}. \code{curve_parameters} describe
 the authoritative curve; the numerical endpoint residual is retained.
@@ -91,7 +157,9 @@ For \code{lifted_domain_polyline}, consecutive domain points specify lifted
 straight segments. All numerical error estimates are nonrigorous.
 The historical development adapter registry is independent of this
 package interface and is not activated by these methods.
-Grid and Clairaut results are symmetric under endpoint reversal. A single
+Grid, Clairaut and continuous results are symmetric under endpoint reversal
+when calculation limits, rather than wall-clock timing, determine completion.
+A single
 randomized refinement run is not required to be: its internal orientation
 is randomized relative to the supplied endpoints. The wrapper preserves
 the lower-level solver's behavior and seed semantics.

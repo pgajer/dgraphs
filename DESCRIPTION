@@ -46,6 +46,7 @@ Imports:
     parallel,
     Rcpp
 LinkingTo:
+    BH,
     Rcpp,
     RcppEigen
 Suggests:

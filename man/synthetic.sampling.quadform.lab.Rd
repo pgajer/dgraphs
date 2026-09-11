@@ -30,3 +30,8 @@ surface in three dimensions. Area sampling uses rejection sampling.
 \description{
 Versioned quadratic-surface sampling used by Geometry Lab
 }
+\examples{
+sampling <- synthetic.sampling.quadform.lab("disk", mode = "area")
+surface <- synthetic.quadform(2, 3, list(diag(c(1, -1))))
+sample.synthetic.geometry(surface, sampling, 30, seed = 4101)$n
+}

@@ -6,6 +6,10 @@
 #' @param algorithm The fixed version-1 draw and arithmetic policy.
 #' @return A sampling component for a canonical two-dimensional quadratic
 #'   surface in three dimensions. Area sampling uses rejection sampling.
+#' @examples
+#' sampling <- synthetic.sampling.quadform.lab("disk", mode = "area")
+#' surface <- synthetic.quadform(2, 3, list(diag(c(1, -1))))
+#' sample.synthetic.geometry(surface, sampling, 30, seed = 4101)$n
 #' @export
 synthetic.sampling.quadform.lab <- function(domain = c("square", "disk"),
     extent = 1, mode = c("uniform", "area", "grid", "center", "gap"),
@@ -25,6 +29,8 @@ synthetic.sampling.quadform.lab <- function(domain = c("square", "disk"),
 #' @param coefficients Three finite coefficients for u^2, 2uv and v^2.
 #' @return A three-column matrix. Version-1 arithmetic preserves existing
 #'   Geometry Lab cloud identities and reference meshes.
+#' @examples
+#' embed.quadform.surface(matrix(c(0, 1, 0, 1), ncol = 2), c(1, 0, -1))
 #' @export
 embed.quadform.surface <- function(latent, coefficients) {
   if (!is.matrix(latent) || !is.numeric(latent) || ncol(latent) != 2L ||

@@ -18,3 +18,6 @@ Geometry Lab cloud identities and reference meshes.
 \description{
 Lift coordinates onto a quadratic surface using Geometry Lab arithmetic
 }
+\examples{
+embed.quadform.surface(matrix(c(0, 1, 0, 1), ncol = 2), c(1, 0, -1))
+}

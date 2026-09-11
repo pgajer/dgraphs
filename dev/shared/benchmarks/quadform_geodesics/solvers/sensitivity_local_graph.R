@@ -1,0 +1,6 @@
+.qga_files <- Filter(Negate(is.null), lapply(sys.frames(), function(f) f$ofile))
+.qga_directory <- dirname(normalizePath(tail(.qga_files, 1L)[[1L]]))
+.qga_namespace <- new.env(parent = environment())
+for (.qga_file in c("common.R", "local_graph.R", "three_point.R", "sensitivity.R"))
+  sys.source(file.path(.qga_directory, "adaptive", .qga_file), envir = .qga_namespace)
+.qga_namespace$qgx.adapter("sensitivity_local_graph", .qga_namespace$qga.local.graph.plan)

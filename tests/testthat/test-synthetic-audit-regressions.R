@@ -64,3 +64,15 @@ test_that("current-stream errors retain draws already consumed", {
     synthetic.sampling.uniform.box(1,1.1),1,rng.plan="current"),"footprint")
   expect_identical(.Random.seed,expected)
 })
+
+
+test_that("successful singleton single-height names retain their legacy behavior", {
+  g <- synthetic.quadform(1,2,list(height=matrix(.5)))
+  u <- matrix(2,nrow=1)
+  x <- embed.synthetic.geometry(g,u)
+  expect_identical(dim(x),c(1L,2L))
+  expect_identical(rownames(x),"height")
+  expect_identical(unname(x),matrix(c(2,2),nrow=1))
+  rownames(u) <- "sample"
+  expect_identical(rownames(embed.synthetic.geometry(g,u)),"sample")
+})

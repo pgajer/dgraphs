@@ -15,7 +15,9 @@ quadform_geodesics(
 )
 }
 \arguments{
-\item{A}{Finite exactly symmetric 2 by 2 matrix.}
+\item{A}{Finite exactly symmetric 2 by 2 matrix. The Delaunay and radius
+graph references also accept 3 by 3 and 4 by 4 matrices, representing
+a single quadratic height over the corresponding domain dimension.}
 
 \item{from, to}{Two-element numeric vectors or matching two-column matrices
 of domain coordinates. Rows define pairs; no recycling or Cartesian product.}
@@ -25,7 +27,8 @@ of domain coordinates. Rows define pairs; no recycling or Cartesian product.}
 
 \item{method}{One of \code{"single_point"}, \code{"local_network"}, \code{"best_of_six"},
 \code{"grid_dijkstra"}, \code{"paraboloid_clairaut"}, \code{"geodesic_shooting"} or
-\code{"geodesic_collocation"}. No partial matching.}
+\code{"geodesic_collocation"}, \code{"boundary_optimization"}, \code{"polyhedral_mesh"},
+\code{"delaunay_graph"} or \code{"radius_graph"}. No partial matching.}
 
 \item{control}{Named list of method-specific controls; unknown names are
 errors. Refinements accept the corresponding lower-level function's
@@ -47,6 +50,25 @@ The two continuous methods accept \code{ode_tolerance = 1e-6} (1e-10--1e-2),
 \code{initial_bends = c(0,-1,1)} (1--9 distinct values between -4 and 4),
 and \code{max_seconds = Inf}. Shooting additionally accepts
 \code{integration_tolerance = 1e-10} (1e-13--1e-5).
+Boundary optimization accepts \code{initial_edges = 8} (2--64), \code{levels = 2}
+(1--3), \code{evaluations_per_start = 2000} (1--100000),
+\code{max_evaluations = 20000} (0--1000000), \code{position_tolerance = 1e-6}
+(1e-10--1e-2), \code{initial_step = 0.05} (1e-6--0.5),
+\code{initial_bends = c(0,-0.5,0.5)} (1--9 distinct values in -4--4),
+\code{initial_path = NULL} (otherwise a feasible two-column path with 2--65
+rows and exactly matching endpoints), and \code{max_seconds = Inf}.
+Reference graphs and meshes accept \code{resolution} (2--33; defaults 17, 5,
+3 in domain dimensions 2, 3, 4), \code{vertices = NULL} (otherwise a finite
+domain-coordinate matrix), \code{max_vertices}, \code{max_edges = 200000}
+(0--2000000), \code{max_pair_checks = 1000000} (0--10000000),
+\code{max_seconds = Inf} and \code{keep_graph = FALSE}. Default vertex caps are
+4096 for radius graphs, 2048/512/128 for 2D/3D/4D Delaunay graphs,
+and 1024 for meshes; the Delaunay and mesh caps cannot be raised.
+Radius graphs accept \code{radius}, defaulting to twice the largest domain
+bounding-box width divided by resolution minus one, in domain units.
+Mesh controls additionally include \code{max_faces = 2048} (1--4096),
+\code{max_propagations = 100000} (0--1000000),
+\code{max_intervals = 200000} (1--1000000), and \code{keep_mesh = FALSE}.
 Time and calculation limits apply to each pair, not the whole batch.}
 
 \item{return.paths}{Whether to retain paths, including those in nested
@@ -86,6 +108,59 @@ outside the initial numeric scope (minimum endpoint radius below 1e-100,
 maximum above 1e100, or twice absolute curvature times maximum radius above
 1e6) are explicitly unsupported. These restrictions do not apply to flat,
 coincident or apex cases.
+
+Boundary optimization uses NLopt COBYLA to vary interior vertices of
+a lifted domain polyline. Bounds constrain a rectangle; a quadratic
+inequality per vertex constrains a disk. All accepted vertices must also
+pass the strict floating-point domain check, independently of NLopt's
+constraint status. Convexity then keeps every lifted domain segment in D.
+The direct connector is an explicit initial candidate. Each accepted
+replacement must be shorter by more than the sum of the two numerical
+length-error estimates. A feasible supplied initial path competes with
+the direct connector, rather than silently replacing it.
+
+Optimization coordinates are centered and divided by the domain radius
+or largest box width. The position tolerance and initial step use these
+normalized units. Starts add sine-shaped normal displacements controlled
+by \code{initial_bends}, projected into D only to construct feasible initial
+guesses. Subsequent levels bisect the retained path, up to 257 vertices.
+Objective-evaluation or time limits, and incomplete individual searches,
+retain the best feasible path as \code{partial}. A position-tolerance stop is
+not a stationarity or global-optimality certificate. No states are saved.
+
+Delaunay and radius references insert endpoints into either the supplied
+vertex set or a regular lattice clipped to D, remove exact duplicates,
+and sort vertices lexicographically. Delaunay uses \code{geometry::delaunayn}
+with Qhull options \verb{Qt Qbb Qc Qz}, without randomized perturbation. The
+package geometry is an optional dependency for Delaunay and mesh methods.
+Its simplices supply all one-skeleton edges. Radius graphs instead join
+all pairs at Euclidean domain distance at most \code{radius}. There is no
+direct-edge override or silent connectivity repair. Edge weights are
+analytic lifted straight-segment lengths, not ambient chords. Boost
+Dijkstra selects a graph path, whose length is recomputed with the exact
+accumulator. In 3D and 4D, the same analytic integral is used with
+higher-dimensional endpoint slopes and propagated numerical error estimates.
+The entire triangulation and pair preparation count toward total time,
+but Qhull is an indivisible call: its time allowance is checked before
+and after it, not enforced as an operating-system deadline.
+
+The polyhedral method uses Kirsanov's implementation of the
+Mitchell--Mount--Papadimitriou triangle-interior propagation algorithm on
+a two-dimensional Delaunay triangulation lifted at its vertices. Its
+domain is the triangulated convex hull of these points, a subset of D,
+not the whole disk when D is circular. The upstream small-interval cutoff
+is 1e-6 times edge length. Live intervals and propagation counts are
+bounded; user interrupts release owned intervals before propagating to R.
+Degenerate triangles or unresolved numerical invariants return no path.
+
+For \code{polyhedral_surface_polyline}, \code{surface_path} is a path across flat
+mesh triangles and \code{path} is its domain projection. \code{length} measures
+that mesh path, not a smooth-surface path. The separate diagnostic
+\code{smooth_lifted_length} measures the lifted domain polyline obtained from
+its projection. These two numbers must not be interchanged in comparisons.
+Mesh \code{length_error_estimate} is missing, not zero; the algorithm's name
+does not imply a rigorous certificate. Kept mesh vertices and triangles
+are available under \code{backend_result$mesh} when \code{keep_mesh = TRUE}.
 
 Shooting adjusts the initial velocity of the geodesic equation using
 its variational equations and damped Newton iterations. Integration uses

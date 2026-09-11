@@ -19,7 +19,9 @@ Authors@R: c(
     person("Jitse", "Niesen", role = c("ctb", "cph"),
            comment = "Spectra linear algebra routines"),
     person("Netherlands eScience Center", role = c("ctb", "cph"),
-           comment = "Spectra eigensolver routines")
+           comment = "Spectra eigensolver routines"),
+    person("Danil", "Kirsanov", role = c("ctb", "cph"),
+           comment = "Polyhedral geodesic library")
     )
 Description: Constructs data-derived graphs from numerical observations using
     mutual, shared-neighbor, intersection, geodesic, radius, adaptive-radius,
@@ -43,13 +45,16 @@ Depends:
 Imports:
     FNN,
     igraph (>= 2.2.0),
+    nloptr,
     parallel,
     Rcpp
 LinkingTo:
     BH,
+    nloptr,
     Rcpp,
     RcppEigen
 Suggests:
+    geometry,
     knitr,
     Matrix,
     rmarkdown,

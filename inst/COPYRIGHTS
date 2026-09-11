@@ -1,5 +1,15 @@
 This package includes the following external libraries:
 
+Geodesic (https://github.com/mojocorp/geodesic)
+License: MIT
+Copyright (c) 2008 Danil Kirsanov
+Pinned upstream commit: 7b08bfb03c444819a31f216cb1e0a3fb9528f806
+The license is retained in inst/licenses/Geodesic-MIT.txt. The six headers
+under src/vendor/geodesic retain upstream notices. dgraphs adaptations add
+owned interval allocations, resource/interrupt hooks, exception-based invariant
+checks, silent diagnostics and typed interval copies. See that directory's
+README.md for the source and modification record.
+
 The quadform_geodesics R and C++ source units were developed in geosmooth
 by Pawel Gajer's project and are distributed here under the package's MIT
 license with the copyright holder's authorization (2026-09-11). This does

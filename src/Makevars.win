@@ -12,6 +12,9 @@ OBJECTS = \
 	quadform_geodesics_solver_rcpp.o \
 	quadform_geodesics_methods.o \
 	quadform_geodesics_continuous.o \
+	quadform_geodesics_boundary.o \
+	quadform_geodesics_reference.o \
+	quadform_geodesics_mesh.o \
 	quadform_geodesics_methods_rcpp.o \
 	SEXP_cpp_conversion_utils.o \
 	Eigen_utils.o \

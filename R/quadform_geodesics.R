@@ -3,14 +3,17 @@
 #' Internal common interface for paired endpoint queries on
 #' \eqn{F(u)=(u,u^T A u)}. A method must be selected explicitly.
 #'
-#' @param A Finite exactly symmetric 2 by 2 matrix.
+#' @param A Finite exactly symmetric 2 by 2 matrix. The Delaunay and radius
+#'   graph references also accept 3 by 3 and 4 by 4 matrices, representing
+#'   a single quadratic height over the corresponding domain dimension.
 #' @param from,to Two-element numeric vectors or matching two-column matrices
 #'   of domain coordinates. Rows define pairs; no recycling or Cartesian product.
 #' @param domain A list with `kind = "ball"`, `center` and `radius`, or
 #'   `kind = "box"`, `lower` and `upper`. The domain is closed and convex.
 #' @param method One of `"single_point"`, `"local_network"`, `"best_of_six"`,
 #'   `"grid_dijkstra"`, `"paraboloid_clairaut"`, `"geodesic_shooting"` or
-#'   `"geodesic_collocation"`. No partial matching.
+#'   `"geodesic_collocation"`, `"boundary_optimization"`, `"polyhedral_mesh"`,
+#'   `"delaunay_graph"` or `"radius_graph"`. No partial matching.
 #' @param control Named list of method-specific controls; unknown names are
 #'   errors. Refinements accept the corresponding lower-level function's
 #'   controls, with `cache_edges = 0` and `trace = FALSE` by default.
@@ -31,6 +34,25 @@
 #'   `initial_bends = c(0,-1,1)` (1--9 distinct values between -4 and 4),
 #'   and `max_seconds = Inf`. Shooting additionally accepts
 #'   `integration_tolerance = 1e-10` (1e-13--1e-5).
+#'   Boundary optimization accepts `initial_edges = 8` (2--64), `levels = 2`
+#'   (1--3), `evaluations_per_start = 2000` (1--100000),
+#'   `max_evaluations = 20000` (0--1000000), `position_tolerance = 1e-6`
+#'   (1e-10--1e-2), `initial_step = 0.05` (1e-6--0.5),
+#'   `initial_bends = c(0,-0.5,0.5)` (1--9 distinct values in -4--4),
+#'   `initial_path = NULL` (otherwise a feasible two-column path with 2--65
+#'   rows and exactly matching endpoints), and `max_seconds = Inf`.
+#'   Reference graphs and meshes accept `resolution` (2--33; defaults 17, 5,
+#'   3 in domain dimensions 2, 3, 4), `vertices = NULL` (otherwise a finite
+#'   domain-coordinate matrix), `max_vertices`, `max_edges = 200000`
+#'   (0--2000000), `max_pair_checks = 1000000` (0--10000000),
+#'   `max_seconds = Inf` and `keep_graph = FALSE`. Default vertex caps are
+#'   4096 for radius graphs, 2048/512/128 for 2D/3D/4D Delaunay graphs,
+#'   and 1024 for meshes; the Delaunay and mesh caps cannot be raised.
+#'   Radius graphs accept `radius`, defaulting to twice the largest domain
+#'   bounding-box width divided by resolution minus one, in domain units.
+#'   Mesh controls additionally include `max_faces = 2048` (1--4096),
+#'   `max_propagations = 100000` (0--1000000),
+#'   `max_intervals = 200000` (1--1000000), and `keep_mesh = FALSE`.
 #'   Time and calculation limits apply to each pair, not the whole batch.
 #' @param return.paths Whether to retain paths, including those in nested
 #'   refinement results. Default `FALSE`. No files or checkpoints are written.
@@ -63,6 +85,59 @@
 #'   maximum above 1e100, or twice absolute curvature times maximum radius above
 #'   1e6) are explicitly unsupported. These restrictions do not apply to flat,
 #'   coincident or apex cases.
+#'
+#'   Boundary optimization uses NLopt COBYLA to vary interior vertices of
+#'   a lifted domain polyline. Bounds constrain a rectangle; a quadratic
+#'   inequality per vertex constrains a disk. All accepted vertices must also
+#'   pass the strict floating-point domain check, independently of NLopt's
+#'   constraint status. Convexity then keeps every lifted domain segment in D.
+#'   The direct connector is an explicit initial candidate. Each accepted
+#'   replacement must be shorter by more than the sum of the two numerical
+#'   length-error estimates. A feasible supplied initial path competes with
+#'   the direct connector, rather than silently replacing it.
+#'
+#'   Optimization coordinates are centered and divided by the domain radius
+#'   or largest box width. The position tolerance and initial step use these
+#'   normalized units. Starts add sine-shaped normal displacements controlled
+#'   by `initial_bends`, projected into D only to construct feasible initial
+#'   guesses. Subsequent levels bisect the retained path, up to 257 vertices.
+#'   Objective-evaluation or time limits, and incomplete individual searches,
+#'   retain the best feasible path as `partial`. A position-tolerance stop is
+#'   not a stationarity or global-optimality certificate. No states are saved.
+#'
+#'   Delaunay and radius references insert endpoints into either the supplied
+#'   vertex set or a regular lattice clipped to D, remove exact duplicates,
+#'   and sort vertices lexicographically. Delaunay uses `geometry::delaunayn`
+#'   with Qhull options `Qt Qbb Qc Qz`, without randomized perturbation. The
+#'   package geometry is an optional dependency for Delaunay and mesh methods.
+#'   Its simplices supply all one-skeleton edges. Radius graphs instead join
+#'   all pairs at Euclidean domain distance at most `radius`. There is no
+#'   direct-edge override or silent connectivity repair. Edge weights are
+#'   analytic lifted straight-segment lengths, not ambient chords. Boost
+#'   Dijkstra selects a graph path, whose length is recomputed with the exact
+#'   accumulator. In 3D and 4D, the same analytic integral is used with
+#'   higher-dimensional endpoint slopes and propagated numerical error estimates.
+#'   The entire triangulation and pair preparation count toward total time,
+#'   but Qhull is an indivisible call: its time allowance is checked before
+#'   and after it, not enforced as an operating-system deadline.
+#'
+#'   The polyhedral method uses Kirsanov's implementation of the
+#'   Mitchell--Mount--Papadimitriou triangle-interior propagation algorithm on
+#'   a two-dimensional Delaunay triangulation lifted at its vertices. Its
+#'   domain is the triangulated convex hull of these points, a subset of D,
+#'   not the whole disk when D is circular. The upstream small-interval cutoff
+#'   is 1e-6 times edge length. Live intervals and propagation counts are
+#'   bounded; user interrupts release owned intervals before propagating to R.
+#'   Degenerate triangles or unresolved numerical invariants return no path.
+#'
+#'   For `polyhedral_surface_polyline`, `surface_path` is a path across flat
+#'   mesh triangles and `path` is its domain projection. `length` measures
+#'   that mesh path, not a smooth-surface path. The separate diagnostic
+#'   `smooth_lifted_length` measures the lifted domain polyline obtained from
+#'   its projection. These two numbers must not be interchanged in comparisons.
+#'   Mesh `length_error_estimate` is missing, not zero; the algorithm's name
+#'   does not imply a rigorous certificate. Kept mesh vertices and triangles
+#'   are available under `backend_result$mesh` when `keep_mesh = TRUE`.
 #'
 #'   Shooting adjusts the initial velocity of the geodesic equation using
 #'   its variational equations and damped Newton iterations. Integration uses
@@ -145,10 +220,13 @@ quadform_geodesics <- function(A, from, to, domain, method,
                               control = list(), return.paths = FALSE) {
   methods <- c("single_point", "local_network", "best_of_six",
                "grid_dijkstra", "paraboloid_clairaut",
-               "geodesic_shooting", "geodesic_collocation")
+               "geodesic_shooting", "geodesic_collocation", "boundary_optimization",
+               "polyhedral_mesh", "delaunay_graph", "radius_graph")
   if (missing(method) || !is.character(method) || length(method) != 1L ||
       is.na(method) || !method %in% methods)
     stop("method must explicitly name one of: ", paste(methods, collapse = ", "))
+  if (method %in% c("polyhedral_mesh", "delaunay_graph", "radius_graph"))
+    return(quadform_geodesics_graph_reference(A, from, to, domain, method, control, return.paths))
   if (!is.matrix(A) || !is.numeric(A) || !identical(dim(A), c(2L, 2L)) ||
       any(!is.finite(A)) || A[1L, 2L] != A[2L, 1L])
     stop("A must be a finite symmetric 2 by 2 numeric matrix")
@@ -205,6 +283,11 @@ quadform_geodesics <- function(A, from, to, domain, method,
   } else if (method == "paraboloid_clairaut") {
     defaults <- list(iterations = 80L, path_samples = 257L,
       domain_check_depth = 16L, angle_tolerance = 1e-12, max_seconds = Inf)
+  } else if (method == "boundary_optimization") {
+    defaults <- list(initial_edges = 8L, levels = 2L, evaluations_per_start = 2000L,
+      max_evaluations = 20000L, position_tolerance = 1e-6, initial_step = .05,
+      initial_bends = c(0, -.5, .5), initial_path = NULL, max_seconds = Inf)
+    if (!requireNamespace("nloptr", quietly = TRUE)) stop("nloptr is required")
   } else {
     defaults <- list(ode_tolerance = 1e-6, endpoint_tolerance = 1e-8,
       path_tolerance = 1e-7, iterations = 30L, continuation_steps = 8L,

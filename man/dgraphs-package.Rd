@@ -34,6 +34,7 @@ Other contributors:
   \item Gael Guennebaud (Spectra linear algebra routines) [contributor, copyright holder]
   \item Jitse Niesen (Spectra linear algebra routines) [contributor, copyright holder]
   \item Netherlands eScience Center (Spectra eigensolver routines) [contributor, copyright holder]
+  \item Danil Kirsanov (Polyhedral geodesic library) [contributor, copyright holder]
 }
 
 }

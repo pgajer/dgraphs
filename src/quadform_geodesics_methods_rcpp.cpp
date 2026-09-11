@@ -1,5 +1,7 @@
 #include "quadform_geodesics_methods.h"
 #include "quadform_geodesics_continuous.h"
+#include "quadform_geodesics_boundary.h"
+#include "quadform_geodesics_reference.h"
 #include "quadform_geodesics_exact.h"
 #include <Rcpp.h>
 #include <cmath>
@@ -17,6 +19,8 @@ bool flag(Rcpp::List, const char*);
 Rcpp::List rcpp_quadform_geodesics_method(Rcpp::NumericMatrix A,
     Rcpp::NumericVector from,Rcpp::NumericVector to,Rcpp::List domain,
     std::string method,Rcpp::List control){
+  if(method=="polyhedral_mesh"||method=="delaunay_graph"||method=="radius_graph")
+    return qgr::solve(A,from,to,domain,method,control);
   if(A.nrow()!=2||A.ncol()!=2||A(0,1)!=A(1,0))Rcpp::stop("A must be symmetric and 2 by 2");
   for(double x:A)if(!std::isfinite(x))Rcpp::stop("A must be finite");
   std::array<double,4> a{{A(0,0),A(0,1),A(1,0),A(1,1)}};
@@ -47,6 +51,29 @@ Rcpp::List rcpp_quadform_geodesics_method(Rcpp::NumericMatrix A,
     o.domain_depth=qgn::scalar(control,"domain_check_depth",0,20,true);
     o.angle_tolerance=qgn::scalar(control,"angle_tolerance",1e-15,1e-8,false);
     s=qgm::clairaut(a,d,u,v,o);
+  }else if(method=="boundary_optimization"){
+    qgb::Options b;b.max_seconds=o.max_seconds;
+    b.initial_edges=qgn::scalar(control,"initial_edges",2,64,true);
+    b.levels=qgn::scalar(control,"levels",1,3,true);
+    b.evaluations_per_start=qgn::scalar(control,"evaluations_per_start",1,100000,true);
+    b.max_evaluations=qgn::scalar(control,"max_evaluations",0,1000000,true);
+    b.position_tolerance=qgn::scalar(control,"position_tolerance",1e-10,1e-2,false);
+    b.initial_step=qgn::scalar(control,"initial_step",1e-6,.5,false);
+    Rcpp::NumericVector bends=control["initial_bends"];
+    if(bends.hasAttribute("dim")||bends.size()<1||bends.size()>9)Rcpp::stop("initial_bends must be a vector of 1 to 9 values");
+    b.bends.clear();for(double x:bends){
+      if(!std::isfinite(x)||std::abs(x)>4||std::find(b.bends.begin(),b.bends.end(),x)!=b.bends.end())
+        Rcpp::stop("Invalid initial_bends");
+      b.bends.push_back(x);
+    }
+    if(!Rf_isNull(control["initial_path"])){
+      Rcpp::NumericMatrix path=control["initial_path"];
+      if(path.ncol()!=2||path.nrow()<2||path.nrow()>65)Rcpp::stop("initial_path must have 2 to 65 rows and two columns");
+      for(int i=0;i<path.nrow();++i){qgn::Point p{{path(i,0),path(i,1)}};
+        if(!std::isfinite(p[0])||!std::isfinite(p[1])||!d.inside(p))Rcpp::stop("initial_path must be finite and inside the domain");b.initial_path.push_back(p);}
+      if(b.initial_path.front()!=u||b.initial_path.back()!=v)Rcpp::stop("initial_path endpoints must match from and to");
+    }
+    s=qgb::solve(a,d,u,v,b);
   }else if(method=="geodesic_shooting"||method=="geodesic_collocation"){
     qgc::Options c;c.max_seconds=o.max_seconds;
     c.ode_tolerance=qgn::scalar(control,"ode_tolerance",1e-10,1e-2,false);

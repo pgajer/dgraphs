@@ -29,6 +29,10 @@ struct r_call_boundary<Function> {
 
 extern "C" {
 
+SEXP _dgraphs_rcpp_quadform_geodesics_solver(SEXP, SEXP, SEXP, SEXP, SEXP);
+SEXP _dgraphs_rcpp_quadform_geodesics_reference_uniforms(SEXP, SEXP);
+SEXP _dgraphs_rcpp_quadform_geodesics_method(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+
 SEXP S_adaptive_radius_edges_ann(SEXP s_X,
                                  SEXP s_k_scale,
                                  SEXP s_radius_factor,
@@ -188,6 +192,9 @@ SEXP S_wgraph_prune_long_edges(SEXP s_adj_list,
                                SEXP s_verbose);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_dgraphs_rcpp_quadform_geodesics_solver", (DL_FUNC) &r_call_boundary<_dgraphs_rcpp_quadform_geodesics_solver>::call, 5},
+    {"_dgraphs_rcpp_quadform_geodesics_reference_uniforms", (DL_FUNC) &r_call_boundary<_dgraphs_rcpp_quadform_geodesics_reference_uniforms>::call, 2},
+    {"_dgraphs_rcpp_quadform_geodesics_method", (DL_FUNC) &r_call_boundary<_dgraphs_rcpp_quadform_geodesics_method>::call, 6},
     {"S_adaptive_radius_edges_ann", (DL_FUNC) &r_call_boundary<S_adaptive_radius_edges_ann>::call, 4},
     {"S_adaptive_radius_edges_ann_graphs", (DL_FUNC) &r_call_boundary<S_adaptive_radius_edges_ann_graphs>::call, 4},
     {"S_compute_mstree_total_length", (DL_FUNC) &r_call_boundary<S_compute_mstree_total_length>::call, 1},

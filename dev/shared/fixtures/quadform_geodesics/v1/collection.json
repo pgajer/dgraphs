@@ -1,0 +1,3969 @@
+{
+  "schema_version": 1,
+  "collection_id": "quadform_geodesics",
+  "collection_version": "1.0.0",
+  "frozen_date": "2026-09-09",
+  "equation": "F(u) = Q * (u, u^T A1 u, ..., u^T Am u) + offset; no implicit 1/2",
+  "domain_policy": "Closed declared population sampling domain, never inferred from sample extrema or convex hull",
+  "checks": {
+    "absolute_factor": 1e-12,
+    "relative_factor": 1e-08,
+    "scope": "Analytic controls and necessary consistency checks, not accuracy certification for unknown distances",
+    "results_required": ["finite_nonnegative", "identity", "chord_lower", "segment_upper", "symmetry", "exact_when_known", "triangle_when_available", "scale_isometry", "domain_inclusion"],
+    "future_path_checks": ["both_endpoints", "entire_path_domain_containment", "independent_length_integration"]
+  },
+  "cases": [
+    {
+      "id": "flat2_ball",
+      "purpose": "Exact Euclidean control in a convex declared domain",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [0, 0],
+            [0, 0]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0],
+        "radius": 1
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 2,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1],
+          "to": [0.2, 0.1],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1],
+          "to": [0.20000001, 0.10000002],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "flat",
+            "value": 2.23606797632282e-08
+          },
+          "bounds": {
+            "chord_lower": 2.23606797632282e-08,
+            "segment_upper": 2.23606797632282e-08,
+            "quadrature_abs_error": 2.48253415194058e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2],
+          "to": [0.4, -0.1],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "flat",
+            "value": 0.855862138431185
+          },
+          "bounds": {
+            "chord_lower": 0.855862138431185,
+            "segment_upper": 0.855862138431185,
+            "quadrature_abs_error": 9.50197851991224e-15
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "flat",
+            "value": 0.761577310586391
+          },
+          "bounds": {
+            "chord_lower": 0.761577310586391,
+            "segment_upper": 0.761577310586391,
+            "quadrature_abs_error": 8.45520665245115e-15
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "flat",
+            "value": 0.97082439194738
+          },
+          "bounds": {
+            "chord_lower": 0.97082439194738,
+            "segment_upper": 0.97082439194738,
+            "quadrature_abs_error": 1.0778315928077e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0],
+          "to": [1, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "flat",
+            "value": 2
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 2,
+            "quadrature_abs_error": 2.22044604925031e-14
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [0.8, 0.4],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "flat",
+            "value": 0.894427190999916
+          },
+          "bounds": {
+            "chord_lower": 0.894427190999916,
+            "segment_upper": 0.894427190999916,
+            "quadrature_abs_error": 9.93013661298909e-15
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "flat2_box",
+      "purpose": "Exact Euclidean control in a convex declared domain",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [0, 0],
+            [0, 0]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1],
+        "upper": [1, 1]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 2.82842712474619,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1],
+          "to": [0.2, 0.1],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1],
+          "to": [0.20000001, 0.10000002],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "flat",
+            "value": 2.23606797632282e-08
+          },
+          "bounds": {
+            "chord_lower": 2.23606797632282e-08,
+            "segment_upper": 2.23606797632282e-08,
+            "quadrature_abs_error": 2.48253415194058e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2],
+          "to": [0.4, -0.1],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "flat",
+            "value": 0.855862138431185
+          },
+          "bounds": {
+            "chord_lower": 0.855862138431185,
+            "segment_upper": 0.855862138431185,
+            "quadrature_abs_error": 9.50197851991224e-15
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "flat",
+            "value": 0.761577310586391
+          },
+          "bounds": {
+            "chord_lower": 0.761577310586391,
+            "segment_upper": 0.761577310586391,
+            "quadrature_abs_error": 8.45520665245115e-15
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "flat",
+            "value": 0.97082439194738
+          },
+          "bounds": {
+            "chord_lower": 0.97082439194738,
+            "segment_upper": 0.97082439194738,
+            "quadrature_abs_error": 1.0778315928077e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0],
+          "to": [1, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "flat",
+            "value": 2
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 2,
+            "quadrature_abs_error": 2.22044604925031e-14
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [0.8, 0.4],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "flat",
+            "value": 0.894427190999916
+          },
+          "bounds": {
+            "chord_lower": 0.894427190999916,
+            "segment_upper": 0.894427190999916,
+            "quadrature_abs_error": 9.93013661298909e-15
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "flat3_ball",
+      "purpose": "Exact Euclidean control in a convex declared domain",
+      "geometry": {
+        "intrinsic_dim": 3,
+        "ambient_dim": 4,
+        "forms": [
+          [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0, 0]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0, 0],
+        "radius": 1
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 2,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1, 0],
+          "to": [0.2, 0.1, 0],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1, 0],
+          "to": [0.20000001, 0.10000002, 0],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "flat",
+            "value": 2.23606797632282e-08
+          },
+          "bounds": {
+            "chord_lower": 2.23606797632282e-08,
+            "segment_upper": 2.23606797632282e-08,
+            "quadrature_abs_error": 2.48253415194058e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2, 0],
+          "to": [0.4, -0.1, 0],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "flat",
+            "value": 0.855862138431185
+          },
+          "bounds": {
+            "chord_lower": 0.855862138431185,
+            "segment_upper": 0.855862138431185,
+            "quadrature_abs_error": 9.50197851991224e-15
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1, 0],
+          "to": [0.1, 0.6, 0],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "flat",
+            "value": 0.761577310586391
+          },
+          "bounds": {
+            "chord_lower": 0.761577310586391,
+            "segment_upper": 0.761577310586391,
+            "quadrature_abs_error": 8.45520665245115e-15
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2, 0],
+          "to": [0.1, 0.6, 0],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "flat",
+            "value": 0.97082439194738
+          },
+          "bounds": {
+            "chord_lower": 0.97082439194738,
+            "segment_upper": 0.97082439194738,
+            "quadrature_abs_error": 1.0778315928077e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0, 0],
+          "to": [1, 0, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "flat",
+            "value": 2
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 2,
+            "quadrature_abs_error": 2.22044604925031e-14
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0, 0],
+          "to": [0.8, 0.4, 0],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "flat",
+            "value": 0.894427190999916
+          },
+          "bounds": {
+            "chord_lower": 0.894427190999916,
+            "segment_upper": 0.894427190999916,
+            "quadrature_abs_error": 9.93013661298909e-15
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "flat3_box",
+      "purpose": "Exact Euclidean control in a convex declared domain",
+      "geometry": {
+        "intrinsic_dim": 3,
+        "ambient_dim": 4,
+        "forms": [
+          [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1, -1],
+        "upper": [1, 1, 1]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 3.46410161513775,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1, 0],
+          "to": [0.2, 0.1, 0],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1, 0],
+          "to": [0.20000001, 0.10000002, 0],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "flat",
+            "value": 2.23606797632282e-08
+          },
+          "bounds": {
+            "chord_lower": 2.23606797632282e-08,
+            "segment_upper": 2.23606797632282e-08,
+            "quadrature_abs_error": 2.48253415194058e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2, 0],
+          "to": [0.4, -0.1, 0],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "flat",
+            "value": 0.855862138431185
+          },
+          "bounds": {
+            "chord_lower": 0.855862138431185,
+            "segment_upper": 0.855862138431185,
+            "quadrature_abs_error": 9.50197851991224e-15
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1, 0],
+          "to": [0.1, 0.6, 0],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "flat",
+            "value": 0.761577310586391
+          },
+          "bounds": {
+            "chord_lower": 0.761577310586391,
+            "segment_upper": 0.761577310586391,
+            "quadrature_abs_error": 8.45520665245115e-15
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2, 0],
+          "to": [0.1, 0.6, 0],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "flat",
+            "value": 0.97082439194738
+          },
+          "bounds": {
+            "chord_lower": 0.97082439194738,
+            "segment_upper": 0.97082439194738,
+            "quadrature_abs_error": 1.0778315928077e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0, 0],
+          "to": [1, 0, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "flat",
+            "value": 2
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 2,
+            "quadrature_abs_error": 2.22044604925031e-14
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0, 0],
+          "to": [0.8, 0.4, 0],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "flat",
+            "value": 0.894427190999916
+          },
+          "bounds": {
+            "chord_lower": 0.894427190999916,
+            "segment_upper": 0.894427190999916,
+            "quadrature_abs_error": 9.93013661298909e-15
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "flat4_ball",
+      "purpose": "Exact Euclidean control in a convex declared domain",
+      "geometry": {
+        "intrinsic_dim": 4,
+        "ambient_dim": 5,
+        "forms": [
+          [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0, 0, 0]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0, 0, 0],
+        "radius": 1
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 2,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1, 0, 0],
+          "to": [0.2, 0.1, 0, 0],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1, 0, 0],
+          "to": [0.20000001, 0.10000002, 0, 0],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "flat",
+            "value": 2.23606797632282e-08
+          },
+          "bounds": {
+            "chord_lower": 2.23606797632282e-08,
+            "segment_upper": 2.23606797632282e-08,
+            "quadrature_abs_error": 2.48253415194058e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2, 0, 0],
+          "to": [0.4, -0.1, 0, 0],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "flat",
+            "value": 0.855862138431185
+          },
+          "bounds": {
+            "chord_lower": 0.855862138431185,
+            "segment_upper": 0.855862138431185,
+            "quadrature_abs_error": 9.50197851991224e-15
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1, 0, 0],
+          "to": [0.1, 0.6, 0, 0],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "flat",
+            "value": 0.761577310586391
+          },
+          "bounds": {
+            "chord_lower": 0.761577310586391,
+            "segment_upper": 0.761577310586391,
+            "quadrature_abs_error": 8.45520665245115e-15
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2, 0, 0],
+          "to": [0.1, 0.6, 0, 0],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "flat",
+            "value": 0.97082439194738
+          },
+          "bounds": {
+            "chord_lower": 0.97082439194738,
+            "segment_upper": 0.97082439194738,
+            "quadrature_abs_error": 1.0778315928077e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0, 0, 0],
+          "to": [1, 0, 0, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "flat",
+            "value": 2
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 2,
+            "quadrature_abs_error": 2.22044604925031e-14
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0, 0, 0],
+          "to": [0.8, 0.4, 0, 0],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "flat",
+            "value": 0.894427190999916
+          },
+          "bounds": {
+            "chord_lower": 0.894427190999916,
+            "segment_upper": 0.894427190999916,
+            "quadrature_abs_error": 9.93013661298909e-15
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "flat4_box",
+      "purpose": "Exact Euclidean control in a convex declared domain",
+      "geometry": {
+        "intrinsic_dim": 4,
+        "ambient_dim": 5,
+        "forms": [
+          [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1, -1, -1],
+        "upper": [1, 1, 1, 1]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 4,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1, 0, 0],
+          "to": [0.2, 0.1, 0, 0],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1, 0, 0],
+          "to": [0.20000001, 0.10000002, 0, 0],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "flat",
+            "value": 2.23606797632282e-08
+          },
+          "bounds": {
+            "chord_lower": 2.23606797632282e-08,
+            "segment_upper": 2.23606797632282e-08,
+            "quadrature_abs_error": 2.48253415194058e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2, 0, 0],
+          "to": [0.4, -0.1, 0, 0],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "flat",
+            "value": 0.855862138431185
+          },
+          "bounds": {
+            "chord_lower": 0.855862138431185,
+            "segment_upper": 0.855862138431185,
+            "quadrature_abs_error": 9.50197851991224e-15
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1, 0, 0],
+          "to": [0.1, 0.6, 0, 0],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "flat",
+            "value": 0.761577310586391
+          },
+          "bounds": {
+            "chord_lower": 0.761577310586391,
+            "segment_upper": 0.761577310586391,
+            "quadrature_abs_error": 8.45520665245115e-15
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2, 0, 0],
+          "to": [0.1, 0.6, 0, 0],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "flat",
+            "value": 0.97082439194738
+          },
+          "bounds": {
+            "chord_lower": 0.97082439194738,
+            "segment_upper": 0.97082439194738,
+            "quadrature_abs_error": 1.0778315928077e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0, 0, 0],
+          "to": [1, 0, 0, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "flat",
+            "value": 2
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 2,
+            "quadrature_abs_error": 2.22044604925031e-14
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0, 0, 0],
+          "to": [0.8, 0.4, 0, 0],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "flat",
+            "value": 0.894427190999916
+          },
+          "bounds": {
+            "chord_lower": 0.894427190999916,
+            "segment_upper": 0.894427190999916,
+            "quadrature_abs_error": 9.93013661298909e-15
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "paraboloid2_disk",
+      "purpose": "Specialized smooth-solver baseline",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [1.2, 0],
+            [0, 1.2]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0],
+        "radius": 1
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 5.2,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1],
+          "to": [0.2, 0.1],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1],
+          "to": [0.20000001, 0.10000002],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.4334338104703e-08,
+            "segment_upper": 2.43343381027023e-08,
+            "quadrature_abs_error": 2.70165424506333e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2],
+          "to": [0.4, -0.1],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.860272631204783,
+            "segment_upper": 0.99165434308016,
+            "quadrature_abs_error": 1.10095748415712e-14
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.798498591107085,
+            "segment_upper": 0.884877309626713,
+            "quadrature_abs_error": 1.73178604548445e-13
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.982806695133891,
+            "segment_upper": 1.16700793714905,
+            "quadrature_abs_error": 1.29563908174122e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0],
+          "to": [1, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 3.27059913018087,
+            "quadrature_abs_error": 8.63109171807264e-13
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [0.8, 0.4],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.31209755734854,
+            "segment_upper": 1.37308725079717,
+            "quadrature_abs_error": 1.68863467184985e-13
+          }
+        },
+        {
+          "id": "radial",
+          "from": [0, 0],
+          "to": [0.6, 0.8],
+          "purpose": "Exact isotropic apex-to-boundary arc",
+          "exact": {
+            "kind": "radial_from_apex",
+            "value": 1.63529956509044
+          },
+          "bounds": {
+            "chord_lower": 1.56204993518133,
+            "segment_upper": 1.63529956509044,
+            "quadrature_abs_error": 4.31551261708986e-13
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "paraboloid2_square",
+      "purpose": "Same geometry and pairs on a larger domain",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [1.2, 0],
+            [0, 1.2]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1],
+        "upper": [1, 1]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 10.0079968025574,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1],
+          "to": [0.2, 0.1],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1],
+          "to": [0.20000001, 0.10000002],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.4334338104703e-08,
+            "segment_upper": 2.43343381027023e-08,
+            "quadrature_abs_error": 2.70165424506333e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2],
+          "to": [0.4, -0.1],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.860272631204783,
+            "segment_upper": 0.99165434308016,
+            "quadrature_abs_error": 1.10095748415712e-14
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.798498591107085,
+            "segment_upper": 0.884877309626713,
+            "quadrature_abs_error": 1.73178604548445e-13
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.982806695133891,
+            "segment_upper": 1.16700793714905,
+            "quadrature_abs_error": 1.29563908174122e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0],
+          "to": [1, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 3.27059913018087,
+            "quadrature_abs_error": 8.63109171807264e-13
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [0.8, 0.4],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.31209755734854,
+            "segment_upper": 1.37308725079717,
+            "quadrature_abs_error": 1.68863467184985e-13
+          }
+        },
+        {
+          "id": "radial",
+          "from": [0, 0],
+          "to": [0.6, 0.8],
+          "purpose": "Exact isotropic apex-to-boundary arc",
+          "exact": {
+            "kind": "radial_from_apex",
+            "value": 1.63529956509044
+          },
+          "bounds": {
+            "chord_lower": 1.56204993518133,
+            "segment_upper": 1.63529956509044,
+            "quadrature_abs_error": 4.31551261708986e-13
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "saddle2_disk",
+      "purpose": "Shooting baseline and exact ruling",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [1.2, 0],
+            [0, -1.2]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0],
+        "radius": 1
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 5.2,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1],
+          "to": [0.2, 0.1],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1],
+          "to": [0.20000001, 0.10000002],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.23606797632282e-08,
+            "segment_upper": 2.23606797632282e-08,
+            "quadrature_abs_error": 2.48253415194058e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2],
+          "to": [0.4, -0.1],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.855993574742241,
+            "segment_upper": 0.982216439783864,
+            "quadrature_abs_error": 1.09047930661333e-14
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.969535971483266,
+            "segment_upper": 0.994693709795966,
+            "quadrature_abs_error": 1.10433185906529e-14
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.14922800174726,
+            "segment_upper": 1.16632255802296,
+            "quadrature_abs_error": 1.2948781580568e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0],
+          "to": [1, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 3.27059913018087,
+            "quadrature_abs_error": 8.63109171807264e-13
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [0.8, 0.4],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.06384961343227,
+            "segment_upper": 1.10113876542475,
+            "quadrature_abs_error": 1.22250961068187e-14
+          }
+        },
+        {
+          "id": "ruling",
+          "from": [-0.6, -0.6],
+          "to": [0.6, 0.6],
+          "purpose": "Straight ruling on a saddle",
+          "exact": {
+            "kind": "straight_ruling",
+            "value": 1.69705627484771
+          },
+          "bounds": {
+            "chord_lower": 1.69705627484771,
+            "segment_upper": 1.69705627484771,
+            "quadrature_abs_error": 1.88411095042053e-14
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "saddle2_square",
+      "purpose": "Same saddle and pairs on the sampling square",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [1.2, 0],
+            [0, -1.2]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1],
+        "upper": [1, 1]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 10.0079968025574,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1],
+          "to": [0.2, 0.1],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1],
+          "to": [0.20000001, 0.10000002],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.23606797632282e-08,
+            "segment_upper": 2.23606797632282e-08,
+            "quadrature_abs_error": 2.48253415194058e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2],
+          "to": [0.4, -0.1],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.855993574742241,
+            "segment_upper": 0.982216439783864,
+            "quadrature_abs_error": 1.09047930661333e-14
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.969535971483266,
+            "segment_upper": 0.994693709795966,
+            "quadrature_abs_error": 1.10433185906529e-14
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.14922800174726,
+            "segment_upper": 1.16632255802296,
+            "quadrature_abs_error": 1.2948781580568e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0],
+          "to": [1, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 3.27059913018087,
+            "quadrature_abs_error": 8.63109171807264e-13
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [0.8, 0.4],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.06384961343227,
+            "segment_upper": 1.10113876542475,
+            "quadrature_abs_error": 1.22250961068187e-14
+          }
+        },
+        {
+          "id": "ruling",
+          "from": [-0.6, -0.6],
+          "to": [0.6, 0.6],
+          "purpose": "Straight ruling on a saddle",
+          "exact": {
+            "kind": "straight_ruling",
+            "value": 1.69705627484771
+          },
+          "bounds": {
+            "chord_lower": 1.69705627484771,
+            "segment_upper": 1.69705627484771,
+            "quadrature_abs_error": 1.88411095042053e-14
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "paraboloid2_rectangle",
+      "purpose": "Narrow rectangle; unrestricted candidates require containment checks",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [1.2, 0],
+            [0, 1.2]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-0.3, -1],
+        "upper": [0.3, 1]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 5.63327826403064,
+      "pairs": [
+        {
+          "id": "boundary_face",
+          "from": [0.3, -0.8],
+          "to": [0.3, 0.8],
+          "purpose": "Endpoints on the same narrow face",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.6,
+            "segment_upper": 2.31821218648021,
+            "quadrature_abs_error": 1.33747562856704e-13
+          }
+        },
+        {
+          "id": "opposite_corners",
+          "from": [-0.3, -1],
+          "to": [0.3, 1],
+          "purpose": "Box corners",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.08806130178211,
+            "segment_upper": 3.50386254691008,
+            "quadrature_abs_error": 2.46489985065886e-12
+          }
+        }
+      ],
+      "triangles": []
+    },
+    {
+      "id": "saddle2_rectangle",
+      "purpose": "Narrow saddle patch, not its enclosing disk",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [1.2, 0],
+            [0, -1.2]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -0.2],
+        "upper": [1, 0.2]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 5.39259343915337,
+      "pairs": [
+        {
+          "id": "boundary_face",
+          "from": [-0.9, 0.2],
+          "to": [0.9, 0.2],
+          "purpose": "Same-face endpoints",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.8,
+            "segment_upper": 2.77263626890365,
+            "quadrature_abs_error": 3.3158289211143e-13
+          }
+        },
+        {
+          "id": "opposite_corners",
+          "from": [-1, -0.2],
+          "to": [1, 0.2],
+          "purpose": "Box corners",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.03960780543711,
+            "segment_upper": 3.22102469961734,
+            "quadrature_abs_error": 1.4720673681759e-13
+          }
+        }
+      ],
+      "triangles": []
+    },
+    {
+      "id": "paraboloid2_high_curvature",
+      "purpose": "High curvature",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [8, 0],
+            [0, 8]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0],
+        "radius": 1
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 32.0624390837628,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1],
+          "to": [0.2, 0.1],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1],
+          "to": [0.20000001, 0.10000002],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 6.77938087117629e-08,
+            "segment_upper": 6.77938087671858e-08,
+            "quadrature_abs_error": 7.52662474203644e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2],
+          "to": [0.4, -0.1],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.03387620148643,
+            "segment_upper": 3.1533750092197,
+            "quadrature_abs_error": 2.34992931092794e-13
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.77200451466693,
+            "segment_upper": 2.77971954672648,
+            "quadrature_abs_error": 4.08702420366456e-14
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.40815482103354,
+            "segment_upper": 4.04123726580438,
+            "quadrature_abs_error": 1.33314070342691e-12
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0],
+          "to": [1, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 16.2478889817492,
+            "quadrature_abs_error": 2.10123443319014e-13
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [0.8, 0.4],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 6.46219776856141,
+            "segment_upper": 6.52046167922372,
+            "quadrature_abs_error": 7.34637009734127e-14
+          }
+        },
+        {
+          "id": "radial",
+          "from": [0, 0],
+          "to": [0.6, 0.8],
+          "purpose": "Exact isotropic apex-to-boundary arc",
+          "exact": {
+            "kind": "radial_from_apex",
+            "value": 8.1239444908746
+          },
+          "bounds": {
+            "chord_lower": 8.06225774829855,
+            "segment_upper": 8.1239444908746,
+            "quadrature_abs_error": 1.05193059147211e-13
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "saddle2_high_curvature",
+      "purpose": "High curvature with ruling",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [8, 0],
+            [0, -8]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0],
+        "radius": 1
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 32.0624390837628,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1],
+          "to": [0.2, 0.1],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1],
+          "to": [0.20000001, 0.10000002],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.23606797632284e-08,
+            "segment_upper": 2.23606797632284e-08,
+            "quadrature_abs_error": 2.4825341519406e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2],
+          "to": [0.4, -0.1],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.861684396980704,
+            "segment_upper": 3.04954599724836,
+            "quadrature_abs_error": 2.35216301842737e-12
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 4.07185461430047,
+            "segment_upper": 4.0953526610472,
+            "quadrature_abs_error": 4.54675481825856e-14
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 4.21337157155644,
+            "segment_upper": 4.23342834248153,
+            "quadrature_abs_error": 2.71519066142395e-13
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0],
+          "to": [1, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 16.2478889817492,
+            "quadrature_abs_error": 2.10123443319014e-13
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [0.8, 0.4],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 3.94279088971251,
+            "segment_upper": 4.01422021915306,
+            "quadrature_abs_error": 8.29729105756674e-14
+          }
+        },
+        {
+          "id": "ruling",
+          "from": [-0.6, -0.6],
+          "to": [0.6, 0.6],
+          "purpose": "Straight ruling on a saddle",
+          "exact": {
+            "kind": "straight_ruling",
+            "value": 1.69705627484771
+          },
+          "bounds": {
+            "chord_lower": 1.69705627484771,
+            "segment_upper": 1.69705627484771,
+            "quadrature_abs_error": 1.88411095042053e-14
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "paraboloid2_radius64",
+      "purpose": "Large-radius continuation sentinel",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [1, 0],
+            [0, 1]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0],
+        "radius": 64
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 16384.4999923708,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [12.8, 6.4],
+          "to": [12.8, 6.4],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [12.8, 6.4],
+          "to": [12.80000064, 6.40000128],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 3.27992371117883e-05,
+            "segment_upper": 3.27992371418183e-05,
+            "quadrature_abs_error": 3.64144682649873e-19
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-28.8, -12.8],
+          "to": [25.6, -6.4],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 301.969471304634,
+            "segment_upper": 1517.45172515288,
+            "quadrature_abs_error": 5.49931248343075e-10
+          }
+        },
+        {
+          "id": "bc",
+          "from": [25.6, -6.4],
+          "to": [6.4, 38.4],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 820.648719002229,
+            "segment_upper": 1331.58960279948,
+            "quadrature_abs_error": 1.71178323975881e-11
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-28.8, -12.8],
+          "to": [6.4, 38.4],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 525.923090955322,
+            "segment_upper": 1968.22053567709,
+            "quadrature_abs_error": 2.97341516373955e-11
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-64, 0],
+          "to": [64, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 128,
+            "segment_upper": 8195.02259253688,
+            "quadrature_abs_error": 3.22377252924955e-09
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [51.2, 25.6],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 3277.29996185885,
+            "segment_upper": 3278.28340380135,
+            "quadrature_abs_error": 1.52509940706434e-10
+          }
+        },
+        {
+          "id": "radial",
+          "from": [0, 0],
+          "to": [38.4, 51.2],
+          "purpose": "Large exact apex arc",
+          "exact": {
+            "kind": "radial_from_apex",
+            "value": 4097.51129626844
+          },
+          "bounds": {
+            "chord_lower": 4096.49996948615,
+            "segment_upper": 4097.51129626844,
+            "quadrature_abs_error": 1.61180355303528e-09
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "saddle2_radius64",
+      "purpose": "Large-radius shooting sentinel",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [1, 0],
+            [0, -1]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0],
+        "radius": 64
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 16384.4999923708,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [12.8, 6.4],
+          "to": [12.8, 6.4],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [12.8, 6.4],
+          "to": [12.80000064, 6.40000128],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.43108350484714e-06,
+            "segment_upper": 1.43108350484731e-06,
+            "quadrature_abs_error": 1.58882185724275e-20
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-28.8, -12.8],
+          "to": [25.6, -6.4],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 74.9783968887038,
+            "segment_upper": 1462.30595994522,
+            "quadrature_abs_error": 2.85556354212441e-10
+          }
+        },
+        {
+          "id": "bc",
+          "from": [25.6, -6.4],
+          "to": [6.4, 38.4],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2048.57991789434,
+            "segment_upper": 2048.79586245634,
+            "quadrature_abs_error": 5.03199679246224e-11
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-28.8, -12.8],
+          "to": [6.4, 38.4],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2100.11931089641,
+            "segment_upper": 2100.30276182533,
+            "quadrature_abs_error": 3.35343043044968e-11
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-64, 0],
+          "to": [64, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 128,
+            "segment_upper": 8195.02259253688,
+            "quadrature_abs_error": 3.22377252924955e-09
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [51.2, 25.6],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1966.91315680179,
+            "segment_upper": 1968.33950272275,
+            "quadrature_abs_error": 2.21602217334724e-11
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "anisotropic2_disk",
+      "purpose": "Clairaut isotropic specialization is inapplicable",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [0.35, 0],
+            [0, 3]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0],
+        "radius": 1
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 12.1655250605964,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1],
+          "to": [0.2, 0.1],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1],
+          "to": [0.20000001, 0.10000002],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.60683722612043e-08,
+            "segment_upper": 2.60683722618544e-08,
+            "quadrature_abs_error": 2.89417070996106e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2],
+          "to": [0.4, -0.1],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.862263744816515,
+            "segment_upper": 0.877281091201072,
+            "quadrature_abs_error": 9.73977666519711e-15
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.25499252985825,
+            "segment_upper": 1.40747542405738,
+            "quadrature_abs_error": 6.06477580787975e-13
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.31881742126232,
+            "segment_upper": 1.64385829169934,
+            "quadrature_abs_error": 1.82504932084757e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0],
+          "to": [1, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 2.15303637026245,
+            "quadrature_abs_error": 4.82365210890212e-14
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [0.8, 0.4],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.13825129035727,
+            "segment_upper": 1.18495222466155,
+            "quadrature_abs_error": 1.31556124290006e-14
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "cross_term2_square",
+      "purpose": "Non-diagonal indefinite symmetric form",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [1.1, 0.75],
+            [0.75, 0.1]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1],
+        "upper": [1, 1]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 12.3396346983575,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1],
+          "to": [0.2, 0.1],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1],
+          "to": [0.20000001, 0.10000002],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.55203842156048e-08,
+            "segment_upper": 2.55203842131027e-08,
+            "quadrature_abs_error": 2.83333181506669e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2],
+          "to": [0.4, -0.1],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.890169962703753,
+            "segment_upper": 1.02444405966702,
+            "quadrature_abs_error": 1.13736138248245e-14
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.761839878189636,
+            "segment_upper": 0.767893847561412,
+            "quadrature_abs_error": 8.52533430030679e-15
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.996500156798784,
+            "segment_upper": 1.15539299190095,
+            "quadrature_abs_error": 1.28274390209842e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0],
+          "to": [1, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 3.11190941976001,
+            "quadrature_abs_error": 3.11133768488708e-13
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [0.8, 0.4],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.49666295470958,
+            "segment_upper": 1.5661630873683,
+            "quadrature_abs_error": 1.73879031991434e-14
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "paraboloid3_ball",
+      "purpose": "3D positive form with radial control",
+      "geometry": {
+        "intrinsic_dim": 3,
+        "ambient_dim": 4,
+        "forms": [
+          [
+            [1.2, 0, 0],
+            [0, 1.2, 0],
+            [0, 0, 1.2]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0, 0]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0, 0],
+        "radius": 1
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 5.2,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1, 0],
+          "to": [0.2, 0.1, 0],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1, 0],
+          "to": [0.20000001, 0.10000002, 0],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.4334338104703e-08,
+            "segment_upper": 2.43343381027023e-08,
+            "quadrature_abs_error": 2.70165424506333e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2, 0],
+          "to": [0.4, -0.1, 0],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.860272631204783,
+            "segment_upper": 0.99165434308016,
+            "quadrature_abs_error": 1.10095748415712e-14
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1, 0],
+          "to": [0.1, 0.6, 0],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.798498591107085,
+            "segment_upper": 0.884877309626713,
+            "quadrature_abs_error": 1.73178604548445e-13
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2, 0],
+          "to": [0.1, 0.6, 0],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.982806695133891,
+            "segment_upper": 1.16700793714905,
+            "quadrature_abs_error": 1.29563908174122e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0, 0],
+          "to": [1, 0, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 3.27059913018087,
+            "quadrature_abs_error": 8.63109171807264e-13
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0, 0],
+          "to": [0.8, 0.4, 0],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.31209755734854,
+            "segment_upper": 1.37308725079717,
+            "quadrature_abs_error": 1.68863467184985e-13
+          }
+        },
+        {
+          "id": "radial",
+          "from": [0, 0, 0],
+          "to": [0.48, 0.64, 0.6],
+          "purpose": "Exact 3D radial arc",
+          "exact": {
+            "kind": "radial_from_apex",
+            "value": 1.63529956509044
+          },
+          "bounds": {
+            "chord_lower": 1.56204993518133,
+            "segment_upper": 1.63529956509044,
+            "quadrature_abs_error": 4.31551261708986e-13
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "mixed3_cube",
+      "purpose": "3D mixed-index cube",
+      "geometry": {
+        "intrinsic_dim": 3,
+        "ambient_dim": 4,
+        "forms": [
+          [
+            [1, 0, 0],
+            [0, -1, 0],
+            [0, 0, 2]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1, -1],
+        "upper": [1, 1, 1]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 24.2487113059643,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1, 0],
+          "to": [0.2, 0.1, 0],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1, 0],
+          "to": [0.20000001, 0.10000002, 0],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.23606797632282e-08,
+            "segment_upper": 2.23606797632282e-08,
+            "quadrature_abs_error": 2.48253415194058e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2, 0],
+          "to": [0.4, -0.1, 0],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.8559534157885,
+            "segment_upper": 0.946438596103355,
+            "quadrature_abs_error": 1.05075792078786e-14
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1, 0],
+          "to": [0.1, 0.6, 0],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.91104335791443,
+            "segment_upper": 0.931745513131526,
+            "quadrature_abs_error": 1.0344453217698e-14
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2, 0],
+          "to": [0.1, 0.6, 0],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.09779608762283,
+            "segment_upper": 1.1113310177589,
+            "quadrature_abs_error": 1.23382528389604e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0, 0],
+          "to": [1, 0, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 2.95788571508919,
+            "quadrature_abs_error": 2.72825639575751e-13
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0, 0],
+          "to": [0.8, 0.4, 0],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.01508620323596,
+            "segment_upper": 1.04449678474426,
+            "quadrature_abs_error": 1.15962437957003e-14
+          }
+        },
+        {
+          "id": "full_dimension",
+          "from": [-0.7, 0.2, 0.5],
+          "to": [0.4, -0.6, -0.8],
+          "purpose": "All latent coordinates vary",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.88597454913899,
+            "segment_upper": 2.85596598474329,
+            "quadrature_abs_error": 7.6462899461496e-13
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "mixed4_ball",
+      "purpose": "4D anisotropic mixed form",
+      "geometry": {
+        "intrinsic_dim": 4,
+        "ambient_dim": 5,
+        "forms": [
+          [
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, -2, 0],
+            [0, 0, 0, -4]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0, 0, 0]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0, 0, 0],
+        "radius": 1
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 16.1245154965971,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1, 0, 0],
+          "to": [0.2, 0.1, 0, 0],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1, 0, 0],
+          "to": [0.20000001, 0.10000002, 0, 0],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.37486843275339e-08,
+            "segment_upper": 2.3748684330006e-08,
+            "quadrature_abs_error": 2.63663361477273e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2, 0, 0],
+          "to": [0.4, -0.1, 0, 0],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.858927383426562,
+            "segment_upper": 0.95344232567675,
+            "quadrature_abs_error": 3.29449992325678e-13
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1, 0, 0],
+          "to": [0.1, 0.6, 0, 0],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.787400787401181,
+            "segment_upper": 0.850584113587847,
+            "quadrature_abs_error": 2.86385693675685e-14
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2, 0, 0],
+          "to": [0.1, 0.6, 0, 0],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.979160992891363,
+            "segment_upper": 1.11283279588614,
+            "quadrature_abs_error": 1.23549259255077e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0, 0, 0],
+          "to": [1, 0, 0, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 2.95788571508919,
+            "quadrature_abs_error": 2.72825639575751e-13
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0, 0, 0],
+          "to": [0.8, 0.4, 0, 0],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.2,
+            "segment_upper": 1.25276891643613,
+            "quadrature_abs_error": 2.24848073113875e-14
+          }
+        },
+        {
+          "id": "full_dimension",
+          "from": [-0.4, 0.2, 0.3, -0.5],
+          "to": [0.3, -0.4, 0.5, 0.2],
+          "purpose": "All four latent coordinates vary",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.30571819317952,
+            "segment_upper": 1.4481811674541,
+            "quadrature_abs_error": 1.60780407593616e-14
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "mixed4_box",
+      "purpose": "4D anisotropic mixed form",
+      "geometry": {
+        "intrinsic_dim": 4,
+        "ambient_dim": 5,
+        "forms": [
+          [
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, -2, 0],
+            [0, 0, 0, -4]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1, -1, -1],
+        "upper": [1, 1, 1, 1]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 64.1248781675256,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1, 0, 0],
+          "to": [0.2, 0.1, 0, 0],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1, 0, 0],
+          "to": [0.20000001, 0.10000002, 0, 0],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.37486843275339e-08,
+            "segment_upper": 2.3748684330006e-08,
+            "quadrature_abs_error": 2.63663361477273e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2, 0, 0],
+          "to": [0.4, -0.1, 0, 0],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.858927383426562,
+            "segment_upper": 0.95344232567675,
+            "quadrature_abs_error": 3.29449992325678e-13
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1, 0, 0],
+          "to": [0.1, 0.6, 0, 0],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.787400787401181,
+            "segment_upper": 0.850584113587847,
+            "quadrature_abs_error": 2.86385693675685e-14
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2, 0, 0],
+          "to": [0.1, 0.6, 0, 0],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.979160992891363,
+            "segment_upper": 1.11283279588614,
+            "quadrature_abs_error": 1.23549259255077e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0, 0, 0],
+          "to": [1, 0, 0, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 2.95788571508919,
+            "quadrature_abs_error": 2.72825639575751e-13
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0, 0, 0],
+          "to": [0.8, 0.4, 0, 0],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.2,
+            "segment_upper": 1.25276891643613,
+            "quadrature_abs_error": 2.24848073113875e-14
+          }
+        },
+        {
+          "id": "full_dimension",
+          "from": [-0.4, 0.2, 0.3, -0.5],
+          "to": [0.3, -0.4, 0.5, 0.2],
+          "purpose": "All four latent coordinates vary",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.30571819317952,
+            "segment_upper": 1.4481811674541,
+            "quadrature_abs_error": 1.60780407593616e-14
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "multi_form2_square",
+      "purpose": "Codimension two; no single-height specialization",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 4,
+        "forms": [
+          [
+            [1, 0],
+            [0, 1]
+          ],
+          [
+            [0, 0.5],
+            [0.5, 0]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1],
+        "upper": [1, 1]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 9.38083151964686,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1],
+          "to": [0.2, 0.1],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1],
+          "to": [0.20000001, 0.10000002],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.42693223893895e-08,
+            "segment_upper": 2.42693223922703e-08,
+            "quadrature_abs_error": 2.69443605119494e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2],
+          "to": [0.4, -0.1],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.868709531431537,
+            "segment_upper": 0.963302241921894,
+            "quadrature_abs_error": 2.45883947625668e-14
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.793725393319377,
+            "segment_upper": 0.865643152749088,
+            "quadrature_abs_error": 2.31802368221628e-13
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.979620462219935,
+            "segment_upper": 1.13984554493476,
+            "quadrature_abs_error": 1.26548276850302e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0],
+          "to": [1, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 2.95788571508919,
+            "quadrature_abs_error": 2.72825639575751e-13
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [0.8, 0.4],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.2419339757008,
+            "segment_upper": 1.29814103367573,
+            "quadrature_abs_error": 7.84174411693281e-14
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "paraboloid2_rigid_frame",
+      "purpose": "Ambient isometry and translation preserve distances",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 4,
+        "forms": [
+          [
+            [1.2, 0],
+            [0, 1.2]
+          ]
+        ],
+        "frame": "supplied",
+        "offset": [2, -3, 1, 4],
+        "frame_matrix": [
+          [0, 0, -1],
+          [1, 0, 0],
+          [0, 1, 0],
+          [0, 0, 0]
+        ]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0],
+        "radius": 1
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 5.2,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.2, 0.1],
+          "to": [0.2, 0.1],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.2, 0.1],
+          "to": [0.20000001, 0.10000002],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.4334337979694e-08,
+            "segment_upper": 2.43343381027023e-08,
+            "quadrature_abs_error": 2.70165424506333e-22
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.45, -0.2],
+          "to": [0.4, -0.1],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.860272631204783,
+            "segment_upper": 0.99165434308016,
+            "quadrature_abs_error": 1.10095748415712e-14
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.4, -0.1],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.798498591107085,
+            "segment_upper": 0.884877309626713,
+            "quadrature_abs_error": 1.73178604548445e-13
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.45, -0.2],
+          "to": [0.1, 0.6],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.982806695133891,
+            "segment_upper": 1.16700793714905,
+            "quadrature_abs_error": 1.29563908174122e-14
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1, 0],
+          "to": [1, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2,
+            "segment_upper": 3.27059913018087,
+            "quadrature_abs_error": 8.63109171807264e-13
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [0.8, 0.4],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1.31209755734854,
+            "segment_upper": 1.37308725079717,
+            "quadrature_abs_error": 1.68863467184985e-13
+          }
+        },
+        {
+          "id": "radial",
+          "from": [0, 0],
+          "to": [0.6, 0.8],
+          "purpose": "Exact isotropic apex-to-boundary arc",
+          "exact": {
+            "kind": "radial_from_apex",
+            "value": 1.63529956509044
+          },
+          "bounds": {
+            "chord_lower": 1.56204993518133,
+            "segment_upper": 1.63529956509044,
+            "quadrature_abs_error": 4.31551261708986e-13
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "paraboloid2_small_units",
+      "purpose": "Scale latent coordinates and divide forms by scale: F_new = scale * F",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [1200, 0],
+            [0, 1200]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0],
+        "radius": 0.001
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 0.0052,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [0.0002, 0.0001],
+          "to": [0.0002, 0.0001],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [0.0002, 0.0001],
+          "to": [0.00020000001, 0.00010000002],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.43343380938103e-11,
+            "segment_upper": 2.43343380966557e-11,
+            "quadrature_abs_error": 2.70165424439203e-25
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-0.00045, -0.0002],
+          "to": [0.0004, -0.0001],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.000860272631204783,
+            "segment_upper": 0.00099165434308016,
+            "quadrature_abs_error": 1.10095748415709e-17
+          }
+        },
+        {
+          "id": "bc",
+          "from": [0.0004, -0.0001],
+          "to": [0.0001, 0.0006],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.000798498591107085,
+            "segment_upper": 0.000884877309626713,
+            "quadrature_abs_error": 1.73169703045856e-16
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-0.00045, -0.0002],
+          "to": [0.0001, 0.0006],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.00098280669513389,
+            "segment_upper": 0.00116700793714905,
+            "quadrature_abs_error": 1.2956390817409e-17
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-0.001, 0],
+          "to": [0.001, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.002,
+            "segment_upper": 0.00327059913018088,
+            "quadrature_abs_error": 8.63123132180784e-16
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [0.0008, 0.0004],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 0.00131209755734854,
+            "segment_upper": 0.00137308725079717,
+            "quadrature_abs_error": 1.68863093249228e-16
+          }
+        },
+        {
+          "id": "radial",
+          "from": [0, 0],
+          "to": [0.0006, 0.0008],
+          "purpose": "Exact isotropic apex-to-boundary arc",
+          "exact": {
+            "kind": "radial_from_apex",
+            "value": 0.00163529956509044
+          },
+          "bounds": {
+            "chord_lower": 0.00156204993518133,
+            "segment_upper": 0.00163529956509044,
+            "quadrature_abs_error": 4.31564811716676e-16
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "paraboloid2_large_units",
+      "purpose": "Scale latent coordinates and divide forms by scale: F_new = scale * F",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [0.0012, 0],
+            [0, 0.0012]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "ball",
+        "center": [0, 0],
+        "radius": 1000
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 5200,
+      "pairs": [
+        {
+          "id": "identity",
+          "from": [200, 100],
+          "to": [200, 100],
+          "purpose": "Coincident endpoints",
+          "exact": {
+            "kind": "identity",
+            "value": 0
+          },
+          "bounds": {
+            "chord_lower": 0,
+            "segment_upper": 0,
+            "quadrature_abs_error": 0
+          }
+        },
+        {
+          "id": "near",
+          "from": [200, 100],
+          "to": [200.00001, 100.00002],
+          "purpose": "Very short separation; keep absolute and relative errors",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2.43343381085208e-05,
+            "segment_upper": 2.43343381102097e-05,
+            "quadrature_abs_error": 2.70165424589682e-19
+          }
+        },
+        {
+          "id": "ab",
+          "from": [-450, -200],
+          "to": [400, -100],
+          "purpose": "Interior triangle edge AB",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 860.272631204783,
+            "segment_upper": 991.65434308016,
+            "quadrature_abs_error": 1.10095748415711e-11
+          }
+        },
+        {
+          "id": "bc",
+          "from": [400, -100],
+          "to": [100, 600],
+          "purpose": "Interior triangle edge BC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 798.498591107085,
+            "segment_upper": 884.877309626713,
+            "quadrature_abs_error": 1.7317961384678e-10
+          }
+        },
+        {
+          "id": "ac",
+          "from": [-450, -200],
+          "to": [100, 600],
+          "purpose": "Interior triangle edge AC",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 982.80669513389,
+            "segment_upper": 1167.00793714905,
+            "quadrature_abs_error": 1.29563908174424e-11
+          }
+        },
+        {
+          "id": "antipodal",
+          "from": [-1000, 0],
+          "to": [1000, 0],
+          "purpose": "Boundary antipodes",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 2000,
+            "segment_upper": 3270.59913018088,
+            "quadrature_abs_error": 8.63104143711269e-10
+          }
+        },
+        {
+          "id": "grid_direction",
+          "from": [0, 0],
+          "to": [800, 400],
+          "purpose": "Detect fixed-stencil directional bias",
+          "exact": {
+            "kind": "unknown"
+          },
+          "bounds": {
+            "chord_lower": 1312.09755734854,
+            "segment_upper": 1373.08725079717,
+            "quadrature_abs_error": 1.68864998828726e-10
+          }
+        },
+        {
+          "id": "radial",
+          "from": [0, 0],
+          "to": [600, 800],
+          "purpose": "Exact isotropic apex-to-boundary arc",
+          "exact": {
+            "kind": "radial_from_apex",
+            "value": 1635.29956509044
+          },
+          "bounds": {
+            "chord_lower": 1562.04993518133,
+            "segment_upper": 1635.29956509044,
+            "quadrature_abs_error": 4.31552059130798e-10
+          }
+        }
+      ],
+      "triangles": [
+        ["ab", "bc", "ac"]
+      ]
+    },
+    {
+      "id": "regression_paraboloid4101",
+      "purpose": "Six actual former refinement outliers",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [1.2, 0],
+            [0, 1.2]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1],
+        "upper": [1, 1]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 10.0079968025574,
+      "pairs": [
+        {
+          "id": "11_155",
+          "from": [-0.921012345346368, -0.644416204889372],
+          "to": [-0.973187162637727, 0.20538781205956],
+          "purpose": "Historical mesh-refinement outlier; new target is sampling square",
+          "exact": {
+            "kind": "unknown"
+          },
+          "source": {
+            "file": "source_inputs/uv-4101.csv",
+            "zero_based_rows": [11, 155]
+          },
+          "bounds": {
+            "chord_lower": 0.912799356135348,
+            "segment_upper": 1.02628249402725,
+            "quadrature_abs_error": 1.13940245463863e-14
+          }
+        },
+        {
+          "id": "57_155",
+          "from": [-0.950656398319965, -0.475469620258586],
+          "to": [-0.973187162637727, 0.20538781205956],
+          "purpose": "Historical mesh-refinement outlier; new target is sampling square",
+          "exact": {
+            "kind": "unknown"
+          },
+          "source": {
+            "file": "source_inputs/uv-4101.csv",
+            "zero_based_rows": [57, 155]
+          },
+          "bounds": {
+            "chord_lower": 0.701795732355827,
+            "segment_upper": 0.766957445146943,
+            "quadrature_abs_error": 2.51057667352556e-13
+          }
+        },
+        {
+          "id": "77_155",
+          "from": [-0.94517558307082, -0.484163072662768],
+          "to": [-0.973187162637727, 0.20538781205956],
+          "purpose": "Historical mesh-refinement outlier; new target is sampling square",
+          "exact": {
+            "kind": "unknown"
+          },
+          "source": {
+            "file": "source_inputs/uv-4101.csv",
+            "zero_based_rows": [77, 155]
+          },
+          "bounds": {
+            "chord_lower": 0.709848477827637,
+            "segment_upper": 0.777728928438412,
+            "quadrature_abs_error": 3.99359591257004e-13
+          }
+        },
+        {
+          "id": "115_184",
+          "from": [0.983291550825776, 0.186433370838876],
+          "to": [0.989227752376542, -0.0975306467026675],
+          "purpose": "Historical mesh-refinement outlier; new target is sampling square",
+          "exact": {
+            "kind": "unknown"
+          },
+          "source": {
+            "file": "source_inputs/uv-4101.csv",
+            "zero_based_rows": [115, 184]
+          },
+          "bounds": {
+            "chord_lower": 0.284490139539564,
+            "segment_upper": 0.289872368220848,
+            "quadrature_abs_error": 3.21822977401407e-15
+          }
+        },
+        {
+          "id": "148_155",
+          "from": [-0.92527960912695, -0.624451550087872],
+          "to": [-0.973187162637727, 0.20538781205956],
+          "purpose": "Historical mesh-refinement outlier; new target is sampling square",
+          "exact": {
+            "kind": "unknown"
+          },
+          "source": {
+            "file": "source_inputs/uv-4101.csv",
+            "zero_based_rows": [148, 155]
+          },
+          "bounds": {
+            "chord_lower": 0.886506938734494,
+            "segment_upper": 0.993602681060277,
+            "quadrature_abs_error": 1.10312057384242e-14
+          }
+        },
+        {
+          "id": "155_228",
+          "from": [-0.973187162637727, 0.20538781205956],
+          "to": [-0.963407803782649, -0.445463733497615],
+          "purpose": "Historical mesh-refinement outlier; new target is sampling square",
+          "exact": {
+            "kind": "unknown"
+          },
+          "source": {
+            "file": "source_inputs/uv-4101.csv",
+            "zero_based_rows": [155, 228]
+          },
+          "bounds": {
+            "chord_lower": 0.671457526485908,
+            "segment_upper": 0.728421774257075,
+            "quadrature_abs_error": 6.53080348801396e-14
+          }
+        }
+      ],
+      "triangles": []
+    },
+    {
+      "id": "regression_paraboloid4102",
+      "purpose": "Former optimizer-degeneracy endpoints",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [1.2, 0],
+            [0, 1.2]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1],
+        "upper": [1, 1]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 10.0079968025574,
+      "pairs": [
+        {
+          "id": "2_3",
+          "from": [0.948903652342949, 0.801278613311989],
+          "to": [-0.0486592111394475, -0.728860828808123],
+          "purpose": "Actual zero-path-segment failure endpoints; failure is not an expected outcome",
+          "exact": {
+            "kind": "unknown"
+          },
+          "source": {
+            "file": "source_inputs/uv-4102.csv",
+            "zero_based_rows": [2, 3]
+          },
+          "bounds": {
+            "chord_lower": 2.19136656831231,
+            "segment_upper": 3.00228898123841,
+            "quadrature_abs_error": 3.33321031769356e-14
+          }
+        }
+      ],
+      "triangles": []
+    },
+    {
+      "id": "regression_saddle4101",
+      "purpose": "Cloud-level historical failure; offending pair was not retained",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [1.2, 0],
+            [0, -1.2]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1],
+        "upper": [1, 1]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 10.0079968025574,
+      "pairs": [
+        {
+          "id": "234_213",
+          "from": [0.174038742345207, -0.4451128057932],
+          "to": [0.180355708503739, -0.44456556806302],
+          "purpose": "Deterministic short/long source-cloud sentinel; not a localized historical failure",
+          "exact": {
+            "kind": "unknown"
+          },
+          "source": {
+            "file": "source_inputs/uv-4101.csv",
+            "zero_based_rows": [234, 213]
+          },
+          "bounds": {
+            "chord_lower": 0.00713448330477804,
+            "segment_upper": 0.0071345249801129,
+            "quadrature_abs_error": 7.92091390268468e-17
+          }
+        },
+        {
+          "id": "129_40",
+          "from": [-0.963018978662503, 0.978788860731383],
+          "to": [0.988118857896554, -0.961258669968408],
+          "purpose": "Deterministic short/long source-cloud sentinel; not a localized historical failure",
+          "exact": {
+            "kind": "unknown"
+          },
+          "source": {
+            "file": "source_inputs/uv-4101.csv",
+            "zero_based_rows": [129, 40]
+          },
+          "bounds": {
+            "chord_lower": 2.75329608110109,
+            "segment_upper": 2.75345819410734,
+            "quadrature_abs_error": 3.05695268444077e-14
+          }
+        }
+      ],
+      "triangles": []
+    },
+    {
+      "id": "regression_saddle4102",
+      "purpose": "Cloud-level historical failure; offending pair was not retained",
+      "geometry": {
+        "intrinsic_dim": 2,
+        "ambient_dim": 3,
+        "forms": [
+          [
+            [1.2, 0],
+            [0, -1.2]
+          ]
+        ],
+        "frame": "canonical",
+        "offset": [0, 0, 0]
+      },
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1],
+        "upper": [1, 1]
+      },
+      "sampling": {
+        "domain_source": "declared_population_support",
+        "endpoint_policy": "fixed_coordinates_not_random_draws",
+        "density_does_not_restrict_paths": true
+      },
+      "length_scale": 10.0079968025574,
+      "pairs": [
+        {
+          "id": "237_16",
+          "from": [0.557290153902362, -0.677771216331761],
+          "to": [0.557949955225895, -0.675345628754126],
+          "purpose": "Deterministic short/long source-cloud sentinel; not a localized historical failure",
+          "exact": {
+            "kind": "unknown"
+          },
+          "source": {
+            "file": "source_inputs/uv-4102.csv",
+            "zero_based_rows": [237, 16]
+          },
+          "bounds": {
+            "chord_lower": 0.00543745792922662,
+            "segment_upper": 0.00543745820922482,
+            "quadrature_abs_error": 6.03679129931847e-17
+          }
+        },
+        {
+          "id": "207_36",
+          "from": [-0.949845987595735, 0.866021474226982],
+          "to": [0.946214900095155, -0.97173660452073],
+          "purpose": "Deterministic short/long source-cloud sentinel; not a localized historical failure",
+          "exact": {
+            "kind": "unknown"
+          },
+          "source": {
+            "file": "source_inputs/uv-4102.csv",
+            "zero_based_rows": [207, 36]
+          },
+          "bounds": {
+            "chord_lower": 2.65154178315743,
+            "segment_upper": 2.65578973022401,
+            "quadrature_abs_error": 2.94851890705773e-14
+          }
+        }
+      ],
+      "triangles": []
+    }
+  ],
+  "relations": [
+    {
+      "from_case": "paraboloid2_disk",
+      "to_case": "paraboloid2_rigid_frame",
+      "kind": "distance_scale",
+      "factor": 1,
+      "pairs": ["identity", "near", "ab", "bc", "ac", "antipodal", "grid_direction", "radial"]
+    },
+    {
+      "from_case": "paraboloid2_disk",
+      "to_case": "paraboloid2_small_units",
+      "kind": "distance_scale",
+      "factor": 0.001,
+      "pairs": ["identity", "near", "ab", "bc", "ac", "antipodal", "grid_direction", "radial"]
+    },
+    {
+      "from_case": "paraboloid2_disk",
+      "to_case": "paraboloid2_large_units",
+      "kind": "distance_scale",
+      "factor": 1000,
+      "pairs": ["identity", "near", "ab", "bc", "ac", "antipodal", "grid_direction", "radial"]
+    },
+    {
+      "from_case": "paraboloid2_square",
+      "to_case": "paraboloid2_disk",
+      "kind": "domain_inclusion",
+      "factor": null,
+      "pairs": ["identity", "near", "ab", "bc", "ac", "antipodal", "grid_direction", "radial"]
+    },
+    {
+      "from_case": "saddle2_square",
+      "to_case": "saddle2_disk",
+      "kind": "domain_inclusion",
+      "factor": null,
+      "pairs": ["identity", "near", "ab", "bc", "ac", "antipodal", "grid_direction", "ruling"]
+    }
+  ],
+  "robustness_inputs": [
+    {
+      "id": "duplicate_interior_vertex",
+      "case_id": "regression_paraboloid4102",
+      "pair_id": "2_3",
+      "latent_path": [
+        [0.948903652342949, 0.801278613311989],
+        [0.450122220601751, 0.0362088922519332],
+        [0.450122220601751, 0.0362088922519332],
+        [-0.0486592111394475, -0.728860828808123]
+      ],
+      "check": "Handle redundant segment or reject this start with a structured diagnostic; attempt other declared starts"
+    }
+  ],
+  "cloud_workloads": [
+    {
+      "id": "paraboloid_4101",
+      "case_id": "regression_paraboloid4101",
+      "source_file": "source_inputs/uv-4101.csv",
+      "n": 240,
+      "pairs": "All i < j in zero-based rows 0..239",
+      "unordered_pair_count": 28680,
+      "default_execution": false,
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1],
+        "upper": [1, 1]
+      }
+    },
+    {
+      "id": "paraboloid_4102",
+      "case_id": "regression_paraboloid4102",
+      "source_file": "source_inputs/uv-4102.csv",
+      "n": 240,
+      "pairs": "All i < j in zero-based rows 0..239",
+      "unordered_pair_count": 28680,
+      "default_execution": false,
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1],
+        "upper": [1, 1]
+      }
+    },
+    {
+      "id": "saddle_4101",
+      "case_id": "regression_saddle4101",
+      "source_file": "source_inputs/uv-4101.csv",
+      "n": 240,
+      "pairs": "All i < j in zero-based rows 0..239",
+      "unordered_pair_count": 28680,
+      "default_execution": false,
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1],
+        "upper": [1, 1]
+      }
+    },
+    {
+      "id": "saddle_4102",
+      "case_id": "regression_saddle4102",
+      "source_file": "source_inputs/uv-4102.csv",
+      "n": 240,
+      "pairs": "All i < j in zero-based rows 0..239",
+      "unordered_pair_count": 28680,
+      "default_execution": false,
+      "domain": {
+        "kind": "box",
+        "lower": [-1, -1],
+        "upper": [1, 1]
+      }
+    }
+  ]
+}

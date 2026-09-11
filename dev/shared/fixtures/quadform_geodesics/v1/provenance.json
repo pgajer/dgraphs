@@ -1,0 +1,26 @@
+{
+  "source_project": "grip",
+  "source_directory": "papers/gmds_manuscript/evidence/study-embedding-methods/inputs",
+  "source_definition": "NumPy PCG64 seeds 4101 and 4102; 240 uniform points in [-1,1]^2; saved CSV bytes authoritative",
+  "face_indexing": "zero-based; original faces retained for lineage, not the new surface boundary",
+  "old_domain": "sample convex hull",
+  "new_domain": "declared sampling square [-1,1]^2",
+  "interpretation": "Preserves challenging inputs, not the old target or a claim to reproduce each failure unchanged",
+  "identified_pairs": {
+    "paraboloid4101": [
+      [11, 155],
+      [57, 155],
+      [77, 155],
+      [115, 184],
+      [148, 155],
+      [155, 228]
+    ],
+    "paraboloid4102": [
+      [2, 3]
+    ]
+  },
+  "missing_diagnostics": {
+    "saddle4101": "Asymmetry magnitude and offending pair not retained",
+    "saddle4102": "Timeout was cloud/mesh-level, no offending pair identified"
+  }
+}

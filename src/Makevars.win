@@ -7,6 +7,11 @@ PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 CXX_STD = CXX17
 
 OBJECTS = \
+	RcppExports.o \
+	quadform_geodesics_solver.o \
+	quadform_geodesics_solver_rcpp.o \
+	quadform_geodesics_methods.o \
+	quadform_geodesics_methods_rcpp.o \
 	SEXP_cpp_conversion_utils.o \
 	Eigen_utils.o \
 	adaptive_radius_graph_ann.o \
@@ -57,6 +62,13 @@ OBJECTS = \
 	ANN/kd_util.o
 
 $(SHLIB): $(OBJECTS)
+
+# Preserve the originating solver's per-file floating-point settings.
+quadform_geodesics_solver.o: quadform_geodesics_solver.cpp quadform_geodesics_solver.h quadform_geodesics_exact.h
+	$(CXX) $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) -ffp-contract=off -fno-fast-math -c quadform_geodesics_solver.cpp -o quadform_geodesics_solver.o
+
+quadform_geodesics_solver_rcpp.o: quadform_geodesics_solver_rcpp.cpp quadform_geodesics_solver.h quadform_geodesics_exact.h
+	$(CXX) $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) -ffp-contract=off -fno-fast-math -c quadform_geodesics_solver_rcpp.cpp -o quadform_geodesics_solver_rcpp.o
 
 .PHONY: clean
 clean:

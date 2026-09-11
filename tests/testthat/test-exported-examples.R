@@ -20,7 +20,7 @@ test_that("every exported function and registered S3 method has an example", {
     )
     source.namespace <- file.path(source.root, "NAMESPACE")
 
-    if (file.exists(source.namespace)) {
+    if (file.exists(source.namespace) && dir.exists(file.path(source.root, "man"))) {
         namespace.lines <- trimws(readLines(source.namespace, warn = FALSE))
         exported.functions <- sub(
             "^export\\((.*)\\)$",

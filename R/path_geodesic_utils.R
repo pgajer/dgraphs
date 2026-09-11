@@ -470,7 +470,8 @@ geodesic.core.endpoints <- function(adj.list,
 #' series <- create.path.graph.series(graph, lengths, h.values = 1:2)
 #' compare.paths(series, from = 1, to = 3)
 #'
-#' @export
+#' @export compare.paths
+#' @usage compare.paths(x, from, to)
 compare.paths <- function(x, from, to) {
     if (!inherits(x, "path.graph.series")) {
         stop("'x' must be a path.graph.series object.", call. = FALSE)

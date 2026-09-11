@@ -1,5 +1,11 @@
 This package includes the following external libraries:
 
+The quadform_geodesics R and C++ source units were developed in geosmooth
+by Pawel Gajer's project and are distributed here under the package's MIT
+license with the copyright holder's authorization (2026-09-11). This does
+not change the licenses of earlier geosmooth distributions or the external
+libraries listed below.
+
 ANN - Approximate Nearest Neighbor Library
 (https://www.cs.umd.edu/~mount/ANN/)
 License: LGPL-2.1-or-later

@@ -1,4 +1,8 @@
 .PHONY: build clean-build repo-hygiene
+.PHONY: test-quadform
+
+test-quadform:
+	Rscript -e 'pkgload::load_all(".", quiet=TRUE); testthat::test_dir("tests/testthat", filter="quadform", stop_on_failure=TRUE)'
 
 PKGNAME := $(shell awk '/^Package:/ { print $$2 }' DESCRIPTION)
 VERSION := $(shell awk '/^Version:/ { print $$2 }' DESCRIPTION)

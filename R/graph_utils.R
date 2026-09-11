@@ -14,7 +14,8 @@ utils::globalVariables("all.edge.lengths")
 #' graph <- list(c(2L, 3L), 1L, 1L)
 #' compare.adj.lists(graph, list(c(3L, 2L), 1L, 1L))
 #'
-#' @export
+#' @export compare.adj.lists
+#' @usage compare.adj.lists(adj.list1, adj.list2, verbose = FALSE)
 compare.adj.lists <- function(adj.list1, adj.list2, verbose = FALSE) {
     if (length(adj.list1) != length(adj.list2)) {
         return(FALSE)

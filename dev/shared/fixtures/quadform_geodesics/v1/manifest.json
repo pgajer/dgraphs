@@ -1,0 +1,50 @@
+{
+  "collection_version": "1.0.0",
+  "hash_algorithm": "sha256",
+  "frozen_date": "2026-09-09",
+  "files": [
+    {
+      "path": "collection.json",
+      "bytes": 111895,
+      "sha256": "b171fcf8ebb7d9d28f91cbb9539cfefae700eea305d20aa03cfd4772eb662073"
+    },
+    {
+      "path": "INDEX.md",
+      "bytes": 2358,
+      "sha256": "d5ca46e8fecd63b162d803ac1f0ce4c291515b9972a004e8ab9ff5d61fd4d7c1"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 941,
+      "sha256": "dd61e839cbbb103f43854475149ab0d4446fd4b61ca7e4733b74da1de0956d3d"
+    },
+    {
+      "path": "source_inputs/faces-4101.csv",
+      "bytes": 4899,
+      "sha256": "8143d833b7321a811c79c7a063971ade675c857c3c05a5f409eb2ba38c82e367"
+    },
+    {
+      "path": "source_inputs/faces-4102.csv",
+      "bytes": 4936,
+      "sha256": "6a2f41e1ee2e64e202bd4a3711334b6fe41e7f0e51215fdf2d223b10b547619d"
+    },
+    {
+      "path": "source_inputs/uv-4101.csv",
+      "bytes": 9846,
+      "sha256": "4335368672eeeab764c51c5a313e97f3ec6e48d4cb944fc7e3136700948575f2"
+    },
+    {
+      "path": "source_inputs/uv-4102.csv",
+      "bytes": 9860,
+      "sha256": "c4b25af9ca7afe081e53e7deb16e8006a11e39f7fc2b4362b13a448a6d8ca9df"
+    }
+  ],
+  "builder": {
+    "file": "freeze_v1.R",
+    "sha256": "dbb8e6b0b861b1e4d8944216c252813b559aca976501e5c51cab5280d0dda455"
+  },
+  "helpers": {
+    "file": "collection.R",
+    "sha256": "4bbc22bf217f5dc3f531e87b66d6c64174d45f1ae0a56d7a6852ea46eb57d2b3"
+  }
+}

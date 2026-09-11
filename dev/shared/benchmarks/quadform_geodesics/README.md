@@ -11,7 +11,7 @@ on the frozen collection, install this package into a dedicated library, set
 `R_LIBS_USER` to that library, and run:
 
 ```sh
-Rscript dev/shared/benchmarks/quadform_geodesics/verify.R /absolute/private/empty-output
+Rscript --vanilla dev/shared/benchmarks/quadform_geodesics/verify.R /absolute/private/empty-output
 ```
 
 The development runner additionally needs jsonlite. It resolves input paths

@@ -102,7 +102,9 @@ Geometry and sampling live in dgraphs. `synthetic.sampling.quadform.lab()`
 uses the versioned `geometry.lab.v1` draw policy, including the original
 column-major square draws and rejection batches. `embed.quadform.surface()`
 retains the expression order used by historical cloud identities and meshes.
-The app continues the returned RNG state before adding measurement noise.
+The app opts into `rng.plan = "current"`, advancing the selected R stream
+directly through geometry sampling and measurement noise. This preserves
+nondefault generators and Box-Muller cached normals without resetting kinds.
 The graph and embedding adapters remain app-local.
 
 For an isolated installation, set `R_LIBS` to its absolute library directory

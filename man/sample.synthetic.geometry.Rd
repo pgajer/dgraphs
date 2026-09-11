@@ -28,7 +28,12 @@ states. States are complete integer \code{.Random.seed} vectors for
 L'Ecuyer-CMRG or Mersenne-Twister with Inversion/Rejection. \code{frame} is \code{NULL}
 unless a random frame is requested. Retry/substream selection belongs to
 the caller. The standalone seed assigns sampling its initial stream and
-the random frame the next independent stream.}
+the random frame the next independent stream. Alternatively, \code{"current"}
+consumes the current R stream directly, sampling before any random frame.
+This mode never resets RNG kinds or seed and supports the caller's selected
+generators, including Box-Muller's hidden cached normal value. Draws advance
+the stream even if a subsequent operation fails. Call \code{set.seed()} yourself
+when reproducibility from a known starting point is needed.}
 }
 \value{
 A \code{synthetic_geometry_sample} list containing \code{predictors}, \code{latent},
@@ -36,12 +41,16 @@ A \code{synthetic_geometry_sample} list containing \code{predictors}, \code{late
 \code{intrinsic.dim.by.region} and \code{codimension.by.region} for simplex strata,
 \code{declared.regions}, \code{observed.regions}, \code{n}, and \code{sample} (the original sampler payload). \code{rng} contains the
 effective plan, states after each draw, and \code{final.state} for explicit
-continuation by a caller. The result has no truth or response fields.
+continuation by a caller. In current-stream mode the plan is \code{"current"};
+returned state vectors are observations, not complete replay tokens for
+generators with hidden state. A deterministic draw can leave these vectors
+\code{NULL} if no seed exists. The result has no truth or response fields.
 }
 \description{
 Coordinates and sampling algorithms retain the existing version-1 draw
-order. The caller's RNG kinds and seed presence/value are restored on
-success and errors. No statistical response or dataset identity is created.
+order. With a seed or explicit state list, the caller's RNG kinds and seed
+presence/value are restored on success and errors. The opt-in current-stream
+mode instead advances the caller's stream. No statistical response or dataset identity is created.
 }
 \examples{
 x <- sample.synthetic.geometry(synthetic.circle(),

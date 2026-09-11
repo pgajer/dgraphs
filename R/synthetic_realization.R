@@ -95,8 +95,9 @@ validate.synthetic.sampling <- function(sampling, geometry = NULL) {
 #' Realize points on a synthetic geometry with explicit random-state control
 #'
 #' Coordinates and sampling algorithms retain the existing version-1 draw
-#' order. The caller's RNG kinds and seed presence/value are restored on
-#' success and errors. No statistical response or dataset identity is created.
+#' order. With a seed or explicit state list, the caller's RNG kinds and seed
+#' presence/value are restored on success and errors. The opt-in current-stream
+#' mode instead advances the caller's stream. No statistical response or dataset identity is created.
 #' @param geometry A supported geometry component.
 #' @param sampling A supported sampling component. Legacy G4 is excluded.
 #' @param n Positive sample size, or `NULL` for fixed-size sampling.
@@ -108,13 +109,21 @@ validate.synthetic.sampling <- function(sampling, geometry = NULL) {
 #'   L'Ecuyer-CMRG or Mersenne-Twister with Inversion/Rejection. `frame` is `NULL`
 #'   unless a random frame is requested. Retry/substream selection belongs to
 #'   the caller. The standalone seed assigns sampling its initial stream and
-#'   the random frame the next independent stream.
+#'   the random frame the next independent stream. Alternatively, `"current"`
+#'   consumes the current R stream directly, sampling before any random frame.
+#'   This mode never resets RNG kinds or seed and supports the caller's selected
+#'   generators, including Box-Muller's hidden cached normal value. Draws advance
+#'   the stream even if a subsequent operation fails. Call `set.seed()` yourself
+#'   when reproducibility from a known starting point is needed.
 #' @return A `synthetic_geometry_sample` list containing `predictors`, `latent`,
 #'   `latent.mask`, `region`, `frame.matrix`, the specifications, dimensions,
 #'   `intrinsic.dim.by.region` and `codimension.by.region` for simplex strata,
 #'   `declared.regions`, `observed.regions`, `n`, and `sample` (the original sampler payload). `rng` contains the
 #'   effective plan, states after each draw, and `final.state` for explicit
-#'   continuation by a caller. The result has no truth or response fields.
+#'   continuation by a caller. In current-stream mode the plan is `"current"`;
+#'   returned state vectors are observations, not complete replay tokens for
+#'   generators with hidden state. A deterministic draw can leave these vectors
+#'   `NULL` if no seed exists. The result has no truth or response fields.
 #' @examples
 #' x <- sample.synthetic.geometry(synthetic.circle(),
 #'   synthetic.sampling.uniform.interval(0, 2 * pi), n = 8, seed = 7)
@@ -135,7 +144,9 @@ sample.synthetic.geometry <- function(geometry, sampling, n = NULL,
   random <- identical(geometry$parameters$frame, "random.orthonormal")
   if (is.null(seed) == is.null(rng.plan))
     stop("Supply exactly one of seed and rng.plan.", call. = FALSE)
-  .with.synthetic.rng.preserved({
+  current <- identical(rng.plan, "current")
+  state.now <- function() get0(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+  realize <- function() {
     if (!is.null(seed)) {
       seed <- .synthetic.scalar.integer(seed, "seed", 0L)
       RNGkind("L'Ecuyer-CMRG", "Inversion", "Rejection")
@@ -144,28 +155,30 @@ sample.synthetic.geometry <- function(geometry, sampling, n = NULL,
       rng.plan <- list(version = 1L, order = "sampling.frame", sampling = state,
                        frame = if (random) parallel::nextRNGStream(state) else NULL)
     }
-    if (!is.list(rng.plan) || !setequal(names(rng.plan), c("version", "order", "sampling", "frame")) ||
-        length(rng.plan) != 4L || !identical(rng.plan$version, 1L) ||
-        !is.character(rng.plan$order) || length(rng.plan$order) != 1L ||
-        is.na(rng.plan$order) || !rng.plan$order %in% c("sampling.frame", "frame.sampling"))
-      stop("Invalid version-1 geometry RNG plan.", call. = FALSE)
-    .synthetic.validate.state(rng.plan$sampling, "sampling")
-    if (random) .synthetic.validate.state(rng.plan$frame, "frame")
-    else if (!is.null(rng.plan$frame)) stop("Nonrandom geometry requires a NULL frame state.", call. = FALSE)
+    if (!current) {
+      if (!is.list(rng.plan) || !setequal(names(rng.plan), c("version", "order", "sampling", "frame")) ||
+          length(rng.plan) != 4L || !identical(rng.plan$version, 1L) ||
+          !is.character(rng.plan$order) || length(rng.plan$order) != 1L ||
+          is.na(rng.plan$order) || !rng.plan$order %in% c("sampling.frame", "frame.sampling"))
+        stop("Invalid version-1 geometry RNG plan.", call. = FALSE)
+      .synthetic.validate.state(rng.plan$sampling, "sampling")
+      if (random) .synthetic.validate.state(rng.plan$frame, "frame")
+      else if (!is.null(rng.plan$frame)) stop("Nonrandom geometry requires a NULL frame state.", call. = FALSE)
+    }
     sample <- NULL; frame <- NULL; sampling.after <- NULL; frame.after <- NULL
     draw.sample <- function() {
-      assign(".Random.seed", rng.plan$sampling, envir = .GlobalEnv)
+      if (!current) assign(".Random.seed", rng.plan$sampling, envir = .GlobalEnv)
       sample <<- .draw.synthetic.sampling(sampling, n, geometry)
-      sampling.after <<- get(".Random.seed", envir = .GlobalEnv)
+      sampling.after <<- state.now()
     }
     draw.frame <- function() {
-      if (random) assign(".Random.seed", rng.plan$frame, envir = .GlobalEnv)
+      if (random && !current) assign(".Random.seed", rng.plan$frame, envir = .GlobalEnv)
       frame <<- .draw.synthetic.frame(geometry)
-      if (random) frame.after <<- get(".Random.seed", envir = .GlobalEnv)
+      if (random) frame.after <<- state.now()
     }
-    if (rng.plan$order == "frame.sampling") { draw.frame(); draw.sample() }
+    if (!current && rng.plan$order == "frame.sampling") { draw.frame(); draw.sample() }
     else { draw.sample(); draw.frame() }
-    final <- get(".Random.seed", envir = .GlobalEnv)
+    final <- state.now()
     X <- if (is.null(sample$predictors))
       .embed.synthetic.geometry(geometry, sample$latent, frame) else sample$predictors
     if (!is.null(sample$latent)) .validate.synthetic.latent(geometry, sample$latent)
@@ -188,5 +201,6 @@ sample.synthetic.geometry <- function(geometry, sampling, n = NULL,
       rng = list(plan = rng.plan, sampling.after = sampling.after,
                  frame.after = frame.after, final.state = final)),
       class = c("synthetic_geometry_sample", "list"))
-  })
+  }
+  if (current) realize() else .with.synthetic.rng.preserved(realize())
 }

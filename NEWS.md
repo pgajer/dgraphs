@@ -1,5 +1,10 @@
 # dgraphs 0.2.1.9000
 
+- Fix one-point box sampling and multiple-height embeddings to retain matrix
+  dimensions. These inputs previously failed in inherited geometry kernels.
+- Add explicit current-stream sampling for Geometry Lab compatibility with
+  nondefault RNG kinds; the default isolated seed/state modes are unchanged.
+
 - Add reusable synthetic geometry constructors, embeddings, geometric edge
   lengths, and sampling specifications previously provided by geosmooth.
 - Add `sample.synthetic.geometry()` with explicit random-state continuation

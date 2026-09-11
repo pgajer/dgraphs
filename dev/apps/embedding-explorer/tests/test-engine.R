@@ -105,3 +105,22 @@ if(nzchar(python) && file.exists(python)) {
   })
 }
 cat('Geometry Lab numerical and import checks completed.\n')
+
+test_that('nondefault RNG kinds preserve direct geometry, noise and continuation', {
+  kinds <- RNGkind(); withr::defer(do.call(RNGkind,as.list(kinds)))
+  for(kind in c('Mersenne-Twister',"L'Ecuyer-CMRG",'Wichmann-Hill')) for(normal in c('Inversion','Box-Muller')) {
+    RNGkind(kind,normal,'Rejection')
+    s<-default_spec();s$n<-31L;s$noise<-.1
+    set.seed(s$seed)
+    uv<-matrix(runif(2*s$n,-s$extent,s$extent),ncol=2)
+    truth<-cbind(uv,1.2*uv[,1]^2 + 2*0*uv[,1]*uv[,2] - 1.2*uv[,2]^2)
+    observed<-truth+matrix(rnorm(3*s$n,sd=s$noise),ncol=3)
+    continuation<-rnorm(3)
+    cloud<-make_experiment(s)$cloud
+    expect_identical(cloud$uv,uv)
+    expect_identical(cloud$truth,truth)
+    expect_identical(cloud$observed,observed)
+    expect_identical(rnorm(3),continuation)
+    expect_identical(RNGkind(),c(kind,normal,'Rejection'))
+  }
+})

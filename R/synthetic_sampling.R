@@ -323,7 +323,7 @@ synthetic.sampling.dirichlet.zeros <- function(
       seq_len(d),
       function(j) stats::runif(n, lower[j], upper[j]),
       numeric(n))
-    if (d == 1L) out$latent <- matrix(out$latent, ncol = 1L)
+    if (is.null(dim(out$latent))) out$latent <- matrix(out$latent, nrow = n, ncol = d)
     if (p$order == "ascending.first.coordinate") {
       out$latent <- out$latent[order(out$latent[, 1], seq_len(n)), ,
                                drop = FALSE]

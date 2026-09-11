@@ -72,8 +72,7 @@ make_experiment <- function(spec = default_spec()) {
   sampling <- dgraphs::synthetic.sampling.quadform.lab(spec$domain, e,
     spec$sampling, spec$gap)
   draw <- dgraphs::sample.synthetic.geometry(geometry, sampling, n=n,
-    rng.plan=list(version=1L,order='sampling.frame',sampling=.Random.seed,frame=NULL))
-  assign('.Random.seed',draw$rng$final.state,envir=.GlobalEnv)
+    rng.plan='current')
   uv <- draw$latent
   truth <- lift_quad(uv,spec$coefficients)
   observed <- truth + matrix(rnorm(n*3,sd=spec$noise),ncol=3)

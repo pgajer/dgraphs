@@ -478,6 +478,7 @@ synthetic.point.line.junction <- function(
     if (length(p$forms)) {
       q <- vapply(p$forms, function(A) rowSums((U %*% A) * U),
                   numeric(nrow(U)))
+      if (is.null(dim(q))) q <- matrix(q, nrow = nrow(U), ncol = length(p$forms))
       z <- cbind(U, q)
     }
   } else if (family == "sphere.cap") {

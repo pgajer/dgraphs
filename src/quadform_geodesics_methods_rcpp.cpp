@@ -113,7 +113,7 @@ Rcpp::List rcpp_quadform_geodesics_method(Rcpp::NumericMatrix A,
   if(o.keep_graph)graph=Rcpp::List::create(Rcpp::_["vertices"]=qgn::matrix(s.vertices,false),
     Rcpp::_["edges"]=edges,Rcpp::_["weights"]=s.weights);
   return Rcpp::List::create(Rcpp::_["status"]=s.status,Rcpp::_["termination"]=s.termination,
-    Rcpp::_["implementation"]="self-contained-cpp-"+method+"-v1",
+    Rcpp::_["implementation"]=method=="boundary_optimization"?"nlopt-cobyla-boundary-optimization-v1":"self-contained-cpp-"+method+"-v1",
     Rcpp::_["length"]=std::isfinite(s.length)?s.length:NA_REAL,
     Rcpp::_["error_estimate"]=std::isfinite(s.error)?s.error:NA_REAL,
     Rcpp::_["path"]=qgn::matrix(s.path,false),Rcpp::_["surface_path"]=lifted,

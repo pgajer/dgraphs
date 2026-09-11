@@ -156,7 +156,7 @@ Rcpp::List solve(Rcpp::NumericMatrix A,Rcpp::NumericVector from,Rcpp::NumericVec
   diagnostics["settled_vertices"]=settled;diagnostics["elapsed_seconds"]=budget.elapsed();
   diagnostics["source_index"]=source+1;diagnostics["target_index"]=target+1;
   return Rcpp::List::create(Rcpp::_["status"]=status,Rcpp::_["termination"]=termination,
-    Rcpp::_["implementation"]="self-contained-cpp-"+method+"-v1",Rcpp::_["length"]=length,
+    Rcpp::_["implementation"]=mesh?"qhull-kirsanov-mesh-v1":method=="delaunay_graph"?"qhull-boost-delaunay-graph-v1":"native-boost-radius-graph-v1",Rcpp::_["length"]=length,
     Rcpp::_["error_estimate"]=error,Rcpp::_["path"]=matrix(path,d),Rcpp::_["surface_path"]=matrix(surface,d+1),
     Rcpp::_["path_representation"]=mesh?"polyhedral_surface_polyline":"lifted_domain_polyline",
     Rcpp::_["curve_parameters"]=R_NilValue,Rcpp::_["diagnostics"]=diagnostics,Rcpp::_["graph"]=graph,

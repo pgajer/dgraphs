@@ -5,6 +5,8 @@ quadform_geodesics_graph_reference <- function(A, from, to, domain, method,
   if (!is.matrix(A) || !is.numeric(A) || !nrow(A) %in% 2:4 || nrow(A) != ncol(A) ||
       any(!is.finite(A)) || any(A != t(A))) stop("A must be a finite symmetric 2, 3 or 4 dimensional matrix")
   d <- nrow(A)
+  backend <- c(polyhedral_mesh="qhull-kirsanov-mesh-v1",delaunay_graph="qhull-boost-delaunay-graph-v1",
+    radius_graph="native-boost-radius-graph-v1")[[method]]
   endpoints <- function(x) {
     if (is.numeric(x) && is.null(dim(x)) && length(x) == d) x <- matrix(x, 1L)
     if (!is.matrix(x) || !is.numeric(x) || ncol(x) != d || !nrow(x) || any(!is.finite(x)))
@@ -65,7 +67,7 @@ quadform_geodesics_graph_reference <- function(A, from, to, domain, method,
     if(!is.matrix(v)||!is.numeric(v)||ncol(v)!=d||!nrow(v)||any(!is.finite(v))||!all(inside(v)))stop("vertices must be a finite matrix inside the domain")
   }
   raw_failure <- function(status,reason,message=NULL) list(status=status,termination=reason,
-    implementation=paste0("self-contained-cpp-",method,"-v1"),length=NA_real_,error_estimate=NA_real_,
+    implementation=backend,length=NA_real_,error_estimate=NA_real_,
     path=matrix(numeric(),0,d),surface_path=matrix(numeric(),0,d+1L),
     path_representation=if(mesh)"polyhedral_surface_polyline" else "lifted_domain_polyline",
     curve_parameters=NULL,diagnostics=list(message=message),graph=NULL,configuration=defaults,state_saving=FALSE)

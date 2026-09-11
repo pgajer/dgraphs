@@ -33,6 +33,7 @@ the random frame the next independent stream.}
 \value{
 A \code{synthetic_geometry_sample} list containing \code{predictors}, \code{latent},
 \code{latent.mask}, \code{region}, \code{frame.matrix}, the specifications, dimensions,
+\code{intrinsic.dim.by.region} and \code{codimension.by.region} for simplex strata,
 \code{n}, and \code{sample} (the original sampler payload). \code{rng} contains the
 effective plan, states after each draw, and \code{final.state} for explicit
 continuation by a caller. The result has no truth or response fields.

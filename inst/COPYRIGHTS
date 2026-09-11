@@ -30,3 +30,11 @@ Netherlands eScience Center retain that organization's copyright notices.
 The Spectra contribution inst/include/Spectra/contrib/LOBPCGSolver.h is
 Copyright Anna Araslanova and Yixuan Qiu and is distributed under the MIT
 license stated in that source file.
+
+The reusable synthetic geometry and sampling R source units, Geometry Lab
+application, and maintained quadratic-surface reference tools were developed
+in Pawel Gajer's geosmooth project and migrated on 2026-09-11. Distribution of
+project-owned material here is under the package's MIT license under the
+recorded copyright-holder authorization, to the extent the holder has the
+necessary rights. This does not relicense earlier geosmooth distributions or
+third-party material. Existing third-party notices remain applicable.

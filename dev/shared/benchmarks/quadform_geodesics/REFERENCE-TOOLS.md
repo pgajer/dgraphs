@@ -1,3 +1,8 @@
+> Relocation note (2026-09-11): maintained code below is now owned by dgraphs.
+> Historical `native/package_profile/` and manuscript sources remain in geosmooth.
+> Old invocation examples referring to a geosmooth checkout describe historical
+> runs; use this dgraphs checkout and its installed library for new runs.
+
 # Quadform solver interface and comparison harness
 
 The installed native solvers and unified `quadform_geodesics()` interface now

@@ -45,6 +45,7 @@ Imports:
     FNN,
     igraph (>= 2.2.0),
     parallel,
+    stats,
     Rcpp
 LinkingTo:
     Rcpp,

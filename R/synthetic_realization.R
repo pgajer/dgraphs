@@ -15,7 +15,7 @@
   } else {
     c("uniform.box", "uniform.disk", "uniform.interval", "grid.interval",
       "uniform.rectangle", "truncated.normal", "gapped.uniform", "clustered",
-      "dirichlet.zeros")
+      "dirichlet.zeros", "quadform.lab")
   }
   if (!family %in% families) stop("Unsupported ", kind, " family: ", family, call. = FALSE)
   prefix <- if (kind == "geometry") "synthetic." else "synthetic.sampling."
@@ -55,6 +55,12 @@ validate.synthetic.sampling <- function(sampling, geometry = NULL) {
   if (!is.null(geometry)) {
     validate.synthetic.geometry(geometry)
     .validate.synthetic.support(geometry, sampling)
+    gp <- geometry$parameters
+    if (sampling$family == "quadform.lab" &&
+        (geometry$family != "quadform" || gp$intrinsic.dim != 2L ||
+         gp$ambient.dim != 3L || gp$frame != "canonical" || any(gp$offset != 0) ||
+         max(abs(gp$forms[[1L]])) > 20))
+      stop("Geometry Lab sampling requires a canonical 2D quadratic surface in 3D, zero offset and coefficients in [-20,20].", call. = FALSE)
     d <- geometry$parameters$intrinsic.dim
     family <- sampling$family
     expected <- if (family %in% c("uniform.disk", "uniform.rectangle", "clustered")) 2L
@@ -105,6 +111,7 @@ validate.synthetic.sampling <- function(sampling, geometry = NULL) {
 #'   the random frame the next independent stream.
 #' @return A `synthetic_geometry_sample` list containing `predictors`, `latent`,
 #'   `latent.mask`, `region`, `frame.matrix`, the specifications, dimensions,
+#'   `intrinsic.dim.by.region` and `codimension.by.region` for simplex strata,
 #'   `n`, and `sample` (the original sampler payload). `rng` contains the
 #'   effective plan, states after each draw, and `final.state` for explicit
 #'   continuation by a caller. The result has no truth or response fields.
@@ -163,8 +170,15 @@ sample.synthetic.geometry <- function(geometry, sampling, n = NULL,
       .embed.synthetic.geometry(geometry, sample$latent, frame) else sample$predictors
     if (!is.null(sample$latent)) .validate.synthetic.latent(geometry, sample$latent)
     if (any(!is.finite(X))) stop("Sampling produced nonfinite coordinates.", call. = FALSE)
+    by.region <- if (geometry$family == "simplex") c(
+      interior = geometry$parameters$parts - 1L,
+      zero = geometry$parameters$parts - length(sampling$parameters$zero.parts) - 1L) else NULL
+    dimension <- if (is.null(by.region)) geometry$parameters$intrinsic.dim else NA_integer_
     structure(list(predictors = X, latent = sample$latent, latent.mask = sample$latent.mask,
-      region = sample$region, n = n, intrinsic.dim = geometry$parameters$intrinsic.dim,
+      region = sample$region, n = n, intrinsic.dim = dimension,
+      intrinsic.dim.by.region = by.region,
+      codimension = if (is.null(by.region)) ncol(X) - dimension else NA_integer_,
+      codimension.by.region = if (is.null(by.region)) NULL else ncol(X) - by.region,
       ambient.dim = geometry$parameters$ambient.dim, frame.matrix = frame,
       geometry.spec = geometry, sampling.spec = sampling, sample = sample,
       rng = list(plan = rng.plan, sampling.after = sampling.after,

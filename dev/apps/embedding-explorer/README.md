@@ -43,9 +43,8 @@ per session and must be exported to persist across browser sessions.
 
 ## Dependencies
 
-R: `shiny`, `bslib`, `DT`, `plotly`, `ivue`, `rgl`, `geometry`, `grip`, `igraph`,
-`callr`, `jsonlite`, `digest`, `htmlwidgets`. The current workstation already
-has these installed. The GRIP adapter needs `grip`, `metric.mds` and `edge.kk`
+R: `dgraphs` (>= 0.2.1.9000), `shiny`, `bslib`, `DT`, `plotly`, `ivue`, `rgl`, `geometry`, `grip`, `igraph`,
+`callr`, `jsonlite`, `digest`, `htmlwidgets`. Use a library containing the development versions below. The GRIP adapter needs `grip`, `metric.mds` and `edge.kk`
 with the arguments in the current local development package (0.2.0.9001).
 The renderer needs ivue's `layer3D.mesh`, `layer3D.axes`, `camera.zup`, and
 `plot3D.plain`. No Internet fonts or remote rendering services are used.
@@ -81,8 +80,8 @@ have converged; method metadata and warnings remain available.
 16S triplet and general simplex-complex generators are future extensions,
 documented in the spec rather than shown as nonfunctional selectors. General
 simplex 2-skeletons may require an intersecting 3D projection; the projection
-must not silently become the intrinsic reference geometry. Add such generators
-in `R/engine.R`, preserving distinct method-input and truth-display contracts.
+must not silently become the intrinsic reference geometry. Add reusable generators in the dgraphs package, with app adapters in
+`R/engine.R`, preserving distinct method-input and truth-display contracts.
 
 Run focused checks with `Rscript tests/test-engine.R` from this directory.
 Run background-job and reactive-state checks with `Rscript tests/test-server.R`.
@@ -96,3 +95,17 @@ See [VALIDATION.md](VALIDATION.md) for the recorded browser and numerical checks
 - `app.R`: Shiny UI, reactive state, background jobs, saved-study browser, exports.
 - `scripts/umap_fit.py`: explicit-neighbor Python UMAP adapter.
 - `launch.R`, `scripts/start.py`, `Open Geometry Lab.command`: local startup.
+
+## Package ownership and isolated validation
+
+Geometry and sampling live in dgraphs. `synthetic.sampling.quadform.lab()`
+uses the versioned `geometry.lab.v1` draw policy, including the original
+column-major square draws and rejection batches. `embed.quadform.surface()`
+retains the expression order used by historical cloud identities and meshes.
+The app continues the returned RNG state before adding measurement noise.
+The graph and embedding adapters remain app-local.
+
+For an isolated installation, set `R_LIBS` to its absolute library directory
+before launching and check `find.package("dgraphs")`. Background jobs inherit
+that library setting. The existing private study/log locations remain valid;
+relocation does not rewrite saved study data or reuse a validation server port.

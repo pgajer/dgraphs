@@ -62,10 +62,29 @@ test_that("simplex and clustered samples retain allocation metadata", {
     synthetic.sampling.dirichlet.zeros(rep(1,3),.25,1L), 20, seed=5)
   expect_equal(rowSums(a$predictors), rep(1,20))
   expect_identical(sum(a$region=="zero"), 5L)
+  expect_identical(a$intrinsic.dim.by.region,c(interior=2L,zero=1L))
+  expect_identical(a$codimension.by.region,c(interior=1L,zero=2L))
   b <- sample.synthetic.geometry(synthetic.quadform(2,2),
     synthetic.sampling.clustered(3,4,within.sd=.1), seed=5)
   expect_identical(b$n, 12L)
   expect_identical(b$sample$parameters$cluster, rep(1:3,each=4))
   expect_error(sample.synthetic.geometry(synthetic.quadform(2,2),
     synthetic.sampling.clustered(3,4,within.sd=.1), n=13, seed=5), "fixed size")
+})
+
+
+test_that("Geometry Lab policy preserves disk draw order and continuation", {
+  RNGkind("Mersenne-Twister", "Inversion", "Rejection")
+  set.seed(4101); state <- .Random.seed
+  radius <- sqrt(runif(30)); theta <- runif(30,0,2*pi)
+  uv <- cbind(radius*cos(theta),radius*sin(theta)); after <- .Random.seed
+  a <- sample.synthetic.geometry(synthetic.quadform(2,3,list(diag(c(1,-1)))),
+    synthetic.sampling.quadform.lab("disk"),30,
+    rng.plan=list(version=1L,order="sampling.frame",sampling=state,frame=NULL))
+  expect_identical(a$latent,uv)
+  expect_identical(a$rng$final.state,after)
+  expect_identical(a$predictors,cbind(uv,uv[,1]^2+2*0*uv[,1]*uv[,2]-uv[,2]^2))
+  expect_error(validate.synthetic.sampling(synthetic.sampling.quadform.lab(),
+    synthetic.circle()), "requires a canonical")
+  expect_error(synthetic.sampling.quadform.lab(algorithm="v2"),"Unknown")
 })

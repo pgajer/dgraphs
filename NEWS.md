@@ -1,3 +1,14 @@
+# dgraphs 0.2.1.9000
+
+- Add reusable synthetic geometry constructors, embeddings, geometric edge
+  lengths, and sampling specifications previously provided by geosmooth.
+- Add `sample.synthetic.geometry()` with explicit random-state continuation
+  and restoration of the caller's random-number state. Statistical responses,
+  registry identities and the legacy G4 recipe remain in geosmooth.
+- Move the development Geometry Lab app and maintained quadratic-surface
+  fixture/reference tools into this repository. Geometry Lab uses shared
+  versioned sampling while retaining its existing point identities.
+
 # dgraphs 0.2.1
 
 * Adds `create.sknn.graphs()` for constructing a sequence of symmetric-kNN

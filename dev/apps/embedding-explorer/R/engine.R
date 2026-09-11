@@ -32,7 +32,7 @@ scalar_number <- function(x, label, lo, hi, whole = FALSE) {
 default_spec <- function() list(surface = 'saddle', coefficients = c(1.2, 0, -1.2),
   domain = 'square', extent = 1, sampling = 'uniform', n = 300L,
   seed = 4101L, noise = 0, gap = .2)
-lift_quad <- function(uv, co) cbind(uv, co[1]*uv[,1]^2 + 2*co[2]*uv[,1]*uv[,2] + co[3]*uv[,2]^2)
+lift_quad <- function(uv, co) dgraphs::embed.quadform.surface(uv, co)
 
 triangulate_uv <- function(uv, gap = NULL) {
   tri <- geometry::delaunayn(uv, options = 'QJ')
@@ -66,37 +66,15 @@ make_experiment <- function(spec = default_spec()) {
       any(abs(spec$coefficients)>20)) stop('Three finite coefficients in [-20,20] are required.')
   set.seed(spec$seed)
   e <- spec$extent
-  candidate <- function(m) {
-    if (spec$domain=='disk') {
-      r <- sqrt(runif(m))*e; theta <- runif(m,0,2*pi)
-      cbind(r*cos(theta),r*sin(theta))
-    } else matrix(runif(2*m,-e,e),ncol=2)
-  }
-  if (spec$sampling=='grid') {
-    side <- ceiling(sqrt(n * if (spec$domain=='disk') 4/pi else 1))
-    repeat {
-      uv <- as.matrix(expand.grid(seq(-e,e,length.out=side),seq(-e,e,length.out=side)))
-      if (spec$domain=='disk') uv <- uv[rowSums(uv^2)<=e^2,,drop=FALSE]
-      if (nrow(uv)>=n) break
-      side <- side+1L
-    }
-    # Systematic thinning spreads the requested exact count over the full grid.
-    uv <- uv[unique(round(seq(1,nrow(uv),length.out=n))),,drop=FALSE]
-  } else if (spec$sampling %in% c('area','gap','center')) {
-    uv <- matrix(numeric(),0,2)
-    co <- spec$coefficients
-    bound <- sqrt(1 + (2*e*(abs(co[1])+abs(co[2])))^2 + (2*e*(abs(co[2])+abs(co[3])))^2)
-    while(nrow(uv)<n) {
-      x <- candidate(max(1000,n*3))
-      keep <- if(spec$sampling=='gap') abs(x[,1])>spec$gap*e else if(spec$sampling=='center')
-        runif(nrow(x)) < exp(-rowSums(x^2)/(2*(.32*e)^2)) else {
-          du <- 2*co[1]*x[,1]+2*co[2]*x[,2]; dv <- 2*co[2]*x[,1]+2*co[3]*x[,2]
-          runif(nrow(x)) < sqrt(1+du^2+dv^2)/bound
-        }
-      uv <- rbind(uv,x[keep,,drop=FALSE])
-    }
-    uv <- uv[seq_len(n),,drop=FALSE]
-  } else uv <- candidate(n)
+  co <- spec$coefficients
+  geometry <- dgraphs::synthetic.quadform(2L, 3L,
+    forms=list(matrix(c(co[1],co[2],co[2],co[3]),2)))
+  sampling <- dgraphs::synthetic.sampling.quadform.lab(spec$domain, e,
+    spec$sampling, spec$gap)
+  draw <- dgraphs::sample.synthetic.geometry(geometry, sampling, n=n,
+    rng.plan=list(version=1L,order='sampling.frame',sampling=.Random.seed,frame=NULL))
+  assign('.Random.seed',draw$rng$final.state,envir=.GlobalEnv)
+  uv <- draw$latent
   truth <- lift_quad(uv,spec$coefficients)
   observed <- truth + matrix(rnorm(n*3,sd=spec$noise),ncol=3)
   cloud <- list(spec=spec, ids=sprintf('sample-%04d',seq_len(n)), uv=uv,

@@ -308,6 +308,7 @@ synthetic.sampling.dirichlet.zeros <- function(
   n <- .synthetic.scalar.integer(n, "n", 1L)
   out <- list(latent = NULL, predictors = NULL, latent.mask = NULL,
               region = NULL, parameters = list())
+  if (family == "quadform.lab") return(.draw.synthetic.quadform.lab(p, n, geometry))
   if (family == "uniform.box") {
     d <- gp$intrinsic.dim
     lower <- rep(p$lower, length.out = d)
@@ -440,10 +441,6 @@ synthetic.sampling.dirichlet.zeros <- function(
   }
   if (gf == "simplex" && sf != "dirichlet.zeros") {
     stop("Simplex geometry requires Dirichlet sampling.", call. = FALSE)
-  }
-  if (gf == "g4.segment.rectangle" && sf != "stratified.g4") {
-    stop("G4 stratified geometry requires G4 stratified sampling.",
-         call. = FALSE)
   }
   invisible(TRUE)
 }

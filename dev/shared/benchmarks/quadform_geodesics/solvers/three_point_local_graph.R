@@ -1,0 +1,7 @@
+.qga_files <- Filter(Negate(is.null), lapply(sys.frames(), function(f) f$ofile))
+.qga_directory <- dirname(normalizePath(tail(.qga_files, 1L)[[1L]]))
+.qga_namespace <- new.env(parent = environment())
+sys.source(file.path(.qga_directory, "adaptive/common.R"), envir = .qga_namespace)
+sys.source(file.path(.qga_directory, "adaptive/local_graph.R"), envir = .qga_namespace)
+sys.source(file.path(.qga_directory, "adaptive/three_point.R"), envir = .qga_namespace)
+.qga_namespace$qga.adapter("three_point_local_graph", .qga_namespace$qga.local.graph.plan)

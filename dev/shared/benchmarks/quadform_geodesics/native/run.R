@@ -1,0 +1,11 @@
+script <- normalizePath(sub("^--file=","",grep("^--file=",commandArgs(),value=TRUE)[1L]))
+home <- dirname(dirname(script))
+source(file.path(home,"../../fixtures/quadform_geodesics/collection.R"))
+source(file.path(home,"interface.R"));source(file.path(home,"runner.R"))
+source(file.path(home,"experiments/sensitivity.R"));source(file.path(home,"native/load.R"))
+source(file.path(home,"native/parallel.R"));source(file.path(home,"native/report.R"))
+args <- commandArgs(trailingOnly=TRUE)
+stopifnot(length(args)>=3L,length(args)<=4L)
+output <- args[1L];workers <- as.integer(args[2L]);plan.file <- args[3L]
+plan <- readRDS(plan.file)
+qgc.run(home,output,plan,workers,purpose=attr(plan,"purpose"),resume=length(args)==4L&&args[4L]=="resume")

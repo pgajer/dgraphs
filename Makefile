@@ -19,3 +19,11 @@ build: repo-hygiene
 
 clean-build:
 	rm -f $(TARBALL)
+
+.PHONY: test-quadform-fixtures test-quadform-interface
+test-quadform-fixtures:
+	Rscript --vanilla dev/shared/fixtures/quadform_geodesics/verify.R --self-test
+test-quadform-interface:
+	Rscript --vanilla dev/shared/benchmarks/quadform_geodesics/tests.R
+	Rscript --vanilla dev/shared/benchmarks/quadform_geodesics/tests_runtime.R
+	Rscript --vanilla dev/shared/benchmarks/quadform_geodesics/tests_regressions.R

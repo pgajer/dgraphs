@@ -1,0 +1,17 @@
+{
+  "interface_version": "0.3.2",
+  "methods": [
+    {"id":"direct_connector","family":"control","status":"implemented","file":"solvers/direct_connector.R","scope":"Lifted straight parameter segment; feasible upper bound, not a general geodesic solver"},
+    {"id":"grid_dijkstra","family":"graph","status":"planned","scope":"Historical 2D grid baseline"},
+    {"id":"delaunay_dijkstra","family":"graph","status":"planned","scope":"Historical 3D Delaunay reference"},
+    {"id":"radius_dijkstra","family":"graph","status":"planned","scope":"Historical 4D radius reference"},
+    {"id":"polyhedral_exact","family":"polyhedral","status":"planned","scope":"2D triangulated surfaces; polyhedral distances require a distinct audit representation"},
+    {"id":"paraboloid_clairaut","family":"smooth","status":"planned","scope":"Isotropic 2D paraboloid; whole-path domain validation required"},
+    {"id":"saddle_shooting","family":"smooth","status":"planned","scope":"Specialized 2D saddle; whole-path domain validation required"},
+    {"id":"bvp_collocation","family":"smooth","status":"planned","scope":"Initially 2D single-height forms"},
+    {"id":"constrained_path","family":"optimization","status":"planned","scope":"Initially 2D single-height forms with explicit domain constraints"},
+    {"id":"adaptive_initializer","family":"adaptive_refinement","status":"planned","file":"solvers/adaptive_initializer.R","sources":["solvers/adaptive/common.R"],"scope":"Deterministic matched initializer; source present, pending independent integration review"},
+    {"id":"adaptive_vertex","family":"adaptive_refinement","status":"planned","scope":"Initially 2D single-height forms; sampled single-pivot windows"},
+    {"id":"adaptive_local_graph","family":"adaptive_refinement","status":"planned","scope":"Initially 2D single-height forms; complete local-graph windows"}
+  ]
+}

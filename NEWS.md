@@ -1,3 +1,19 @@
+# dgraphs 0.2.1.9000
+
+- Fix one-point box sampling and multiple-height embeddings to retain matrix
+  dimensions. These inputs previously failed in inherited geometry kernels.
+- Add explicit current-stream sampling for Geometry Lab compatibility with
+  nondefault RNG kinds; the default isolated seed/state modes are unchanged.
+
+- Add reusable synthetic geometry constructors, embeddings, geometric edge
+  lengths, and sampling specifications previously provided by geosmooth.
+- Add `sample.synthetic.geometry()` with explicit random-state continuation
+  and restoration of the caller's random-number state. Statistical responses,
+  registry identities and the legacy G4 recipe remain in geosmooth.
+- Move the development Geometry Lab app and maintained quadratic-surface
+  fixture/reference tools into this repository. Geometry Lab uses shared
+  versioned sampling while retaining its existing point identities.
+
 # dgraphs 0.2.1
 
 * Adds `create.sknn.graphs()` for constructing a sequence of symmetric-kNN

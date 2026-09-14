@@ -16,7 +16,8 @@
 #' \code{vignette("synthetic-geometry", package = "dgraphs")}.
 #'
 #' @seealso [create.graph()], [create.sknn.graph()], [create.rknn.graph()],
-#'   [graph.geodesic.distances()], [sample.synthetic.geometry()]
+#'   [graph.geodesic.distances()], [create.path.graph()], [plot.dgraph()],
+#'   [sample.synthetic.geometry()]
 #' @keywords internal
 #' @useDynLib dgraphs, .registration = TRUE
 #' @importFrom Rcpp evalCpp

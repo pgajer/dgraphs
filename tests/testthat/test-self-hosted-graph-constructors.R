@@ -94,15 +94,15 @@ test_that("DG1 graph utilities run without native gflow calls", {
 test_that("DG2 shortest paths and path graph are self-hosted", {
     adj <- list(c(2L), c(1L, 3L), c(2L))
     weights <- list(c(1), c(1, 2), c(2))
-    D <- shortest.path(adj, weights, 1:3)
+    D <- graph.geodesic.distances(dgraph(adj, weights), vertices = 1:3)
     expect_equal(D, matrix(c(0, 1, 3, 1, 0, 2, 3, 2, 0), nrow = 3, byrow = TRUE))
-    pg <- create.path.graph(adj, weights, h = 2)
+    pg <- create.path.graph(dgraph(adj, weights), h.values = 2)[[1L]]
     expect_s3_class(pg, "path.graph")
     expect_equal(graph.adjacency(pg$graph)[[1]], c(2L, 3L))
     expect_equal(graph.lengths(pg$graph)[[1]], c(1, 3))
     expect_equal(graph.edge.attribute(pg$graph, "hops")[[1]], c(1L, 2L))
     expect_equal(get.shortest.path(pg, 1, 3)$path, c(1L, 2L, 3L))
-    series <- create.path.graph.series(adj, weights, c(1, 2))
+    series <- create.path.graph(dgraph(adj, weights), h.values = c(1, 2))
     expect_s3_class(series, "path.graph.series")
     expect_equal(attr(series[[2]], "h"), 2L)
 })

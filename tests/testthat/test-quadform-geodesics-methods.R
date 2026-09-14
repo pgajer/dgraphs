@@ -87,7 +87,7 @@ local({
         g[[a]]<-c(g[[a]],b);w[[a]]<-c(w[[a]],graph$weights[i])
         g[[b]]<-c(g[[b]],a);w[[b]]<-c(w[[b]],graph$weights[i])}
       ids<-unlist(x$backend_result$diagnostics[c("source_index","target_index")])
-      reference<-dgraphs::shortest.path(g,w,ids)[1,2]
+      reference<-dgraphs::graph.geodesic.distances(dgraphs::dgraph(g,w), vertices=ids)[1,2]
       expect_equal(x$length,reference,tolerance=1e-13)
       expect_equal(x$length,integrate_path(x$path,A),tolerance=1e-11)
       expect_equal(x$surface_path[,3],rowSums((x$path%*%A)*x$path),tolerance=1e-13)

@@ -21,8 +21,8 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 6, fig.height
 
 `dgraphs` turns numerical observations into graphs and provides tools to inspect
 their connectivity, paths and geometry. Start with the question you want to
-answer. The catalog covers all 113 explicit public exports exactly once;
-38 registered S3 methods are described separately through object workflows.
+answer. The catalog covers all 109 explicit public exports exactly once;
+39 registered S3 methods are described separately through object workflows.
 Internal helpers and development applications are not public entry points.
 
 ## Choose a starting point
@@ -223,12 +223,101 @@ pruning and exact component bridging can be expensive even with ANN neighbor
 search. Native construction is serial; thread controls do not promise native
 parallel execution.
 
+### Distances and stored routes
+
+Use `graph.geodesic.distances()` for a matrix of distances. Supply exactly one
+of an existing `graph` or a coordinate matrix `points`. With coordinates,
+`graph.type = "sknn"` requires an explicit `k` and builds a symmetric kNN graph
+without pruning or connectivity repair. `graph.type = "mst"` builds a Euclidean
+minimum spanning tree and does not accept `k`. Setting `k = 1` never changes
+the construction method. Coincident observations remain connected by
+zero-length edges when selected by the construction.
+
+```{r distance-inputs}
+line.points <- matrix(c(0, 0, 1, 10, 11), ncol = 1)
+D.tree <- graph.geodesic.distances(points = line.points, graph.type = "mst")
+D.neighbors <- graph.geodesic.distances(points = line.points,
+                                       graph.type = "sknn", k = 1)
+knitr::kable(data.frame(
+  pair = c("Coincident observations", "First to last observation"),
+  tree.distance = c(D.tree[1, 2], D.tree[1, 5]),
+  symmetric.neighbor.distance = c(D.neighbors[1, 2], D.neighbors[1, 5])
+), row.names = FALSE, col.names = c("Pair", "Tree distance", "Symmetric kNN distance"))
+```
+
+Both calculations are exact shortest-path distances on their chosen graphs.
+Neither construction guarantees exact continuous manifold geodesics. The
+symmetric-neighbor example has disconnected components, represented by `Inf`.
+`vertices` selects matrix rows and columns in the requested order; paths may
+still pass through any vertex in the graph. `distance = "hop"` counts edges;
+`distance = "length"` requires stored lengths. To reuse a graph or choose
+additional construction options, construct it first and pass `graph = g`.
+
+Use `create.path.graph()` when the routes themselves matter. Its `h.values`
+argument specifies strictly increasing positive integer **maximum hop counts**;
+a hop traverses one edge. It always returns a named collection, including
+when only one limit is requested. Select a member before retrieving a route.
+
+```{r constrained-paths}
+weighted.graph <- dgraph(
+  list(c(2L, 3L), c(1L, 3L, 4L), c(1L, 2L), 2L),
+  list(c(5, 1), c(5, 1, 1), c(1, 1), 1))
+paths <- create.path.graph(weighted.graph, h.values = c(2, 3))
+knitr::kable(compare.paths(paths, from = 1, to = 4)[,
+  c("h", "path_exists", "path_length", "n_hops")], row.names = FALSE,
+  col.names = c("Hop limit", "Route exists", "Route length", "Hops used"))
+get.shortest.path(paths[["h_2"]], from = 1, to = 4)
+get.shortest.path(paths[["h_3"]], from = 4, to = 1)
+```
+
+With two hops, the best route has length 6; allowing three hops lowers it to 3.
+The returned route's edges, stored length and hop count agree. Each result
+stores a graph of reachable pairs in `$graph`, with a `hops` edge attribute.
+`get.shortest.path()` returns a vertex sequence, length and hop count, or
+`NULL` when the pair is unreachable within the selected limit. Both directions
+are supported; a vertex's route to itself has length and hop count zero.
+For equal-length routes, fewer hops are preferred. These all-pairs route
+collections can require substantial memory; use modest hop limits when possible.
+
+### Plotting a graph and reusing its layout
+
+`graph.embedding()` computes coordinates without drawing. The standard
+`plot()` method for a `dgraph` computes a two-dimensional layout only when
+coordinates are absent and invisibly returns the coordinates actually drawn.
+Use `vertex.values` for numeric values mapped through a palette, or
+`vertex.colors` for explicit colors; supplying both errors. Constant numeric
+values use the palette midpoint. Every undirected edge is drawn once.
+
+```{r graph-layout, fig.width=6, fig.height=4}
+cycle <- create.graph("cycle", n = 8)
+set.seed(4101)
+xy <- plot(cycle, vertex.values = seq_len(8), main = "Numeric vertex values")
+```
+
+```{r graph-layout-reuse, fig.width=6, fig.height=4}
+plot(cycle, coordinates = xy, vertex.values = rep(7, 8),
+     main = "Same layout, constant values")
+```
+
+The same `stage` controls both layout computation and drawn edges. For
+three-dimensional coordinates, choose an explicit two-column projection;
+the plotting method never silently discards a coordinate. Layout generation
+itself remains available in both two and three dimensions.
+
+```{r graph-projection, fig.width=6, fig.height=4}
+set.seed(4102)
+xyz <- graph.embedding(cycle, dim = 3)
+colnames(xyz) <- c("x", "y", "z")
+plot(cycle, coordinates = xyz, projection = c(1, 3), vertex.colors = "navy",
+     main = "Explicit x/z projection")
+```
+
 ### Reuse an expensive computation
 
 Keep a constructed graph for repeated `graph.geodesic.distances()` calls;
 this reuses its edges, not a memoized distance matrix. Save `D` yourself when
-reusing the same distances. `estimate.geodesic.distances(graph = ...)` accepts
-an existing **dgraph** object. Geodesic intersection and iterated intersection
+reusing the same distances. Coordinate input constructs a fresh graph for
+each distance call. Geodesic intersection and iterated intersection
 workflows deliberately build on existing graph metrics.
 
 `create.sknn.graphs()` reuses one ANN search across its `k` values. A single
@@ -309,16 +398,13 @@ release or development installation.
 | Function | Purpose |
 |---|---|
 | `graph.geodesic.distances()` | Compute shortest-path distances for a supported graph object and stage. |
-| `estimate.geodesic.distances()` | Estimate pairwise distances using a constructed or supplied dgraph. |
-| `shortest.path()` | Compute weighted graph distances for selected vertices. |
 | `compute.graph.distance()` | Compute a weighted shortest-path distance between two vertices. |
 | `compute.graph.diameter()` | Compute a weighted graph diameter. |
 | `get.shortest.path()` | Recover a shortest vertex path. |
 | `geodesic.disk()` | Find a graph neighborhood within a distance radius. |
 | `geodesic.knn()` | Find nearest vertices in a graph metric. |
 | `geodesic.knnx()` | Find graph-metric nearest neighbors for query vertices. |
-| `create.path.graph()` | Construct a path graph with a hop limit. |
-| `create.path.graph.series()` | Construct path graphs across hop limits. |
+| `create.path.graph()` | Construct a collection of path results for one or several hop limits. |
 | `create.plm.graph()` | Build a path-length-matrix graph structure. |
 | `compare.paths()` | Compare paths obtained under different hop limits. |
 | `minh.limit()` | Find a minimum hop limit that permits a path. |
@@ -368,7 +454,6 @@ release or development installation.
 | `graph.spectrum()` | Compute nontrivial eigenpairs of an unweighted graph Laplacian. |
 | `graph.spectral.embedding()` | Embed vertices using a graph spectrum. |
 | `graph.embedding()` | Compute a graph visualization layout. |
-| `plot2D.colored.graph()` | Draw graph edges and colored vertices in two dimensions. |
 
 ### Synthetic geometry and embedding
 
@@ -429,7 +514,7 @@ references, not extra rows in the export catalog.
 |---|---|
 | `print()` | [`dgraph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.dgraph); [`adaptive_radius_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.adaptive_radius_graph); [`build_iknn_graphs_and_selectk`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.build_iknn_graphs_and_selectk); [`cknn_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.cknn_graph); [`geodesic_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.geodesic_stats); [`knn.outliers`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.knn.outliers); [`maximal_packing`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.maximal_packing); [`mknn_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.mknn_graph); [`mknn_graphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.mknn_graphs); [`mst_completion_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.mst_completion_graph); [`packing_validation`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.packing_validation); [`path.graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.path.graph); [`path.graph.plm`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.path.graph.plm); [`radius_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.radius_graph); [`rknn_graphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.rknn_graphs); [`sknn_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.sknn_graph); [`sknn_graphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.sknn_graphs); [`summary.knn.outliers`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.summary.knn.outliers); [`summary.local_extrema`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.summary.local_extrema); [`summary.mst_completion_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.summary.mst_completion_graph) |
 | `summary()` | [`IkNN`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.IkNN); [`geodesic_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.geodesic_stats); [`iknn_graphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.iknn_graphs); [`iterated_iknn_graphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.iterated_iknn_graphs); [`knn.outliers`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.knn.outliers); [`local_extrema`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.local_extrema); [`mknn_graphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.mknn_graphs); [`mst_completion_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.mst_completion_graph); [`path.graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.path.graph); [`rknn_graphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.rknn_graphs); [`vertex_geodesic_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.vertex_geodesic_stats) |
-| `plot()` | [`IkNNgraphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.IkNNgraphs); [`build_iknn_graphs_and_selectk`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.build_iknn_graphs_and_selectk); [`cst_graph_mixing_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.cst_graph_mixing_stats); [`geodesic_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.geodesic_stats); [`iknn_stability_metrics`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.iknn_stability_metrics); [`vertex_geodesic_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.vertex_geodesic_stats) |
+| `plot()` | [`dgraph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.dgraph); [`IkNNgraphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.IkNNgraphs); [`build_iknn_graphs_and_selectk`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.build_iknn_graphs_and_selectk); [`cst_graph_mixing_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.cst_graph_mixing_stats); [`geodesic_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.geodesic_stats); [`iknn_stability_metrics`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.iknn_stability_metrics); [`vertex_geodesic_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.vertex_geodesic_stats) |
 | `vertices()` | [`local_extrema`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#vertices.local_extrema) |
 
 ## Finding more help

@@ -121,7 +121,7 @@ test_that("all retained stages convert with their lengths and attributes", {
     expect_false(any(c("get.edge.weights","extract.edge.lengths") %in% getNamespaceExports("dgraphs")))
     expect_error(as_igraph(list(2L,1L)),"dgraph")
     expect_error(create.iknn.graphs(X,kmin=1,kmax=2),"unused argument")
-    expect_error(shortest.path(adj.list=list(2L,1L),weight.list=list(1,1),vertices=1:2),"unused argument")
+    expect_false("shortest.path" %in% getNamespaceExports("dgraphs"))
 })
 
 test_that("raw symmetrization preserves vertex order and isolated vertices", {

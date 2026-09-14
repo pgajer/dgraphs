@@ -1,5 +1,18 @@
 # dgraphs 0.3.0
 
+* Consolidate distance matrices under `graph.geodesic.distances()`, accepting
+  either a graph or points with explicit symmetric-kNN/MST construction. MST
+  construction preserves zero-length edges; k = 1 no longer implies an MST.
+* `create.path.graph(graph, h.values)` always returns a named collection.
+  Correct hop-constrained route reconstruction and support reverse and self
+  queries in `get.shortest.path()`. Remove the raw public `shortest.path()`,
+  `estimate.geodesic.distances()` and `create.path.graph.series()` interfaces.
+* Replace `plot2D.colored.graph()` with `plot()` for `dgraph`. Layouts can be
+  reused, numeric values and explicit colors are distinct, constant values
+  plot correctly, and undirected edges are drawn once. Three-dimensional
+  coordinates require explicit projection. Layout and plotting share stage
+  selection. No compatibility wrappers are retained.
+
 * Replace ten basic graph constructors with `create.graph(type, ...)`, without
   compatibility wrappers. Eight types share vertex counts, optional labels and
   strict argument validation. Chains use per-side `span`; circles return

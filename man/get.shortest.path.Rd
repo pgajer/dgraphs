@@ -14,7 +14,10 @@ get.shortest.path(path.result, from, to)
 \item{to}{Target vertex.}
 }
 \value{
-Path information, or \code{NULL} when no stored path exists.
+A list with \code{path} (vertex indices in requested direction), \code{length}
+and \code{hops}, or \code{NULL} when no stored route exists within this result's
+hop limit. A vertex queried against itself has path \code{from}, length zero
+and zero hops. Routes can be retrieved in either direction.
 }
 \description{
 Get Shortest Path Between Two Vertices
@@ -22,7 +25,7 @@ Get Shortest Path Between Two Vertices
 \examples{
 graph <- list(2L, c(1L, 3L), 2L)
 lengths <- list(1, c(1, 2), 2)
-pg <- create.path.graph(graph, lengths, h = 2)
+pg <- create.path.graph(dgraph(graph, lengths), h.values = 2)[[1L]]
 get.shortest.path(pg, from = 1, to = 3)
 
 }

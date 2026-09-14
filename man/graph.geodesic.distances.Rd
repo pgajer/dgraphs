@@ -5,31 +5,65 @@
 \title{Compute Graph Geodesic Distances}
 \usage{
 graph.geodesic.distances(
-  graph,
+  graph = NULL,
   vertices = NULL,
   stage = "final",
-  distance = c("length", "hop")
+  distance = c("length", "hop"),
+  points = NULL,
+  graph.type = NULL,
+  k = NULL
 )
 }
 \arguments{
-\item{graph}{A \code{dgraph} with finite nonnegative lengths.}
+\item{graph}{A \code{dgraph}. Construction arguments cannot accompany a graph.}
 
-\item{vertices}{Optional 1-based vertex subset.}
+\item{vertices}{Optional unique 1-based vertex indices, in output order.
+\code{NULL} selects all vertices; an empty vector returns a zero-by-zero matrix.
+Paths may traverse vertices outside the selected subset.}
 
-\item{stage}{Stored graph stage.}
+\item{stage}{Stored graph stage; defaults to \code{"final"}. Coordinate input
+permits only \code{"final"}.}
 
 \item{distance}{\code{"length"} sums stored lengths (and errors if absent).
 \code{"hop"} explicitly counts edges instead.}
+
+\item{points}{Finite numeric matrix or data frame, with one point per row
+and at least one row and column. Cannot accompany \code{graph}.}
+
+\item{graph.type}{Construction for coordinate input: \code{"sknn"} (default when
+omitted) or \code{"mst"}. Symmetric kNN links a pair if either endpoint selects
+the other, without pruning or connectivity repair. MST builds a Euclidean
+minimum spanning tree, retaining zero-length edges for coincident points.}
+
+\item{k}{Required number of other neighbors for \code{"sknn"}, with \verb{1 <= k < n}.
+Not accepted for \code{"mst"}. In particular, \code{k = 1} still constructs a
+symmetric kNN graph; it never switches to an MST.}
 }
 \value{
-A numeric matrix of shortest-path distances; unreachable pairs
-have infinite distance. A zero-length edge remains traversable.
+A numeric square matrix in the requested vertex order; unreachable
+pairs have infinite distance. Zero-length edges remain traversable. Row
+names from \code{points}, or adjacency labels from \code{graph}, label the matrix
+when present.
 }
 \description{
-Compute Graph Geodesic Distances
+Compute exact shortest-path distances on a supplied graph, or on a graph
+constructed from coordinates. These graph distances may approximate a
+continuous geometric distance; construction alone does not make them exact
+manifold geodesics. Supply exactly one of \code{graph} and \code{points}.
+}
+\details{
+For repeated calculations or more construction options, build a
+graph separately and supply it via \code{graph}. Coordinate construction uses
+untransformed Euclidean distances. The exact symmetric-neighbor search
+evaluates all pairs; MST construction uses a dense Prim search with
+quadratic time and linear auxiliary storage. Selected-vertex output has
+\code{length(vertices)^2} entries; all-pairs output has \code{n^2} entries.
 }
 \examples{
 graph <- create.graph("chain", 5)
 graph.geodesic.distances(graph, vertices = c(1, 5))
 graph.geodesic.distances(create.graph("cycle", 5), distance = "hop")
+X <- matrix(c(0, 0, 1, 10), ncol = 1)
+graph.geodesic.distances(points = X, graph.type = "mst")
+graph.geodesic.distances(points = X, graph.type = "sknn", k = 1)
 }

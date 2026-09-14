@@ -122,8 +122,8 @@ as_igraph(graph, stage = "final", ...)
 graph.geodesic.distances(graph, vertices = NULL, stage = "final")
 graph.connected.components(graph, stage = "final")
 
-shortest.path(adj.list, length.list, vertices)
-create.path.graph(adj.list, length.list, h)
+graph.geodesic.distances(dgraph(adj.list, length.list), vertices = vertices)
+create.path.graph(graph, h.values, stage = "final")
 wgraph.prune.long.edges(adj.list, length.list, alt.path.len.ratio.thld, ...)
 extract.trajectory.edge.lengths(traj, adj.list, length.list, ...)
 ```

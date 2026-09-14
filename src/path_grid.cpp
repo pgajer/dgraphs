@@ -174,91 +174,61 @@ path_graph_plus_t create_path_graph_plus(
         const std::vector<std::vector<int>>& adj_list,
         const std::vector<std::vector<double>>& weight_list,
         int h) {
-    const int n_vertices = static_cast<int>(adj_list.size());
+    const int n = static_cast<int>(adj_list.size());
+    const int limit = std::min(h, std::max(0, n - 1));
+    const double infinity = std::numeric_limits<double>::infinity();
     path_graph_plus_t result;
-    result.adj_list.resize(static_cast<size_t>(n_vertices));
-    result.weight_list.resize(static_cast<size_t>(n_vertices));
-    result.hop_list.resize(static_cast<size_t>(n_vertices));
+    result.adj_list.resize(static_cast<size_t>(n));
+    result.weight_list.resize(static_cast<size_t>(n));
+    result.hop_list.resize(static_cast<size_t>(n));
 
-    std::vector<double> distances(static_cast<size_t>(n_vertices));
-    std::vector<int> hops(static_cast<size_t>(n_vertices));
-    std::vector<int> parent(static_cast<size_t>(n_vertices));
-    std::vector<bool> in_queue(static_cast<size_t>(n_vertices));
-
-    struct neighbor_info_t {
-        int vertex;
-        double distance;
-        int hops;
-        neighbor_info_t(int v, double d, int h_) : vertex(v), distance(d), hops(h_) {}
-    };
-    std::vector<neighbor_info_t> current_neighbors;
-    current_neighbors.reserve(static_cast<size_t>(std::max(1, n_vertices / 2)));
-
-    for (int start = 0; start < n_vertices; ++start) {
-        std::fill(distances.begin(), distances.end(), std::numeric_limits<double>::infinity());
-        std::fill(hops.begin(), hops.end(), std::numeric_limits<int>::max());
-        std::fill(parent.begin(), parent.end(), -1);
-        std::fill(in_queue.begin(), in_queue.end(), false);
-        current_neighbors.clear();
-
-        distances[static_cast<size_t>(start)] = 0.0;
-        hops[static_cast<size_t>(start)] = 0;
-        std::deque<int> q{start};
-        in_queue[static_cast<size_t>(start)] = true;
-
-        while (!q.empty()) {
-            int current = q.front();
-            q.pop_front();
-            in_queue[static_cast<size_t>(current)] = false;
-            if (hops[static_cast<size_t>(current)] >= h) continue;
-            const double current_dist = distances[static_cast<size_t>(current)];
-            const int next_hops = hops[static_cast<size_t>(current)] + 1;
-            for (size_t i = 0; i < adj_list[static_cast<size_t>(current)].size(); ++i) {
-                const int neighbor = adj_list[static_cast<size_t>(current)][i];
-                if (neighbor == current) continue;
-                const double new_distance = current_dist +
-                    weight_list[static_cast<size_t>(current)][i];
-                if (new_distance < distances[static_cast<size_t>(neighbor)]) {
-                    distances[static_cast<size_t>(neighbor)] = new_distance;
-                    hops[static_cast<size_t>(neighbor)] = next_hops;
-                    parent[static_cast<size_t>(neighbor)] = current;
-                    if (!in_queue[static_cast<size_t>(neighbor)] && next_hops <= h) {
-                        q.push_back(neighbor);
-                        in_queue[static_cast<size_t>(neighbor)] = true;
+    // A single label per vertex loses feasible shorter-hop prefixes. Keep
+    // exact-hop layers so every reconstructed route matches its cost and limit.
+    for (int start = 0; start < n; ++start) {
+        std::vector<std::vector<double>> distance(
+            static_cast<size_t>(limit + 1), std::vector<double>(static_cast<size_t>(n), infinity));
+        std::vector<std::vector<int>> parent(
+            static_cast<size_t>(limit + 1), std::vector<int>(static_cast<size_t>(n), -1));
+        distance[0][static_cast<size_t>(start)] = 0.0;
+        for (int step = 1; step <= limit; ++step) {
+            for (int u = 0; u < n; ++u) {
+                const double prefix = distance[static_cast<size_t>(step - 1)][static_cast<size_t>(u)];
+                if (!std::isfinite(prefix)) continue;
+                for (size_t j = 0; j < adj_list[static_cast<size_t>(u)].size(); ++j) {
+                    const int v = adj_list[static_cast<size_t>(u)][j];
+                    const double candidate = prefix + weight_list[static_cast<size_t>(u)][j];
+                    double& best = distance[static_cast<size_t>(step)][static_cast<size_t>(v)];
+                    if (candidate < best) {
+                        best = candidate;
+                        parent[static_cast<size_t>(step)][static_cast<size_t>(v)] = u;
                     }
                 }
             }
         }
-
-        for (int v = 0; v < n_vertices; ++v) {
-            if (v != start && hops[static_cast<size_t>(v)] <= h) {
-                current_neighbors.emplace_back(
-                    v,
-                    distances[static_cast<size_t>(v)],
-                    hops[static_cast<size_t>(v)]
-                );
-                if (start < v) {
-                    auto& path = result.shortest_paths[{start, v}];
-                    path.clear();
-                    path.reserve(static_cast<size_t>(hops[static_cast<size_t>(v)] + 1));
-                    for (int current = v; current != -1;
-                         current = parent[static_cast<size_t>(current)]) {
-                        path.push_back(current);
-                    }
-                    std::reverse(path.begin(), path.end());
-                }
+        for (int target = start + 1; target < n; ++target) {
+            double best = infinity;
+            int hops = -1;
+            for (int step = 1; step <= limit; ++step) {
+                const double candidate = distance[static_cast<size_t>(step)][static_cast<size_t>(target)];
+                if (candidate < best) { best = candidate; hops = step; }
             }
-        }
-
-        const size_t n_new_neighbors = current_neighbors.size();
-        result.adj_list[static_cast<size_t>(start)].resize(n_new_neighbors);
-        result.weight_list[static_cast<size_t>(start)].resize(n_new_neighbors);
-        result.hop_list[static_cast<size_t>(start)].resize(n_new_neighbors);
-        for (size_t i = 0; i < n_new_neighbors; ++i) {
-            const auto& info = current_neighbors[i];
-            result.adj_list[static_cast<size_t>(start)][i] = info.vertex;
-            result.weight_list[static_cast<size_t>(start)][i] = info.distance;
-            result.hop_list[static_cast<size_t>(start)][i] = info.hops;
+            if (hops < 0) continue;
+            auto& path = result.shortest_paths[{start, target}];
+            int vertex = target;
+            path.push_back(vertex);
+            for (int step = hops; step > 0; --step) {
+                vertex = parent[static_cast<size_t>(step)][static_cast<size_t>(vertex)];
+                path.push_back(vertex);
+            }
+            std::reverse(path.begin(), path.end());
+            // Store one canonical route for each undirected pair. Its reverse
+            // has exactly the same length and hop count, including tied routes.
+            result.adj_list[static_cast<size_t>(start)].push_back(target);
+            result.weight_list[static_cast<size_t>(start)].push_back(best);
+            result.hop_list[static_cast<size_t>(start)].push_back(hops);
+            result.adj_list[static_cast<size_t>(target)].push_back(start);
+            result.weight_list[static_cast<size_t>(target)].push_back(best);
+            result.hop_list[static_cast<size_t>(target)].push_back(hops);
         }
     }
     return result;

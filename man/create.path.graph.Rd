@@ -2,26 +2,43 @@
 % Please edit documentation in R/path_graphs.R
 \name{create.path.graph}
 \alias{create.path.graph}
-\title{Create a Path Graph with Limited Hop Distance}
+\title{Construct Path Graphs Across Hop Limits}
 \usage{
-create.path.graph(adj.list, length.list, h)
+create.path.graph(graph, h.values, stage = "final")
 }
 \arguments{
-\item{adj.list}{A graph adjacency list using 1-based vertex indices.}
+\item{graph}{A \code{dgraph} with finite nonnegative stored lengths.}
 
-\item{length.list}{Edge-length list matching \code{adj.list}.}
+\item{h.values}{One or more strictly increasing positive integer hop limits.
+A hop counts one traversed edge. Invalid, duplicate or unordered values
+error; values are never silently rounded or reordered.}
 
-\item{h}{Integer maximum hop count.}
+\item{stage}{Stored graph stage; defaults to \code{"final"}.}
 }
 \value{
-An object of class \code{"path.graph"}.
+A named \code{path.graph.series} collection, even for one limit. Names
+are \code{h_2}, \code{h_4}, etc. Each member is a \code{path.graph} with a \code{graph} of
+reachable pairs, stored \code{shortest.paths}, and an \code{h} attribute recording
+the requested limit. Its graph stores route lengths and a \code{hops} edge
+attribute. Routes use the input graph's vertex indices. Empty graphs and
+isolated vertices are preserved.
 }
 \description{
-Create a Path Graph with Limited Hop Distance
+Find minimum-length routes using at most each requested number of edges.
+Equal-length routes prefer fewer hops. One route is stored per unordered
+pair and can be retrieved in either direction with \code{\link[=get.shortest.path]{get.shortest.path()}}.
+}
+\details{
+Hop-constrained search retains a separate distance for each hop
+count, then selects the best route for each pair. With nonnegative lengths,
+limits above \code{n - 1} need no additional search. For each source, auxiliary
+storage is proportional to \code{n * min(h, n - 1)}; storing routes for all
+reachable pairs can require cubic space. Use small hop limits when possible.
 }
 \examples{
-graph <- list(2L, c(1L, 3L), 2L)
-lengths <- list(1, c(1, 2), 2)
-create.path.graph(graph, lengths, h = 2)
-
+graph <- create.graph("chain", n = 5)
+paths <- create.path.graph(graph, h.values = c(2, 4))
+get.shortest.path(paths[["h_4"]], from = 1, to = 5)
+get.shortest.path(paths[["h_4"]], from = 5, to = 1)
+compare.paths(paths, from = 1, to = 5)
 }

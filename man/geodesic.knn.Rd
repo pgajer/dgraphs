@@ -11,7 +11,9 @@ geodesic.knn(X, k, k.graph = 5, graph = NULL)
 
 \item{k}{Number of nearest neighbors to return.}
 
-\item{k.graph}{Number of neighbors used to construct the auxiliary graph.}
+\item{k.graph}{Number of other neighbors used to construct the auxiliary
+symmetric kNN graph, including when \code{k.graph = 1}. Components are not
+automatically connected. Ignored when \code{graph} is supplied.}
 
 \item{graph}{Optional \code{dgraph} containing stored edge lengths.}
 }

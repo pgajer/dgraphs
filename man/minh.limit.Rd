@@ -22,7 +22,7 @@ Find the Minimum Hop Limit for Path Existence
 \examples{
 graph <- list(2L, c(1L, 3L), 2L)
 lengths <- list(1, c(1, 2), 2)
-series <- create.path.graph.series(graph, lengths, h.values = 1:2)
+series <- create.path.graph(dgraph(graph, lengths), h.values = 1:2)
 minh.limit(series, from = 1, to = 3)
 
 }

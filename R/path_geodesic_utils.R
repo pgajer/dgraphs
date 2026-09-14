@@ -123,7 +123,9 @@ subdivide.path <- function(path, n.subdivision.pts) {
 #'
 #' @param X Numeric matrix of observations.
 #' @param k Number of nearest neighbors to return.
-#' @param k.graph Number of neighbors used to construct the auxiliary graph.
+#' @param k.graph Number of other neighbors used to construct the auxiliary
+#'   symmetric kNN graph, including when `k.graph = 1`. Components are not
+#'   automatically connected. Ignored when `graph` is supplied.
 #' @param graph Optional `dgraph` containing stored edge lengths.
 #'
 #' @return A list with `nn.index` and `nn.dist` matrices.
@@ -147,125 +149,15 @@ geodesic.knn <- function(X, k, k.graph = 5, graph = NULL) {
         stop("X cannot contain NA, NaN, or Inf values")
     }
     stopifnot(k > 0)
-    d <- estimate.geodesic.distances(X, k.graph, graph)
+    if (!is.null(graph) && graph.order(graph) != nrow(X))
+        stop("graph and X must have the same vertex count.")
+    d <- if (is.null(graph)) graph.geodesic.distances(points = X, k = k.graph) else
+        graph.geodesic.distances(graph = graph)
     r <- .dist.to.knn(d, k)
     list(nn.index = r$nn.i, nn.dist = r$nn.d)
 }
 
-#' Estimate Pairwise Geodesic Distances
-#'
-#' @param points Numeric matrix or data frame with points in rows.
-#' @param k Positive integer k for k-NN graph construction.
-#' @param graph Optional `dgraph` with stored lengths to use directly.
-#' @param method Graph construction method, `"knn.graph"` or `"mst"`.
-#'
-#' @return Numeric matrix of graph shortest-path distances.
-#'
-#' @examples
-#' points <- cbind(seq(0, 1, length.out = 8), 0)
-#' estimate.geodesic.distances(points, k = 2)
-#'
-#' @export
-estimate.geodesic.distances <- function(points,
-                                        k = 5,
-                                        graph = NULL,
-                                        method = "knn.graph") {
-    if (!is.null(graph)) {
-        if (graph.order(graph) != nrow(as.matrix(points))) stop("graph and points must have the same vertex order and count.")
-        return(graph.geodesic.distances(graph))
-    }
-    if (!is.matrix(points) && !is.data.frame(points)) {
-        stop("points must be a matrix or data frame.")
-    }
-    if (is.data.frame(points)) {
-        points <- as.matrix(points)
-    }
-    if (!is.numeric(points)) {
-        stop("points must contain numeric values.")
-    }
-    if (any(is.na(points)) || any(is.infinite(points))) {
-        stop("points cannot contain NA, NaN, or infinite values.")
-    }
-    if (!is.numeric(k) || k < 1 || k != as.integer(k)) {
-        stop("k must be a positive integer.")
-    }
 
-    n <- nrow(points)
-    if (k >= n) {
-        stop("k must be less than the number of points.")
-    }
-    if (!is.null(graph) && !inherits(graph, "igraph")) {
-        stop("If provided, graph must be an igraph object.")
-    }
-    if (!method %in% c("knn.graph", "mst")) {
-        stop("method must be either 'knn.graph' or 'mst'.")
-    }
-    if (!requireNamespace("igraph", quietly = TRUE)) {
-        stop("Package 'igraph' is required for this function to work. Please install it.")
-    }
-    if (method == "knn.graph" && k > 1 &&
-        !requireNamespace("FNN", quietly = TRUE)) {
-        stop("Package 'FNN' is required for k-NN graph construction. Please install it.")
-    }
-
-    if (is.null(graph)) {
-        if (method == "mst" || k == 1) {
-            dist.matrix <- as.matrix(stats::dist(points))
-            complete.graph <- igraph::graph_from_adjacency_matrix(
-                dist.matrix,
-                mode = "undirected",
-                weighted = TRUE,
-                diag = FALSE
-            )
-            graph <- igraph::mst(complete.graph)
-        } else {
-            nn <- FNN::get.knn(points, k = k)
-            edges <- matrix(nrow = 0, ncol = 2)
-            weights <- numeric(0)
-
-            for (i in 1:nrow(points)) {
-                for (j in 1:k) {
-                    neighbor.idx <- nn$nn.index[i, j]
-                    edges <- rbind(edges, c(i, neighbor.idx))
-                    weights <- c(weights, nn$nn.dist[i, j])
-                }
-            }
-
-            graph <- igraph::graph_from_edgelist(edges, directed = FALSE)
-            graph <- igraph::simplify(graph,
-                                      remove.multiple = TRUE,
-                                      remove.loops = TRUE)
-
-            edge.list <- igraph::as_edgelist(graph)
-            edge.weights <- numeric(nrow(edge.list))
-            for (e in 1:nrow(edge.list)) {
-                v1 <- edge.list[e, 1]
-                v2 <- edge.list[e, 2]
-
-                weight1 <- if (v2 %in% nn$nn.index[v1, ]) {
-                    nn$nn.dist[v1, which(nn$nn.index[v1, ] == v2)]
-                } else {
-                    Inf
-                }
-                weight2 <- if (v1 %in% nn$nn.index[v2, ]) {
-                    nn$nn.dist[v2, which(nn$nn.index[v2, ] == v1)]
-                } else {
-                    Inf
-                }
-                edge.weights[e] <- min(weight1, weight2)
-            }
-            igraph::E(graph)$weight <- edge.weights
-        }
-    }
-
-    geodesic.distances <- igraph::distances(graph, mode = "all")
-    if (!is.null(rownames(points))) {
-        rownames(geodesic.distances) <- rownames(points)
-        colnames(geodesic.distances) <- rownames(points)
-    }
-
-    geodesic.distances
-}
 
 #' Estimate Geodesic Nearest Neighbors from Grid Points to Data Points
 #'
@@ -468,7 +360,7 @@ geodesic.core.endpoints <- function(adj.list,
 #' @examples
 #' graph <- list(2L, c(1L, 3L), 2L)
 #' lengths <- list(1, c(1, 2), 2)
-#' series <- create.path.graph.series(graph, lengths, h.values = 1:2)
+#' series <- create.path.graph(dgraph(graph, lengths), h.values = 1:2)
 #' compare.paths(series, from = 1, to = 3)
 #'
 #' @export compare.paths
@@ -516,7 +408,7 @@ compare.paths <- function(path.result, from, to) {
 #' @examples
 #' graph <- list(2L, c(1L, 3L), 2L)
 #' lengths <- list(1, c(1, 2), 2)
-#' series <- create.path.graph.series(graph, lengths, h.values = 1:2)
+#' series <- create.path.graph(dgraph(graph, lengths), h.values = 1:2)
 #' minh.limit(series, from = 1, to = 3)
 #'
 #' @export

@@ -6,7 +6,12 @@ and a uniform self-plus-k-other-vertices intersection convention. Superseded
 interfaces are removed without wrappers. Ten standard graph constructors are
 now consolidated into `create.graph(type, ...)`, with eight graph types,
 per-side chain spans, optional vertex labels, explicit circle arc/chord
-lengths and feasible random edge budgets. It also adds reusable synthetic
+lengths and feasible random edge budgets. Distance matrices now share
+`graph.geodesic.distances()`, and path construction always returns a named
+collection across hop limits. Hop-constrained routes retain consistent lengths
+and hop counts. The `plot()` method for `dgraph` replaces the specialized
+colored-graph function, with reusable coordinates and explicit 3D projection.
+It also adds reusable synthetic
 geometry, embeddings and point sampling
 migrated from geosmooth, a symmetric-kNN parameter sequence, and two installed
 vignettes covering the complete API and synthetic geometry workflows.
@@ -34,7 +39,7 @@ The note reports `ivue` under "Suggests or Enhances not in mainstream
 repositories". ivue 0.1.0 is installed locally but was absent from the CRAN
 source index checked on 2026-09-14. This new optional dependency must be
 coordinated with the ivue release before submission.
-All 2,754 test expectations passed with no failures, warnings or skips.
+All 3,126 test expectations passed with no failures, warnings or skips.
 The installed self-containment script, examples, all three vignettes and their
 rebuilds, PDF manual and HTML validation passed. All declared dependencies
 were available locally. A separate forced-static render also passed.
@@ -43,11 +48,14 @@ were exercised in a WebGL browser over local HTTP; rotation, camera reset and
 examples from all six galleries were inspected. The unchanged galleries were
 rebuilt for this update. The updated function-guide tables, example results and
 section navigation were checked in generated HTML. A fresh visual browser
-inspection was blocked by the browser local-URL policy.
+inspection was blocked by the browser local-URL policy. The three new plotting
+examples embedded in the final guide were extracted as PNGs and visually
+inspected, and their numeric distance/path tables were verified. All 546 local
+HTML links passed validation.
 The standalone HTML embeds its assets and has no local/private URLs.
 
-The API catalog contains exactly one row for each of 113 explicit exports;
-all 38 registered S3 methods have documented help references. Installed help
+The API catalog contains exactly one row for each of 109 explicit exports;
+all 39 registered S3 methods have documented help references. Installed help
 resolves for every export and method. Both new guides and the existing graph
 workflow appear in the installed vignette index with HTML, Rmd and R sources.
 

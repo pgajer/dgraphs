@@ -11,7 +11,7 @@
 \method{summary}{path.graph}(object, ...)
 }
 \arguments{
-\item{x, object}{A \code{path.graph} object from \code{\link[=create.path.graph]{create.path.graph()}}.}
+\item{x, object}{A single \code{path.graph} member from \code{\link[=create.path.graph]{create.path.graph()}}.}
 
 \item{...}{Unused.}
 }
@@ -26,7 +26,7 @@ Inspect a Path Graph
 }
 \examples{
 chain <- create.graph("chain", n = 5)
-paths <- create.path.graph(graph.adjacency(chain), graph.lengths(chain), h = 2)
+paths <- create.path.graph(chain, h.values = 2)[[1L]]
 print(paths)
 summary(paths)
 }

@@ -43,7 +43,7 @@ test_that("DG6d graph.embedding returns stable layout-shaped matrices", {
     expect_true(all(is.finite(no.edges)))
 })
 
-test_that("DG6d plot2D.colored.graph prepares plotting on an off-screen device", {
+test_that("DG6d plot.dgraph prepares plotting on an off-screen device", {
     embedding <- matrix(c(0, 0, 1, 0, 1, 1, 0, 1), ncol = 2, byrow = TRUE)
     graph <- list(c(2L, 4L), c(1L, 3L), c(2L, 4L), c(1L, 3L))
     colors <- c(-1, 0, 1, 2)
@@ -51,12 +51,12 @@ test_that("DG6d plot2D.colored.graph prepares plotting on an off-screen device",
     grDevices::pdf(out)
     res <- tryCatch({
         oldpar <- graphics::par(c("mar", "xpd"))
-        value <- dgraphs::plot2D.colored.graph(embedding, graph, colors, vertex.size = 1.2, edge.alpha = 0.4,
+        value <- plot(dgraph(graph), coordinates = embedding, vertex.values = colors, vertex.size = 1.2, edge.alpha = 0.4,
             add.legend = FALSE)
         expect_equal(graphics::par(c("mar", "xpd")), oldpar)
         value
     }, finally = grDevices::dev.off())
-    expect_null(res)
+    expect_equal(res, embedding)
     expect_true(file.exists(out))
     expect_gt(file.info(out)$size, 0)
 })

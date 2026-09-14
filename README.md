@@ -40,6 +40,16 @@ Other types are `"empty"`, `"complete"`, `"cycle"`, `"complete_bipartite"`,
 `"star"` and `"random"`. Type-specific arguments are documented together in
 `help("create.graph")` and the function guide.
 
+Distances, stored routes, and plotting share the graph representation:
+
+```r
+D <- graph.geodesic.distances(chain, vertices = c(1, 10))
+paths <- create.path.graph(chain, h.values = c(2, 5))
+get.shortest.path(paths[["h_5"]], from = 10, to = 1)
+xy <- plot(chain, vertex.values = seq_len(graph.order(chain)))
+plot(chain, coordinates = xy, vertex.colors = "navy")
+```
+
 For an end-to-end introduction to graph construction, connectivity repair,
 parameter sequences, conversion, and diagnostics, run:
 

@@ -15,14 +15,14 @@ test_that("DG6c path distance helpers run self-hosted", {
 
 test_that("DG6c geodesic distance helpers run self-hosted", {
     X <- matrix(c(0, 0, 1, 0, 2, 0, 3, 0), ncol = 2, byrow = TRUE)
-    D <- dgraphs::estimate.geodesic.distances(X, k = 1, method = "mst")
+    D <- dgraphs::graph.geodesic.distances(points = X, graph.type = "mst")
     expect_equal(D, matrix(c(0, 1, 2, 3, 1, 0, 1, 2, 2, 1, 0, 1, 3, 2, 1, 0), nrow = 4, byrow = TRUE),
         ignore_attr = TRUE)
     gnn <- dgraphs::geodesic.knn(X, k = 2, k.graph = 1)
     expect_equal(gnn$nn.index[1, ], c(1L, 2L))
     expect_equal(gnn$nn.index[4, ], c(4L, 3L))
     graph <- dgraph(list(2L, 1L, 4L, 3L), rep(list(1), 4))
-    disconnected <- dgraphs::estimate.geodesic.distances(X, k = 1, graph = graph)
+    disconnected <- dgraphs::graph.geodesic.distances(graph = graph)
     expect_true(is.infinite(disconnected[1, 3]))
     grid <- as.matrix(expand.grid(seq(0, 1, length.out = 3), seq(0, 1, length.out = 3)))
     X2 <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0.5, 0.5), ncol = 2, byrow = TRUE)
@@ -35,14 +35,14 @@ test_that("DG6c geodesic distance helpers run self-hosted", {
 test_that("DG6c path graph series helpers run self-hosted", {
     adj <- list(c(2L), c(1L, 3L), c(2L, 4L), c(3L))
     weights <- list(c(1), c(1, 2), c(2, 3), c(3))
-    series <- dgraphs::create.path.graph.series(adj, weights, c(1, 2, 3))
+    series <- dgraphs::create.path.graph(dgraph(adj, weights), h.values = c(1, 2, 3))
     cmp <- dgraphs::compare.paths(series, from = 1, to = 4)
     expect_equal(cmp$path_exists, c(FALSE, FALSE, TRUE))
     expect_equal(cmp$path_length, c(NA, NA, 6))
     expect_equal(cmp$n_hops, c(NA_integer_, NA_integer_, 3L))
     expect_equal(cmp$path[[3]], c(1L, 2L, 3L, 4L))
     expect_equal(dgraphs::minh.limit(series, from = 1, to = 4), 3L)
-    expect_null(dgraphs::minh.limit(series, from = 4, to = 1))
+    expect_equal(dgraphs::minh.limit(series, from = 4, to = 1), 3L)
 })
 
 test_that("DG6c native-backed PLM graph helper runs self-hosted", {

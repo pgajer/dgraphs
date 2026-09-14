@@ -10,7 +10,8 @@ graph.embedding(
   transform = c("identity", "reciprocal"),
   dim = 2,
   method = c("fr", "kk"),
-  verbose = FALSE
+  verbose = FALSE,
+  stage = "final"
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ Kamada-Kawai uses them as distances.}
 \item{method}{Layout method, \code{"fr"} or \code{"kk"}.}
 
 \item{verbose}{Logical; print timing messages.}
+
+\item{stage}{Stored graph stage used for both topology and edge attributes.}
 }
 \value{
 Numeric layout matrix with one row per embedded vertex.

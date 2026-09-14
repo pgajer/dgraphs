@@ -28,6 +28,7 @@ elapsed.time <- function(start.time,
 #' @param dim Embedding dimension, either `2` or `3`.
 #' @param method Layout method, `"fr"` or `"kk"`.
 #' @param verbose Logical; print timing messages.
+#' @param stage Stored graph stage used for both topology and edge attributes.
 #'
 #' @return Numeric layout matrix with one row per embedded vertex.
 #'
@@ -39,15 +40,16 @@ elapsed.time <- function(start.time,
 #' @export
 graph.embedding <- function(graph, edge.attribute = NULL,
                             transform = c("identity", "reciprocal"),
-                            dim = 2, method = c("fr", "kk"), verbose = FALSE) {
+                            dim = 2, method = c("fr", "kk"), verbose = FALSE,
+                            stage = "final") {
     method <- match.arg(method)
     transform <- match.arg(transform)
     if (length(dim) != 1L || !dim %in% c(2, 3)) stop("dim must be 2 or 3.")
-    g <- as_igraph(graph)
+    g <- as_igraph(graph, stage)
     if (!graph.order(graph)) return(matrix(numeric(), 0L, dim))
     weights <- NULL
     if (!is.null(edge.attribute)) {
-        edges <- graph.edges(graph)
+        edges <- graph.edges(graph, stage)
         if (length(edge.attribute) != 1L || !edge.attribute %in% setdiff(names(edges), c("from", "to")))
             stop("Select a stored edge attribute, such as 'length' or 'conductance'.")
         weights <- edges[[edge.attribute]]
@@ -57,107 +59,6 @@ graph.embedding <- function(graph, edge.attribute = NULL,
     } else if (transform != "identity") stop("Select edge.attribute before transforming edge values.")
     if (method == "fr") igraph::layout_with_fr(g, dim = dim, weights = weights) else
         igraph::layout_with_kk(g, dim = dim, weights = weights)
-}
-
-#' Plot a Graph with Colored Vertices
-#'
-#' @param embedding Numeric `n x 2` matrix of vertex coordinates.
-#' @param adj.list Graph adjacency list.
-#' @param vertex.colors Numeric color value for each vertex.
-#' @param vertex.size Base graphics point size.
-#' @param edge.alpha Edge alpha in `[0, 1]`.
-#' @param color.palette Optional vector of colors.
-#' @param main Plot title.
-#' @param add.legend Logical; add color scale legend.
-#'
-#' @return Invisibly returns `NULL`; produces a plot as a side effect.
-#'
-#' @examples
-#' embedding <- rbind(c(0, 0), c(1, 0), c(1, 1), c(0, 1))
-#' graph <- create.graph("cycle", 4)
-#' plot2D.colored.graph(
-#'   embedding,
-#'   graph.adjacency(graph),
-#'   vertex.colors = 1:4,
-#'   add.legend = FALSE
-#' )
-#'
-#' @export
-plot2D.colored.graph <- function(embedding, adj.list, vertex.colors,
-                               vertex.size = 1,
-                               edge.alpha = 0.2,
-                               color.palette = NULL,
-                               main = "",
-                               add.legend = TRUE) {
-
-    if (is.null(color.palette)) {
-        cols <- grDevices::colorRampPalette(c("blue", "white", "red"))(100)
-        color.indices <- round((vertex.colors - min(vertex.colors)) /
-                             (max(vertex.colors) - min(vertex.colors)) * 99 + 1)
-        point.colors <- cols[color.indices]
-    } else {
-        cols <- color.palette
-        color.indices <- round((vertex.colors - min(vertex.colors)) /
-                             (max(vertex.colors) - min(vertex.colors)) * (length(cols) - 1) + 1)
-        point.colors <- cols[color.indices]
-    }
-
-    oldpar <- par(no.readonly = TRUE)
-    on.exit(par(oldpar), add = TRUE)
-
-    mar.right <- if(add.legend) 4 else 1
-    par(mar = c(1, 1, 2, mar.right))
-
-    plot(embedding[,1], embedding[,2],
-         type = "n",
-         xlab = "", ylab = "",
-         xaxt = "n", yaxt = "n",
-         main = main,
-         asp = 1)
-
-    edge.col <- grDevices::rgb(0, 0, 0, edge.alpha)
-
-    for(i in seq_along(adj.list)) {
-        if(length(adj.list[[i]]) > 0) {
-            segments(embedding[i,1], embedding[i,2],
-                    embedding[adj.list[[i]],1], embedding[adj.list[[i]],2],
-                    col = edge.col)
-        }
-    }
-
-    points(embedding[,1], embedding[,2],
-           pch = 19,
-           cex = vertex.size,
-           col = point.colors)
-
-    if(add.legend) {
-        legend.vals <- round(seq(min(vertex.colors), max(vertex.colors), length.out = 5), 2)
-        legend.cols <- cols[round(seq(1, length(cols), length.out = 5))]
-
-        par(xpd = TRUE)
-        legend.x <- par("usr")[2] * 1.02
-        legend.y <- mean(par("usr")[3:4])
-
-        gradient.bars <- length(cols)
-        bar.height <- (par("usr")[4] - par("usr")[3]) / gradient.bars
-
-        for(i in 1:gradient.bars) {
-            rect(legend.x,
-                 par("usr")[3] + (i-1) * bar.height,
-                 legend.x + graphics::strwidth("M"),
-                 par("usr")[3] + i * bar.height,
-                 col = cols[i],
-                 border = NA)
-        }
-
-        graphics::text(legend.x + graphics::strwidth("M") * 1.5,
-             seq(par("usr")[3], par("usr")[4], length.out = 5),
-             labels = legend.vals,
-             adj = 0,
-             cex = 0.8)
-    }
-
-    invisible(NULL)
 }
 
 #' Compute Graph Spectrum

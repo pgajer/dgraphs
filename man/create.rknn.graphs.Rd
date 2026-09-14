@@ -4,28 +4,17 @@
 \alias{create.rknn.graphs}
 \title{Compute Adaptive Radius-kNN Graphs Across k Values}
 \usage{
-create.rknn.graphs(
-  X,
-  kmin = NULL,
-  kmax = NULL,
-  ...,
-  k.values = NULL,
-  backend = c("auto", "cpp", "r")
-)
+create.rknn.graphs(X, k.values, ..., backend = c("auto", "cpp", "r"))
 }
 \arguments{
 \item{X}{Numeric matrix or data frame with observations in rows.}
 
-\item{kmin, kmax}{Optional integer scalars defining the inclusive k range.
-Required when \code{k.values} is \code{NULL}.}
+\item{k.values}{Strictly increasing integer vector, each between 1 and n - 1.
+Returned graphs follow this order.}
 
 \item{...}{Additional arguments forwarded to \code{create.rknn.graph()} with
 \code{type = "adaptive.radius"}. The arguments \code{type}, \code{k.scale}, and \code{radius}
 are reserved by this plural constructor.}
-
-\item{k.values}{Optional integer vector of k values to evaluate. When
-supplied, \code{k.values} is used instead of \code{kmin:kmax}, and the returned
-graph order follows the supplied vector.}
 
 \item{backend}{Character scalar. \code{"auto"} uses the batched C++ ANN backend
 when \code{radius.search = "ann"} and the scalar R loop when
@@ -42,7 +31,7 @@ component, and MST-repair counts.}
 \item{timing}{Present only when forwarded options request graph timing;
 contains backend-specific construction timing rows.}
 }
-Attributes include \code{kmin}, \code{kmax}, \code{k.values}, and \code{n_vertices}.
+Attributes include \code{k.values} and \code{n_vertices}.
 }
 \description{
 Creates a sequence of adaptive-radius graphs by varying the \code{k.scale}
@@ -53,14 +42,9 @@ to force the scalar loop for ANN parity checks.
 }
 \examples{
 X <- matrix(c(0, 1, 3, 4), ncol = 1)
-result <- create.rknn.graphs(
-  X,
-  kmin = 1,
-  kmax = 2,
-  radius.search = "all.pairs",
-  graph.detail = "minimal",
-  prune.method = "none"
-)
+result <- create.rknn.graphs(X, k.values = seq.int(1, 2), radius.search = "all.pairs",
+    graph.detail = "minimal",
+    prune.method = "none")
 names(result$graphs)
 result$k_statistics
 

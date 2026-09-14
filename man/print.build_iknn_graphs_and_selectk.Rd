@@ -21,7 +21,8 @@ Print method for build_iknn_graphs_and_selectk
 \examples{
 set.seed(1)
 X <- matrix(rnorm(60), ncol = 2)
-selected <- build.iknn.graphs.and.selectk(X, kmin = 2, kmax = 4,
-  method = "edit", n.cores = 1, verbose = FALSE)
+selected <- build.iknn.graphs.and.selectk(X, k.values = seq.int(2, 4),
+    method = "edit", n.cores = 1,
+    verbose = FALSE)
 print(selected)
 }

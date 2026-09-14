@@ -10,7 +10,9 @@ create.circular.graph(n)
 \item{n}{Number of vertices.}
 }
 \value{
-An undirected cycle graph adjacency list.
+A \code{dgraph} object. Use \code{\link[=graph.adjacency]{graph.adjacency()}}, \code{\link[=graph.lengths]{graph.lengths()}},
+\code{\link[=graph.edges]{graph.edges()}} and \code{\link[=graph.stages]{graph.stages()}} to inspect its stored graph stages.
+Construction and diagnostic information is stored in \code{metadata}.
 }
 \description{
 Create a Circular Graph

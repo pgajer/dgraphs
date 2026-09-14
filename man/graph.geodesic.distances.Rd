@@ -2,26 +2,34 @@
 % Please edit documentation in R/geodesic_distances.R
 \name{graph.geodesic.distances}
 \alias{graph.geodesic.distances}
-\title{Compute Graph Geodesic Distances from a Graph Object}
+\title{Compute Graph Geodesic Distances}
 \usage{
-graph.geodesic.distances(graph, vertices = NULL, stage = "final")
+graph.geodesic.distances(
+  graph,
+  vertices = NULL,
+  stage = "final",
+  distance = c("length", "hop")
+)
 }
 \arguments{
-\item{graph}{A supported graph object.}
+\item{graph}{A \code{dgraph} with finite nonnegative lengths.}
 
 \item{vertices}{Optional 1-based vertex subset.}
 
-\item{stage}{Graph lifecycle stage.}
+\item{stage}{Stored graph stage.}
+
+\item{distance}{\code{"length"} sums stored lengths (and errors if absent).
+\code{"hop"} explicitly counts edges instead.}
 }
 \value{
-A numeric matrix of shortest-path distances.
+A numeric matrix of shortest-path distances; unreachable pairs
+have infinite distance. A zero-length edge remains traversable.
 }
 \description{
-Compute Graph Geodesic Distances from a Graph Object
+Compute Graph Geodesic Distances
 }
 \examples{
-X <- cbind(seq(0, 1, length.out = 6), 0)
-graph <- create.mknn.graph(X, k = 2, connect.components = TRUE)
-graph.geodesic.distances(graph, vertices = c(1, 6))
-
+graph <- create.chain.graph(5)
+graph.geodesic.distances(graph, vertices = c(1, 5))
+graph.geodesic.distances(create.circular.graph(5), distance = "hop")
 }

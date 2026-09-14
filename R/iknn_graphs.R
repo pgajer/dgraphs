@@ -9,9 +9,8 @@
 #' @param X A numeric matrix (or object coercible to a numeric matrix) with rows
 #'     = observations and columns = features.
 #'
-#' @param kmin Integer \eqn{\ge 1}, the minimum k.
+#' @param k.values Strictly increasing integer vector of neighborhood sizes, each between 1 and n - 1.
 #'
-#' @param kmax Integer \eqn{> k_{\mathrm{min}}}, the maximum k.
 #'
 #' @param max.path.edge.ratio.deviation.thld Numeric in \eqn{[0, 0.2)}.
 #'     Geometric pruning removes an edge \eqn{(i,j)} when there exists an
@@ -115,28 +114,19 @@
 #' X <- matrix(rnorm(100 * 5), 100, 5)
 #'
 #' # Basic usage
-#' res1 <- create.iknn.graphs(
-#'   X, kmin = 3, kmax = 10, n.cores = 1,
-#'   compute.full = FALSE
-#' )
+#' res1 <- create.iknn.graphs(X, k.values = seq.int(3, 10), n.cores = 1, compute.full = FALSE)
 #'
 #' # With custom pruning parameters
-#' res2 <- create.iknn.graphs(
-#'   X, kmin = 3, kmax = 10,
-#'   max.path.edge.ratio.deviation.thld = 0.1,
-#'   path.edge.ratio.percentile = 0.5,
-#'   compute.full = TRUE,
-#'   n.cores = 1,
-#'   verbose = TRUE
-#' )
+#' res2 <- create.iknn.graphs(X, k.values = seq.int(3, 10),
+#'     max.path.edge.ratio.deviation.thld = 0.1,
+#'     path.edge.ratio.percentile = 0.5, compute.full = TRUE, n.cores = 1, verbose = TRUE)
 #'
 #' # View statistics for each k
 #' print(res2$k_statistics)
 #'
 #' @export
 create.iknn.graphs <- function(X,
-                               kmin,
-                               kmax,
+                               k.values,
                                max.path.edge.ratio.deviation.thld = 0.1,
                                path.edge.ratio.percentile = 0.5,
                                threshold.percentile = 0,
@@ -153,6 +143,9 @@ create.iknn.graphs <- function(X,
                                verbose = TRUE,
                                knn.cache.path = NULL,
                                knn.cache.mode = c("none", "read", "write", "readwrite")) {
+    k.values <- .validate.k.values(k.values, nrow(as.matrix(X)))
+    kmin <- min(k.values); kmax <- max(k.values)
+
 
     ## Coerce & basic checks
     if (!is.matrix(X)) {
@@ -354,8 +347,7 @@ create.iknn.graphs <- function(X,
         }
     }
 
-    attr(result, "kmin") <- kmin
-    attr(result, "kmax") <- kmax
+    attr(result, "k.values") <- k.values
     attr(result, "max_path_edge_ratio_deviation_thld") <- max.path.edge.ratio.deviation.thld
     attr(result, "path_edge_ratio_percentile") <- path.edge.ratio.percentile
     attr(result, "with.isize.pruning") <- with.isize.pruning
@@ -365,6 +357,32 @@ create.iknn.graphs <- function(X,
     attr(result, "knn.metric") <- knn.metric
     attr(result, "linf.tol") <- linf.tol
     if (!is.null(pca_info)) attr(result, "pca") <- pca_info
+    selected <- match(k.values, seq.int(kmin, kmax))
+    if (!is.null(result$k_statistics)) {
+        result$k_statistics <- result$k_statistics[selected, , drop = FALSE]
+        result$k_statistics[, "k"] <- k.values
+    }
+    if (!is.null(result$edge_pruning_stats)) {
+        result$edge_pruning_stats <- result$edge_pruning_stats[selected]
+        names(result$edge_pruning_stats) <- as.character(k.values)
+    }
+    for (field in c("geom_pruned_graphs", "isize_pruned_graphs")) if (!is.null(result[[field]])) {
+        result[[field]] <- result[[field]][selected]
+        names(result[[field]]) <- as.character(k.values)
+        for (idx in seq_along(result[[field]])) {
+            native <- result[[field]][[idx]]
+            if (is.null(native$adj_list)) {
+                native$adj_list <- native$pruned_adj_list
+                native$weight_list <- native$pruned_weight_list
+                native$isize_list <- native$pruned_isize_list
+            }
+            graph <- .dgraph.from.native(native, "IkNN")
+            graph$metadata$k <- k.values[idx]
+            graph$metadata$neighborhood <- .neighborhood.metadata(k.values[idx],
+                rep(k.values[idx], n), knn.metric)
+            result[[field]][[idx]] <- graph
+        }
+    }
     class(result) <- "iknn_graphs"
     result
 }
@@ -415,13 +433,8 @@ create.iknn.graphs <- function(X,
 #' x <- matrix(rnorm(1000), ncol = 5)
 #'
 #' # Generate intersection kNN graphs
-#' iknn.res <- create.iknn.graphs(
-#'   x,
-#'   kmin = 3,
-#'   kmax = 10,
-#'   n.cores = 1,
-#'   with.isize.pruning = TRUE
-#' )
+#' iknn.res <- create.iknn.graphs(x, k.values = seq.int(3, 10), n.cores = 1,
+#'     with.isize.pruning = TRUE)
 #'
 #' # Summarize the geometrically pruned graphs
 #' summary(iknn.res)
@@ -457,16 +470,16 @@ summary.iknn_graphs <- function(object,
     }
 
     ## Extract relevant information
-    kmin <- attr(object, "kmin")
-    kmax <- attr(object, "kmax")
+    kmin <- min(attr(object, "k.values"))
+    kmax <- max(attr(object, "k.values"))
     max_path_edge_ratio_deviation_thld <- attr(object, "max_path_edge_ratio_deviation_thld")
     path_edge_ratio_percentile <- attr(object, "path_edge_ratio_percentile")
 
     ## Get number of vertices (same for all graphs)
-    n_vertices <- length(graphs_to_use[[1]]$adj_list)
+    n_vertices <- length(graph.adjacency(graphs_to_use[[1]]))
 
     ## Initialize table of statistics
-    k_values <- kmin:kmax
+    k_values <- attr(object, "k.values")
     n_graphs <- length(k_values)
     stats_table <- data.frame(
         idx = seq_along(k_values),
@@ -483,8 +496,8 @@ summary.iknn_graphs <- function(object,
     ## Calculate statistics for each graph
     for (i in 1:n_graphs) {
         graph <- graphs_to_use[[i]]
-        adj_list <- graph$adj_list
-        weight_list <- graph$weight_list
+        adj_list <- graph.adjacency(graph)
+        weight_list <- graph.lengths(graph)
 
         ## Calculate number of edges (sum of adjacency list lengths divided by 2 because each edge is counted twice)
         edge_count <- sum(sapply(adj_list, length)) / 2
@@ -506,7 +519,7 @@ summary.iknn_graphs <- function(object,
         sparsity <- 1 - density
 
         ## Number of connected components
-        n.ccomp <- length(table(graph.connected.components(adj_list)))
+        n.ccomp <- length(table(.graph.components(adj_list)$component_id))
 
         ## Store statistics
         stats_table$edges[i] <- edge_count

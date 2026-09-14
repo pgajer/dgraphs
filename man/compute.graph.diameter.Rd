@@ -4,12 +4,12 @@
 \alias{compute.graph.diameter}
 \title{Compute a Weighted Graph Diameter}
 \usage{
-compute.graph.diameter(adj.list, weight.list)
+compute.graph.diameter(graph, stage = "final")
 }
 \arguments{
-\item{adj.list}{Adjacency list.}
+\item{graph}{A \code{dgraph} with stored lengths.}
 
-\item{weight.list}{Edge-length list matching \code{adj.list}.}
+\item{stage}{Stored graph stage.}
 }
 \value{
 A list containing the diameter and the farthest path details.
@@ -20,6 +20,6 @@ Compute a Weighted Graph Diameter
 \examples{
 graph <- list(2L, c(1L, 3L), 2L)
 weights <- list(1, c(1, 2), 2)
-compute.graph.diameter(graph, weights)$diameter
+compute.graph.diameter(dgraph(graph, weights))$diameter
 
 }

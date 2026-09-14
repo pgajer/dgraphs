@@ -4,12 +4,12 @@
 \alias{convert.adjacency.to.edge.matrix}
 \title{Convert an Adjacency List to an Edge Matrix}
 \usage{
-convert.adjacency.to.edge.matrix(adj.list, weights.list = NULL)
+convert.adjacency.to.edge.matrix(adj.list, weight.list = NULL)
 }
 \arguments{
 \item{adj.list}{A 1-based adjacency list.}
 
-\item{weights.list}{Optional edge-weight list aligned with \code{adj.list}.}
+\item{weight.list}{Optional edge-weight list aligned with \code{adj.list}.}
 }
 \value{
 A list with \code{edge.matrix} and \code{weights}.

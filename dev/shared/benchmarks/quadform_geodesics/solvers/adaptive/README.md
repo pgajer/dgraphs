@@ -1,7 +1,8 @@
 # Adaptive refinement implementation
 
 Implements the search family in the revised
-`dev/shared/fixtures/quadform_geodesics/adaptive_quadform_geodesic_refinement.tex`,
+`dgraphs_manuscripts/reports/quadform_geodesics/adaptive_quadform_geodesic_refinement.tex`
+in the sibling private manuscript repository,
 Sections 8.1–8.7. All numerical settings remain provisional. This is an
 implementation awaiting shared-runtime alignment and independent implementation
 audit, not a protocol-compliance or benchmark result.

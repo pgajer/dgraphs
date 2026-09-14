@@ -8,7 +8,7 @@
 #' @param X A numeric matrix or data frame where each row represents a data point
 #'   and each column represents a feature/dimension.
 #' @param k A positive integer specifying the number of nearest neighbors to
-#'   consider. Must be at least 2.
+#'   consider, excluding self; require `1 <= k < n`.
 #' @param prune.method Character scalar. `"none"` disables geometric pruning.
 #'   `"local.geodesic"` applies the experimental local geometric pruning stage
 #'   before optional MST connectivity repair. `"global.geodesic.ratio"` applies
@@ -40,30 +40,9 @@
 #' @param bridge.growth Numeric scalar greater than 1. Multiplicative growth
 #'   factor for ANN bridge neighborhoods.
 #'
-#' @return A list with class "mknn_graph" containing:
-#'   \describe{
-#'     \item{adj_list}{A list where element i contains the indices of vertices
-#'       connected to vertex i by an edge in the final graph after optional MST
-#'       component repair.}
-#'     \item{weight_list}{A list where element i contains the distances between
-#'       vertex i and its connected neighbors in the final graph (in the same
-#'       order as \code{adj_list[[i]]}).}
-#'     \item{raw_adj_list, raw_weight_list}{The native mutual-kNN graph before
-#'       pruning and before optional MST component repair.}
-#'     \item{pruned_adj_list, pruned_weight_list}{The graph after optional local
-#'       geometric pruning and before optional MST component repair. If pruning
-#'       is disabled, these fields are identical to the raw graph.}
-#'     \item{raw_repaired_adj_list, raw_repaired_weight_list}{The native mutual
-#'       kNN graph after MST component repair.}
-#'     \item{pruned_repaired_adj_list, pruned_repaired_weight_list}{The
-#'       prune-first branch after MST component repair.}
-#'     \item{repaired_pruned_adj_list, repaired_pruned_weight_list}{The
-#'       repair-first branch after applying local geometric pruning to the
-#'       repaired raw graph.}
-#'     \item{n_vertices}{The number of vertices in the graph.}
-#'     \item{n_edges}{The total number of edges in the graph.}
-#'     \item{k}{The k value used to construct the graph.}
-#'   }
+#' @return A `dgraph` object. Use [graph.adjacency()], [graph.lengths()],
+#'   [graph.edges()] and [graph.stages()] to inspect its stored graph stages.
+#'   Construction and diagnostic information is stored in `metadata`.
 #'
 #' @details
 #' The mutual k-nearest neighbor graph is a symmetric graph where an edge between
@@ -76,21 +55,16 @@
 #' This mutual relationship ensures that the resulting graph is undirected and
 #' typically sparser than a standard k-nearest neighbor graph.
 #'
-#' The final graph is always stored in \code{adj_list}/\code{weight_list}.
-#' Lifecycle diagnostic fields follow the same convention as the other graph
-#' constructors: \code{raw_*} is before pruning and MST repair, and
-#' \code{pruned_*} is after pruning but before MST repair.
-#' The \code{raw_repaired_*}, \code{pruned_repaired_*}, and
-#' \code{repaired_pruned_*} branches allow one constructor call to compare
-#' native, prune-first, and repair-first graph geodesic geometries.
+#' Use graph accessors for the final graph and `graph.stages()` to list
+#' stored raw, pruned and repaired stages. Construction details are in `metadata`.
 #'
 #' @examples
 #' set.seed(123)
 #' X <- matrix(rnorm(60), ncol = 2)
 #' graph <- create.mknn.graph(X, k = 4)
-#' graph$n_vertices
-#' graph$n_edges
-#' graph$adj_list[[1]]
+#' graph.order(graph)
+#' nrow(graph.edges(graph))
+#' graph.adjacency(graph)[[1]]
 #'
 #' @seealso
 #' \code{\link{create.mknn.graphs}} for creating multiple graphs with different k values,
@@ -115,9 +89,8 @@ create.mknn.graph <- function(X,
     stop("'k' must be a single numeric value.", call. = FALSE)
   }
 
-  k <- as.integer(k)
-  if (k < 2) {
-    stop("'k' must be at least 2.", call. = FALSE)
+  if (!is.finite(k) || k != floor(k) || k < 1) {
+    stop("'k' must be a positive integer.", call. = FALSE)
   }
 
   # Validate X
@@ -171,13 +144,13 @@ create.mknn.graph <- function(X,
                     X,
                     as.integer(k + 1))
   raw.adj.list <- result$adj_list
-  raw.weight.list <- result$weight_list
+  raw.length.list <- result$weight_list
 
   if (!identical(prune.method, "none")) {
     pruning <- .prune.graph.by.method(
       X = X,
       adj.list = result$adj_list,
-      weight.list = result$weight_list,
+      length.list = result$weight_list,
       k = k,
       prune.method = prune.method,
       max.path.edge.ratio.deviation.thld =
@@ -202,13 +175,13 @@ create.mknn.graph <- function(X,
     )
   }
   pruned.adj.list <- result$adj_list
-  pruned.weight.list <- result$weight_list
+  pruned.length.list <- result$weight_list
   n.edges.before.mst <- pruning$n_edges_after_pruning
 
   bridge <- .augment.graph.with.component.mst(
     X = X,
     adj.list = result$adj_list,
-    weight.list = result$weight_list,
+    length.list = result$weight_list,
     k = k,
     connect.components = connect.components,
     connect.method = connect.method,
@@ -223,17 +196,17 @@ create.mknn.graph <- function(X,
   result$n_vertices <- n
   result$n_edges <- sum(sapply(result$adj_list, length)) / 2  # Divide by 2 for undirected graph
   result$raw_adj_list <- raw.adj.list
-  result$raw_weight_list <- raw.weight.list
+  result$raw_weight_list <- raw.length.list
   result$pruned_adj_list <- pruned.adj.list
-  result$pruned_weight_list <- pruned.weight.list
+  result$pruned_weight_list <- pruned.length.list
   result <- .add.graph.lifecycle.branches(
     result = result,
     X = X,
     k = k,
     raw.adj.list = result$raw_adj_list,
-    raw.weight.list = result$raw_weight_list,
+    raw.length.list = result$raw_weight_list,
     pruned.adj.list = result$pruned_adj_list,
-    pruned.weight.list = result$pruned_weight_list,
+    pruned.length.list = result$pruned_weight_list,
     connect.method = connect.method,
     bridge.k = bridge.controls$bridge.k,
     bridge.k.max = bridge.controls$bridge.k.max,
@@ -276,7 +249,7 @@ create.mknn.graph <- function(X,
   # Set class
   class(result) <- c("mknn_graph", "list")
 
-  return(result)
+  return(.dgraph.from.native(result))
 }
 
 
@@ -289,11 +262,10 @@ create.mknn.graph <- function(X,
 #'
 #' @param X A numeric matrix where rows represent data points and columns represent
 #'   features. Data frames will be converted to matrices.
-#' @param kmin Minimum k value to consider (positive integer, at least 2).
-#' @param kmax Maximum k value to consider (must be >= kmin).
+#' @param k.values Strictly increasing integer vector of neighborhood sizes, each between 1 and n - 1.
 #' @param max.path.edge.ratio.thld Maximum acceptable ratio of alternative path
-#'   length to direct edge length for pruning. Edges with alternative paths having
-#'   ratio <= this value will be pruned. Default is 1.2. Set to 0 or negative to
+#'   length to direct edge length for pruning; zero disables pruning. Edges with alternative paths having
+#'   ratio <= this value will be pruned. Default is 1.2. Set to 0 to
 #'   disable pruning.
 #' @param path.edge.ratio.percentile Percentile threshold (0.0-1.0) for edge
 #'   lengths to consider for pruning. Only edges with length greater than this
@@ -322,7 +294,7 @@ create.mknn.graph <- function(X,
 #'
 #'   The returned object also has the following attributes:
 #'   \itemize{
-#'     \item kmin, kmax: The k range used
+#'     \item k.values: The requested neighborhood sizes
 #'     \item max.path.edge.ratio.thld: The pruning threshold used
 #'     \item path.edge.ratio.percentile: The percentile threshold used
 #'     \item pca: If PCA was performed, contains dimensionality reduction details
@@ -349,15 +321,11 @@ create.mknn.graph <- function(X,
 #' @examples
 #' set.seed(123)
 #' X <- matrix(rnorm(80), ncol = 2)
-#' result <- create.mknn.graphs(
-#'   X, kmin = 3, kmax = 4, compute.full = TRUE, verbose = FALSE
-#' )
+#' result <- create.mknn.graphs(X, k.values = seq.int(3, 4), compute.full = TRUE, verbose = FALSE)
 #' result$k_statistics
 #'
 #' X.high <- matrix(rnorm(120), nrow = 20, ncol = 6)
-#' result.pca <- create.mknn.graphs(
-#'   X.high, kmin = 2, kmax = 3, pca.dim = 3, verbose = FALSE
-#' )
+#' result.pca <- create.mknn.graphs(X.high, k.values = seq.int(2, 3), pca.dim = 3, verbose = FALSE)
 #' attr(result.pca, "pca")$n_components
 #'
 #' @seealso
@@ -366,14 +334,16 @@ create.mknn.graph <- function(X,
 #'
 #' @export
 create.mknn.graphs <- function(X,
-                              kmin,
-                              kmax,
+                              k.values,
                               max.path.edge.ratio.thld = 1.2,
                               path.edge.ratio.percentile = 0.5,
                               compute.full = FALSE,
                               pca.dim = 100,
                               variance.explained = 0.99,
                               verbose = FALSE) {
+    k.values <- .validate.k.values(k.values, nrow(as.matrix(X)))
+    kmin <- min(k.values); kmax <- max(k.values)
+
 
     ## Convert data frame to matrix if necessary
     if (is.data.frame(X)) {
@@ -394,8 +364,8 @@ create.mknn.graphs <- function(X,
     }
 
     ## Validate k parameters
-    if (!is.numeric(kmin) || length(kmin) != 1 || kmin < 2) {
-        stop("'kmin' must be a single integer >= 2.", call. = FALSE)
+    if (!is.numeric(kmin) || length(kmin) != 1 || kmin < 1) {
+        stop("'k.values' must contain positive integers.", call. = FALSE)
     }
     kmin <- as.integer(kmin)
 
@@ -412,8 +382,9 @@ create.mknn.graphs <- function(X,
     }
 
     ## Validate other parameters
-    if (!is.numeric(max.path.edge.ratio.thld) || length(max.path.edge.ratio.thld) != 1) {
-        stop("'max.path.edge.ratio.thld' must be a single numeric value.", call. = FALSE)
+    if (!is.numeric(max.path.edge.ratio.thld) || length(max.path.edge.ratio.thld) != 1 ||
+        !is.finite(max.path.edge.ratio.thld) || max.path.edge.ratio.thld < 0) {
+        stop("'max.path.edge.ratio.thld' must be a finite nonnegative scalar.", call. = FALSE)
     }
 
     if (!is.numeric(path.edge.ratio.percentile) || length(path.edge.ratio.percentile) != 1 ||
@@ -484,7 +455,7 @@ create.mknn.graphs <- function(X,
                     X,
                     as.integer(kmin + 1),
                     as.integer(kmax + 1),
-                    as.double(max.path.edge.ratio.thld + 1.0),
+                    as.double(max.path.edge.ratio.thld),
                     as.double(path.edge.ratio.percentile),
                     as.logical(compute.full),
                     as.logical(verbose))
@@ -511,8 +482,7 @@ create.mknn.graphs <- function(X,
     }
 
     ## Add attributes
-    attr(result, "kmin") <- kmin
-    attr(result, "kmax") <- kmax
+    attr(result, "k.values") <- k.values
     attr(result, "max.path.edge.ratio.thld") <- max.path.edge.ratio.thld
     attr(result, "path.edge.ratio.percentile") <- path.edge.ratio.percentile
     attr(result, "n_vertices") <- n
@@ -521,6 +491,32 @@ create.mknn.graphs <- function(X,
         attr(result, "pca") <- pca_info
     }
 
+    selected <- match(k.values, seq.int(kmin, kmax))
+    if (!is.null(result$k_statistics)) {
+        result$k_statistics <- result$k_statistics[selected, , drop = FALSE]
+        result$k_statistics[, "k"] <- k.values
+    }
+    if (!is.null(result$edge_pruning_stats)) {
+        result$edge_pruning_stats <- result$edge_pruning_stats[selected]
+        names(result$edge_pruning_stats) <- as.character(k.values)
+    }
+    for (field in "pruned_graphs") if (!is.null(result[[field]])) {
+        result[[field]] <- result[[field]][selected]
+        names(result[[field]]) <- as.character(k.values)
+        for (idx in seq_along(result[[field]])) {
+            native <- result[[field]][[idx]]
+            if (is.null(native$adj_list)) {
+                native$adj_list <- native$pruned_adj_list
+                native$weight_list <- native$pruned_weight_list
+                native$isize_list <- native$pruned_isize_list
+            }
+            graph <- .dgraph.from.native(native, "mknn_graph")
+            graph$metadata$k <- k.values[idx]
+            graph$metadata$neighborhood <- .neighborhood.metadata(k.values[idx],
+                rep(k.values[idx], n), "euclidean")
+            result[[field]][[idx]] <- graph
+        }
+    }
     class(result) <- "mknn_graphs"
 
     return(result)
@@ -566,29 +562,9 @@ create.mknn.graphs <- function(X,
 #' has been applied.
 #'
 #' @examples
-#' mknn_result <- list(
-#'   pruned_graphs = list(
-#'     list(adj_list = list(c(2L), c(1L, 3L), c(2L))),
-#'     list(adj_list = list(c(2L, 3L), c(1L, 3L), c(1L, 2L)))
-#'   ),
-#'   k_statistics = data.frame(
-#'     k = 2:3,
-#'     n_edges = c(2L, 3L),
-#'     n_edges_pruned = c(2L, 3L),
-#'     n_removed = c(0L, 0L),
-#'     reduction_ratio = c(0, 0)
-#'   )
-#' )
-#' attr(mknn_result, "kmin") <- 2L
-#' attr(mknn_result, "kmax") <- 3L
-#' attr(mknn_result, "n_vertices") <- 3L
-#' attr(mknn_result, "max.path.edge.ratio.thld") <- 1.2
-#' class(mknn_result) <- "mknn_graphs"
-#'
-#' stats <- summary(mknn_result)
-#' plot(stats$k, stats$mean_degree, type = "b",
-#'      xlab = "k", ylab = "Mean Degree")
-#'
+#' graphs <- create.mknn.graphs(matrix(c(0, 1, 3, 6, 9), ncol = 1),
+#'                               k.values = 1:3, compute.full = TRUE, verbose = FALSE)
+#' summary(graphs)
 #' @method summary mknn_graphs
 #' @export
 summary.mknn_graphs <- function(object, ...) {
@@ -605,14 +581,14 @@ summary.mknn_graphs <- function(object, ...) {
   }
 
   # Extract attributes
-  kmin <- attr(object, "kmin")
-  kmax <- attr(object, "kmax")
+  kmin <- min(attr(object, "k.values"))
+  kmax <- max(attr(object, "k.values"))
   n_vertices <- attr(object, "n_vertices")
   pruning_threshold <- attr(object, "max.path.edge.ratio.thld")
   pca_info <- attr(object, "pca")
 
   # Initialize statistics table
-  k_values <- kmin:kmax
+  k_values <- attr(object, "k.values")
   n_graphs <- length(k_values)
 
   stats_table <- data.frame(
@@ -633,7 +609,7 @@ summary.mknn_graphs <- function(object, ...) {
     graph <- object$pruned_graphs[[i]]
 
     # Get adjacency list
-    adj_list <- graph$adj_list
+    adj_list <- graph.adjacency(graph)
 
     # Number of edges (divide by 2 for undirected graph)
     n_edges <- sum(sapply(adj_list, length)) / 2
@@ -738,25 +714,18 @@ summary.mknn_graphs <- function(object, ...) {
 #' @return Invisibly returns the input object.
 #'
 #' @examples
-#' graph <- list(
-#'   n_vertices = 3L,
-#'   n_edges = 2L,
-#'   k = 2L,
-#'   adj_list = list(c(2L), c(1L, 3L), c(2L))
-#' )
-#' class(graph) <- c("mknn_graph", "list")
-#'
+#' graph <- create.mknn.graph(matrix(c(0, 1, 3, 6), ncol = 1), k = 2)
 #' print(graph)
 #' @method print mknn_graph
 #' @export
 print.mknn_graph <- function(x, ...) {
   cat("Mutual k-Nearest Neighbor Graph\n")
   cat("-------------------------------\n")
-  cat(sprintf("Number of vertices: %d\n", x$n_vertices))
-  cat(sprintf("Number of edges: %d\n", x$n_edges))
-  cat(sprintf("k value: %d\n", x$k))
+  cat(sprintf("Number of vertices: %d\n", graph.order(x)))
+  cat(sprintf("Number of edges: %d\n", nrow(graph.edges(x))))
+  cat(sprintf("k value: %d\n", x$metadata$k))
 
-  degrees <- sapply(x$adj_list, length)
+  degrees <- sapply(graph.adjacency(x), length)
   cat(sprintf("Mean degree: %.2f\n", mean(degrees)))
   cat(sprintf("Degree range: [%d, %d]\n", min(degrees), max(degrees)))
 
@@ -775,29 +744,21 @@ print.mknn_graph <- function(x, ...) {
 #' @return Invisibly returns the input object.
 #'
 #' @examples
-#' graphs <- list(
-#'   k_statistics = data.frame(
-#'     k = 2:4,
-#'     n_edges_pruned = c(2L, 3L, 3L)
-#'   )
-#' )
-#' attr(graphs, "kmin") <- 2L
-#' attr(graphs, "kmax") <- 4L
-#' attr(graphs, "n_vertices") <- 3L
-#' class(graphs) <- "mknn_graphs"
-#'
+#' graphs <- create.mknn.graphs(matrix(c(0, 1, 3, 6, 9), ncol = 1),
+#'                               k.values = 1:3, verbose = FALSE)
 #' print(graphs)
 #' @method print mknn_graphs
 #' @export
 print.mknn_graphs <- function(x, ...) {
-  kmin <- attr(x, "kmin")
-  kmax <- attr(x, "kmax")
+  k.values <- attr(x, "k.values")
+  kmin <- min(k.values)
+  kmax <- max(k.values)
   n_vertices <- attr(x, "n_vertices")
 
   cat("Collection of Mutual k-NN Graphs\n")
   cat("--------------------------------\n")
   cat(sprintf("Number of vertices: %d\n", n_vertices))
-  cat(sprintf("k range: %d to %d (%d graphs)\n", kmin, kmax, kmax - kmin + 1))
+  cat(sprintf("k range: %d to %d (%d graphs)\n", kmin, kmax, length(k.values)))
 
   if (!is.null(attr(x, "pca"))) {
     pca_info <- attr(x, "pca")

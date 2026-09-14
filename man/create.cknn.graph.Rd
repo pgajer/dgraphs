@@ -108,6 +108,6 @@ benchmarks.
 }
 \examples{
 X <- matrix(c(0, 1, 3), ncol = 1)
-create.cknn.graph(X, k.scale = 1, delta = 1)$edge_matrix
+as.matrix(graph.edges(create.cknn.graph(X, k.scale = 1, delta = 1))[, c("from", "to")])
 
 }

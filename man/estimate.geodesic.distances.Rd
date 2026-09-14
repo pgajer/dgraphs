@@ -11,7 +11,7 @@ estimate.geodesic.distances(points, k = 5, graph = NULL, method = "knn.graph")
 
 \item{k}{Positive integer k for k-NN graph construction.}
 
-\item{graph}{Optional igraph object to use directly.}
+\item{graph}{Optional \code{dgraph} with stored lengths to use directly.}
 
 \item{method}{Graph construction method, \code{"knn.graph"} or \code{"mst"}.}
 }

@@ -2,40 +2,27 @@
 % Please edit documentation in R/graph_utils.R
 \name{create.subgraph}
 \alias{create.subgraph}
-\title{Create a Subgraph from a Graph Object}
+\title{Extract an Induced Subgraph}
 \usage{
-create.subgraph(
-  S.graph,
-  id.indices = NULL,
-  ids = NULL,
-  S = NULL,
-  use.sequential.indices = FALSE
-)
+create.subgraph(graph, vertices, stage = "final")
 }
 \arguments{
-\item{S.graph}{List containing \code{adj_list} and \code{dist_list}.}
+\item{graph}{A \code{dgraph}.}
 
-\item{id.indices}{Optional vertex indices to keep.}
+\item{vertices}{Unique vertex indices, in the desired output order.}
 
-\item{ids}{Optional vertex IDs to keep.}
-
-\item{S}{Data frame or matrix whose row names map \code{ids} to vertex indices.}
-
-\item{use.sequential.indices}{Logical; if \code{TRUE}, renumber kept vertices
-from 1 to \code{length(id.indices)}.}
+\item{stage}{Stored stage to extract.}
 }
 \value{
-A list with subgraph \code{adj_list} and \code{dist_list}.
+A \code{dgraph} with compact indices and aligned lengths and attributes.
+\code{metadata$original.vertices} maps its vertices back to the original graph.
 }
 \description{
-Create a Subgraph from a Graph Object
+Extract an Induced Subgraph
 }
 \examples{
-graph <- list(
-  adj_list = list(c(2L, 3L), c(1L, 3L), c(1L, 2L)),
-  dist_list = list(c(1, 2), c(1, 1), c(2, 1))
-)
-create.subgraph(graph, id.indices = c(1, 3),
-                use.sequential.indices = TRUE)
-
+graph <- create.chain.graph(4)
+sub <- create.subgraph(graph, vertices = c(4, 3))
+graph.edges(sub)
+sub$metadata$original.vertices
 }

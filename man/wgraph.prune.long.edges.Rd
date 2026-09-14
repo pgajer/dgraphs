@@ -5,17 +5,17 @@
 \title{Prune Long Edges in a Weighted Graph}
 \usage{
 wgraph.prune.long.edges(
-  graph,
-  edge.lengths,
+  adj.list,
+  length.list,
   alt.path.len.ratio.thld,
   use.total.length.constraint = TRUE,
   verbose = FALSE
 )
 }
 \arguments{
-\item{graph}{A graph adjacency list.}
+\item{adj.list}{A graph adjacency list.}
 
-\item{edge.lengths}{Edge-length list matching \code{graph}.}
+\item{length.list}{Edge-length list matching \code{adj.list}.}
 
 \item{alt.path.len.ratio.thld}{Alternative-path threshold.}
 
@@ -26,7 +26,9 @@ alternative path to be shorter than the original edge times the threshold.}
 \item{verbose}{Logical progress flag.}
 }
 \value{
-A list with pruned adjacency and edge-length lists.
+A \code{dgraph} object. Use \code{\link[=graph.adjacency]{graph.adjacency()}}, \code{\link[=graph.lengths]{graph.lengths()}},
+\code{\link[=graph.edges]{graph.edges()}} and \code{\link[=graph.stages]{graph.stages()}} to inspect its stored graph stages.
+Construction and diagnostic information is stored in \code{metadata}.
 }
 \description{
 Prune Long Edges in a Weighted Graph
@@ -34,10 +36,6 @@ Prune Long Edges in a Weighted Graph
 \examples{
 graph <- list(c(2L, 3L), c(1L, 3L), c(1L, 2L))
 lengths <- list(c(1, 2), c(1, 1), c(2, 1))
-wgraph.prune.long.edges(
-  graph,
-  lengths,
-  alt.path.len.ratio.thld = 1.1
-)$adj_list
+graph.adjacency(wgraph.prune.long.edges(graph, lengths, alt.path.len.ratio.thld = 1.1))
 
 }

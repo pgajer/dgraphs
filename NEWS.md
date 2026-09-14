@@ -1,4 +1,28 @@
-# dgraphs 0.2.1.9000
+# dgraphs 0.3.0
+
+* Breaking graph API: every constructor returns `dgraph`; use `graph.adjacency`,
+  `graph.lengths`, `graph.edges`, `graph.order`, `graph.stages` and
+  `graph.edge.attribute`. Raw metric inputs use `adj.list` and `length.list`.
+  Old graph fields, conversion overloads, `get.edge.weights` and
+  `extract.edge.lengths` are removed without compatibility wrappers.
+* Graph sequences use increasing `k.values`. Coordinate, geodesic and iterated
+  intersection covers contain self plus k other vertices, with distance ties
+  resolved by vertex index. Undersized components require explicit truncation.
+  Neighbor caches use format 3 and validate working coordinates and row order.
+* Mutual-neighbor sequences now use the documented path/edge ratio directly;
+  zero disables pruning. The former unintended addition of one is removed.
+* Graph layouts select edge attributes and transformations explicitly. Nerve
+  overlaps are attributes rather than lengths. Path results contain `$graph`;
+  path series compute each requested hop limit independently.
+
+- Expand quadratic-geometry examples with interactive ivue galleries, labeled
+  x/y/z axes, all specialized sampling modes, frames, dimensions and metric
+  diagnostics. Optional visualization dependencies have static fallbacks.
+
+- Add installed function-guide and synthetic-geometry vignettes, with a
+  task-oriented catalog, method workflows, reproducible examples and explicit
+  geometry/sampling limits. Link all guides from the package overview and
+  README; add automated export and method-help coverage checks.
 
 - Fix one-point box sampling and multiple-height embeddings to retain matrix
   dimensions. These inputs previously failed in inherited geometry kernels.
@@ -14,7 +38,7 @@
   fixture/reference tools into this repository. Geometry Lab uses shared
   versioned sampling while retaining its existing point identities.
 
-# dgraphs 0.2.1
+## Graph construction and maintenance changes carried forward
 
 * Adds `create.sknn.graphs()` for constructing a sequence of symmetric-kNN
   graphs from one cached ANN search. `create.sknn.graph()` now also accepts a

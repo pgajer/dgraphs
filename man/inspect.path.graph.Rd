@@ -26,7 +26,7 @@ Inspect a Path Graph
 }
 \examples{
 chain <- create.chain.graph(n.vertices = 5)
-paths <- create.path.graph(chain$adj.list, chain$edge.lengths, h = 2)
+paths <- create.path.graph(graph.adjacency(chain), graph.lengths(chain), h = 2)
 print(paths)
 summary(paths)
 }

@@ -1,7 +1,7 @@
 #' Detect Local Extrema in a Graph
 #'
 #' @param adj.list Graph adjacency list using 1-based vertex indices.
-#' @param weight.list Edge-length list aligned with `adj.list`.
+#' @param length.list Edge-length list aligned with `adj.list`.
 #' @param y Numeric vertex function values.
 #' @param max.radius Maximum graph-geodesic radius for neighborhoods.
 #' @param min.neighborhood.size Minimum neighborhood size required.
@@ -19,25 +19,20 @@
 #'
 #' @examples
 #' chain <- create.chain.graph(n.vertices = 5)
-#' extrema <- detect.local.extrema(
-#'   chain$adj.list,
-#'   chain$edge.lengths,
-#'   y = c(1, 3, 1, 2, 0),
-#'   max.radius = 1,
-#'   min.neighborhood.size = 2
-#' )
+#' extrema <- detect.local.extrema(graph.adjacency(chain), graph.lengths(chain), y = c(1, 3, 1, 2,
+#'     0), max.radius = 1, min.neighborhood.size = 2)
 #' extrema$vertices
 #'
 #' @export
 detect.local.extrema <- function(adj.list,
-                                 weight.list,
+                                 length.list,
                                  y,
                                  max.radius,
                                  min.neighborhood.size,
                                  detect.maxima = TRUE,
                                  custom.prefix = NULL) {
     adj.list <- .dgraphs.validate.adj.list(adj.list)
-    weight.list <- .dgraphs.validate.weight.list(adj.list, weight.list)
+    length.list <- .dgraphs.validate.length.list(adj.list, length.list)
     n <- length(adj.list)
     if (!is.numeric(y) || length(y) != n) {
         stop("'y' must be a numeric vector with length equal to the graph size.",
@@ -62,7 +57,7 @@ detect.local.extrema <- function(adj.list,
              call. = FALSE)
     }
 
-    graph.obj <- .dgraphs.weighted.igraph(adj.list, weight.list)
+    graph.obj <- .dgraphs.weighted.igraph(adj.list, length.list)
     vertices <- integer(0)
     values <- numeric(0)
     radii <- numeric(0)
@@ -121,8 +116,8 @@ detect.local.extrema <- function(adj.list,
     result
 }
 
-.dgraphs.weighted.igraph <- function(adj.list, weight.list) {
-    edge.obj <- convert.adjacency.to.edge.matrix(adj.list, weight.list)
+.dgraphs.weighted.igraph <- function(adj.list, length.list) {
+    edge.obj <- convert.adjacency.to.edge.matrix(adj.list, length.list)
     if (nrow(edge.obj$edge.matrix) == 0L) {
         return(igraph::make_empty_graph(n = length(adj.list), directed = FALSE))
     }
@@ -148,8 +143,8 @@ detect.local.extrema <- function(adj.list,
 #'   summary and invisibly returns `x` unchanged.
 #' @examples
 #' chain <- create.chain.graph(n.vertices = 5)
-#' extrema <- detect.local.extrema(chain$adj.list, chain$edge.lengths,
-#'   y = c(1, 3, 1, 2, 0), max.radius = 1, min.neighborhood.size = 2)
+#' extrema <- detect.local.extrema(graph.adjacency(chain), graph.lengths(chain), y = c(1, 3, 1, 2,
+#'     0), max.radius = 1, min.neighborhood.size = 2)
 #' summary(extrema)
 #' print(summary(extrema))
 #' @name summary.local_extrema
@@ -226,13 +221,8 @@ print.summary.local_extrema <- function(x, ...) {
 #'
 #' @examples
 #' chain <- create.chain.graph(n.vertices = 5)
-#' extrema <- detect.local.extrema(
-#'   chain$adj.list,
-#'   chain$edge.lengths,
-#'   y = c(1, 3, 1, 2, 0),
-#'   max.radius = 1,
-#'   min.neighborhood.size = 2
-#' )
+#' extrema <- detect.local.extrema(graph.adjacency(chain), graph.lengths(chain), y = c(1, 3, 1, 2,
+#'     0), max.radius = 1, min.neighborhood.size = 2)
 #' vertices(extrema, extrema$labels[[1]])
 #'
 #' @export

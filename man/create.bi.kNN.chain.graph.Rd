@@ -16,14 +16,16 @@ create.bi.kNN.chain.graph(n.vertices = 5, k = 1, x = NULL, y = NULL)
 \item{y}{Optional response vector sorted along with \code{x}.}
 }
 \value{
-A list with \code{adj.list}, \code{edge.lengths}, \code{x.sorted}, and \code{y.sorted}.
+A \code{dgraph} object. Use \code{\link[=graph.adjacency]{graph.adjacency()}}, \code{\link[=graph.lengths]{graph.lengths()}},
+\code{\link[=graph.edges]{graph.edges()}} and \code{\link[=graph.stages]{graph.stages()}} to inspect its stored graph stages.
+Construction and diagnostic information is stored in \code{metadata}.
 }
 \description{
 Create a Bi-kNN Chain Graph
 }
 \examples{
 chain <- create.bi.kNN.chain.graph(x = c(3, 1, 2, 4), k = 1)
-chain$adj.list
-chain$x.sorted
+graph.adjacency(chain)
+chain$metadata$x.sorted
 
 }

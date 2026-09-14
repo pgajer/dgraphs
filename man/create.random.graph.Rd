@@ -14,7 +14,9 @@ create.random.graph(n_vertices, avg_degree, connected = TRUE)
 \item{connected}{Logical; if \code{TRUE}, first build a random spanning tree.}
 }
 \value{
-A list with \code{adj.list} and \code{weight.list}.
+A \code{dgraph} object. Use \code{\link[=graph.adjacency]{graph.adjacency()}}, \code{\link[=graph.lengths]{graph.lengths()}},
+\code{\link[=graph.edges]{graph.edges()}} and \code{\link[=graph.stages]{graph.stages()}} to inspect its stored graph stages.
+Construction and diagnostic information is stored in \code{metadata}.
 }
 \description{
 Create a Random Undirected Graph
@@ -22,6 +24,6 @@ Create a Random Undirected Graph
 \examples{
 set.seed(1)
 graph <- create.random.graph(8, avg_degree = 2)
-sum(lengths(graph$adj.list)) / 2
+sum(lengths(graph.adjacency(graph)))/2
 
 }

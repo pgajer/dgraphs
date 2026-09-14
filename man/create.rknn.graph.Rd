@@ -108,12 +108,10 @@ size before exact fallback.}
 factor for ANN bridge neighborhoods.}
 }
 \value{
-For \code{type = "fixed"}, a list of class \code{"radius_graph"}. For
-\code{type = "adaptive.radius"}, a list of class \code{"adaptive_radius_graph"}.
-Both contain adjacency lists, edge weights, edge matrix, and component
-diagnostics. The final graph is stored in \code{adj_list}/\code{weight_list}; raw
-and pruned lifecycle graph stages are stored in corresponding
-\verb{raw_*}/\verb{pruned_*} fields when \code{graph.detail = "full"}.
+A \code{dgraph}, with constructor class \code{radius_graph} for fixed radii
+or \code{adaptive_radius_graph} for adaptive radii. Use graph accessors for
+topology, lengths and retained stages; construction diagnostics are in
+\code{metadata}.
 }
 \description{
 Creates an undirected Euclidean radius graph from a numeric data matrix.
@@ -124,7 +122,8 @@ observation-specific local scale distances.
 }
 \examples{
 X <- matrix(c(0, 1, 3), ncol = 1)
-create.rknn.graph(X, type = "fixed", radius = 1.1)$edge_matrix
-create.rknn.graph(X, type = "adaptive.radius", k.scale = 1)$edge_matrix
+as.matrix(graph.edges(create.rknn.graph(X, type = "fixed", radius = 1.1))[, c("from", "to")])
+as.matrix(graph.edges(create.rknn.graph(X, type = "adaptive.radius", k.scale = 1))[, c("from",
+"to")])
 
 }

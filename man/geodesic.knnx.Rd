@@ -4,7 +4,7 @@
 \alias{geodesic.knnx}
 \title{Estimate Geodesic Nearest Neighbors from Grid Points to Data Points}
 \usage{
-geodesic.knnx(X, X.grid, k, method = "knn.graph", K = 5)
+geodesic.knnx(X, X.grid, k, method = "knn.graph", k.graph = 5)
 }
 \arguments{
 \item{X}{Numeric data matrix.}
@@ -15,8 +15,7 @@ geodesic.knnx(X, X.grid, k, method = "knn.graph", K = 5)
 
 \item{method}{Legacy graph construction method argument.}
 
-\item{K}{Legacy graph neighbor argument. The implementation resets this to
-\code{2^ncol(X)}.}
+\item{k.graph}{Number of neighbors used to construct the auxiliary graph.}
 }
 \value{
 A list with graph vertices, graph edges, \code{nn.index}, and \code{nn.dist}.

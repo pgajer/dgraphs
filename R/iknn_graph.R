@@ -8,7 +8,8 @@
 #' @param X A numeric matrix where rows represent data points and columns represent features.
 #'        Data frames will be coerced to matrices.
 #'
-#' @param k Integer scalar. The number of nearest neighbors to consider for each point.
+#' @param k Integer scalar. Number of nearest other vertices. Self is explicitly
+#'        added to each cover, and distance ties use ascending vertex index.
 #'        Must be positive and less than the number of data points.
 #'
 #' @param max.path.edge.ratio.deviation.thld Numeric in \eqn{[0, 0.2)}.
@@ -48,11 +49,9 @@
 #'     This pruning is applied after geometric pruning and targets unusually long edges
 #'     based on absolute edge lengths rather than path-to-edge ratios.
 #'
-#' @param compute.full Logical scalar controlling additional full-payload outputs.
-#'        If TRUE, keeps legacy original-graph components `isize_list` and
-#'        `conn_comps`. Lifecycle graph payloads are always returned:
-#'        `raw_adj_list`/`raw_weight_list`, `pruned_adj_list`/`pruned_weight_list`,
-#'        and final `adj_list`/`weight_list`.
+#' @param compute.full Logical. Retain additional native component diagnostics.
+#'   Graph stages are always retained; available overlap values are stored as
+#'   named edge attributes.
 #'
 #' @param with.isize.pruning Logical scalar. If TRUE, compute intersection-size pruning
 #'        outputs and related statistics. Default is FALSE.
@@ -116,45 +115,14 @@
 #'
 #' @param verbose Logical. If TRUE, print progress messages. Default is TRUE.
 #'
-#' @return An object of class "IkNN" (inheriting from "list") containing:
-#' \describe{
-#'   \item{adj_list}{Adjacency lists for the final graph after optional MST repair}
-#'   \item{weight_list}{Edge weights for the final graph}
-#'   \item{raw_adj_list}{Adjacency lists for the native graph before pruning}
-#'   \item{raw_weight_list}{Edge weights for the native graph before pruning}
-#'   \item{pruned_adj_list}{Adjacency lists after pruning and before MST repair}
-#'   \item{pruned_weight_list}{Edge weights after pruning and before MST repair}
-#'   \item{raw_repaired_adj_list, raw_repaired_weight_list}{The native graph
-#'     after MST component repair.}
-#'   \item{pruned_repaired_adj_list, pruned_repaired_weight_list}{The
-#'     prune-first branch after MST component repair.}
-#'   \item{repaired_pruned_adj_list, repaired_pruned_weight_list}{The
-#'     repair-first branch after applying the selected pruning method to the
-#'     repaired raw graph.}
-#'   \item{n_edges}{Total number of edges in original graph}
-#'   \item{n_edges_in_pruned_graph}{Number of edges after pruning}
-#'   \item{n_removed_edges}{Number of edges removed by pruning}
-#'   \item{edge_reduction_ratio}{Proportion of edges removed}
-#'   \item{call}{The matched function call}
-#'   \item{k}{Number of nearest neighbors used}
-#'   \item{n}{Number of data points}
-#'   \item{d}{Number of features}
-#' }
-#'
-#' If compute.full = TRUE, additional components include:
-#' \describe{
-#'   \item{isize_list}{Intersection sizes for original edges}
-#'   \item{conn_comps}{Connected components identification}
-#'   \item{connected_components}{Alternative format of connected components}
-#' }
+#' @return A `dgraph` object. Use [graph.adjacency()], [graph.lengths()],
+#'   [graph.edges()] and [graph.stages()] to inspect its stored graph stages.
+#'   Construction and diagnostic information is stored in `metadata`.
 #'
 #' @details
-#' `adj_list` and `weight_list` always contain the final graph used by downstream
-#' algorithms. `raw_*` fields contain the native graph before pruning, and
-#' `pruned_*` fields contain the graph after pruning but before optional MST
-#' component repair. If pruning is disabled, `pruned_*` is identical to `raw_*`.
-#' The repaired lifecycle branches allow direct comparison of raw, prune-first,
-#' and repair-first graph geodesic distances from a single constructor call.
+#' The default accessors inspect the final graph. Use `stage = "raw"` or
+#' `stage = "pruned"` to inspect earlier stages. `graph.stages()` reports
+#' which repaired branches are retained; a missing stage is an error.
 #'
 #' @examples
 #' # Create sample data
@@ -363,7 +331,7 @@ create.single.iknn.graph <- function(X,
     }
 
     if (verbose && !compute.full) {
-        message("compute.full=FALSE: legacy isize_list/conn_comps may be omitted; lifecycle graph payloads are still returned.")
+        message("compute.full=FALSE: optional component diagnostics may be omitted; graph stages are retained.")
     }
     if (verbose && identical(prune.method, "none") && threshold.percentile == 0) {
         message("No geometric/quantile pruning requested: pruned_adj_list/pruned_weight_list will match the unpruned graph.")
@@ -392,7 +360,7 @@ create.single.iknn.graph <- function(X,
                     as.logical(verbose),
                     PACKAGE = "dgraphs")
     raw.adj.list <- result$adj_list
-    raw.weight.list <- result$weight_list
+    raw.length.list <- result$weight_list
     raw.isize.list <- result$isize_list
     raw.conn.comps <- result$conn_comps
     if (!isTRUE(compute.full)) {
@@ -404,7 +372,7 @@ create.single.iknn.graph <- function(X,
         pruning <- .prune.graph.local.geodesic(
             X = X,
             adj.list = result$pruned_adj_list,
-            weight.list = result$pruned_weight_list,
+            length.list = result$pruned_weight_list,
             k = k,
             prune.tau = local.prune.controls$prune.tau,
             prune.local.k = local.prune.controls$prune.local.k,
@@ -443,11 +411,11 @@ create.single.iknn.graph <- function(X,
     n.removed.by.pruning <- result$n_removed_edges
     pruning.reduction.ratio <- result$edge_reduction_ratio
     pruned.adj.list <- result$pruned_adj_list
-    pruned.weight.list <- result$pruned_weight_list
+    pruned.length.list <- result$pruned_weight_list
     bridge <- .augment.graph.with.component.mst(
         X = X,
         adj.list = result$pruned_adj_list,
-        weight.list = result$pruned_weight_list,
+        length.list = result$pruned_weight_list,
         k = k,
         connect.components = connect.components,
         connect.method = connect.method,
@@ -456,11 +424,11 @@ create.single.iknn.graph <- function(X,
         bridge.growth = bridge.controls$bridge.growth
     )
     result$raw_adj_list <- raw.adj.list
-    result$raw_weight_list <- raw.weight.list
+    result$raw_weight_list <- raw.length.list
     result$raw_isize_list <- raw.isize.list
     result$raw_conn_comps <- raw.conn.comps
     result$pruned_adj_list <- pruned.adj.list
-    result$pruned_weight_list <- pruned.weight.list
+    result$pruned_weight_list <- pruned.length.list
     result$adj_list <- bridge$adj_list
     result$weight_list <- bridge$weight_list
     if (isTRUE(with.lifecycle.branches)) {
@@ -469,9 +437,9 @@ create.single.iknn.graph <- function(X,
             X = X,
             k = k,
             raw.adj.list = result$raw_adj_list,
-            raw.weight.list = result$raw_weight_list,
+            raw.length.list = result$raw_weight_list,
             pruned.adj.list = result$pruned_adj_list,
-            pruned.weight.list = result$pruned_weight_list,
+            pruned.length.list = result$pruned_weight_list,
             connect.method = connect.method,
             bridge.k = bridge.controls$bridge.k,
             bridge.k.max = bridge.controls$bridge.k.max,
@@ -530,7 +498,9 @@ create.single.iknn.graph <- function(X,
 
     class(result) <- c("IkNN", "list")
 
-    return(result)
+    graph <- .dgraph.from.native(result)
+    graph$metadata$neighborhood <- .neighborhood.metadata(k, rep(k, n), knn.metric)
+    return(graph)
 }
 
 #' Summarize IkNN Graph Object
@@ -545,30 +515,22 @@ create.single.iknn.graph <- function(X,
 #' @return Invisibly returns NULL while printing summary information to the console
 #'
 #' @examples
-#' graph <- list(
-#'   pruned_adj_list = list(c(2L, 3L), c(1L, 3L), c(1L, 2L)),
-#'   n_edges = 3L,
-#'   n_pruned_edges = 2L,
-#'   n_removed_edges = 1L,
-#'   edge_reduction_ratio = 1 / 3
-#' )
-#' class(graph) <- c("IkNN", "list")
-#'
+#' graph <- create.single.iknn.graph(matrix(c(0, 1, 3, 6), ncol = 1),
+#'                                    k = 1, verbose = FALSE)
 #' summary(graph)
-#'
 #' @method summary IkNN
 #' @export
 summary.IkNN <- function(object, ...) {
-    adj.list <- object$adj_list
+    adj.list <- graph.adjacency(object)
     if (is.null(adj.list)) {
-        adj.list <- object$pruned_adj_list
+        adj.list <- graph.adjacency(object, "pruned")
     }
     final.edges <- if (is.null(adj.list)) NA_real_ else sum(lengths(adj.list)) / 2
     cat("Graph Summary:\n")
     cat("Number of vertices:", length(adj.list), "\n")
-    cat("Number of edges:", object$n_edges, "\n")                  # Total number of edges in the original graph
-    cat("Number of edges after pruning:", object$n_pruned_edges, "\n")    # Number of edges after pruning
+    cat("Number of edges:", nrow(graph.edges(object)), "\n")                  # Total number of edges in the original graph
+    cat("Number of edges after pruning:", object$metadata$n_pruned_edges, "\n")    # Number of edges after pruning
     cat("Number of edges in final graph:", final.edges, "\n")      # Number of edges after optional MST repair
-    cat("Number of removed edges:", object$n_removed_edges, "\n")  # Number of edges removed during pruning
-    cat("Proportion of edges removed:", object$edge_reduction_ratio,"\n") # Proportion of edges removed (n_removed_edges / n_edges)
+    cat("Number of removed edges:", object$metadata$n_removed_edges, "\n")  # Number of edges removed during pruning
+    cat("Proportion of edges removed:", object$metadata$edge_reduction_ratio,"\n") # Proportion of edges removed (n_removed_edges / n_edges)
 }

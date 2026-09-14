@@ -30,20 +30,10 @@ including graph statistics, edge weight distributions, and PCA information
 if applicable.
 }
 \examples{
-graph <- list(
-  mst_adj_list = list(c(2L), c(1L, 3L), c(2L)),
-  mst_weight_list = list(1.1, c(1.1, 0.9), 0.9),
-  cmst_adj_list = list(c(2L, 3L), c(1L, 3L), c(1L, 2L)),
-  cmst_weight_list = list(c(1.1, 1.4), c(1.1, 0.9), c(1.4, 0.9)),
-  mst_edge_weights = c(1.1, 0.9),
-  cmst_distance_threshold = 1.08
-)
-attr(graph, "q_thld") <- 0.8
-attr(graph, "cmst_distance_threshold") <- graph$cmst_distance_threshold
-class(graph) <- c("mst_completion_graph", "list")
-
+X <- rbind(c(0, 0), c(1, 0), c(0, 1), c(2, 2))
+graph <- create.cmst.graph(X, verbose = FALSE)
+print(graph)
 summary(graph)
-
 }
 \seealso{
 \code{\link{print.summary.mst_completion_graph}} for printing summaries,

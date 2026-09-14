@@ -2,50 +2,27 @@
 % Please edit documentation in R/as_igraph.R
 \name{as_igraph}
 \alias{as_igraph}
-\title{Convert a dgraphs Graph to igraph}
+\title{Convert a dgraph to igraph}
 \usage{
-as_igraph(
-  gflow.graph,
-  include.vertex.attrs = TRUE,
-  include.edge.attrs = TRUE,
-  stage = "final",
-  weight.list = NULL
-)
+as_igraph(graph, stage = "final")
 }
 \arguments{
-\item{gflow.graph}{A current \code{dgraphs} graph object, a legacy basin graph
-list, or a bare 1-based adjacency list. The argument name is retained for
-backward compatibility.}
+\item{graph}{A \code{dgraph} object, including isolates.}
 
-\item{include.vertex.attrs}{Logical; include basin metadata as vertex
-attributes when available.}
-
-\item{include.edge.attrs}{Logical; include edge weights and intersection
-sizes when available.}
-
-\item{stage}{Lifecycle stage used for current \code{dgraphs} graph objects. See
-\code{\link[=graph.geodesic.distances]{graph.geodesic.distances()}} for supported values.}
-
-\item{weight.list}{Optional list of edge weights aligned with a bare
-adjacency list supplied as \code{gflow.graph}. It must be \code{NULL} for graph
-objects that already contain weights.}
+\item{stage}{Stored graph stage.}
 }
 \value{
-An \code{igraph} object.
+An undirected \code{igraph}. Edge lengths are named \code{length}; other
+attributes retain their names. No implicit \code{weight} or unit lengths are
+added. For metric paths pass \code{weights = igraph::E(g)$length} explicitly;
+for hop distance pass \code{weights = NA}.
 }
 \description{
-Convert a dgraphs Graph to igraph
+Convert a dgraph to igraph
 }
 \examples{
-X <- matrix(c(0, 0, 1, 0, 2, 0), ncol = 2, byrow = TRUE)
-graph <- create.mknn.graph(X, k = 2)
+graph <- dgraph(list(2L, 1L, integer()), list(0, 0, numeric()))
 ig <- as_igraph(graph)
 igraph::vcount(ig)
-igraph::ecount(ig)
-
-adjacency <- list(c(2L, 3L), 1L, 1L, integer(0))
-weights <- list(c(1, 2), 1, 2, numeric(0))
-bare.ig <- as_igraph(adjacency, weight.list = weights)
-c(vertices = igraph::vcount(bare.ig), edges = igraph::ecount(bare.ig))
-
+igraph::E(ig)$length
 }

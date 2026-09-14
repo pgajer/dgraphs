@@ -22,7 +22,7 @@ Summarize Iterated Intersection k-NN Graphs
 \examples{
 set.seed(1)
 X <- matrix(rnorm(30), ncol = 2)
-out <- create.iterated.iknn.graphs(X, kmin = 2, kmax = 3,
-  n.iterations = 1, verbose = FALSE)
+out <- create.iterated.iknn.graphs(X, k.values = seq.int(2, 3), n.iterations = 1,
+    verbose = FALSE)
 summary(out)
 }

@@ -36,44 +36,16 @@
 #' before graph construction. This can significantly reduce computation time
 #' for high-dimensional data while preserving the most important variation.
 #'
-#' @return An object of class \code{mst_completion_graph}, which is a list
-#'   containing:
-#'   \describe{
-#'     \item{\code{mst_adj_list}}{A list of length n, where element i contains
-#'       the indices of vertices adjacent to vertex i in the MST.}
-#'     \item{\code{mst_weight_list}}{A list of length n, where element i
-#'       contains the edge weights corresponding to the adjacent vertices in
-#'       \code{mst_adj_list[[i]]}.}
-#'     \item{\code{cmst_adj_list}}{A list of length n containing adjacency
-#'       information for the completed MST graph.}
-#'     \item{\code{cmst_weight_list}}{A list of length n containing edge
-#'       weights for the completed MST graph.}
-#'     \item{\code{mst_edge_weights}}{Numeric vector containing all unique MST
-#'       edge weights.}
-#'     \item{\code{cmst_distance_threshold}}{Numeric scalar containing the
-#'       actual Euclidean distance threshold used for completion.}
-#'   }
-#'
-#'   The returned object also has the following attributes:
-#'   \describe{
-#'     \item{\code{q_thld}}{The quantile threshold used for MST completion.}
-#'     \item{\code{pca}}{If PCA was applied, a list containing:
-#'       \itemize{
-#'         \item \code{original_dim}: The original number of dimensions
-#'         \item \code{n_components}: The number of PCA components used
-#'         \item \code{variance_explained}: The proportion of variance explained
-#'         \item \code{cumulative_variance}: Cumulative variance by component (if applicable)
-#'       }
-#'     }
-#'     \item{\code{call}}{The matched function call.}
-#'   }
+#' @return A `dgraph` with `raw` (MST) and `final` (completed) stages.
+#'   Use graph accessors to inspect topology and lengths; construction details
+#'   are in `metadata`.
 #'
 #' @examples
 #' set.seed(123)
 #' X <- matrix(rnorm(60), nrow = 20, ncol = 3)
 #' graph <- create.cmst.graph(X, verbose = FALSE)
-#' graph$n_vertices
-#' graph$n_edges
+#' graph.order(graph)
+#' nrow(graph.edges(graph))
 #' @seealso
 #' \code{\link[stats:prcomp]{stats::prcomp()}} for principal component analysis.
 #'
@@ -276,7 +248,12 @@ create.cmst.graph <- function(X,
     # Set class
     class(result) <- c("mst_completion_graph", "list")
 
-    result
+    result$adj_list <- result$cmst_adj_list
+    result$weight_list <- result$cmst_weight_list
+    result$raw_adj_list <- result$mst_adj_list
+    result$raw_weight_list <- result$mst_weight_list
+    result[c("cmst_adj_list", "cmst_weight_list", "mst_adj_list", "mst_weight_list", "mst_edge_weights")] <- NULL
+    .dgraph.from.native(result)
 }
 
 
@@ -293,27 +270,17 @@ create.cmst.graph <- function(X,
 #' @details
 #' This method provides a human-readable overview of the graph structure without
 #' displaying the full adjacency lists. For detailed inspection of graph
-#' components, use direct indexing (e.g., \code{x$mst_adj_list}) or the
+#' components, use graph accessors with the desired stage.
 #' \code{\link{summary}} method.
 #'
 #' @return
 #' Invisibly returns the input object \code{x}.
 #'
 #' @examples
-#' graph <- list(
-#'   mst_adj_list = list(c(2L), c(1L, 3L), c(2L)),
-#'   mst_weight_list = list(1.1, c(1.1, 0.9), 0.9),
-#'   cmst_adj_list = list(c(2L, 3L), c(1L, 3L), c(1L, 2L)),
-#'   cmst_weight_list = list(c(1.1, 1.4), c(1.1, 0.9), c(1.4, 0.9)),
-#'   mst_edge_weights = c(1.1, 0.9),
-#'   cmst_distance_threshold = 1.08
-#' )
-#' attr(graph, "q_thld") <- 0.8
-#' attr(graph, "cmst_distance_threshold") <- graph$cmst_distance_threshold
-#' class(graph) <- c("mst_completion_graph", "list")
-#'
+#' X <- rbind(c(0, 0), c(1, 0), c(0, 1), c(2, 2))
+#' graph <- create.cmst.graph(X, verbose = FALSE)
 #' print(graph)
-#'
+#' summary(graph)
 #' @seealso
 #' \code{\link{summary.mst_completion_graph}} for more detailed summaries,
 #' \code{\link{create.cmst.graph}} for creating MST completion graphs
@@ -324,12 +291,12 @@ print.mst_completion_graph <- function(x, ...) {
     cat("======================================\n")
 
     # Basic graph information
-    n_vertices <- length(x$mst_adj_list)
-    n_mst_edges <- length(x$mst_edge_weights)
+    n_vertices <- length(graph.adjacency(x, "raw"))
+    n_mst_edges <- length(graph.edges(x, "raw")$length)
     q_thld <- attr(x, "q_thld")
     completion_threshold <- attr(x, "cmst_distance_threshold")
     if (is.null(completion_threshold)) {
-        completion_threshold <- x$cmst_distance_threshold
+        completion_threshold <- x$metadata$cmst_distance_threshold
     }
 
     cat(sprintf("Number of vertices: %d\n", n_vertices))
@@ -340,7 +307,7 @@ print.mst_completion_graph <- function(x, ...) {
     }
 
     # Count completed graph edges
-    n_cmst_edges <- sum(lengths(x$cmst_adj_list)) / 2
+    n_cmst_edges <- sum(lengths(graph.adjacency(x))) / 2
     cat(sprintf("Number of completed graph edges: %d\n", n_cmst_edges))
     cat(sprintf("Edge increase factor: %.2fx\n", n_cmst_edges / n_mst_edges))
 
@@ -382,20 +349,10 @@ print.mst_completion_graph <- function(x, ...) {
 #' }
 #'
 #' @examples
-#' graph <- list(
-#'   mst_adj_list = list(c(2L), c(1L, 3L), c(2L)),
-#'   mst_weight_list = list(1.1, c(1.1, 0.9), 0.9),
-#'   cmst_adj_list = list(c(2L, 3L), c(1L, 3L), c(1L, 2L)),
-#'   cmst_weight_list = list(c(1.1, 1.4), c(1.1, 0.9), c(1.4, 0.9)),
-#'   mst_edge_weights = c(1.1, 0.9),
-#'   cmst_distance_threshold = 1.08
-#' )
-#' attr(graph, "q_thld") <- 0.8
-#' attr(graph, "cmst_distance_threshold") <- graph$cmst_distance_threshold
-#' class(graph) <- c("mst_completion_graph", "list")
-#'
+#' X <- rbind(c(0, 0), c(1, 0), c(0, 1), c(2, 2))
+#' graph <- create.cmst.graph(X, verbose = FALSE)
+#' print(graph)
 #' summary(graph)
-#'
 #' @seealso
 #' \code{\link{print.summary.mst_completion_graph}} for printing summaries,
 #' \code{\link{create.cmst.graph}} for creating graphs
@@ -403,21 +360,21 @@ print.mst_completion_graph <- function(x, ...) {
 #' @export
 summary.mst_completion_graph <- function(object, ...) {
     # Basic counts
-    n_vertices <- length(object$mst_adj_list)
-    n_mst_edges <- length(object$mst_edge_weights)
-    n_cmst_edges <- sum(lengths(object$cmst_adj_list)) / 2
+    n_vertices <- length(graph.adjacency(object, "raw"))
+    n_mst_edges <- length(graph.edges(object, "raw")$length)
+    n_cmst_edges <- sum(lengths(graph.adjacency(object))) / 2
 
     # Edge weight statistics
-    edge_summary <- summary(object$mst_edge_weights)
+    edge_summary <- summary(graph.edges(object, "raw")$length)
 
     # Completion threshold (actual distance value)
     q_thld <- attr(object, "q_thld")
     completion_threshold <- attr(object, "cmst_distance_threshold")
     if (is.null(completion_threshold)) {
-        completion_threshold <- object$cmst_distance_threshold
+        completion_threshold <- object$metadata$cmst_distance_threshold
     }
     if (is.null(completion_threshold)) {
-        completion_threshold <- stats::quantile(object$mst_edge_weights,
+        completion_threshold <- stats::quantile(graph.edges(object, "raw")$length,
                                                 probs = q_thld,
                                                 names = FALSE)
     }
@@ -459,21 +416,10 @@ summary.mst_completion_graph <- function(object, ...) {
 #' Invisibly returns the input summary object.
 #'
 #' @examples
-#' graph <- list(
-#'   mst_adj_list = list(c(2L), c(1L, 3L), c(2L)),
-#'   mst_weight_list = list(1.1, c(1.1, 0.9), 0.9),
-#'   cmst_adj_list = list(c(2L, 3L), c(1L, 3L), c(1L, 2L)),
-#'   cmst_weight_list = list(c(1.1, 1.4), c(1.1, 0.9), c(1.4, 0.9)),
-#'   mst_edge_weights = c(1.1, 0.9),
-#'   cmst_distance_threshold = 1.08
-#' )
-#' attr(graph, "q_thld") <- 0.8
-#' attr(graph, "cmst_distance_threshold") <- graph$cmst_distance_threshold
-#' class(graph) <- c("mst_completion_graph", "list")
-#'
-#' graph_summary <- summary(graph)
-#' print(graph_summary, digits = 4)
-#'
+#' X <- rbind(c(0, 0), c(1, 0), c(0, 1), c(2, 2))
+#' graph <- create.cmst.graph(X, verbose = FALSE)
+#' print(graph)
+#' summary(graph)
 #' @export
 print.summary.mst_completion_graph <- function(x, digits = 3L, ...) {
     cat("Summary of MST Completion Graph\n")

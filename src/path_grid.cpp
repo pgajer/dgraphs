@@ -272,38 +272,6 @@ path_graph_t convert_to_path_graph(const path_graph_plus_t& plus_graph) {
     return result;
 }
 
-std::vector<path_graph_t> create_path_graph_series(
-        const std::vector<std::vector<int>>& adj_list,
-        const std::vector<std::vector<double>>& weight_list,
-        const std::vector<int>& h_values) {
-    int h_max = *std::max_element(h_values.begin(), h_values.end());
-    path_graph_plus_t max_graph = create_path_graph_plus(adj_list, weight_list, h_max);
-    std::vector<path_graph_t> result;
-    result.reserve(h_values.size());
-    for (int h : h_values) {
-        path_graph_t sub;
-        const int n_vertices = static_cast<int>(max_graph.adj_list.size());
-        sub.adj_list.resize(static_cast<size_t>(n_vertices));
-        sub.weight_list.resize(static_cast<size_t>(n_vertices));
-        for (int v = 0; v < n_vertices; ++v) {
-            for (size_t i = 0; i < max_graph.adj_list[static_cast<size_t>(v)].size(); ++i) {
-                if (max_graph.hop_list[static_cast<size_t>(v)][i] <= h) {
-                    const int u = max_graph.adj_list[static_cast<size_t>(v)][i];
-                    sub.adj_list[static_cast<size_t>(v)].push_back(u);
-                    sub.weight_list[static_cast<size_t>(v)].push_back(
-                        max_graph.weight_list[static_cast<size_t>(v)][i]
-                    );
-                    if (v < u) {
-                        sub.shortest_paths[{v, u}] = max_graph.shortest_paths.at({v, u});
-                    }
-                }
-            }
-        }
-        result.push_back(std::move(sub));
-    }
-    return result;
-}
-
 SEXP path_graph_from_path_graph_t(path_graph_t& path_graph) {
     const int n_vertices = static_cast<int>(path_graph.adj_list.size());
     SEXP r_result = PROTECT(Rf_allocVector(VECSXP, 3));
@@ -673,11 +641,11 @@ SEXP S_create_path_graph_series(SEXP s_adj_list, SEXP s_weight_list, SEXP s_h_va
     for (int i = 0; i < n; ++i) {
         h_values[static_cast<size_t>(i)] = INTEGER(s_h_values)[i];
     }
-    std::vector<path_graph_t> graph_series =
-        create_path_graph_series(adj_vect, weight_vect, h_values);
+
     SEXP r_result = PROTECT(Rf_allocVector(VECSXP, n));
     for (int i = 0; i < n; ++i) {
-        SEXP path_graph = PROTECT(path_graph_from_path_graph_t(graph_series[static_cast<size_t>(i)]));
+        path_graph_plus_t graph = create_path_graph_plus(adj_vect, weight_vect, h_values[static_cast<size_t>(i)]);
+        SEXP path_graph = PROTECT(path_graph_plus_to_R(graph));
         SET_VECTOR_ELT(r_result, i, path_graph);
         UNPROTECT(1);
     }

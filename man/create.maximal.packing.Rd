@@ -6,7 +6,7 @@
 \usage{
 create.maximal.packing(
   adj.list,
-  weight.list,
+  length.list,
   grid.size,
   max.iterations = 20,
   precision = 0.1
@@ -17,7 +17,7 @@ create.maximal.packing(
 indices (1-based) for the corresponding vertex. Must represent an
 undirected graph.}
 
-\item{weight.list}{A list where each element is a vector of edge weights
+\item{length.list}{A list where each element is a vector of edge weights
 corresponding to the adjacencies in \code{adj.list}. All weights
 must be positive.}
 
@@ -31,18 +31,9 @@ converge. Default is 20.}
 Must be between 0 and 0.5. Default is 0.1.}
 }
 \value{
-A list with class "maximal_packing" containing five components:
-\item{adj_list}{A list of adjacency vectors for each vertex in the
-resulting grid graph}
-\item{weight_list}{A list of weight vectors corresponding to each
-adjacency}
-\item{grid_vertices}{An integer vector of vertex indices that form
-the maximal packing}
-\item{graph_diameter}{A numeric value representing the maximum shortest
-path distance between any two vertices in the graph}
-\item{max_packing_radius}{A numeric value representing the optimal radius
-used for the final packing, which is the minimum guaranteed distance
-between any two vertices in the packing}
+A \code{maximal_packing} result containing its \code{graph} (a \code{dgraph}),
+\code{grid_vertices} (packing indices), \code{graph_diameter}, and
+\code{max_packing_radius} (the guaranteed separation of packing vertices).
 }
 \description{
 Creates a maximal packing of vertices based on a specified grid
@@ -74,9 +65,9 @@ must be undirected (symmetric adjacency) and connected.
 }
 \examples{
 adj.list <- list(c(2), c(1, 3), c(2, 4), c(3, 5), c(4))
-weight.list <- list(c(1), c(1, 1), c(1, 1), c(1, 1), c(1))
+length.list <- list(c(1), c(1, 1), c(1, 1), c(1, 1), c(1))
 
-result <- create.maximal.packing(adj.list, weight.list, grid.size = 2)
+result <- create.maximal.packing(adj.list, length.list, grid.size = 2)
 result$grid_vertices
 result$max_packing_radius
 

@@ -5,21 +5,21 @@
 \title{Weighted Graph Distance Between Graphs with Identical Vertex Sets}
 \usage{
 identical.vertex.set.weighted.graph.similarity(
-  graph1.adj.list,
-  graph1.weights,
-  graph2.adj.list,
-  graph2.weights,
+  adj.list1,
+  length.list1,
+  adj.list2,
+  length.list2,
   calculate.normalized.deviation = FALSE
 )
 }
 \arguments{
-\item{graph1.adj.list}{First graph adjacency list.}
+\item{adj.list1}{First graph adjacency list.}
 
-\item{graph1.weights}{First graph edge weights.}
+\item{length.list1}{First graph edge weights.}
 
-\item{graph2.adj.list}{Second graph adjacency list.}
+\item{adj.list2}{Second graph adjacency list.}
 
-\item{graph2.weights}{Second graph edge weights.}
+\item{length.list2}{Second graph edge weights.}
 
 \item{calculate.normalized.deviation}{Logical; if \code{TRUE}, normalize the L1
 distance-matrix deviation.}

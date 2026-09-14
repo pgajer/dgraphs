@@ -6,7 +6,7 @@
 \usage{
 compute.geodesic.stats(
   adj.list,
-  weight.list,
+  length.list,
   min.radius = 0.2,
   max.radius = 0.5,
   n.steps = 5,
@@ -20,7 +20,7 @@ compute.geodesic.stats(
 \item{adj.list}{List of integer vectors. Each vector contains indices of vertices
 adjacent to the corresponding vertex. Indices should be 1-based.}
 
-\item{weight.list}{List of numeric vectors. Each vector contains weights of edges
+\item{length.list}{List of numeric vectors. Each vector contains weights of edges
 corresponding to adjacencies in adj.list.}
 
 \item{min.radius}{Numeric. Minimum radius as a fraction of graph diameter.}
@@ -55,14 +55,8 @@ and provides insights into the graph structure around grid vertices.
 }
 \examples{
 graph <- generate.circle.graph(8, type = "uniform")
-stats <- compute.geodesic.stats(
-  graph$adj.list,
-  graph$weight.list,
-  min.radius = 0.3,
-  max.radius = 0.5,
-  n.steps = 2,
-  n.packing.vertices = 4
-)
+stats <- compute.geodesic.stats(graph.adjacency(graph), graph.lengths(graph), min.radius = 0.3,
+    max.radius = 0.5, n.steps = 2, n.packing.vertices = 4)
 stats$summary
 
 }

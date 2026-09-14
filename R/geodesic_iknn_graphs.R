@@ -1,85 +1,43 @@
 #' Create a graph-geodesic iKNN graph
 #'
 #' @description
-#' Rebuilds an iKNN graph from an existing weighted graph by using graph
-#' geodesic distances in place of Euclidean distances. For every vertex `i`,
-#' the graph-metric neighbor set contains the first `k` finite graph-geodesic
-#' nearest vertices under the same convention used by `create.iknn.graphs()`.
-#' Because self-distance is zero, this includes `i` whenever `i` is finite from
-#' itself. Vertices `i` and `j` are connected in the returned graph when those
-#' two neighbor sets intersect.
+#' Each cover contains its source vertex plus its `k` nearest other vertices.
+#' Equal distances are resolved by ascending vertex index. Intersecting covers
+#' create edges whose lengths are shortest-path distances in the input graph.
 #'
-#' @param graph A weighted graph list with entries `adj_list` and `weight_list`,
-#'   as returned by `create.iknn.graphs(..., compute.full = TRUE)` in
-#'   `geom_pruned_graphs`.
-#' @param k Integer number of graph-metric nearest vertices in each neighbor
-#'   set, matching the `k` convention used by `create.iknn.graphs()`.
-#'
-#' @return A list with entries:
-#' \describe{
-#'   \item{adj_list}{1-based adjacency list for the final graph.}
-#'   \item{weight_list}{Final graph-geodesic edge lengths from the input graph.}
-#'   \item{raw_adj_list, raw_weight_list}{The native geodesic iKNN graph.}
-#'   \item{pruned_adj_list, pruned_weight_list}{Identical to \code{raw_*}
-#'     because geodesic iKNN graphs do not currently have a pruning stage.}
-#'   \item{raw_repaired_adj_list, raw_repaired_weight_list,
-#'     pruned_repaired_adj_list, pruned_repaired_weight_list,
-#'     repaired_pruned_adj_list, repaired_pruned_weight_list}{Lifecycle aliases
-#'     identical to the final graph because this constructor has no MST repair
-#'     or pruning stage.}
-#'   \item{isize_list}{Intersection sizes for each edge.}
-#'   \item{n_edges}{Number of undirected edges.}
-#' }
+#' @param graph A `dgraph` with stored finite, nonnegative lengths.
+#' @param k Number of nearest other vertices; integer `1 <= k < n`.
+#' @param small.component Default `"error"` requires at least `k + 1` vertices
+#'   in every component. `"truncate"` uses all reachable other vertices in
+#'   smaller components, recording per-vertex `effective.k` in neighborhood metadata.
+#' @return A `dgraph` with a final stage, lengths and an `overlap` edge attribute.
+#'   `metadata$neighborhood` records requested and effective sizes and the tie rule.
 #'
 #' @examples
-#' graph <- list(
-#'   adj_list = list(2L, c(1L, 3L), 2L),
-#'   weight_list = list(1, c(1, 1), 1)
-#' )
+#' graph <- create.chain.graph(3)
 #' create.geodesic.iknn.graph(graph, k = 1)
-#'
 #' @export
-create.geodesic.iknn.graph <- function(graph, k) {
-    .validate.geodesic.iknn.input(graph)
-
-    if (!is.numeric(k) || length(k) != 1 || k != floor(k) || k < 1) {
-        stop("k must be a positive integer.")
-    }
-    if (length(graph$adj_list) <= k) {
-        stop("Number of vertices must be greater than k.")
-    }
-
-    result <- .Call(
-        "S_create_geodesic_iknn_graph",
-        graph$adj_list,
-        graph$weight_list,
-        as.integer(k),
-        PACKAGE = "dgraphs"
-    )
-    result$raw_adj_list <- result$adj_list
-    result$raw_weight_list <- result$weight_list
-    result$pruned_adj_list <- result$adj_list
-    result$pruned_weight_list <- result$weight_list
-    result$raw_repaired_adj_list <- result$adj_list
-    result$raw_repaired_weight_list <- result$weight_list
-    result$pruned_repaired_adj_list <- result$adj_list
-    result$pruned_repaired_weight_list <- result$weight_list
-    result$repaired_pruned_adj_list <- result$adj_list
-    result$repaired_pruned_weight_list <- result$weight_list
-    result$n_edges_in_raw_graph <- .edge.count.from.adj.list(result$raw_adj_list)
-    result$n_edges_in_raw_repaired_graph <- .edge.count.from.adj.list(result$adj_list)
-    result$n_edges_in_pruned_repaired_graph <- .edge.count.from.adj.list(result$adj_list)
-    result$n_edges_in_repaired_pruned_graph <- .edge.count.from.adj.list(result$adj_list)
-    comps <- .graph.components(result$adj_list)
-    result$n_components_raw <- comps$n_components
-    result$n_components_raw_repaired <- comps$n_components
-    result$n_components_pruned <- comps$n_components
-    result$n_components_pruned_repaired <- comps$n_components
-    result$n_components_repaired_pruned <- comps$n_components
-    attr(result, "k") <- as.integer(k)
-    attr(result, "k_internal") <- as.integer(k)
-    class(result) <- c("geodesic_iknn_graph", "list")
-    result
+create.geodesic.iknn.graph <- function(graph, k,
+                                         small.component = c("error", "truncate")) {
+    small.component <- match.arg(small.component)
+    n <- graph.order(graph)
+    k <- .validate.k.values(k, n)
+    if (length(k) != 1L) stop("k must be a single integer.")
+    adj.list <- graph.adjacency(graph)
+    length.list <- graph.lengths(graph)
+    if (is.null(length.list)) stop("Graph-geodesic neighborhoods require stored lengths.")
+    components <- graph.connected.components(graph)
+    sizes <- tabulate(match(components, unique(components)))
+    if (small.component == "error" && any(sizes <= k))
+        stop("Components must contain at least k + 1 vertices. Undersized component sizes: ",
+             paste(sizes[sizes <= k], collapse = ", "), ". Use small.component = 'truncate' explicitly.")
+    effective.k <- pmin(k, sizes[match(components, unique(components))] - 1L)
+    result <- .Call("S_create_geodesic_iknn_graph", adj.list, length.list, k,
+                    PACKAGE = "dgraphs")
+    out <- .dgraph.from.native(result, "geodesic_iknn_graph")
+    out$metadata$neighborhood <- .neighborhood.metadata(k, effective.k, "graph.geodesic")
+    out$metadata$small.component <- small.component
+    out
 }
 
 #' Create iterated graph-geodesic iKNN graphs
@@ -87,7 +45,7 @@ create.geodesic.iknn.graph <- function(graph, k) {
 #' @description
 #' Constructs `G0` with `create.iknn.graphs()`, then constructs `G1`, `G2`, ...,
 #' `Gm` by repeatedly applying `create.geodesic.iknn.graph()` to each graph in
-#' the `kmin:kmax` sequence. This implements the iterated nerve rule
+#' the `k.values` sequence. This implements the iterated nerve rule
 #'
 #' \deqn{\{i,j\} \in E(G_{t+1}) \iff
 #'       kNN_{G_t}(i) \cap kNN_{G_t}(j) \ne \emptyset,}
@@ -97,8 +55,8 @@ create.geodesic.iknn.graph <- function(graph, k) {
 #' \deqn{\ell_{t+1}(i,j) = d_{G_t}(i,j).}
 #'
 #' @param X Numeric matrix with rows as observations and columns as features.
-#' @param kmin Integer minimum `k`.
-#' @param kmax Integer maximum `k`.
+#' @param k.values Strictly increasing integer vector of neighborhood sizes, each between 1 and n - 1.
+#' @param small.component Component-size policy forwarded to every geodesic rebuild.
 #' @param n.iterations Non-negative integer number of geodesic rebuilds after
 #'   `G0`. The default `3` returns `G0`, `G1`, `G2`, and `G3`.
 #' @param max.path.edge.ratio.deviation.thld,path.edge.ratio.percentile,threshold.percentile
@@ -111,27 +69,27 @@ create.geodesic.iknn.graph <- function(graph, k) {
 #'
 #' @return A list of class `"iterated_iknn_graphs"` with entries:
 #' \describe{
-#'   \item{k_values}{Integer vector of requested `k` values.}
+#'   \item{k.values}{Integer vector of requested `k` values.}
 #'   \item{n_iterations}{Number of geodesic rebuilds after `G0`.}
 #'   \item{initial_graphs}{The `"iknn_graphs"` object returned by
 #'     `create.iknn.graphs()` for `G0`.}
 #'   \item{graphs}{Nested list named `G0`, `G1`, ...; each entry is a named list
-#'     of graph objects for `kmin:kmax`.}
+#'     of graph objects for `k.values`.}
 #'   \item{summary}{Data frame with one row per iteration and `k`.}
 #' }
 #'
 #' @examples
 #' set.seed(1)
 #' X <- matrix(rnorm(30), ncol = 2)
-#' out <- create.iterated.iknn.graphs(X, kmin = 2, kmax = 3, n.iterations = 1,
-#'                                    verbose = FALSE)
+#' out <- create.iterated.iknn.graphs(X, k.values = seq.int(2, 3), n.iterations = 1,
+#'     verbose = FALSE)
 #' out$summary
 #'
 #' @export
 create.iterated.iknn.graphs <- function(X,
-                                        kmin,
-                                        kmax,
+                                        k.values,
                                         n.iterations = 3L,
+                                        small.component = c("error", "truncate"),
                                         max.path.edge.ratio.deviation.thld = 0,
                                         path.edge.ratio.percentile = 0.5,
                                         threshold.percentile = 0,
@@ -150,14 +108,14 @@ create.iterated.iknn.graphs <- function(X,
         stop("n.iterations must be a non-negative integer.")
     }
 
-    k.values <- seq.int(as.integer(kmin), as.integer(kmax))
+    k.values <- .validate.k.values(k.values, nrow(as.matrix(X)))
+    small.component <- match.arg(small.component)
     parallel.mode <- match.arg(parallel.mode)
     knn.cache.mode <- match.arg(knn.cache.mode)
 
     initial.graphs <- create.iknn.graphs(
         X = X,
-        kmin = kmin,
-        kmax = kmax,
+        k.values = k.values,
         max.path.edge.ratio.deviation.thld = max.path.edge.ratio.deviation.thld,
         path.edge.ratio.percentile = path.edge.ratio.percentile,
         threshold.percentile = threshold.percentile,
@@ -192,7 +150,7 @@ create.iterated.iknn.graphs <- function(X,
             for (idx in seq_along(k.values)) {
                 current[[idx]] <- create.geodesic.iknn.graph(
                     previous[[idx]],
-                    k = k.values[[idx]]
+                    k = k.values[[idx]], small.component = small.component
                 )
             }
             graphs[[iteration + 1L]] <- current
@@ -200,7 +158,7 @@ create.iterated.iknn.graphs <- function(X,
     }
 
     result <- list(
-        k_values = k.values,
+        k.values = k.values,
         n_iterations = as.integer(n.iterations),
         initial_graphs = initial.graphs,
         graphs = graphs,
@@ -208,8 +166,7 @@ create.iterated.iknn.graphs <- function(X,
         call = match.call()
     )
 
-    attr(result, "kmin") <- as.integer(kmin)
-    attr(result, "kmax") <- as.integer(kmax)
+    attr(result, "k.values") <- k.values
     attr(result, "n.iterations") <- as.integer(n.iterations)
     class(result) <- c("iterated_iknn_graphs", "list")
     result
@@ -225,8 +182,8 @@ create.iterated.iknn.graphs <- function(X,
 #' @examples
 #' set.seed(1)
 #' X <- matrix(rnorm(30), ncol = 2)
-#' out <- create.iterated.iknn.graphs(X, kmin = 2, kmax = 3,
-#'   n.iterations = 1, verbose = FALSE)
+#' out <- create.iterated.iknn.graphs(X, k.values = seq.int(2, 3), n.iterations = 1,
+#'     verbose = FALSE)
 #' summary(out)
 #' @export
 summary.iterated_iknn_graphs <- function(object, ...) {
@@ -236,18 +193,7 @@ summary.iterated_iknn_graphs <- function(object, ...) {
     object$summary
 }
 
-.validate.geodesic.iknn.input <- function(graph) {
-    if (!is.list(graph) || is.null(graph$adj_list) || is.null(graph$weight_list)) {
-        stop("graph must be a list with entries adj_list and weight_list.")
-    }
-    if (!is.list(graph$adj_list) || !is.list(graph$weight_list)) {
-        stop("graph$adj_list and graph$weight_list must both be lists.")
-    }
-    if (length(graph$adj_list) != length(graph$weight_list)) {
-        stop("graph$adj_list and graph$weight_list must have the same length.")
-    }
-    invisible(TRUE)
-}
+
 
 .summarize.iterated.iknn.graphs <- function(graphs, k.values) {
     rows <- list()
@@ -274,13 +220,12 @@ summary.iterated_iknn_graphs <- function(object, ...) {
 }
 
 .summarize.geodesic.graph <- function(graph) {
-    .validate.geodesic.iknn.input(graph)
-    degrees <- lengths(graph$adj_list)
-    n.vertices <- length(graph$adj_list)
+    degrees <- lengths(graph.adjacency(graph))
+    n.vertices <- length(graph.adjacency(graph))
     data.frame(
         n_vertices = n.vertices,
         n_edges = as.integer(sum(degrees) / 2L),
-        n_ccomp = .graph.component.count(graph$adj_list),
+        n_ccomp = .graph.component.count(graph.adjacency(graph)),
         mean_degree = if (n.vertices > 0L) mean(degrees) else NA_real_,
         min_degree = if (n.vertices > 0L) min(degrees) else NA_integer_,
         max_degree = if (n.vertices > 0L) max(degrees) else NA_integer_

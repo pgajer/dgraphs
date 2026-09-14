@@ -5,20 +5,24 @@
 \title{Embed Graph in 2D or 3D Space}
 \usage{
 graph.embedding(
-  adj.list,
-  weights.list = NULL,
-  invert.weights = TRUE,
+  graph,
+  edge.attribute = NULL,
+  transform = c("identity", "reciprocal"),
   dim = 2,
   method = c("fr", "kk"),
   verbose = FALSE
 )
 }
 \arguments{
-\item{adj.list}{Adjacency list representation of a graph.}
+\item{graph}{A \code{dgraph} object.}
 
-\item{weights.list}{Optional edge-weight list aligned with \code{adj.list}.}
+\item{edge.attribute}{Explicit edge quantity, such as \code{"length"} or
+\code{"conductance"}; \code{NULL} uses an unweighted layout.}
 
-\item{invert.weights}{Logical; invert weights for Fruchterman-Reingold layout.}
+\item{transform}{Use selected values directly (\code{"identity"}) or their
+reciprocals (\code{"reciprocal"}). Selected values must be strictly positive.
+Fruchterman-Reingold treats larger values as stronger attraction, whereas
+Kamada-Kawai uses them as distances.}
 
 \item{dim}{Embedding dimension, either \code{2} or \code{3}.}
 

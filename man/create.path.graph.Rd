@@ -4,12 +4,12 @@
 \alias{create.path.graph}
 \title{Create a Path Graph with Limited Hop Distance}
 \usage{
-create.path.graph(graph, edge.lengths, h)
+create.path.graph(adj.list, length.list, h)
 }
 \arguments{
-\item{graph}{A graph adjacency list using 1-based vertex indices.}
+\item{adj.list}{A graph adjacency list using 1-based vertex indices.}
 
-\item{edge.lengths}{Edge-length list matching \code{graph}.}
+\item{length.list}{Edge-length list matching \code{adj.list}.}
 
 \item{h}{Integer maximum hop count.}
 }

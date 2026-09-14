@@ -4,47 +4,27 @@
 \alias{create.geodesic.iknn.graph}
 \title{Create a graph-geodesic iKNN graph}
 \usage{
-create.geodesic.iknn.graph(graph, k)
+create.geodesic.iknn.graph(graph, k, small.component = c("error", "truncate"))
 }
 \arguments{
-\item{graph}{A weighted graph list with entries \code{adj_list} and \code{weight_list},
-as returned by \code{create.iknn.graphs(..., compute.full = TRUE)} in
-\code{geom_pruned_graphs}.}
+\item{graph}{A \code{dgraph} with stored finite, nonnegative lengths.}
 
-\item{k}{Integer number of graph-metric nearest vertices in each neighbor
-set, matching the \code{k} convention used by \code{create.iknn.graphs()}.}
+\item{k}{Number of nearest other vertices; integer \verb{1 <= k < n}.}
+
+\item{small.component}{Default \code{"error"} requires at least \code{k + 1} vertices
+in every component. \code{"truncate"} uses all reachable other vertices in
+smaller components, recording per-vertex \code{effective.k} in neighborhood metadata.}
 }
 \value{
-A list with entries:
-\describe{
-\item{adj_list}{1-based adjacency list for the final graph.}
-\item{weight_list}{Final graph-geodesic edge lengths from the input graph.}
-\item{raw_adj_list, raw_weight_list}{The native geodesic iKNN graph.}
-\item{pruned_adj_list, pruned_weight_list}{Identical to \code{raw_*}
-because geodesic iKNN graphs do not currently have a pruning stage.}
-\item{raw_repaired_adj_list, raw_repaired_weight_list,
-pruned_repaired_adj_list, pruned_repaired_weight_list,
-repaired_pruned_adj_list, repaired_pruned_weight_list}{Lifecycle aliases
-identical to the final graph because this constructor has no MST repair
-or pruning stage.}
-\item{isize_list}{Intersection sizes for each edge.}
-\item{n_edges}{Number of undirected edges.}
-}
+A \code{dgraph} with a final stage, lengths and an \code{overlap} edge attribute.
+\code{metadata$neighborhood} records requested and effective sizes and the tie rule.
 }
 \description{
-Rebuilds an iKNN graph from an existing weighted graph by using graph
-geodesic distances in place of Euclidean distances. For every vertex \code{i},
-the graph-metric neighbor set contains the first \code{k} finite graph-geodesic
-nearest vertices under the same convention used by \code{create.iknn.graphs()}.
-Because self-distance is zero, this includes \code{i} whenever \code{i} is finite from
-itself. Vertices \code{i} and \code{j} are connected in the returned graph when those
-two neighbor sets intersect.
+Each cover contains its source vertex plus its \code{k} nearest other vertices.
+Equal distances are resolved by ascending vertex index. Intersecting covers
+create edges whose lengths are shortest-path distances in the input graph.
 }
 \examples{
-graph <- list(
-  adj_list = list(2L, c(1L, 3L), 2L),
-  weight_list = list(1, c(1, 1), 1)
-)
+graph <- create.chain.graph(3)
 create.geodesic.iknn.graph(graph, k = 1)
-
 }

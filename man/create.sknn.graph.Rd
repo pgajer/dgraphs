@@ -99,28 +99,9 @@ neighbors to use before exact fallback. Defaults to
 factor for bridge candidate neighborhoods.}
 }
 \value{
-A list of class \code{"sknn_graph"} with adjacency lists, weights, edge
-matrix, kNN index matrix, component diagnostics, and any MST edges added.
-With \code{graph.detail = "minimal"}, the raw and pruned fields refer to the
-same unmodified graph and repaired lifecycle branches are omitted.
-The graph lifecycle fields are:
-\describe{
-\item{raw_adj_list, raw_weight_list}{The native sKNN graph before pruning
-and before optional MST component repair.}
-\item{pruned_adj_list, pruned_weight_list}{The graph after optional local
-geometric pruning and before optional MST component repair. If pruning
-is disabled, these fields are identical to the raw graph.}
-\item{raw_repaired_adj_list, raw_repaired_weight_list}{The native sKNN
-graph after MST component repair.}
-\item{pruned_repaired_adj_list, pruned_repaired_weight_list}{The
-prune-first branch after MST component repair.}
-\item{repaired_pruned_adj_list, repaired_pruned_weight_list}{The
-repair-first branch after applying local geometric pruning to the
-repaired raw graph.}
-\item{adj_list, weight_list}{The final graph after optional MST component
-repair. Downstream algorithms should use these fields unless they
-explicitly need a lifecycle diagnostic stage.}
-}
+A \code{dgraph} object. Use \code{\link[=graph.adjacency]{graph.adjacency()}}, \code{\link[=graph.lengths]{graph.lengths()}},
+\code{\link[=graph.edges]{graph.edges()}} and \code{\link[=graph.stages]{graph.stages()}} to inspect its stored graph stages.
+Construction and diagnostic information is stored in \code{metadata}.
 }
 \description{
 Creates an undirected symmetric k-nearest neighbor (sKNN) graph from a numeric
@@ -167,8 +148,8 @@ within the configured geodesic-ratio threshold.
 \examples{
 X <- rbind(c(0, 0), c(1, 0), c(10, 0), c(11, 0))
 g <- create.sknn.graph(X, k = 1, connect.components = TRUE)
-g$n_components_before
-g$n_components_after
-g$mst_edge_matrix
+g$metadata$n_components_before
+g$metadata$n_components_after
+g$metadata$mst_edge_matrix
 
 }

@@ -4,12 +4,12 @@
 \alias{shortest.path}
 \title{Computes Shortest Path Distances for Selected Vertices}
 \usage{
-shortest.path(graph, edge.lengths, vertices)
+shortest.path(adj.list, length.list, vertices)
 }
 \arguments{
-\item{graph}{A graph adjacency list using 1-based vertex indices.}
+\item{adj.list}{A graph adjacency list using 1-based vertex indices.}
 
-\item{edge.lengths}{Edge-length list matching \code{graph}.}
+\item{length.list}{Edge-length list matching \code{adj.list}.}
 
 \item{vertices}{Integer vector of vertices for which to compute distances.}
 }

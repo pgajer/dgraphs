@@ -1,3 +1,4 @@
+#include "dgraphs/neighborhood.hpp"
 #include <R.h>
 #include <Rinternals.h>
 
@@ -158,31 +159,8 @@ std::vector<std::vector<int>> graph_metric_knn_sets(
     std::vector<std::vector<int>> knn_sets(static_cast<size_t>(n));
 
     for (int i = 0; i < n; ++i) {
-        std::vector<int> finite_vertices;
-        finite_vertices.reserve(static_cast<size_t>(n));
-        for (int j = 0; j < n; ++j) {
-            if (std::isfinite(distances[static_cast<size_t>(i)][static_cast<size_t>(j)])) {
-                finite_vertices.push_back(j);
-            }
-        }
-
-        std::sort(
-            finite_vertices.begin(),
-            finite_vertices.end(),
-            [&distances, i](int lhs, int rhs) {
-                const double lhs_dist = distances[static_cast<size_t>(i)][static_cast<size_t>(lhs)];
-                const double rhs_dist = distances[static_cast<size_t>(i)][static_cast<size_t>(rhs)];
-                if (lhs_dist < rhs_dist) return true;
-                if (lhs_dist > rhs_dist) return false;
-                return lhs < rhs;
-            }
-        );
-
-        const int keep = std::min(k, static_cast<int>(finite_vertices.size()));
-        knn_sets[static_cast<size_t>(i)].assign(
-            finite_vertices.begin(),
-            finite_vertices.begin() + keep
-        );
+        knn_sets[i] = dgraphs_nearest_others(distances[i], i, k);
+        knn_sets[i].insert(knn_sets[i].begin(), i);
     }
 
     return knn_sets;

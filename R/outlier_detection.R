@@ -7,14 +7,14 @@
 #' larger distances to their nearest neighbors.
 #'
 #' @details
-#' The function determines outliers by analyzing the distances between points and their K nearest
+#' The function determines outliers by analyzing the distances between points and their k nearest
 #' neighbors. Several detection methods are available:
 #'
 #' \describe{
-#'   \item{When K = 1:}{Points are flagged as outliers if their distance to the nearest neighbor
+#'   \item{When k = 1:}{Points are flagged as outliers if their distance to the nearest neighbor
 #'   exceeds the p-th percentile threshold of all nearest neighbor distances.}
 #'
-#'   \item{"dist.factor":}{Points are considered outliers if the ratio of the K-th nearest neighbor
+#'   \item{"dist.factor":}{Points are considered outliers if the ratio of the k-th nearest neighbor
 #'   distance to the 1st nearest neighbor distance exceeds \code{dist.factor}.}
 #'
 #'   \item{"diff.dist.factor" (default):}{For each point, finds the maximum jump in distance between
@@ -27,7 +27,7 @@
 #' }
 #'
 #' @param S A numeric matrix or data frame representing the state space, where each row is an observation
-#'   and each column is a dimension or feature. Must contain at least \code{K+1} observations.
+#'   and each column is a dimension or feature. Must contain at least \code{k+1} observations.
 #' @param y An optional numeric vector containing values of a variable defined over the state space.
 #'   If provided, must have length equal to \code{nrow(S)}. The function will filter this vector
 #'   to match the filtered state space.
@@ -37,16 +37,16 @@
 #' @param dist.factor A positive numeric value used as a threshold factor in certain outlier detection
 #'   methods. In "diff.dist.factor", points with relative jumps greater than this factor are
 #'   considered outliers. Default is 100.
-#' @param K A positive integer specifying the number of nearest neighbors to compute for each point.
+#' @param k A positive integer specifying the number of nearest neighbors to compute for each point.
 #'   Must be less than the number of observations in \code{S}. Default is 30.
-#' @param method A character string specifying the outlier detection method to use when K > 1.
+#' @param method A character string specifying the outlier detection method to use when k > 1.
 #'   Must be one of "dist.factor", "diff.dist.factor" (default), or "default" for the unnamed method.
 #'
 #' @return A list of class "knn.outliers" containing the following components:
 #' \describe{
 #'   \item{S.q}{The filtered state space matrix with outliers removed.}
 #'   \item{y.q}{The filtered dependent variable (if \code{y} was provided), otherwise \code{NULL}.}
-#'   \item{nn.d}{A matrix of dimensions \code{nrow(S)} x \code{K} containing distances to the K
+#'   \item{nn.d}{A matrix of dimensions \code{nrow(S)} x \code{k} containing distances to the k
 #'               nearest neighbors for each point.}
 #'   \item{d.thld}{The distance threshold used for outlier detection.}
 #'   \item{idx}{A logical vector indicating which points were kept (\code{TRUE}) and which were
@@ -73,7 +73,7 @@
 #' y <- c(rnorm(n_normal), rnorm(n_outliers, mean = 5))
 #'
 #' # Remove outliers using the default method
-#' result <- remove.knn.outliers(S, y, K = 10)
+#' result <- remove.knn.outliers(S, y, k = 10)
 #'
 #' # Print summary
 #' cat("Number of outliers detected:", result$n.outliers, "\n")
@@ -81,8 +81,7 @@
 #'     round(100 * nrow(result$S.q) / nrow(S), 2), "%\n")
 #'
 #' # Use a different method with more conservative threshold
-#' result2 <- remove.knn.outliers(S, y, p = 0.95, method = "dist.factor",
-#'                                dist.factor = 5, K = 10)
+#' result2 <- remove.knn.outliers(S, y, p = 0.95, method = "dist.factor", dist.factor = 5, k = 10)
 #'
 #' # Plot the original and filtered state space
 #' oldpar <- par(mfrow = c(1, 2))
@@ -106,7 +105,7 @@
 #'
 #' @export
 remove.knn.outliers <- function(S, y = NULL, p = 0.98, dist.factor = 100,
-                                K = 30, method = "diff.dist.factor") {
+                                k = 30, method = "diff.dist.factor") {
 
     # Input validation
     if (!is.matrix(S) && !is.data.frame(S)) {
@@ -128,18 +127,18 @@ remove.knn.outliers <- function(S, y = NULL, p = 0.98, dist.factor = 100,
 
     n <- nrow(S)
 
-    if (n <= K) {
-        stop(sprintf("Number of observations (%d) must be greater than K (%d)", n, K))
+    if (n <= k) {
+        stop(sprintf("Number of observations (%d) must be greater than k (%d)", n, k))
     }
 
-    # Validate K
-    if (!is.numeric(K) || length(K) != 1) {
-        stop("'K' must be a single numeric value")
+    # Validate k
+    if (!is.numeric(k) || length(k) != 1) {
+        stop("'k' must be a single numeric value")
     }
 
-    K <- as.integer(K)
-    if (K < 1) {
-        stop("'K' must be a positive integer")
+    k <- as.integer(k)
+    if (k < 1) {
+        stop("'k' must be a positive integer")
     }
 
     # Validate p
@@ -188,7 +187,7 @@ remove.knn.outliers <- function(S, y = NULL, p = 0.98, dist.factor = 100,
     }
 
     # Compute k-nearest neighbors
-    nn <- FNN::get.knn(S, k = K)
+    nn <- FNN::get.knn(S, k = k)
     nn.d <- nn$nn.dist
 
     # Get distances to first nearest neighbor
@@ -201,13 +200,13 @@ remove.knn.outliers <- function(S, y = NULL, p = 0.98, dist.factor = 100,
     idx <- rep(TRUE, n)
 
     # Apply outlier detection method
-    if (K == 1) {
-        # Simple threshold method for K=1
+    if (k == 1) {
+        # Simple threshold method for k=1
         idx <- d.nn < d.thld
 
     } else if (method == "dist.factor") {
-        # Ratio of K-th to 1st neighbor distance
-        d.rat <- nn.d[, K] / d.nn
+        # Ratio of k-th to 1st neighbor distance
+        d.rat <- nn.d[, k] / d.nn
         # Handle division by zero
         d.rat[!is.finite(d.rat)] <- Inf
         idx <- d.rat < dist.factor

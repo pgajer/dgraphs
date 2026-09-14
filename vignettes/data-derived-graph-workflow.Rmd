@@ -20,10 +20,13 @@ knitr::opts_chunk$set(
 
 ## Overview
 
+For a task-oriented API catalog, start with [Finding your way around dgraphs](function-guide.html).
+For reproducible input point clouds, see [Synthetic geometry and point sampling](synthetic-geometry.html).
+
 `dgraphs` constructs graphs whose vertices are numerical observations. The
 package supports mutual and symmetric k-nearest-neighbor graphs, fixed and
 adaptive radius graphs, continuous-kNN graphs, intersection-kNN graphs, and
-minimum-spanning-tree completion. Constructors retain graph lifecycle stages
+minimum-spanning-tree completion. The full constructor results used here retain graph lifecycle stages
 so that native, pruned, and connectivity-repaired graphs can be compared.
 
 This vignette follows a small example from construction through connectivity
@@ -82,24 +85,16 @@ graphs <- list(
 )
 ```
 
-Each final graph exposes aligned `adj_list` and `weight_list` fields. The
+Each final graph exposes aligned adjacency and lengths through
+`graph.adjacency()` and `graph.lengths()`. The
 weights are Euclidean edge lengths. The raw fields represent the graph before
 optional pruning and connectivity repair.
 
 ```{r candidate-summary}
 graph.summary <- do.call(rbind, lapply(names(graphs), function(name) {
-  graph <- graphs[[name]]
-  data.frame(
-    graph = name,
-    edges = sum(lengths(graph$adj_list)) / 2,
-    raw.components = length(unique(
-      graph.connected.components(graph$raw_adj_list)
-    )),
-    final.components = length(unique(
-      graph.connected.components(graph$adj_list)
-    )),
-    bridges = graph$n_mst_edges_added
-  )
+    graph <- graphs[[name]]
+    data.frame(graph = name, edges = sum(lengths(graph.adjacency(graph)))/2, raw.components = length(unique(graph.connected.components(graph))),
+        final.components = length(unique(graph.connected.components(graph))), bridges = graph$metadata$n_mst_edges_added)
 }))
 graph.summary
 ```
@@ -157,9 +152,7 @@ The graph can also be drawn in the original coordinates without running a
 layout algorithm.
 
 ```{r graph-figure, fig.cap="Continuous-kNN graph on the variable-density circular point cloud. Lines are graph edges and points are observations.", fig.alt="A circular point cloud with denser sampling on the upper semicircle. Gray graph edges connect nearby points around the circle."}
-edge.matrix <- convert.adjacency.to.edge.matrix(
-  selected$adj_list
-)$edge.matrix
+edge.matrix <- convert.adjacency.to.edge.matrix(graph.adjacency(selected))$edge.matrix
 
 plot(
   X,

@@ -18,9 +18,13 @@ elapsed.time <- function(start.time,
 
 #' Embed Graph in 2D or 3D Space
 #'
-#' @param adj.list Adjacency list representation of a graph.
-#' @param weights.list Optional edge-weight list aligned with `adj.list`.
-#' @param invert.weights Logical; invert weights for Fruchterman-Reingold layout.
+#' @param graph A `dgraph` object.
+#' @param edge.attribute Explicit edge quantity, such as `"length"` or
+#'   `"conductance"`; `NULL` uses an unweighted layout.
+#' @param transform Use selected values directly (`"identity"`) or their
+#'   reciprocals (`"reciprocal"`). Selected values must be strictly positive.
+#'   Fruchterman-Reingold treats larger values as stronger attraction, whereas
+#'   Kamada-Kawai uses them as distances.
 #' @param dim Embedding dimension, either `2` or `3`.
 #' @param method Layout method, `"fr"` or `"kk"`.
 #' @param verbose Logical; print timing messages.
@@ -33,106 +37,26 @@ elapsed.time <- function(start.time,
 #' graph.embedding(graph, dim = 2, method = "fr")
 #'
 #' @export
-graph.embedding <- function(adj.list,
-                            weights.list = NULL,
-                            invert.weights = TRUE,
-                            dim = 2,
-                            method = c("fr", "kk"),
-                            verbose = FALSE) {
-
-  if (!requireNamespace("igraph", quietly = TRUE)) {
-    stop("Package 'igraph' is required. Please install it.")
-  }
-
-  if (!is.list(adj.list)) {
-    stop("adj.list must be a list")
-  }
-
-  if (!is.numeric(dim) || length(dim) != 1 || dim %% 1 != 0 || !(dim %in% c(2, 3))) {
-    stop("dim must be either 2 or 3")
-  }
-
-  method <- match.arg(method)
-
-  if (!is.logical(invert.weights) || length(invert.weights) != 1) {
-    stop("invert.weights must be a single logical value")
-  }
-
-  if (!is.logical(verbose) || length(verbose) != 1) {
-    stop("verbose must be a single logical value")
-  }
-
-  if (!is.null(weights.list)) {
-    if (!is.list(weights.list) || length(weights.list) != length(adj.list)) {
-      stop("weights.list must be a list with the same length as adj.list")
-    }
-    if (!all(mapply(function(a, w) length(a) == length(w), adj.list, weights.list))) {
-      stop("Each element of weights.list must have the same length as the corresponding element of adj.list")
-    }
-    weights.list <- lapply(weights.list, as.numeric)
-  }
-
-  n.vertices <- length(adj.list)
-
-  if (n.vertices == 0) {
-    return(matrix(0, nrow = 0, ncol = dim))
-  }
-
-  if (verbose) {
-    routine.ptm <- proc.time()
-    ptm <- proc.time()
-    cat("Converting graph adjacency list to edge matrix ... ")
-  }
-
-  res <- convert.adjacency.to.edge.matrix(adj.list, weights.list)
-
-  if (verbose) {
-    elapsed.time(ptm)
-  }
-
-  if (nrow(res$edge.matrix) == 0) {
-    if (verbose) {
-      cat("Graph has no edges. Returning random positions.\n")
-    }
-    return(matrix(stats::runif(n.vertices * dim, -1, 1), nrow = n.vertices, ncol = dim))
-  }
-
-  if (verbose) {
-    ptm <- proc.time()
-    cat("Creating igraph object from edge matrix ... ")
-  }
-
-  g <- igraph::graph_from_edgelist(res$edge.matrix, directed = FALSE)
-
-  if (verbose) {
-    elapsed.time(ptm)
-  }
-
-  if (!is.null(weights.list)) {
-    if (method == "fr" && invert.weights) {
-      igraph::E(g)$weight <- 1 / res$weights
-    } else {
-      igraph::E(g)$weight <- res$weights
-    }
-  }
-
-  if (verbose) {
-    ptm <- proc.time()
-    cat(sprintf("Computing %s layout in %dD space ... ",
-                toupper(method), dim))
-  }
-
-  layout.coords <- switch(method,
-                         fr = igraph::layout_with_fr(g, dim = dim),
-                         kk = igraph::layout_with_kk(g, dim = dim))
-
-  if (verbose) {
-    elapsed.time(ptm)
-    txt <- "Total elapsed time"
-    elapsed.time(routine.ptm, txt, with.brackets = FALSE)
-  }
-
-  return(layout.coords)
+graph.embedding <- function(graph, edge.attribute = NULL,
+                            transform = c("identity", "reciprocal"),
+                            dim = 2, method = c("fr", "kk"), verbose = FALSE) {
+    method <- match.arg(method)
+    transform <- match.arg(transform)
+    if (length(dim) != 1L || !dim %in% c(2, 3)) stop("dim must be 2 or 3.")
+    g <- as_igraph(graph)
+    if (!graph.order(graph)) return(matrix(numeric(), 0L, dim))
+    weights <- NULL
+    if (!is.null(edge.attribute)) {
+        edges <- graph.edges(graph)
+        if (length(edge.attribute) != 1L || !edge.attribute %in% setdiff(names(edges), c("from", "to")))
+            stop("Select a stored edge attribute, such as 'length' or 'conductance'.")
+        weights <- edges[[edge.attribute]]
+        if (!is.numeric(weights) || any(!is.finite(weights)) || any(weights <= 0))
+            stop("Layout edge values must be strictly positive, including before reciprocal transformation.")
+        if (transform == "reciprocal") weights <- 1 / weights
+    } else if (transform != "identity") stop("Select edge.attribute before transforming edge values.")
+    if (method == "fr") igraph::layout_with_fr(g, dim = dim, weights = weights) else
+        igraph::layout_with_kk(g, dim = dim, weights = weights)
 }
 
 #' Plot a Graph with Colored Vertices
@@ -153,7 +77,7 @@ graph.embedding <- function(adj.list,
 #' graph <- create.circular.graph(4)
 #' plot2D.colored.graph(
 #'   embedding,
-#'   graph,
+#'   graph.adjacency(graph),
 #'   vertex.colors = 1:4,
 #'   add.legend = FALSE
 #' )
@@ -238,7 +162,7 @@ plot2D.colored.graph <- function(embedding, adj.list, vertex.colors,
 
 #' Compute Graph Spectrum
 #'
-#' @param graph Graph adjacency list.
+#' @param graph A `dgraph`; only topology is used for its unweighted Laplacian.
 #' @param nev Number of nontrivial eigenvalues/eigenvectors to compute.
 #' @param use.R Logical; use R/igraph implementation instead of native backend.
 #' @param return.Laplacian Logical; include the graph Laplacian in the result.
@@ -257,9 +181,11 @@ graph.spectrum <- function(graph,
                            use.R = FALSE,
                            return.Laplacian = FALSE,
                            return.dense = FALSE) {
-  if (!is.list(graph)) stop("'graph' must be a list of integer vectors")
-  n <- length(graph)
-  if (n == 0L) stop("'graph' must contain at least one vertex")
+  adj.list <- graph.adjacency(graph)
+
+  if (!is.list(adj.list)) stop("'adj.list' must be a list of integer vectors")
+  n <- length(adj.list)
+  if (n == 0L) stop("'adj.list' must contain at least one vertex")
 
   if (!is.null(nev)) {
     if (!is.numeric(nev) || length(nev) != 1L || nev < 1) stop("'nev' must be a positive integer")
@@ -278,7 +204,7 @@ graph.spectrum <- function(graph,
     if (!requireNamespace("igraph", quietly = TRUE)) {
       stop("Package 'igraph' is required when use.R = TRUE. Install it with install.packages('igraph').", call. = FALSE)
     }
-    g.m <- convert.adjacency.list.to.adjacency.matrix(graph)
+    g.m <- convert.adjacency.list.to.adjacency.matrix(adj.list)
     g <- igraph::graph_from_adjacency_matrix(g.m, mode = "undirected")
     L  <- igraph::laplacian_matrix(g, normalization = "unnormalized")
     ed <- eigen(L)
@@ -296,7 +222,7 @@ graph.spectrum <- function(graph,
     return.dense <- TRUE
   }
 
-  graph.0 <- lapply(graph, function(x) if (length(x)) as.integer(x - 1L) else integer(0))
+  graph.0 <- lapply(adj.list, function(x) if (length(x)) as.integer(x - 1L) else integer(0))
 
   if (return.Laplacian) {
       ans <- .Call("S_graph_spectrum_plus",

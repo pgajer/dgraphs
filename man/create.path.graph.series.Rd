@@ -4,12 +4,12 @@
 \alias{create.path.graph.series}
 \title{Create a Series of Path Graphs}
 \usage{
-create.path.graph.series(graph, edge.lengths, h.values)
+create.path.graph.series(adj.list, length.list, h.values)
 }
 \arguments{
-\item{graph}{A graph adjacency list.}
+\item{adj.list}{A graph adjacency list.}
 
-\item{edge.lengths}{Edge-length list.}
+\item{length.list}{Edge-length list.}
 
 \item{h.values}{Positive integer hop limits.}
 }

@@ -1,3 +1,4 @@
+#include "dgraphs/neighborhood.hpp"
 #include "dgraphs/linf_simplex_knn.hpp"
 
 #include <algorithm>
@@ -251,7 +252,7 @@ knn_search_result_t compute_linf_simplex_knn(SEXP RX, int k, double tol) {
     if (ncol == 1) {
         for (int i = 0; i < nrow; ++i) {
             for (int j = 0; j < k; ++j) {
-                result.indices[static_cast<size_t>(i)][static_cast<size_t>(j)] = j;
+                result.indices[i][j] = j == 0 ? i : (j <= i ? j - 1 : j);
                 result.distances[static_cast<size_t>(i)][static_cast<size_t>(j)] = 0.0;
             }
         }
@@ -261,8 +262,6 @@ knn_search_result_t compute_linf_simplex_knn(SEXP RX, int k, double tol) {
     std::vector<std::unique_ptr<face_tree_t>> face_trees =
         build_face_trees(x, nrow, ncol, active_faces);
 
-    std::vector<std::pair<double, int>> distances;
-    distances.reserve(static_cast<size_t>(nrow));
     std::vector<double> best_dist_sq(static_cast<size_t>(nrow),
                                      std::numeric_limits<double>::infinity());
     std::vector<int> touched;
@@ -326,7 +325,7 @@ knn_search_result_t compute_linf_simplex_knn(SEXP RX, int k, double tol) {
             }
         }
 
-        if (static_cast<int>(touched.size()) < k) {
+        if (static_cast<int>(touched.size()) < nrow) {
             for (int candidate = 0; candidate < nrow; ++candidate) {
                 if (std::isfinite(best_dist_sq[static_cast<size_t>(candidate)])) {
                     continue;
@@ -345,34 +344,13 @@ knn_search_result_t compute_linf_simplex_knn(SEXP RX, int k, double tol) {
             }
         }
 
-        distances.clear();
-        for (const int candidate : touched) {
-            distances.emplace_back(
-                best_dist_sq[static_cast<size_t>(candidate)],
-                candidate
-            );
-        }
-
-        std::partial_sort(
-            distances.begin(),
-            distances.begin() + k,
-            distances.end(),
-            [](const std::pair<double, int>& lhs, const std::pair<double, int>& rhs) {
-                if (lhs.first < rhs.first) {
-                    return true;
-                }
-                if (lhs.first > rhs.first) {
-                    return false;
-                }
-                return lhs.second < rhs.second;
-            }
-        );
-
-        for (int j = 0; j < k; ++j) {
-            result.indices[static_cast<size_t>(i)][static_cast<size_t>(j)] =
-                distances[static_cast<size_t>(j)].second;
-            result.distances[static_cast<size_t>(i)][static_cast<size_t>(j)] =
-                std::sqrt(std::max(0.0, distances[static_cast<size_t>(j)].first));
+        auto others = dgraphs_nearest_others(best_dist_sq, i, k - 1);
+        result.indices[i][0] = i;
+        result.distances[i][0] = 0;
+        for (int j = 1; j < k; ++j) {
+            const int v = others[j - 1];
+            result.indices[i][j] = v;
+            result.distances[i][j] = std::sqrt(std::max(0.0, best_dist_sq[v]));
         }
 
         for (const int candidate : touched) {

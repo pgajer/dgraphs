@@ -3,23 +3,22 @@
 #' @param n The number of vertices in the graph.
 #' @param offset An offset in indexing the vertices of the graph.
 #'
-#' @return A chain graph adjacency list.
+#' @return A `dgraph` object. Use [graph.adjacency()], [graph.lengths()],
+#'   [graph.edges()] and [graph.stages()] to inspect its stored graph stages.
+#'   Construction and diagnostic information is stored in `metadata`.
 #'
 #' @examples
 #' create.chain.graph.with.offset(4, offset = 0)
 #'
 #' @export
 create.chain.graph.with.offset <- function(n, offset = 0) {
-
-    if (n < 2) {
+    if (length(n) != 1L || !is.finite(n) || n < 2 || n != floor(n))
         stop("A chain has to have at least two vertices.")
-    }
-
-    graph <- list()
-    for (i in seq(n - 1)) {
-        graph[[i + offset]] <- c(i + 1 + offset)
-    }
-    graph[[n + offset]] <- c()
-
-    convert.to.undirected(graph)
+    if (length(offset) != 1L || !is.finite(offset) || offset < 0 || offset != floor(offset))
+        stop("offset must be a nonnegative integer.")
+    adj <- .dgraphs.chain.graph(n)
+    names(adj) <- as.character(seq_len(n) + offset)
+    out <- dgraph(adj)
+    out$metadata$original.vertices <- seq_len(n) + offset
+    out
 }

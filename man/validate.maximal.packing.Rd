@@ -6,7 +6,7 @@
 \usage{
 validate.maximal.packing(
   adj.list,
-  weight.list,
+  length.list,
   packing.vertices,
   max.packing.radius
 )
@@ -15,7 +15,7 @@ validate.maximal.packing(
 \item{adj.list}{A list where each element is a vector of adjacent vertex
 indices (1-based) for the corresponding vertex.}
 
-\item{weight.list}{A list where each element is a vector of edge weights
+\item{length.list}{A list where each element is a vector of edge weights
 corresponding to the adjacencies in \code{adj.list}.}
 
 \item{packing.vertices}{An integer vector of vertex indices (1-based) that
@@ -60,11 +60,11 @@ distances between vertices using Dijkstra's algorithm.
 }
 \examples{
 adj.list <- list(c(2), c(1, 3), c(2, 4), c(3, 5), c(4))
-weight.list <- list(c(1), c(1, 1), c(1, 1), c(1, 1), c(1))
+length.list <- list(c(1), c(1, 1), c(1, 1), c(1, 1), c(1))
 packing <- c(1, 3, 5)
 radius <- 2
 
-result <- validate.maximal.packing(adj.list, weight.list, packing, radius)
+result <- validate.maximal.packing(adj.list, length.list, packing, radius)
 result$valid
 result$is.maximal
 

@@ -6,7 +6,7 @@
 \usage{
 compute.graph.endpoint.scores(
   adj.list,
-  weight.list,
+  length.list,
   layout.3d,
   neighborhood = c("geodesic_k", "geodesic_radius"),
   k = c(10L, 20L, 30L),
@@ -22,7 +22,7 @@ compute.graph.endpoint.scores(
 \arguments{
 \item{adj.list}{Graph adjacency list (1-based vertex indices).}
 
-\item{weight.list}{Edge-length list aligned with \code{adj.list}.}
+\item{length.list}{Edge-length list aligned with \code{adj.list}.}
 
 \item{layout.3d}{Numeric matrix or data frame with 3 columns giving the 3D
 embedding coordinates for graph vertices.}
@@ -78,13 +78,8 @@ from the supplied 3D embedding.
 \examples{
 chain <- create.chain.graph(n.vertices = 8)
 layout <- cbind(seq_len(8), 0, 0)
-scores <- compute.graph.endpoint.scores(
-  chain$adj.list,
-  chain$edge.lengths,
-  layout,
-  k = c(2, 3),
-  min.neighborhood.size = 2
-)
+scores <- compute.graph.endpoint.scores(graph.adjacency(chain), graph.lengths(chain), layout,
+    k = c(2, 3), min.neighborhood.size = 2)
 head(scores$summary)
 
 }

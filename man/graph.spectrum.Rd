@@ -13,7 +13,7 @@ graph.spectrum(
 )
 }
 \arguments{
-\item{graph}{Graph adjacency list.}
+\item{graph}{A \code{dgraph}; only topology is used for its unweighted Laplacian.}
 
 \item{nev}{Number of nontrivial eigenvalues/eigenvectors to compute.}
 

@@ -1,0 +1,22 @@
+# Verify the exact R CMD check installation, not a possibly older user library.
+root <- normalizePath(".")
+lib <- file.path(root, "build", "dgraphs.Rcheck")
+.libPaths(c(lib, .libPaths()))
+library(dgraphs)
+stopifnot(normalizePath(find.package("dgraphs")) == normalizePath(file.path(lib, "dgraphs")))
+source("dev/audit-api-guide.R")
+stopifnot(setequal(getNamespaceExports("dgraphs"), exports))
+for (name in c(exports, methods))
+  if (!length(utils::help(name, package = "dgraphs", lib.loc = lib)))
+    stop("Missing installed help: ", name)
+index <- utils::vignette(package = "dgraphs", lib.loc = lib)$results
+expected <- c("function-guide", "synthetic-geometry", "data-derived-graph-workflow")
+stopifnot(setequal(index[, "Item"], expected))
+for (name in expected) for (ext in c("Rmd", "html", "R"))
+  stopifnot(file.exists(file.path(lib, "dgraphs", "doc", paste0(name, ".", ext))))
+for (name in expected)
+  stopifnot(identical(readLines(file.path("vignettes", paste0(name, ".Rmd"))),
+                      readLines(file.path(lib, "dgraphs", "doc", paste0(name, ".Rmd")))))
+cat("Installed vignette sources match the maintained inputs.\n")
+cat(sprintf("Installed help resolves for all %d exports and %d methods.\n", length(exports), length(methods)))
+print(index[, c("Item", "Title"), drop = FALSE])

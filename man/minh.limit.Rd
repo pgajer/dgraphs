@@ -4,10 +4,10 @@
 \alias{minh.limit}
 \title{Find the Minimum Hop Limit for Path Existence}
 \usage{
-minh.limit(x, from, to)
+minh.limit(path.result, from, to)
 }
 \arguments{
-\item{x}{A \code{path.graph.series} object.}
+\item{path.result}{A \code{path.graph.series} object.}
 
 \item{from}{Source vertex index.}
 

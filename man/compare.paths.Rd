@@ -4,10 +4,10 @@
 \alias{compare.paths}
 \title{Compare Paths Across Hop Limits}
 \usage{
-compare.paths(x, from, to)
+compare.paths(path.result, from, to)
 }
 \arguments{
-\item{x}{A \code{path.graph.series} object.}
+\item{path.result}{A \code{path.graph.series} object.}
 
 \item{from}{Source vertex index.}
 

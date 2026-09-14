@@ -6,8 +6,7 @@
 \usage{
 create.mknn.graphs(
   X,
-  kmin,
-  kmax,
+  k.values,
   max.path.edge.ratio.thld = 1.2,
   path.edge.ratio.percentile = 0.5,
   compute.full = FALSE,
@@ -20,13 +19,11 @@ create.mknn.graphs(
 \item{X}{A numeric matrix where rows represent data points and columns represent
 features. Data frames will be converted to matrices.}
 
-\item{kmin}{Minimum k value to consider (positive integer, at least 2).}
-
-\item{kmax}{Maximum k value to consider (must be >= kmin).}
+\item{k.values}{Strictly increasing integer vector of neighborhood sizes, each between 1 and n - 1.}
 
 \item{max.path.edge.ratio.thld}{Maximum acceptable ratio of alternative path
-length to direct edge length for pruning. Edges with alternative paths having
-ratio <= this value will be pruned. Default is 1.2. Set to 0 or negative to
+length to direct edge length for pruning; zero disables pruning. Edges with alternative paths having
+ratio <= this value will be pruned. Default is 1.2. Set to 0 to
 disable pruning.}
 
 \item{path.edge.ratio.percentile}{Percentile threshold (0.0-1.0) for edge
@@ -61,7 +58,7 @@ containing edge lengths and path ratios.}
 
 The returned object also has the following attributes:
 \itemize{
-\item kmin, kmax: The k range used
+\item k.values: The requested neighborhood sizes
 \item max.path.edge.ratio.thld: The pruning threshold used
 \item path.edge.ratio.percentile: The percentile threshold used
 \item pca: If PCA was performed, contains dimensionality reduction details
@@ -92,15 +89,11 @@ for clustering and visualization tasks.
 \examples{
 set.seed(123)
 X <- matrix(rnorm(80), ncol = 2)
-result <- create.mknn.graphs(
-  X, kmin = 3, kmax = 4, compute.full = TRUE, verbose = FALSE
-)
+result <- create.mknn.graphs(X, k.values = seq.int(3, 4), compute.full = TRUE, verbose = FALSE)
 result$k_statistics
 
 X.high <- matrix(rnorm(120), nrow = 20, ncol = 6)
-result.pca <- create.mknn.graphs(
-  X.high, kmin = 2, kmax = 3, pca.dim = 3, verbose = FALSE
-)
+result.pca <- create.mknn.graphs(X.high, k.values = seq.int(2, 3), pca.dim = 3, verbose = FALSE)
 attr(result.pca, "pca")$n_components
 
 }

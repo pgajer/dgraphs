@@ -4,16 +4,16 @@
 \alias{geodesic.knn}
 \title{Estimate Geodesic Nearest Neighbors Within a Point Cloud}
 \usage{
-geodesic.knn(X, k, K = 5, G = NULL)
+geodesic.knn(X, k, k.graph = 5, graph = NULL)
 }
 \arguments{
 \item{X}{Numeric matrix of observations.}
 
 \item{k}{Number of nearest neighbors to return.}
 
-\item{K}{Number of neighbors used to build the graph.}
+\item{k.graph}{Number of neighbors used to construct the auxiliary graph.}
 
-\item{G}{Optional legacy graph argument passed to \code{estimate.geodesic.distances}.}
+\item{graph}{Optional \code{dgraph} containing stored edge lengths.}
 }
 \value{
 A list with \code{nn.index} and \code{nn.dist} matrices.
@@ -23,6 +23,6 @@ Estimate Geodesic Nearest Neighbors Within a Point Cloud
 }
 \examples{
 X <- cbind(seq(0, 1, length.out = 8), 0)
-geodesic.knn(X, k = 2, K = 3)
+geodesic.knn(X, k = 2, k.graph = 3)
 
 }

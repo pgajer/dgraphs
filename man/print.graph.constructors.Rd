@@ -41,6 +41,6 @@ X <- cbind(seq_len(8), sin(seq_len(8)))
 print(create.rknn.graph(X, type = "fixed", radius = 2))
 print(create.cknn.graph(X, k.scale = 2))
 print(create.rknn.graph(X, type = "adaptive.radius", k.scale = 2))
-print(create.rknn.graphs(X, kmin = 2, kmax = 3))
+print(create.rknn.graphs(X, k.values = seq.int(2, 3)))
 print(create.sknn.graph(X, k = 2))
 }

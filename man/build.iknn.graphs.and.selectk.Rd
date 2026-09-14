@@ -6,8 +6,7 @@
 \usage{
 build.iknn.graphs.and.selectk(
   X,
-  kmin,
-  kmax,
+  k.values,
   method = c("both", "edit", "mixing", "none"),
   pca.dim = 100,
   variance.explained = 0.99,
@@ -40,7 +39,7 @@ build.iknn.graphs.and.selectk(
 \arguments{
 \item{X}{Numeric observation-by-feature matrix.}
 
-\item{kmin, kmax}{Minimum and maximum neighborhood sizes.}
+\item{k.values}{Strictly increasing integer vector of neighborhood sizes, each between 1 and n - 1.}
 
 \item{method}{Selection criterion.}
 
@@ -90,9 +89,8 @@ stability, label-mixing stability, or both.
 \examples{
 set.seed(1)
 x <- matrix(rnorm(60), ncol = 2)
-selected <- build.iknn.graphs.and.selectk(
-  x, kmin = 2, kmax = 4, method = "edit",
-  n.cores = 1, verbose = FALSE
-)
+selected <- build.iknn.graphs.and.selectk(x, k.values = seq.int(2, 4),
+    method = "edit", n.cores = 1,
+    verbose = FALSE)
 selected$k.opt.edit
 }

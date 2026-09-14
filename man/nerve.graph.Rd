@@ -12,13 +12,14 @@ nerve.graph(covering.list, n.cores = 1)
 \item{n.cores}{Number of parallel workers. Use \code{1} for serial execution.}
 }
 \value{
-A list with \code{adjacency.list}, \code{weights.list}, and \code{adjacency.matrix}.
+A \code{dgraph} with no lengths and overlap cardinalities stored in the
+\code{overlap} edge attribute.
 }
 \description{
 Construct the Nerve Graph of a Cover
 }
 \examples{
 cover <- list(c(1, 2, 3), c(3, 4), c(5, 6))
-nerve.graph(cover, n.cores = 1)$adjacency.list
+graph.edges(nerve.graph(cover, n.cores = 1))
 
 }

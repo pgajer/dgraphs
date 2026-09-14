@@ -6,7 +6,7 @@
 \usage{
 create.grid.graph(
   adj.list,
-  weight.list,
+  length.list,
   grid.size,
   start.vertex = 1L,
   snap.tolerance = 0.1
@@ -15,7 +15,7 @@ create.grid.graph(
 \arguments{
 \item{adj.list}{Input graph adjacency list.}
 
-\item{weight.list}{Edge-length list matching \code{adj.list}.}
+\item{length.list}{Edge-length list matching \code{adj.list}.}
 
 \item{grid.size}{Target grid size parameter.}
 
@@ -24,18 +24,16 @@ create.grid.graph(
 \item{snap.tolerance}{Grid snapping tolerance.}
 }
 \value{
-A list with \code{adj_list}, \code{weight_list}, and \code{grid_vertices}.
+A \code{dgraph} object. Use \code{\link[=graph.adjacency]{graph.adjacency()}}, \code{\link[=graph.lengths]{graph.lengths()}},
+\code{\link[=graph.edges]{graph.edges()}} and \code{\link[=graph.stages]{graph.stages()}} to inspect its stored graph stages.
+Construction and diagnostic information is stored in \code{metadata}.
 }
 \description{
 Create a Refined Graph with Approximately Uniform Edge Spacing
 }
 \examples{
 chain <- create.chain.graph(n.vertices = 3)
-grid <- create.grid.graph(
-  chain$adj.list,
-  chain$edge.lengths,
-  grid.size = 5
-)
-grid$grid_vertices
+grid <- create.grid.graph(graph.adjacency(chain), graph.lengths(chain), grid.size = 5)
+grid$metadata$grid_vertices
 
 }

@@ -49,8 +49,8 @@ violating the distance constraint)
 }
 \examples{
 adj.list <- list(c(2), c(1, 3), c(2, 4), c(3, 5), c(4))
-weight.list <- list(c(1), c(1, 1), c(1, 1), c(1, 1), c(1))
-result <- create.maximal.packing(adj.list, weight.list, grid.size = 2)
+length.list <- list(c(1), c(1, 1), c(1, 1), c(1, 1), c(1))
+result <- create.maximal.packing(adj.list, length.list, grid.size = 2)
 
 verify.maximal.packing(result, verbose = FALSE)
 

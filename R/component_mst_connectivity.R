@@ -1,16 +1,16 @@
-.graph.edge.table <- function(adj.list, weight.list) {
+.graph.edge.table <- function(adj.list, length.list) {
     n <- length(adj.list)
     degree <- lengths(adj.list)
     if (!sum(degree)) {
         return(data.frame(from = integer(), to = integer(), weight = numeric()))
     }
-    if (length(weight.list) != n || !identical(lengths(weight.list), degree)) {
+    if (length(length.list) != n || !identical(lengths(length.list), degree)) {
         stop("Adjacency and weight lists must have matching lengths.", call. = FALSE)
     }
 
     from <- rep.int(seq_len(n), degree)
     to <- as.integer(unlist(adj.list, recursive = FALSE, use.names = FALSE))
-    weight <- as.numeric(unlist(weight.list, recursive = FALSE, use.names = FALSE))
+    weight <- as.numeric(unlist(length.list, recursive = FALSE, use.names = FALSE))
     keep <- from < to
     data.frame(
         from = from[keep],
@@ -243,7 +243,7 @@
 
 .augment.graph.with.component.mst <- function(X,
                                               adj.list,
-                                              weight.list,
+                                              length.list,
                                               k,
                                               connect.components = FALSE,
                                               connect.method = c("component.mst", "component.mst.ann", "global.mst"),
@@ -253,7 +253,7 @@
     connect.method <- match.arg(connect.method)
     n <- nrow(X)
     controls <- .normalize.bridge.controls(n, k, bridge.k, bridge.k.max, bridge.growth)
-    edges <- .graph.edge.table(adj.list, weight.list)
+    edges <- .graph.edge.table(adj.list, length.list)
     comps.before <- .graph.components(adj.list)
     added <- data.frame(from = integer(), to = integer(), weight = numeric())
     bridge.method <- "none"
@@ -350,7 +350,7 @@
 
 .repair.graph.lifecycle.stage <- function(X,
                                           adj.list,
-                                          weight.list,
+                                          length.list,
                                           k,
                                           connect.method,
                                           bridge.k,
@@ -359,7 +359,7 @@
     .augment.graph.with.component.mst(
         X = X,
         adj.list = adj.list,
-        weight.list = weight.list,
+        length.list = length.list,
         k = k,
         connect.components = TRUE,
         connect.method = connect.method,
@@ -373,9 +373,9 @@
                                           X,
                                           k,
                                           raw.adj.list,
-                                          raw.weight.list,
+                                          raw.length.list,
                                           pruned.adj.list,
-                                          pruned.weight.list,
+                                          pruned.length.list,
                                           connect.method,
                                           bridge.k,
                                           bridge.k.max,
@@ -388,17 +388,17 @@
                                           prune.local.k = NULL,
                                           with.pruned.edge.stats = FALSE) {
     raw.repaired <- .repair.graph.lifecycle.stage(
-        X, raw.adj.list, raw.weight.list, k, connect.method,
+        X, raw.adj.list, raw.length.list, k, connect.method,
         bridge.k, bridge.k.max, bridge.growth
     )
     pruned.repaired <- .repair.graph.lifecycle.stage(
-        X, pruned.adj.list, pruned.weight.list, k, connect.method,
+        X, pruned.adj.list, pruned.length.list, k, connect.method,
         bridge.k, bridge.k.max, bridge.growth
     )
     repaired.pruning <- .prune.graph.by.method(
         X = X,
         adj.list = raw.repaired$adj_list,
-        weight.list = raw.repaired$weight_list,
+        length.list = raw.repaired$weight_list,
         k = k,
         prune.method = prune.method,
         max.path.edge.ratio.deviation.thld = max.path.edge.ratio.deviation.thld,
@@ -429,6 +429,6 @@
     result$raw_repaired_mst_edge_weight <- raw.repaired$mst_edge_weight
     result$pruned_repaired_mst_edge_matrix <- pruned.repaired$mst_edge_matrix
     result$pruned_repaired_mst_edge_weight <- pruned.repaired$mst_edge_weight
-    result$repaired_pruned_pruning <- repaired.pruning
+    result$repaired_pruned_pruning <- repaired.pruning[setdiff(names(repaired.pruning), c("adj_list", "weight_list"))]
     result
 }

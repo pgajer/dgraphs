@@ -12,7 +12,7 @@ create.bipartite.graph(n1, n2)
 \item{n2}{Number of vertices in the second part.}
 }
 \value{
-An adjacency list for the complete bipartite graph.
+An unweighted \code{dgraph} connecting all pairs across the two parts.
 }
 \description{
 Create a Bipartite Graph

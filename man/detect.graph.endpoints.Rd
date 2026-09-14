@@ -6,7 +6,7 @@
 \usage{
 detect.graph.endpoints(
   adj.list,
-  weight.list,
+  length.list,
   layout.3d,
   neighborhood = c("geodesic_k", "geodesic_radius"),
   k = c(10L, 20L, 30L),
@@ -33,7 +33,7 @@ detect.graph.endpoints(
 \arguments{
 \item{adj.list}{Graph adjacency list (1-based vertex indices).}
 
-\item{weight.list}{Edge-length list aligned with \code{adj.list}.}
+\item{length.list}{Edge-length list aligned with \code{adj.list}.}
 
 \item{layout.3d}{Numeric matrix or data frame with 3 columns giving the 3D
 embedding coordinates for graph vertices.}
@@ -74,7 +74,7 @@ decomposition via \code{refit.rdgraph.regression()}.}
 
 \item{smooth.fit.args}{Optional named list of arguments passed to
 \code{fit.rdgraph.regression()} when \code{smooth = TRUE} and \code{fitted.model} is
-\code{NULL}. \code{X}, \code{y}, \code{adj.list}, \code{weight.list}, and \code{verbose.level} are filled
+\code{NULL}. \code{X}, \code{y}, \code{adj.list}, \code{length.list}, and \code{verbose.level} are filled
 automatically when not supplied.}
 
 \item{smooth.refit.args}{Optional named list of arguments passed to
@@ -124,16 +124,10 @@ need not be degree-1 vertices.
 \examples{
 chain <- create.chain.graph(n.vertices = 8)
 layout <- cbind(seq_len(8), 0, 0)
-endpoints <- detect.graph.endpoints(
-  chain$adj.list,
-  chain$edge.lengths,
-  layout,
-  k = c(2, 3),
-  min.neighborhood.size = 2,
-  detect.max.radius = 2,
-  detect.min.neighborhood.size = 2,
-  min.score.quantile = 0.5
-)
+endpoints <- detect.graph.endpoints(graph.adjacency(chain), graph.lengths(chain),
+    layout, k = c(2,
+    3), min.neighborhood.size = 2, detect.max.radius = 2, detect.min.neighborhood.size = 2,
+    min.score.quantile = 0.5)
 endpoints$endpoints
 
 }

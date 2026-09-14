@@ -35,7 +35,8 @@ create.single.iknn.graph(
 \item{X}{A numeric matrix where rows represent data points and columns represent features.
 Data frames will be coerced to matrices.}
 
-\item{k}{Integer scalar. The number of nearest neighbors to consider for each point.
+\item{k}{Integer scalar. Number of nearest other vertices. Self is explicitly
+added to each cover, and distance ties use ascending vertex index.
 Must be positive and less than the number of data points.}
 
 \item{max.path.edge.ratio.deviation.thld}{Numeric in \eqn{[0, 0.2)}.
@@ -75,11 +76,9 @@ For example, threshold.percentile = 0.9 removes edges in the top 10\\% by length
 This pruning is applied after geometric pruning and targets unusually long edges
 based on absolute edge lengths rather than path-to-edge ratios.}
 
-\item{compute.full}{Logical scalar controlling additional full-payload outputs.
-If TRUE, keeps legacy original-graph components \code{isize_list} and
-\code{conn_comps}. Lifecycle graph payloads are always returned:
-\code{raw_adj_list}/\code{raw_weight_list}, \code{pruned_adj_list}/\code{pruned_weight_list},
-and final \code{adj_list}/\code{weight_list}.}
+\item{compute.full}{Logical. Retain additional native component diagnostics.
+Graph stages are always retained; available overlap values are stored as
+named edge attributes.}
 
 \item{with.isize.pruning}{Logical scalar. If TRUE, compute intersection-size pruning
 outputs and related statistics. Default is FALSE.}
@@ -144,37 +143,9 @@ compute and write cache; if cache exists but is invalid, error.
 }}
 }
 \value{
-An object of class "IkNN" (inheriting from "list") containing:
-\describe{
-\item{adj_list}{Adjacency lists for the final graph after optional MST repair}
-\item{weight_list}{Edge weights for the final graph}
-\item{raw_adj_list}{Adjacency lists for the native graph before pruning}
-\item{raw_weight_list}{Edge weights for the native graph before pruning}
-\item{pruned_adj_list}{Adjacency lists after pruning and before MST repair}
-\item{pruned_weight_list}{Edge weights after pruning and before MST repair}
-\item{raw_repaired_adj_list, raw_repaired_weight_list}{The native graph
-after MST component repair.}
-\item{pruned_repaired_adj_list, pruned_repaired_weight_list}{The
-prune-first branch after MST component repair.}
-\item{repaired_pruned_adj_list, repaired_pruned_weight_list}{The
-repair-first branch after applying the selected pruning method to the
-repaired raw graph.}
-\item{n_edges}{Total number of edges in original graph}
-\item{n_edges_in_pruned_graph}{Number of edges after pruning}
-\item{n_removed_edges}{Number of edges removed by pruning}
-\item{edge_reduction_ratio}{Proportion of edges removed}
-\item{call}{The matched function call}
-\item{k}{Number of nearest neighbors used}
-\item{n}{Number of data points}
-\item{d}{Number of features}
-}
-
-If compute.full = TRUE, additional components include:
-\describe{
-\item{isize_list}{Intersection sizes for original edges}
-\item{conn_comps}{Connected components identification}
-\item{connected_components}{Alternative format of connected components}
-}
+A \code{dgraph} object. Use \code{\link[=graph.adjacency]{graph.adjacency()}}, \code{\link[=graph.lengths]{graph.lengths()}},
+\code{\link[=graph.edges]{graph.edges()}} and \code{\link[=graph.stages]{graph.stages()}} to inspect its stored graph stages.
+Construction and diagnostic information is stored in \code{metadata}.
 }
 \description{
 Creates and prunes an intersection-weighted k-nearest neighbors (IWD-kNN) graph from
@@ -182,12 +153,9 @@ input data. The graph is constructed based on feature space distances and inters
 sizes between neighbor sets.
 }
 \details{
-\code{adj_list} and \code{weight_list} always contain the final graph used by downstream
-algorithms. \verb{raw_*} fields contain the native graph before pruning, and
-\verb{pruned_*} fields contain the graph after pruning but before optional MST
-component repair. If pruning is disabled, \verb{pruned_*} is identical to \verb{raw_*}.
-The repaired lifecycle branches allow direct comparison of raw, prune-first,
-and repair-first graph geodesic distances from a single constructor call.
+The default accessors inspect the final graph. Use \code{stage = "raw"} or
+\code{stage = "pruned"} to inspect earlier stages. \code{graph.stages()} reports
+which repaired branches are retained; a missing stage is an error.
 }
 \examples{
 # Create sample data

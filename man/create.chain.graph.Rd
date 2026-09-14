@@ -14,14 +14,16 @@ create.chain.graph(n.vertices = NULL, x = NULL, y = NULL)
 \item{y}{Optional response vector sorted along with \code{x}.}
 }
 \value{
-A list with \code{adj.list}, \code{edge.lengths}, \code{x.sorted}, and \code{y.sorted}.
+A \code{dgraph} object. Use \code{\link[=graph.adjacency]{graph.adjacency()}}, \code{\link[=graph.lengths]{graph.lengths()}},
+\code{\link[=graph.edges]{graph.edges()}} and \code{\link[=graph.stages]{graph.stages()}} to inspect its stored graph stages.
+Construction and diagnostic information is stored in \code{metadata}.
 }
 \description{
 Create a Chain Graph
 }
 \examples{
 chain <- create.chain.graph(x = c(3, 1, 2))
-chain$adj.list
-chain$edge.lengths
+graph.adjacency(chain)
+graph.lengths(chain)
 
 }

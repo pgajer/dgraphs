@@ -4,19 +4,16 @@
 \alias{create.sknn.graphs}
 \title{Compute a Series of Symmetric k-Nearest Neighbor Graphs}
 \usage{
-create.sknn.graphs(X, kmin = NULL, kmax = NULL, ..., k.values = NULL)
+create.sknn.graphs(X, k.values, ...)
 }
 \arguments{
 \item{X}{Numeric matrix or data frame with observations in rows.}
 
-\item{kmin, kmax}{Integer scalars defining an inclusive sequence of \code{k}
-values. Ignored when \code{k.values} is supplied.}
+\item{k.values}{Optional non-empty vector of distinct integer \code{k} values.}
 
 \item{...}{Named arguments forwarded to \code{\link[=create.sknn.graph]{create.sknn.graph()}}. The \code{k} and
 \code{knn.index} arguments cannot be supplied. \code{neighbor.method} must be
 \code{"ann"} if supplied.}
-
-\item{k.values}{Optional non-empty vector of distinct integer \code{k} values.}
 }
 \value{
 A list of class \code{"sknn_graphs"} with components \code{graphs}, a named

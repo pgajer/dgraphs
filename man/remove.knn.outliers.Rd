@@ -9,13 +9,13 @@ remove.knn.outliers(
   y = NULL,
   p = 0.98,
   dist.factor = 100,
-  K = 30,
+  k = 30,
   method = "diff.dist.factor"
 )
 }
 \arguments{
 \item{S}{A numeric matrix or data frame representing the state space, where each row is an observation
-and each column is a dimension or feature. Must contain at least \code{K+1} observations.}
+and each column is a dimension or feature. Must contain at least \code{k+1} observations.}
 
 \item{y}{An optional numeric vector containing values of a variable defined over the state space.
 If provided, must have length equal to \code{nrow(S)}. The function will filter this vector
@@ -29,10 +29,10 @@ neighbor exceeds the 98th percentile of all nearest neighbor distances.}
 methods. In "diff.dist.factor", points with relative jumps greater than this factor are
 considered outliers. Default is 100.}
 
-\item{K}{A positive integer specifying the number of nearest neighbors to compute for each point.
+\item{k}{A positive integer specifying the number of nearest neighbors to compute for each point.
 Must be less than the number of observations in \code{S}. Default is 30.}
 
-\item{method}{A character string specifying the outlier detection method to use when K > 1.
+\item{method}{A character string specifying the outlier detection method to use when k > 1.
 Must be one of "dist.factor", "diff.dist.factor" (default), or "default" for the unnamed method.}
 }
 \value{
@@ -40,7 +40,7 @@ A list of class "knn.outliers" containing the following components:
 \describe{
 \item{S.q}{The filtered state space matrix with outliers removed.}
 \item{y.q}{The filtered dependent variable (if \code{y} was provided), otherwise \code{NULL}.}
-\item{nn.d}{A matrix of dimensions \code{nrow(S)} x \code{K} containing distances to the K
+\item{nn.d}{A matrix of dimensions \code{nrow(S)} x \code{k} containing distances to the k
 nearest neighbors for each point.}
 \item{d.thld}{The distance threshold used for outlier detection.}
 \item{idx}{A logical vector indicating which points were kept (\code{TRUE}) and which were
@@ -56,14 +56,14 @@ the principle that outliers tend to be isolated from the main data clusters and 
 larger distances to their nearest neighbors.
 }
 \details{
-The function determines outliers by analyzing the distances between points and their K nearest
+The function determines outliers by analyzing the distances between points and their k nearest
 neighbors. Several detection methods are available:
 
 \describe{
-\item{When K = 1:}{Points are flagged as outliers if their distance to the nearest neighbor
+\item{When k = 1:}{Points are flagged as outliers if their distance to the nearest neighbor
 exceeds the p-th percentile threshold of all nearest neighbor distances.}
 
-\item{"dist.factor":}{Points are considered outliers if the ratio of the K-th nearest neighbor
+\item{"dist.factor":}{Points are considered outliers if the ratio of the k-th nearest neighbor
 distance to the 1st nearest neighbor distance exceeds \code{dist.factor}.}
 
 \item{"diff.dist.factor" (default):}{For each point, finds the maximum jump in distance between
@@ -93,7 +93,7 @@ S <- rbind(normal_data, outliers)
 y <- c(rnorm(n_normal), rnorm(n_outliers, mean = 5))
 
 # Remove outliers using the default method
-result <- remove.knn.outliers(S, y, K = 10)
+result <- remove.knn.outliers(S, y, k = 10)
 
 # Print summary
 cat("Number of outliers detected:", result$n.outliers, "\n")
@@ -101,8 +101,7 @@ cat("Percentage of data retained:",
     round(100 * nrow(result$S.q) / nrow(S), 2), "\%\n")
 
 # Use a different method with more conservative threshold
-result2 <- remove.knn.outliers(S, y, p = 0.95, method = "dist.factor",
-                               dist.factor = 5, K = 10)
+result2 <- remove.knn.outliers(S, y, p = 0.95, method = "dist.factor", dist.factor = 5, k = 10)
 
 # Plot the original and filtered state space
 oldpar <- par(mfrow = c(1, 2))

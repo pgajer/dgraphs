@@ -9,25 +9,19 @@ compute.graph.summary.pmf(
   summary = c("degree_distribution", "edge_weight_distribution",
     "component_size_distribution", "neighborhood_label_distribution"),
   labels = NULL,
-  weight.list = NULL,
+  edge.attribute = "length",
+  stage = "final",
   bins = NULL,
   n.bins = 20L,
   bin.method = c("auto", "fixed_width", "fixed_quantile", "explicit"),
   normalize = TRUE,
   support = NULL,
   zero.pad = TRUE,
-  simplify.multiple = TRUE,
-  directed = FALSE,
   return.details = TRUE
 )
 }
 \arguments{
-\item{graph}{Graph-like object. Supported inputs are:
-\itemize{
-\item an object with \code{adj_list} and optional \code{weight_list}
-\item an object with \code{pruned_adj_list} and optional \code{pruned_weight_list}
-\item a plain adjacency list (list of integer vectors)
-}}
+\item{graph}{A \code{dgraph} object.}
 
 \item{summary}{Summary type to compute.}
 
@@ -35,8 +29,9 @@ compute.graph.summary.pmf(
 \code{"neighborhood_label_distribution"}. Must have length equal to the
 number of vertices.}
 
-\item{weight.list}{Optional edge-weight list used when \code{graph} is a
-plain adjacency list.}
+\item{edge.attribute}{Edge quantity for the edge-value distribution; default \code{"length"}.}
+
+\item{stage}{Stored graph stage to summarize.}
 
 \item{bins}{Optional numeric vector of histogram breaks used for
 \code{"edge_weight_distribution"}.}
@@ -53,12 +48,6 @@ and the summary is \code{"edge_weight_distribution"}.}
 
 \item{zero.pad}{Logical; if \code{TRUE} and \code{support} is provided,
 missing support entries are padded with zero mass.}
-
-\item{simplify.multiple}{Logical; if \code{TRUE}, duplicate edges are
-collapsed before computing summaries.}
-
-\item{directed}{Logical; if \code{FALSE} (default), treat edges as
-undirected.}
 
 \item{return.details}{Logical; if \code{TRUE}, return a structured list.
 Otherwise return the named PMF directly.}
@@ -94,7 +83,7 @@ for disconnectedness / fragmentation, not as a general-purpose default
 stability summary.
 }
 \examples{
-graph <- list(c(2L, 3L), 1L, 1L)
+graph <- dgraph(list(c(2L, 3L), 1L, 1L))
 compute.graph.summary.pmf(graph, summary = "degree_distribution")
 
 }

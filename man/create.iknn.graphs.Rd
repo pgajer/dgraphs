@@ -6,8 +6,7 @@
 \usage{
 create.iknn.graphs(
   X,
-  kmin,
-  kmax,
+  k.values,
   max.path.edge.ratio.deviation.thld = 0.1,
   path.edge.ratio.percentile = 0.5,
   threshold.percentile = 0,
@@ -30,9 +29,7 @@ create.iknn.graphs(
 \item{X}{A numeric matrix (or object coercible to a numeric matrix) with rows
 = observations and columns = features.}
 
-\item{kmin}{Integer \eqn{\ge 1}, the minimum k.}
-
-\item{kmax}{Integer \eqn{> k_{\mathrm{min}}}, the maximum k.}
+\item{k.values}{Strictly increasing integer vector of neighborhood sizes, each between 1 and n - 1.}
 
 \item{max.path.edge.ratio.deviation.thld}{Numeric in \eqn{[0, 0.2)}.
 Geometric pruning removes an edge \eqn{(i,j)} when there exists an
@@ -144,20 +141,12 @@ are \code{NULL}.
 X <- matrix(rnorm(100 * 5), 100, 5)
 
 # Basic usage
-res1 <- create.iknn.graphs(
-  X, kmin = 3, kmax = 10, n.cores = 1,
-  compute.full = FALSE
-)
+res1 <- create.iknn.graphs(X, k.values = seq.int(3, 10), n.cores = 1, compute.full = FALSE)
 
 # With custom pruning parameters
-res2 <- create.iknn.graphs(
-  X, kmin = 3, kmax = 10,
-  max.path.edge.ratio.deviation.thld = 0.1,
-  path.edge.ratio.percentile = 0.5,
-  compute.full = TRUE,
-  n.cores = 1,
-  verbose = TRUE
-)
+res2 <- create.iknn.graphs(X, k.values = seq.int(3, 10),
+    max.path.edge.ratio.deviation.thld = 0.1,
+    path.edge.ratio.percentile = 0.5, compute.full = TRUE, n.cores = 1, verbose = TRUE)
 
 # View statistics for each k
 print(res2$k_statistics)

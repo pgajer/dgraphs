@@ -6,7 +6,7 @@
 \usage{
 compute.vertex.geodesic.stats(
   adj.list,
-  weight.list,
+  length.list,
   grid.vertex,
   min.radius = 0.2,
   max.radius = 0.5,
@@ -19,7 +19,7 @@ compute.vertex.geodesic.stats(
 \item{adj.list}{List of integer vectors. Each vector contains indices of vertices
 adjacent to the corresponding vertex. Indices should be 1-based.}
 
-\item{weight.list}{List of numeric vectors. Each vector contains weights of edges
+\item{length.list}{List of numeric vectors. Each vector contains weights of edges
 corresponding to adjacencies in adj.list.}
 
 \item{grid.vertex}{Integer. The grid vertex to analyze.}
@@ -54,13 +54,8 @@ Analyzes how the number of geodesics scales with radius for a specific grid vert
 }
 \examples{
 graph <- generate.circle.graph(8, type = "uniform")
-compute.vertex.geodesic.stats(
-  graph$adj.list,
-  graph$weight.list,
-  grid.vertex = 1,
-  min.radius = 0.3,
-  max.radius = 0.5,
-  n.steps = 2
-)
+compute.vertex.geodesic.stats(graph.adjacency(graph), graph.lengths(graph),
+    grid.vertex = 1, min.radius = 0.3,
+    max.radius = 0.5, n.steps = 2)
 
 }

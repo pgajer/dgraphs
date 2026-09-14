@@ -10,7 +10,9 @@ create.star.graph(sizes)
 \item{sizes}{Positive integer chain lengths attached to the central vertex.}
 }
 \value{
-An adjacency list for the star graph.
+A \code{dgraph} object. Use \code{\link[=graph.adjacency]{graph.adjacency()}}, \code{\link[=graph.lengths]{graph.lengths()}},
+\code{\link[=graph.edges]{graph.edges()}} and \code{\link[=graph.stages]{graph.stages()}} to inspect its stored graph stages.
+Construction and diagnostic information is stored in \code{metadata}.
 }
 \description{
 Create a Star Graph by Joining Chains

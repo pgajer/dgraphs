@@ -10,7 +10,7 @@ convert.weighted.adjacency.matrix.to.adjacency.list(A)
 \item{A}{Numeric square adjacency matrix.}
 }
 \value{
-A list with \code{adjacency.list} and \code{weights.list}.
+A list with \code{adj.list} and \code{weight.list}.
 }
 \description{
 Convert a Weighted Adjacency Matrix to Lists

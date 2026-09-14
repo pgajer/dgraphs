@@ -6,7 +6,7 @@
 \usage{
 geodesic.core.endpoints(
   adj.list,
-  weight.list,
+  length.list,
   core.quantile = 0.1,
   endpoint.quantile = 0.9,
   use.approx.eccentricity = TRUE,
@@ -19,7 +19,7 @@ geodesic.core.endpoints(
 \arguments{
 \item{adj.list}{Graph adjacency list using 1-based vertex indices.}
 
-\item{weight.list}{Edge-length list aligned with \code{adj.list}.}
+\item{length.list}{Edge-length list aligned with \code{adj.list}.}
 
 \item{core.quantile}{Numeric in \verb{(0, 1)} defining the low-eccentricity core.}
 
@@ -43,11 +43,8 @@ Select Graph Endpoints by Core-Eccentricity Geometry
 }
 \examples{
 graph <- create.chain.graph(n.vertices = 8)
-endpoints <- geodesic.core.endpoints(
-  graph$adj.list,
-  graph$edge.lengths,
-  use.approx.eccentricity = FALSE
-)
+endpoints <- geodesic.core.endpoints(graph.adjacency(graph), graph.lengths(graph),
+    use.approx.eccentricity = FALSE)
 endpoints$endpoints
 
 }

@@ -96,35 +96,16 @@
 #' @param bridge.growth Numeric scalar greater than 1. Multiplicative growth
 #'   factor for bridge candidate neighborhoods.
 #'
-#' @return A list of class `"sknn_graph"` with adjacency lists, weights, edge
-#'   matrix, kNN index matrix, component diagnostics, and any MST edges added.
-#'   With `graph.detail = "minimal"`, the raw and pruned fields refer to the
-#'   same unmodified graph and repaired lifecycle branches are omitted.
-#'   The graph lifecycle fields are:
-#'   \describe{
-#'     \item{raw_adj_list, raw_weight_list}{The native sKNN graph before pruning
-#'       and before optional MST component repair.}
-#'     \item{pruned_adj_list, pruned_weight_list}{The graph after optional local
-#'       geometric pruning and before optional MST component repair. If pruning
-#'       is disabled, these fields are identical to the raw graph.}
-#'     \item{raw_repaired_adj_list, raw_repaired_weight_list}{The native sKNN
-#'       graph after MST component repair.}
-#'     \item{pruned_repaired_adj_list, pruned_repaired_weight_list}{The
-#'       prune-first branch after MST component repair.}
-#'     \item{repaired_pruned_adj_list, repaired_pruned_weight_list}{The
-#'       repair-first branch after applying local geometric pruning to the
-#'       repaired raw graph.}
-#'     \item{adj_list, weight_list}{The final graph after optional MST component
-#'       repair. Downstream algorithms should use these fields unless they
-#'       explicitly need a lifecycle diagnostic stage.}
-#'   }
+#' @return A `dgraph` object. Use [graph.adjacency()], [graph.lengths()],
+#'   [graph.edges()] and [graph.stages()] to inspect its stored graph stages.
+#'   Construction and diagnostic information is stored in `metadata`.
 #'
 #' @examples
 #' X <- rbind(c(0, 0), c(1, 0), c(10, 0), c(11, 0))
 #' g <- create.sknn.graph(X, k = 1, connect.components = TRUE)
-#' g$n_components_before
-#' g$n_components_after
-#' g$mst_edge_matrix
+#' g$metadata$n_components_before
+#' g$metadata$n_components_after
+#' g$metadata$mst_edge_matrix
 #'
 #' @export
 create.sknn.graph <- function(X,
@@ -339,7 +320,7 @@ create.sknn.graph <- function(X,
         result$graph_detail <- graph.detail
         result$lifecycle_branches <- FALSE
         class(result) <- c("sknn_graph", "list")
-        return(result)
+        return(.dgraph.from.native(result))
     }
     raw.result <- .Call(
         "S_create_sknn_graph",
@@ -387,7 +368,7 @@ create.sknn.graph <- function(X,
         global.pruning <- .prune.graph.by.method(
             X = X,
             adj.list = raw.result$adj_list,
-            weight.list = raw.result$weight_list,
+            length.list = raw.result$weight_list,
             k = as.integer(k),
             prune.method = prune.method,
             max.path.edge.ratio.deviation.thld =
@@ -426,7 +407,7 @@ create.sknn.graph <- function(X,
         bridge <- .augment.graph.with.component.mst(
             X = X,
             adj.list = result$pruned_adj_list,
-            weight.list = result$pruned_weight_list,
+            length.list = result$pruned_weight_list,
             k = as.integer(k),
             connect.components = connect.components,
             connect.method = connect.method,
@@ -470,9 +451,9 @@ create.sknn.graph <- function(X,
         X = X,
         k = as.integer(k),
         raw.adj.list = result$raw_adj_list,
-        raw.weight.list = result$raw_weight_list,
+        raw.length.list = result$raw_weight_list,
         pruned.adj.list = result$pruned_adj_list,
-        pruned.weight.list = result$pruned_weight_list,
+        pruned.length.list = result$pruned_weight_list,
         connect.method = connect.method,
         bridge.k = bridge.k,
         bridge.k.max = bridge.k.max,
@@ -491,7 +472,7 @@ create.sknn.graph <- function(X,
     result$graph_detail <- graph.detail
     result$lifecycle_branches <- TRUE
     class(result) <- c("sknn_graph", "list")
-    result
+    .dgraph.from.native(result)
 }
 
 #' Compute a Series of Symmetric k-Nearest Neighbor Graphs
@@ -503,8 +484,7 @@ create.sknn.graph <- function(X,
 #' use exactly the same neighbor ranking as the largest graph.
 #'
 #' @param X Numeric matrix or data frame with observations in rows.
-#' @param kmin,kmax Integer scalars defining an inclusive sequence of `k`
-#'   values. Ignored when `k.values` is supplied.
+#' @param k.values Strictly increasing integer vector of neighborhood sizes, each between 1 and n - 1.
 #' @param ... Named arguments forwarded to [create.sknn.graph()]. The `k` and
 #'   `knn.index` arguments cannot be supplied. `neighbor.method` must be
 #'   `"ann"` if supplied.
@@ -528,17 +508,17 @@ create.sknn.graph <- function(X,
 #' @seealso [create.sknn.graph()]
 #'
 #' @export
-create.sknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
-                               k.values = NULL) {
+create.sknn.graphs <- function(X, k.values, ...) {
     X <- .validate.numeric.data.matrix(X)
     n <- nrow(X)
-    k.values <- .normalize.rknn.graphs.k.values(kmin, kmax, k.values, n)
+    k.values <- .validate.k.values(k.values, n)
     args <- list(...)
+    if (any(c("kmin", "kmax") %in% names(args))) stop("Use k.values; kmin and kmax were removed.")
     if (length(args) && (is.null(names(args)) || any(!nzchar(names(args))))) {
         stop("All arguments in '...' must be named.", call. = FALSE)
     }
     if ("k" %in% names(args)) {
-        stop("'k' is varied by create.sknn.graphs(); use 'kmin', 'kmax', or 'k.values'.",
+        stop("'k' is varied by create.sknn.graphs(); use 'k.values'.",
              call. = FALSE)
     }
     if ("knn.index" %in% names(args)) {
@@ -589,8 +569,6 @@ create.sknn.graphs <- function(X, kmin = NULL, kmax = NULL, ...,
         graphs = graphs,
         k_statistics = .rknn.graphs.k.statistics(graphs, k.values)
     )
-    attr(out, "kmin") <- min(k.values)
-    attr(out, "kmax") <- max(k.values)
     attr(out, "k.values") <- k.values
     attr(out, "n_vertices") <- n
     attr(out, "graph_rule") <- "symmetric.knn"
@@ -611,31 +589,31 @@ print.sknn_graphs <- function(x, ...) {
 #' @export
 print.sknn_graph <- function(x, ...) {
     cat("Symmetric kNN graph\n")
-    cat("Number of vertices:", x$n_vertices, "\n")
-    cat("Number of edges:", x$n_edges, "\n")
-    cat("k:", x$k, "\n")
-    if (isTRUE(x$prune_edges)) {
-        cat("Geometric pruning:", x$prune_method, "\n")
-        cat("Edges before pruning:", x$n_edges_before_pruning, "\n")
-        cat("Edges after pruning:", x$n_edges_after_pruning, "\n")
-        cat("Pruned edges:", x$n_pruned_edges, "\n")
+    cat("Number of vertices:", graph.order(x), "\n")
+    cat("Number of edges:", nrow(graph.edges(x)), "\n")
+    cat("k:", x$metadata$k, "\n")
+    if (isTRUE(x$metadata$prune_edges)) {
+        cat("Geometric pruning:", x$metadata$prune_method, "\n")
+        cat("Edges before pruning:", x$metadata$n_edges_before_pruning, "\n")
+        cat("Edges after pruning:", x$metadata$n_edges_after_pruning, "\n")
+        cat("Pruned edges:", x$metadata$n_pruned_edges, "\n")
     }
-    cat("Connected components before MST augmentation:", x$n_components_before, "\n")
-    cat("Connected components after MST augmentation:", x$n_components_after, "\n")
-    if (isTRUE(x$connect_components)) {
-        cat("MST bridge edges added:", x$n_mst_edges_added, "\n")
-        cat("Connection method:", x$connect_method, "\n")
-        cat("Bridge method:", x$bridge_method, "\n")
-        if (identical(x$bridge_method, "ann")) {
-            cat("Bridge k used:", x$bridge_k_used, "\n")
+    cat("Connected components before MST augmentation:", x$metadata$n_components_before, "\n")
+    cat("Connected components after MST augmentation:", x$metadata$n_components_after, "\n")
+    if (isTRUE(x$metadata$connect_components)) {
+        cat("MST bridge edges added:", x$metadata$n_mst_edges_added, "\n")
+        cat("Connection method:", x$metadata$connect_method, "\n")
+        cat("Bridge method:", x$metadata$bridge_method, "\n")
+        if (identical(x$metadata$bridge_method, "ann")) {
+            cat("Bridge k used:", x$metadata$bridge_k_used, "\n")
         }
-        if (isTRUE(x$bridge_exact_fallback_used)) {
+        if (isTRUE(x$metadata$bridge_exact_fallback_used)) {
             cat("Exact bridge fallback used: TRUE\n")
         }
     }
-    cat("Neighbor method:", x$neighbor_method, "\n")
-    if (identical(x$neighbor_method, "ann")) {
-        cat("ANN eps:", x$ann_eps, "\n")
+    cat("Neighbor method:", x$metadata$neighbor_method, "\n")
+    if (identical(x$metadata$neighbor_method, "ann")) {
+        cat("ANN eps:", x$metadata$ann_eps, "\n")
     }
     invisible(x)
 }

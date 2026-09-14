@@ -18,7 +18,7 @@
 #' from the supplied 3D embedding.
 #'
 #' @param adj.list Graph adjacency list (1-based vertex indices).
-#' @param weight.list Edge-length list aligned with `adj.list`.
+#' @param length.list Edge-length list aligned with `adj.list`.
 #' @param layout.3d Numeric matrix or data frame with 3 columns giving the 3D
 #'   embedding coordinates for graph vertices.
 #' @param neighborhood Character string. Either `"geodesic_k"` (default) or
@@ -46,18 +46,13 @@
 #' @examples
 #' chain <- create.chain.graph(n.vertices = 8)
 #' layout <- cbind(seq_len(8), 0, 0)
-#' scores <- compute.graph.endpoint.scores(
-#'   chain$adj.list,
-#'   chain$edge.lengths,
-#'   layout,
-#'   k = c(2, 3),
-#'   min.neighborhood.size = 2
-#' )
+#' scores <- compute.graph.endpoint.scores(graph.adjacency(chain), graph.lengths(chain), layout,
+#'     k = c(2, 3), min.neighborhood.size = 2)
 #' head(scores$summary)
 #'
 #' @export
 compute.graph.endpoint.scores <- function(adj.list,
-                                          weight.list,
+                                          length.list,
                                           layout.3d,
                                           neighborhood = c("geodesic_k", "geodesic_radius"),
                                           k = c(10L, 20L, 30L),
@@ -74,7 +69,7 @@ compute.graph.endpoint.scores <- function(adj.list,
 
     .validate.graph.endpoint.inputs(
         adj.list = adj.list,
-        weight.list = weight.list,
+        length.list = length.list,
         layout.3d = layout.3d,
         q = q,
         gaussian.sigma = gaussian.sigma,
@@ -106,7 +101,7 @@ compute.graph.endpoint.scores <- function(adj.list,
 
     score.matrices <- .compute.graph.endpoint.scores.reference(
         adj.list = adj.list,
-        weight.list = weight.list,
+        length.list = length.list,
         layout.3d = layout.3d,
         scales = unname(unlist(scales, use.names = FALSE)),
         neighborhood = neighborhood,
@@ -185,7 +180,7 @@ compute.graph.endpoint.scores <- function(adj.list,
 }
 
 .compute.graph.endpoint.scores.reference <- function(adj.list,
-                                                     weight.list,
+                                                     length.list,
                                                      layout.3d,
                                                      scales,
                                                      neighborhood,
@@ -201,7 +196,7 @@ compute.graph.endpoint.scores <- function(adj.list,
         return(
             rcpp.fn(
                 adj_list = adj.list,
-                weight_list = weight.list,
+                weight_list = length.list,
                 layout_3d = layout.3d,
                 scales = as.numeric(scales),
                 neighborhood = neighborhood,
@@ -213,7 +208,7 @@ compute.graph.endpoint.scores <- function(adj.list,
         )
     }
 
-    graph.obj <- .build.graph.endpoint.igraph(adj.list, weight.list)
+    graph.obj <- .build.graph.endpoint.igraph(adj.list, length.list)
 
     s.min.by.scale <- matrix(NA_real_, nrow = nrow(layout.3d), ncol = length(scales))
     s.q.by.scale <- matrix(NA_real_, nrow = nrow(layout.3d), ncol = length(scales))
@@ -292,7 +287,7 @@ compute.graph.endpoint.scores <- function(adj.list,
 #' need not be degree-1 vertices.
 #'
 #' @param adj.list Graph adjacency list (1-based vertex indices).
-#' @param weight.list Edge-length list aligned with `adj.list`.
+#' @param length.list Edge-length list aligned with `adj.list`.
 #' @param layout.3d Numeric matrix or data frame with 3 columns giving the 3D
 #'   embedding coordinates for graph vertices.
 #' @param neighborhood Character string. Either `"geodesic_k"` (default) or
@@ -320,7 +315,7 @@ compute.graph.endpoint.scores <- function(adj.list,
 #'   decomposition via `refit.rdgraph.regression()`.
 #' @param smooth.fit.args Optional named list of arguments passed to
 #'   `fit.rdgraph.regression()` when `smooth = TRUE` and `fitted.model` is
-#'   `NULL`. `X`, `y`, `adj.list`, `weight.list`, and `verbose.level` are filled
+#'   `NULL`. `X`, `y`, `adj.list`, `length.list`, and `verbose.level` are filled
 #'   automatically when not supplied.
 #' @param smooth.refit.args Optional named list of arguments passed to
 #'   `refit.rdgraph.regression()` when smoothing aggregated score fields.
@@ -348,21 +343,15 @@ compute.graph.endpoint.scores <- function(adj.list,
 #' @examples
 #' chain <- create.chain.graph(n.vertices = 8)
 #' layout <- cbind(seq_len(8), 0, 0)
-#' endpoints <- detect.graph.endpoints(
-#'   chain$adj.list,
-#'   chain$edge.lengths,
-#'   layout,
-#'   k = c(2, 3),
-#'   min.neighborhood.size = 2,
-#'   detect.max.radius = 2,
-#'   detect.min.neighborhood.size = 2,
-#'   min.score.quantile = 0.5
-#' )
+#' endpoints <- detect.graph.endpoints(graph.adjacency(chain), graph.lengths(chain),
+#'     layout, k = c(2,
+#'     3), min.neighborhood.size = 2, detect.max.radius = 2, detect.min.neighborhood.size = 2,
+#'     min.score.quantile = 0.5)
 #' endpoints$endpoints
 #'
 #' @export
 detect.graph.endpoints <- function(adj.list,
-                                   weight.list,
+                                   length.list,
                                    layout.3d,
                                    neighborhood = c("geodesic_k", "geodesic_radius"),
                                    k = c(10L, 20L, 30L),
@@ -431,7 +420,7 @@ detect.graph.endpoints <- function(adj.list,
 
     scores <- compute.graph.endpoint.scores(
         adj.list = adj.list,
-        weight.list = weight.list,
+        length.list = length.list,
         layout.3d = layout.3d,
         neighborhood = neighborhood,
         k = k,
@@ -489,7 +478,7 @@ detect.graph.endpoints <- function(adj.list,
                 )
             }
             if (is.null(fit.args$adj.list)) fit.args$adj.list <- adj.list
-            if (is.null(fit.args$weight.list)) fit.args$weight.list <- weight.list
+            if (is.null(fit.args$length.list)) fit.args$length.list <- length.list
             if (is.null(fit.args$verbose.level)) fit.args$verbose.level <- 0L
             if (is.null(fit.args$compute.extremality)) fit.args$compute.extremality <- FALSE
 
@@ -553,7 +542,7 @@ detect.graph.endpoints <- function(adj.list,
         y.detect <- .replace.nonfinite.endpoint.values(y.scale)
         ext.scale <- detect.local.extrema(
             adj.list = adj.list,
-            weight.list = weight.list,
+            length.list = length.list,
             y = y.detect,
             max.radius = detect.max.radius,
             min.neighborhood.size = detect.min.neighborhood.size,
@@ -579,7 +568,7 @@ detect.graph.endpoints <- function(adj.list,
     stability.radius <- if (is.null(scale.stability.radius)) detect.max.radius else scale.stability.radius
     local.max.filtered.by.scale <- .suppress.graph.endpoint.maxima.by.scale(
         adj.list = adj.list,
-        weight.list = weight.list,
+        length.list = length.list,
         local.max.by.scale = local.max.strong.by.scale,
         score.by.scale = stability.score.by.scale,
         radius = stability.radius,
@@ -590,7 +579,7 @@ detect.graph.endpoints <- function(adj.list,
     if (stability.radius > 0) {
         local.max.support.by.scale <- .compute.graph.endpoint.support.by.scale(
             adj.list = adj.list,
-            weight.list = weight.list,
+            length.list = length.list,
             local.max.by.scale = local.max.filtered.by.scale,
             radius = stability.radius,
             prefer.cpp = TRUE
@@ -604,7 +593,7 @@ detect.graph.endpoints <- function(adj.list,
     y.final <- .replace.nonfinite.endpoint.values(detection.score)
     local.maxima <- detect.local.extrema(
         adj.list = adj.list,
-        weight.list = weight.list,
+        length.list = length.list,
         y = y.final,
         max.radius = detect.max.radius,
         min.neighborhood.size = detect.min.neighborhood.size,
@@ -692,7 +681,7 @@ detect.graph.endpoints <- function(adj.list,
 }
 
 .compute.graph.endpoint.support.by.scale <- function(adj.list,
-                                                     weight.list,
+                                                     length.list,
                                                      local.max.by.scale,
                                                      radius,
                                                      prefer.cpp = TRUE)
@@ -709,7 +698,7 @@ detect.graph.endpoints <- function(adj.list,
     if (isTRUE(prefer.cpp) && is.function(rcpp.fn)) {
         support <- rcpp.fn(
             adj_list = adj.list,
-            weight_list = weight.list,
+            weight_list = length.list,
             local_max_by_scale = local.max.by.scale,
             radius = as.numeric(radius)
         )
@@ -718,7 +707,7 @@ detect.graph.endpoints <- function(adj.list,
         return(support)
     }
 
-    graph.obj <- .build.graph.endpoint.igraph(adj.list, weight.list)
+    graph.obj <- .build.graph.endpoint.igraph(adj.list, length.list)
     support <- matrix(
         FALSE,
         nrow = nrow(local.max.by.scale),
@@ -746,7 +735,7 @@ detect.graph.endpoints <- function(adj.list,
 }
 
 .suppress.graph.endpoint.maxima.by.scale <- function(adj.list,
-                                                     weight.list,
+                                                     length.list,
                                                      local.max.by.scale,
                                                      score.by.scale,
                                                      radius,
@@ -769,7 +758,7 @@ detect.graph.endpoints <- function(adj.list,
     if (isTRUE(prefer.cpp) && is.function(rcpp.fn)) {
         keep <- rcpp.fn(
             adj_list = adj.list,
-            weight_list = weight.list,
+            weight_list = length.list,
             local_max_by_scale = local.max.by.scale,
             score_by_scale = score.by.scale,
             radius = as.numeric(radius)
@@ -779,7 +768,7 @@ detect.graph.endpoints <- function(adj.list,
         return(keep)
     }
 
-    graph.obj <- .build.graph.endpoint.igraph(adj.list, weight.list)
+    graph.obj <- .build.graph.endpoint.igraph(adj.list, length.list)
     keep <- matrix(
         FALSE,
         nrow = nrow(local.max.by.scale),
@@ -813,16 +802,16 @@ detect.graph.endpoints <- function(adj.list,
 }
 
 .validate.graph.endpoint.inputs <- function(adj.list,
-                                            weight.list,
+                                            length.list,
                                             layout.3d,
                                             q,
                                             gaussian.sigma,
                                             min.neighborhood.size,
                                             verbose) {
     if (!is.list(adj.list)) stop("'adj.list' must be a list.")
-    if (!is.list(weight.list)) stop("'weight.list' must be a list.")
-    if (length(adj.list) != length(weight.list)) {
-        stop("'adj.list' and 'weight.list' must have the same length.")
+    if (!is.list(length.list)) stop("'length.list' must be a list.")
+    if (length(adj.list) != length(length.list)) {
+        stop("'adj.list' and 'length.list' must have the same length.")
     }
 
     n.vertices <- length(adj.list)
@@ -830,18 +819,18 @@ detect.graph.endpoints <- function(adj.list,
         if (!is.numeric(adj.list[[i]])) {
             stop(sprintf("'adj.list[[%d]]' must be numeric.", i))
         }
-        if (!is.numeric(weight.list[[i]])) {
-            stop(sprintf("'weight.list[[%d]]' must be numeric.", i))
+        if (!is.numeric(length.list[[i]])) {
+            stop(sprintf("'length.list[[%d]]' must be numeric.", i))
         }
-        if (length(adj.list[[i]]) != length(weight.list[[i]])) {
+        if (length(adj.list[[i]]) != length(length.list[[i]])) {
             stop(sprintf(
-                "'adj.list[[%d]]' and 'weight.list[[%d]]' must have the same length.",
+                "'adj.list[[%d]]' and 'length.list[[%d]]' must have the same length.",
                 i,
                 i
             ))
         }
-        if (length(weight.list[[i]]) > 0L &&
-            (any(!is.finite(weight.list[[i]])) || any(weight.list[[i]] <= 0))) {
+        if (length(length.list[[i]]) > 0L &&
+            (any(!is.finite(length.list[[i]])) || any(length.list[[i]] <= 0))) {
             stop("All edge lengths must be finite and > 0.")
         }
     }
@@ -904,8 +893,8 @@ detect.graph.endpoints <- function(adj.list,
     as.list(radius)
 }
 
-.build.graph.endpoint.igraph <- function(adj.list, weight.list) {
-    graph.obj <- convert.adjacency.to.edge.matrix(adj.list, weight.list)
+.build.graph.endpoint.igraph <- function(adj.list, length.list) {
+    graph.obj <- convert.adjacency.to.edge.matrix(adj.list, length.list)
     edge.matrix <- graph.obj$edge.matrix
     weights <- graph.obj$weights
 

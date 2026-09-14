@@ -18,16 +18,7 @@ Invisibly returns the input object.
 Prints a concise summary of a collection of mutual k-nearest neighbor graphs.
 }
 \examples{
-graphs <- list(
-  k_statistics = data.frame(
-    k = 2:4,
-    n_edges_pruned = c(2L, 3L, 3L)
-  )
-)
-attr(graphs, "kmin") <- 2L
-attr(graphs, "kmax") <- 4L
-attr(graphs, "n_vertices") <- 3L
-class(graphs) <- "mknn_graphs"
-
+graphs <- create.mknn.graphs(matrix(c(0, 1, 3, 6, 9), ncol = 1),
+                              k.values = 1:3, verbose = FALSE)
 print(graphs)
 }

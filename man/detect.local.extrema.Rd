@@ -6,7 +6,7 @@
 \usage{
 detect.local.extrema(
   adj.list,
-  weight.list,
+  length.list,
   y,
   max.radius,
   min.neighborhood.size,
@@ -17,7 +17,7 @@ detect.local.extrema(
 \arguments{
 \item{adj.list}{Graph adjacency list using 1-based vertex indices.}
 
-\item{weight.list}{Edge-length list aligned with \code{adj.list}.}
+\item{length.list}{Edge-length list aligned with \code{adj.list}.}
 
 \item{y}{Numeric vertex function values.}
 
@@ -44,13 +44,8 @@ the extrema type because it cannot be recovered from empty vectors.
 }
 \examples{
 chain <- create.chain.graph(n.vertices = 5)
-extrema <- detect.local.extrema(
-  chain$adj.list,
-  chain$edge.lengths,
-  y = c(1, 3, 1, 2, 0),
-  max.radius = 1,
-  min.neighborhood.size = 2
-)
+extrema <- detect.local.extrema(graph.adjacency(chain), graph.lengths(chain), y = c(1, 3, 1, 2,
+    0), max.radius = 1, min.neighborhood.size = 2)
 extrema$vertices
 
 }

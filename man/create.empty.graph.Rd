@@ -10,7 +10,9 @@ create.empty.graph(n)
 \item{n}{Integer number of vertices.}
 }
 \value{
-An adjacency list for the empty graph on \code{n} vertices.
+A \code{dgraph} object. Use \code{\link[=graph.adjacency]{graph.adjacency()}}, \code{\link[=graph.lengths]{graph.lengths()}},
+\code{\link[=graph.edges]{graph.edges()}} and \code{\link[=graph.stages]{graph.stages()}} to inspect its stored graph stages.
+Construction and diagnostic information is stored in \code{metadata}.
 }
 \description{
 Create an Empty Graph

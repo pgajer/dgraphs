@@ -25,7 +25,7 @@ create.mknn.graph(
 and each column represents a feature/dimension.}
 
 \item{k}{A positive integer specifying the number of nearest neighbors to
-consider. Must be at least 2.}
+consider, excluding self; require \verb{1 <= k < n}.}
 
 \item{prune.method}{Character scalar. \code{"none"} disables geometric pruning.
 \code{"local.geodesic"} applies the experimental local geometric pruning stage
@@ -69,30 +69,9 @@ size before exact fallback.}
 factor for ANN bridge neighborhoods.}
 }
 \value{
-A list with class "mknn_graph" containing:
-\describe{
-\item{adj_list}{A list where element i contains the indices of vertices
-connected to vertex i by an edge in the final graph after optional MST
-component repair.}
-\item{weight_list}{A list where element i contains the distances between
-vertex i and its connected neighbors in the final graph (in the same
-order as \code{adj_list[[i]]}).}
-\item{raw_adj_list, raw_weight_list}{The native mutual-kNN graph before
-pruning and before optional MST component repair.}
-\item{pruned_adj_list, pruned_weight_list}{The graph after optional local
-geometric pruning and before optional MST component repair. If pruning
-is disabled, these fields are identical to the raw graph.}
-\item{raw_repaired_adj_list, raw_repaired_weight_list}{The native mutual
-kNN graph after MST component repair.}
-\item{pruned_repaired_adj_list, pruned_repaired_weight_list}{The
-prune-first branch after MST component repair.}
-\item{repaired_pruned_adj_list, repaired_pruned_weight_list}{The
-repair-first branch after applying local geometric pruning to the
-repaired raw graph.}
-\item{n_vertices}{The number of vertices in the graph.}
-\item{n_edges}{The total number of edges in the graph.}
-\item{k}{The k value used to construct the graph.}
-}
+A \code{dgraph} object. Use \code{\link[=graph.adjacency]{graph.adjacency()}}, \code{\link[=graph.lengths]{graph.lengths()}},
+\code{\link[=graph.edges]{graph.edges()}} and \code{\link[=graph.stages]{graph.stages()}} to inspect its stored graph stages.
+Construction and diagnostic information is stored in \code{metadata}.
 }
 \description{
 Creates an undirected graph where two points are connected by an edge if and
@@ -110,21 +89,16 @@ vertices i and j exists if and only if:
 This mutual relationship ensures that the resulting graph is undirected and
 typically sparser than a standard k-nearest neighbor graph.
 
-The final graph is always stored in \code{adj_list}/\code{weight_list}.
-Lifecycle diagnostic fields follow the same convention as the other graph
-constructors: \code{raw_*} is before pruning and MST repair, and
-\code{pruned_*} is after pruning but before MST repair.
-The \code{raw_repaired_*}, \code{pruned_repaired_*}, and
-\code{repaired_pruned_*} branches allow one constructor call to compare
-native, prune-first, and repair-first graph geodesic geometries.
+Use graph accessors for the final graph and \code{graph.stages()} to list
+stored raw, pruned and repaired stages. Construction details are in \code{metadata}.
 }
 \examples{
 set.seed(123)
 X <- matrix(rnorm(60), ncol = 2)
 graph <- create.mknn.graph(X, k = 4)
-graph$n_vertices
-graph$n_edges
-graph$adj_list[[1]]
+graph.order(graph)
+nrow(graph.edges(graph))
+graph.adjacency(graph)[[1]]
 
 }
 \seealso{

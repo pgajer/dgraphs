@@ -46,27 +46,7 @@ For pruned graphs, the statistics reflect the structure after geometric pruning
 has been applied.
 }
 \examples{
-mknn_result <- list(
-  pruned_graphs = list(
-    list(adj_list = list(c(2L), c(1L, 3L), c(2L))),
-    list(adj_list = list(c(2L, 3L), c(1L, 3L), c(1L, 2L)))
-  ),
-  k_statistics = data.frame(
-    k = 2:3,
-    n_edges = c(2L, 3L),
-    n_edges_pruned = c(2L, 3L),
-    n_removed = c(0L, 0L),
-    reduction_ratio = c(0, 0)
-  )
-)
-attr(mknn_result, "kmin") <- 2L
-attr(mknn_result, "kmax") <- 3L
-attr(mknn_result, "n_vertices") <- 3L
-attr(mknn_result, "max.path.edge.ratio.thld") <- 1.2
-class(mknn_result) <- "mknn_graphs"
-
-stats <- summary(mknn_result)
-plot(stats$k, stats$mean_degree, type = "b",
-     xlab = "k", ylab = "Mean Degree")
-
+graphs <- create.mknn.graphs(matrix(c(0, 1, 3, 6, 9), ncol = 1),
+                              k.values = 1:3, compute.full = TRUE, verbose = FALSE)
+summary(graphs)
 }

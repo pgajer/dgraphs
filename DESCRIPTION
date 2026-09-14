@@ -1,6 +1,6 @@
 Package: dgraphs
 Title: Data-Derived Graph Construction Utilities
-Version: 0.2.1.9000
+Version: 0.3.0
 Authors@R: c(
     person("Pawel", "Gajer", role = c("aut", "cre"),
            email = "pgajer@gmail.com"),
@@ -57,9 +57,13 @@ LinkingTo:
     RcppEigen
 Suggests:
     geometry,
+    htmltools,
+    htmlwidgets,
+    ivue (>= 0.1.0),
     knitr,
     Matrix,
     rmarkdown,
+    rgl,
     testthat (>= 3.0.0),
     withr
 VignetteBuilder: knitr

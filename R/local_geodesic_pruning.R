@@ -100,7 +100,7 @@
 }
 
 .local.dijkstra.distance <- function(adj.list,
-                                     weight.list,
+                                     length.list,
                                      local.vertices,
                                      source,
                                      target,
@@ -130,7 +130,7 @@
         }
         visited[[u]] <- TRUE
         nbrs <- adj.list[[u]]
-        weights <- weight.list[[u]]
+        weights <- length.list[[u]]
         if (!length(nbrs)) {
             next
         }
@@ -151,7 +151,7 @@
     }
 }
 
-.remove.undirected.edge <- function(adj.list, weight.list, u, v) {
+.remove.undirected.edge <- function(adj.list, length.list, u, v) {
     remove.one <- function(a, w, from, to) {
         pos <- which(a[[from]] == to)
         if (length(pos)) {
@@ -161,14 +161,14 @@
         }
         list(adj = a, weight = w)
     }
-    first <- remove.one(adj.list, weight.list, u, v)
+    first <- remove.one(adj.list, length.list, u, v)
     second <- remove.one(first$adj, first$weight, v, u)
     list(adj_list = second$adj, weight_list = second$weight)
 }
 
 .prune.graph.local.geodesic <- function(X,
                                         adj.list,
-                                        weight.list,
+                                        length.list,
                                         k,
                                         prune.tau = 1.05,
                                         prune.local.k = NULL,
@@ -194,7 +194,7 @@
         "S_prune_graph_local_geodesic",
         X,
         adj.list,
-        weight.list,
+        length.list,
         as.numeric(controls$prune.tau),
         as.integer(controls$prune.local.k),
         as.logical(controls$with.pruned.edge.stats),
@@ -207,16 +207,16 @@
 }
 
 .prune.graph.global.geodesic <- function(adj.list,
-                                         weight.list,
+                                         length.list,
                                          max.ratio.threshold,
                                          path.edge.ratio.percentile,
                                          with.pruned.edge.stats = FALSE) {
-    edges <- .graph.edge.table(adj.list, weight.list)
+    edges <- .graph.edge.table(adj.list, length.list)
     n.edges.before <- nrow(edges)
     if (!n.edges.before || max.ratio.threshold <= 1) {
         return(list(
             adj_list = adj.list,
-            weight_list = weight.list,
+            weight_list = length.list,
             n_edges_before_pruning = n.edges.before,
             n_edges_after_pruning = n.edges.before,
             n_pruned_edges = 0L,
@@ -248,7 +248,7 @@
         v <- edges.asc$to[[r]]
         alt <- .local.dijkstra.distance(
             adj.list = adj.list,
-            weight.list = weight.list,
+            length.list = length.list,
             local.vertices = seq_along(adj.list),
             source = u,
             target = v,
@@ -270,7 +270,7 @@
     if (!cursor) {
         return(list(
             adj_list = adj.list,
-            weight_list = weight.list,
+            weight_list = length.list,
             n_edges_before_pruning = n.edges.before,
             n_edges_after_pruning = n.edges.before,
             n_pruned_edges = 0L,
@@ -287,7 +287,7 @@
     for (r in seq_len(nrow(candidates))) {
         u <- candidates$u[[r]]
         v <- candidates$v[[r]]
-        current <- .graph.edge.table(adj.list, weight.list)
+        current <- .graph.edge.table(adj.list, length.list)
         key <- current$from == u & current$to == v
         if (!any(key)) {
             next
@@ -295,7 +295,7 @@
         edge.length <- current$weight[which(key)[[1L]]]
         alt <- .local.dijkstra.distance(
             adj.list = adj.list,
-            weight.list = weight.list,
+            length.list = length.list,
             local.vertices = seq_along(adj.list),
             source = u,
             target = v,
@@ -304,9 +304,9 @@
             cutoff = Inf
         )
         if (is.finite(alt) && alt / edge.length <= max.ratio.threshold + tol) {
-            removed <- .remove.undirected.edge(adj.list, weight.list, u, v)
+            removed <- .remove.undirected.edge(adj.list, length.list, u, v)
             adj.list <- removed$adj_list
-            weight.list <- removed$weight_list
+            length.list <- removed$weight_list
             if (isTRUE(with.pruned.edge.stats)) {
                 stats.cursor <- stats.cursor + 1L
                 stats[[stats.cursor]] <- data.frame(
@@ -325,10 +325,10 @@
     } else {
         .empty.pruned.edge.stats()
     }
-    n.edges.after <- nrow(.graph.edge.table(adj.list, weight.list))
+    n.edges.after <- nrow(.graph.edge.table(adj.list, length.list))
     list(
         adj_list = adj.list,
-        weight_list = weight.list,
+        weight_list = length.list,
         n_edges_before_pruning = n.edges.before,
         n_edges_after_pruning = n.edges.after,
         n_pruned_edges = n.edges.before - n.edges.after,
@@ -337,14 +337,14 @@
 }
 
 .prune.graph.global.geodesic.ratio <- function(adj.list,
-                                               weight.list,
+                                               length.list,
                                                max.ratio.threshold,
                                                path.edge.ratio.percentile,
                                                with.pruned.edge.stats = FALSE) {
     out <- .Call(
         "S_prune_graph_global_geodesic_ratio",
         adj.list,
-        weight.list,
+        length.list,
         as.numeric(max.ratio.threshold),
         as.numeric(path.edge.ratio.percentile),
         as.logical(with.pruned.edge.stats),
@@ -356,10 +356,10 @@
     out
 }
 
-.prune.graph.long.edges <- function(adj.list, weight.list, threshold.percentile) {
-    edges <- .graph.edge.table(adj.list, weight.list)
+.prune.graph.long.edges <- function(adj.list, length.list, threshold.percentile) {
+    edges <- .graph.edge.table(adj.list, length.list)
     if (!nrow(edges) || threshold.percentile <= 0) {
-        return(list(adj_list = adj.list, weight_list = weight.list, n_pruned_edges = 0L))
+        return(list(adj_list = adj.list, weight_list = length.list, n_pruned_edges = 0L))
     }
 
     edges <- edges[order(-edges$weight, edges$from, edges$to), , drop = FALSE]
@@ -380,15 +380,15 @@
         }
         u <- edges$from[[r]]
         v <- edges$to[[r]]
-        current <- .graph.edge.table(adj.list, weight.list)
+        current <- .graph.edge.table(adj.list, length.list)
         key <- current$from == u & current$to == v
         if (!any(key)) {
             next
         }
-        removed <- .remove.undirected.edge(adj.list, weight.list, u, v)
+        removed <- .remove.undirected.edge(adj.list, length.list, u, v)
         if (is.finite(.local.dijkstra.distance(
             adj.list = removed$adj_list,
-            weight.list = removed$weight_list,
+            length.list = removed$weight_list,
             local.vertices = seq_along(adj.list),
             source = u,
             target = v,
@@ -397,16 +397,16 @@
             cutoff = Inf
         ))) {
             adj.list <- removed$adj_list
-            weight.list <- removed$weight_list
+            length.list <- removed$weight_list
             n.pruned <- n.pruned + 1L
         }
     }
-    list(adj_list = adj.list, weight_list = weight.list, n_pruned_edges = n.pruned)
+    list(adj_list = adj.list, weight_list = length.list, n_pruned_edges = n.pruned)
 }
 
 .prune.graph.by.method <- function(X,
                                    adj.list,
-                                   weight.list,
+                                   length.list,
                                    k,
                                    prune.method,
                                    max.path.edge.ratio.deviation.thld = 0,
@@ -415,12 +415,12 @@
                                    prune.tau = 1.05,
                                    prune.local.k = NULL,
                                    with.pruned.edge.stats = FALSE) {
-    n.edges.before <- nrow(.graph.edge.table(adj.list, weight.list))
+    n.edges.before <- nrow(.graph.edge.table(adj.list, length.list))
     if (identical(prune.method, "local.geodesic")) {
         out <- .prune.graph.local.geodesic(
             X = X,
             adj.list = adj.list,
-            weight.list = weight.list,
+            length.list = length.list,
             k = k,
             prune.tau = prune.tau,
             prune.local.k = prune.local.k,
@@ -429,7 +429,7 @@
     } else if (identical(prune.method, "global.geodesic.ratio")) {
         out <- .prune.graph.global.geodesic.ratio(
             adj.list = adj.list,
-            weight.list = weight.list,
+            length.list = length.list,
             max.ratio.threshold = 1 + max.path.edge.ratio.deviation.thld,
             path.edge.ratio.percentile = path.edge.ratio.percentile,
             with.pruned.edge.stats = with.pruned.edge.stats
@@ -439,7 +439,7 @@
     } else if (identical(prune.method, "global.geodesic")) {
         out <- .prune.graph.global.geodesic(
             adj.list = adj.list,
-            weight.list = weight.list,
+            length.list = length.list,
             max.ratio.threshold = 1 + max.path.edge.ratio.deviation.thld,
             path.edge.ratio.percentile = path.edge.ratio.percentile,
             with.pruned.edge.stats = with.pruned.edge.stats
@@ -447,7 +447,7 @@
     } else {
         out <- list(
             adj_list = adj.list,
-            weight_list = weight.list,
+            weight_list = length.list,
             n_edges_before_pruning = n.edges.before,
             n_edges_after_pruning = n.edges.before,
             n_pruned_edges = 0L,

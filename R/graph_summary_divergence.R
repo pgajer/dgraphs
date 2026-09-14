@@ -16,16 +16,13 @@
 #' for disconnectedness / fragmentation, not as a general-purpose default
 #' stability summary.
 #'
-#' @param graph Graph-like object. Supported inputs are:
-#' - an object with `adj_list` and optional `weight_list`
-#' - an object with `pruned_adj_list` and optional `pruned_weight_list`
-#' - a plain adjacency list (list of integer vectors)
+#' @param graph A `dgraph` object.
+#' @param edge.attribute Edge quantity for the edge-value distribution; default `"length"`.
+#' @param stage Stored graph stage to summarize.
 #' @param summary Summary type to compute.
 #' @param labels Optional label vector used for
 #'   `"neighborhood_label_distribution"`. Must have length equal to the
 #'   number of vertices.
-#' @param weight.list Optional edge-weight list used when `graph` is a
-#'   plain adjacency list.
 #' @param bins Optional numeric vector of histogram breaks used for
 #'   `"edge_weight_distribution"`.
 #' @param n.bins Integer number of bins used when `bins` is `NULL`
@@ -36,10 +33,6 @@
 #' @param support Optional support to align the resulting PMF to.
 #' @param zero.pad Logical; if `TRUE` and `support` is provided,
 #'   missing support entries are padded with zero mass.
-#' @param simplify.multiple Logical; if `TRUE`, duplicate edges are
-#'   collapsed before computing summaries.
-#' @param directed Logical; if `FALSE` (default), treat edges as
-#'   undirected.
 #' @param return.details Logical; if `TRUE`, return a structured list.
 #'   Otherwise return the named PMF directly.
 #'
@@ -53,7 +46,7 @@
 #' Otherwise, returns the named PMF vector.
 #'
 #' @examples
-#' graph <- list(c(2L, 3L), 1L, 1L)
+#' graph <- dgraph(list(c(2L, 3L), 1L, 1L))
 #' compute.graph.summary.pmf(graph, summary = "degree_distribution")
 #'
 #' @export
@@ -66,21 +59,22 @@ compute.graph.summary.pmf <- function(
         "neighborhood_label_distribution"
     ),
     labels = NULL,
-    weight.list = NULL,
+    edge.attribute = "length",
+    stage = "final",
     bins = NULL,
     n.bins = 20L,
     bin.method = c("auto", "fixed_width", "fixed_quantile", "explicit"),
     normalize = TRUE,
     support = NULL,
     zero.pad = TRUE,
-    simplify.multiple = TRUE,
-    directed = FALSE,
     return.details = TRUE
 ) {
     summary <- match.arg(summary)
     bin.method <- match.arg(bin.method)
 
-    graph.info <- .dgraphs.resolve.graph.summary.inputs(graph = graph, weight.list = weight.list)
+    simplify.multiple <- TRUE
+    directed <- FALSE
+    graph.info <- .dgraphs.resolve.graph.summary.inputs(graph, edge.attribute, stage)
     adj.list <- graph.info$adj.list
     weight.list <- graph.info$weight.list
     n.vertices <- graph.info$n.vertices
@@ -219,8 +213,8 @@ compute.graph.summary.pmf <- function(
 #' Currently the supported divergence is Jensen-Shannon divergence, implemented
 #' via [jensen.shannon.divergence()].
 #'
-#' @param g1 First graph-like object.
-#' @param g2 Second graph-like object.
+#' @param graph1 First `dgraph` object.
+#' @param graph2 Second `dgraph` object.
 #' @param summary Summary type to compare.
 #' @param divergence Divergence type. Currently only `"js"`.
 #' @param labels Optional shared vertex-label vector used for
@@ -243,8 +237,8 @@ compute.graph.summary.pmf <- function(
 #' Otherwise, returns the scalar divergence value.
 #'
 #' @examples
-#' path <- list(2L, c(1L, 3L), 2L)
-#' triangle <- list(c(2L, 3L), c(1L, 3L), c(1L, 2L))
+#' path <- dgraph(list(2L, c(1L, 3L), 2L))
+#' triangle <- dgraph(list(c(2L, 3L), c(1L, 3L), c(1L, 2L)))
 #' graph.summary.divergence(
 #'   path,
 #'   triangle,
@@ -253,8 +247,8 @@ compute.graph.summary.pmf <- function(
 #'
 #' @export
 graph.summary.divergence <- function(
-    g1,
-    g2,
+    graph1,
+    graph2,
     summary = c(
         "degree_distribution",
         "edge_weight_distribution",
@@ -272,8 +266,8 @@ graph.summary.divergence <- function(
 
     args1 <- summary.args
     args2 <- summary.args
-    args1$graph <- g1
-    args2$graph <- g2
+    args1$graph <- graph1
+    args2$graph <- graph2
     args1$summary <- summary
     args2$summary <- summary
     args1$labels <- labels
@@ -283,8 +277,8 @@ graph.summary.divergence <- function(
 
     if (identical(summary, "edge_weight_distribution") && is.null(args1$bins) && is.null(args2$bins)) {
         pooled.weights <- c(
-            .dgraphs.extract.edge.weights(g1),
-            .dgraphs.extract.edge.weights(g2)
+            .dgraphs.extract.edge.weights(graph1, summary.args),
+            .dgraphs.extract.edge.weights(graph2, summary.args)
         )
         if (length(pooled.weights) > 0L) {
             n.bins.use <- args1[["n.bins"]]
@@ -359,7 +353,7 @@ graph.summary.divergence <- function(
 #'   [graph.summary.divergence()].
 #' @param k.values Optional integer vector of k values. If `graphs` is an
 #'   `"iknn_graphs"` object and `k.values` is `NULL`, the values
-#'   are derived from its `kmin` and `kmax` attributes.
+#'   are derived from its `k.values` attribute.
 #' @param graph.type If `graphs` is an `"iknn_graphs"` object, choose
 #'   either `"geom"` or `"isize"`.
 #' @param return.details Logical; if `TRUE`, return a structured list.
@@ -377,8 +371,8 @@ graph.summary.divergence <- function(
 #'
 #' @examples
 #' graphs <- list(
-#'   list(2L, c(1L, 3L), 2L),
-#'   list(c(2L, 3L), c(1L, 3L), c(1L, 2L)),
+#'   dgraph(list(2L, c(1L, 3L), 2L)),
+#'   dgraph(list(c(2L, 3L), c(1L, 3L), c(1L, 2L))),
 #'   create.complete.graph(3)
 #' )
 #' compute.graph.summary.stability(
@@ -413,12 +407,7 @@ compute.graph.summary.stability <- function(
             stop("Requested graph sequence is unavailable in `graphs`.")
         }
         if (is.null(k.values)) {
-            kmin <- attr(graphs, "kmin")
-            kmax <- attr(graphs, "kmax")
-            if (!is.numeric(kmin) || !is.numeric(kmax) || length(kmin) != 1L || length(kmax) != 1L) {
-                stop("`graphs` must provide scalar numeric `kmin` and `kmax` attributes when `k.values` is NULL.")
-            }
-            k.values <- as.integer(kmin:kmax)
+            k.values <- attr(graphs, "k.values")
         }
     }
 
@@ -455,8 +444,8 @@ compute.graph.summary.stability <- function(
 
     for (i in seq_len(length(graph.seq) - 1L)) {
         pair.res <- graph.summary.divergence(
-            g1 = graph.seq[[i]],
-            g2 = graph.seq[[i + 1L]],
+            graph1 = graph.seq[[i]],
+            graph2 = graph.seq[[i + 1L]],
             summary = summary,
             divergence = divergence,
             labels = labels,
@@ -483,39 +472,11 @@ compute.graph.summary.stability <- function(
     out
 }
 
-.dgraphs.resolve.graph.summary.inputs <- function(graph, weight.list = NULL) {
-    if (is.list(graph) && !is.null(graph$adj_list)) {
-        adj.list <- graph$adj_list
-        if (is.null(weight.list) && !is.null(graph$weight_list)) {
-            weight.list <- graph$weight_list
-        }
-    } else if (is.list(graph) && !is.null(graph$pruned_adj_list)) {
-        adj.list <- graph$pruned_adj_list
-        if (is.null(weight.list) && !is.null(graph$pruned_weight_list)) {
-            weight.list <- graph$pruned_weight_list
-        }
-    } else if (is.list(graph) && .dgraphs.looks.like.adj.list(graph)) {
-        adj.list <- graph
-    } else {
-        stop("Unsupported graph input. Expected adj_list/pruned_adj_list or a plain adjacency list.")
-    }
-
-    if (!is.list(adj.list)) {
-        stop("Resolved adjacency structure must be a list.")
-    }
-
-    n.vertices <- length(adj.list)
-    if (!is.null(weight.list)) {
-        if (!is.list(weight.list) || length(weight.list) != n.vertices) {
-            stop("`weight.list` must be a list with the same length as the adjacency list.")
-        }
-    }
-
-    list(
-        adj.list = lapply(adj.list, function(x) as.integer(x)),
-        weight.list = weight.list,
-        n.vertices = n.vertices
-    )
+.dgraphs.resolve.graph.summary.inputs <- function(graph, edge.attribute = "length", stage = "final") {
+    adj.list <- graph.adjacency(graph, stage)
+    values <- if (identical(edge.attribute, "length")) graph.lengths(graph, stage) else
+        graph.edge.attribute(graph, edge.attribute, stage)
+    list(adj.list = adj.list, weight.list = values, n.vertices = graph.order(graph))
 }
 
 .dgraphs.looks.like.adj.list <- function(x) {
@@ -696,7 +657,7 @@ compute.graph.summary.stability <- function(
 
 .dgraphs.connected.components <- function(adj.list) {
     if (exists("graph.connected.components", mode = "function")) {
-        return(graph.connected.components(adj.list))
+        return(.graph.components(adj.list)$component_id)
     }
 
     n <- length(adj.list)
@@ -725,8 +686,10 @@ compute.graph.summary.stability <- function(
     comp
 }
 
-.dgraphs.extract.edge.weights <- function(graph) {
-    info <- .dgraphs.resolve.graph.summary.inputs(graph)
+.dgraphs.extract.edge.weights <- function(graph, args = list()) {
+    info <- .dgraphs.resolve.graph.summary.inputs(graph,
+        if (is.null(args$edge.attribute)) "length" else args$edge.attribute,
+        if (is.null(args$stage)) "final" else args$stage)
     edge.df <- .dgraphs.as.edge.data.frame(
         adj.list = info$adj.list,
         weight.list = info$weight.list,

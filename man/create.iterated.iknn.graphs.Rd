@@ -6,9 +6,9 @@
 \usage{
 create.iterated.iknn.graphs(
   X,
-  kmin,
-  kmax,
+  k.values,
   n.iterations = 3L,
+  small.component = c("error", "truncate"),
   max.path.edge.ratio.deviation.thld = 0,
   path.edge.ratio.percentile = 0.5,
   threshold.percentile = 0,
@@ -25,12 +25,12 @@ create.iterated.iknn.graphs(
 \arguments{
 \item{X}{Numeric matrix with rows as observations and columns as features.}
 
-\item{kmin}{Integer minimum \code{k}.}
-
-\item{kmax}{Integer maximum \code{k}.}
+\item{k.values}{Strictly increasing integer vector of neighborhood sizes, each between 1 and n - 1.}
 
 \item{n.iterations}{Non-negative integer number of geodesic rebuilds after
 \code{G0}. The default \code{3} returns \code{G0}, \code{G1}, \code{G2}, and \code{G3}.}
+
+\item{small.component}{Component-size policy forwarded to every geodesic rebuild.}
 
 \item{max.path.edge.ratio.deviation.thld, path.edge.ratio.percentile, threshold.percentile}{Initial \code{G0} pruning arguments forwarded to \code{create.iknn.graphs()}. The
 default deviation and quantile thresholds are zero so that \code{G0} is the
@@ -42,19 +42,19 @@ unpruned iKNN 1-skeleton.}
 \value{
 A list of class \code{"iterated_iknn_graphs"} with entries:
 \describe{
-\item{k_values}{Integer vector of requested \code{k} values.}
+\item{k.values}{Integer vector of requested \code{k} values.}
 \item{n_iterations}{Number of geodesic rebuilds after \code{G0}.}
 \item{initial_graphs}{The \code{"iknn_graphs"} object returned by
 \code{create.iknn.graphs()} for \code{G0}.}
 \item{graphs}{Nested list named \code{G0}, \code{G1}, ...; each entry is a named list
-of graph objects for \code{kmin:kmax}.}
+of graph objects for \code{k.values}.}
 \item{summary}{Data frame with one row per iteration and \code{k}.}
 }
 }
 \description{
 Constructs \code{G0} with \code{create.iknn.graphs()}, then constructs \code{G1}, \code{G2}, ...,
 \code{Gm} by repeatedly applying \code{create.geodesic.iknn.graph()} to each graph in
-the \code{kmin:kmax} sequence. This implements the iterated nerve rule
+the \code{k.values} sequence. This implements the iterated nerve rule
 
 \deqn{\{i,j\} \in E(G_{t+1}) \iff
       kNN_{G_t}(i) \cap kNN_{G_t}(j) \ne \emptyset,}
@@ -66,8 +66,8 @@ with edge length
 \examples{
 set.seed(1)
 X <- matrix(rnorm(30), ncol = 2)
-out <- create.iterated.iknn.graphs(X, kmin = 2, kmax = 3, n.iterations = 1,
-                                   verbose = FALSE)
+out <- create.iterated.iknn.graphs(X, k.values = seq.int(2, 3), n.iterations = 1,
+    verbose = FALSE)
 out$summary
 
 }

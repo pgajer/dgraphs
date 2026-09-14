@@ -6,7 +6,9 @@
 #' @param include.names Logical; if `TRUE`, preserve row names on adjacency and
 #'   weight lists.
 #'
-#' @return A list with `adj_list` and `weight_list`.
+#' @return A `dgraph` object. Use [graph.adjacency()], [graph.lengths()],
+#'   [graph.edges()] and [graph.stages()] to inspect its stored graph stages.
+#'   Construction and diagnostic information is stored in `metadata`.
 #'
 #' @examples
 #' distances <- as.matrix(dist(matrix(c(0, 1, 3), ncol = 1)))
@@ -38,5 +40,5 @@ create.threshold.distance.graph <- function(dist.matrix, threshold, include.name
         names(weight.list) <- vertex.names
     }
 
-    list(adj_list = adj.list, weight_list = weight.list)
+    dgraph(adj.list, weight.list)
 }

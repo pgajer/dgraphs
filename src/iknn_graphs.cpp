@@ -119,7 +119,16 @@ struct knn_cache_header_t {
     std::uint64_t k;
     std::uint32_t metric_id;
     double metric_param;
+    std::uint64_t source_hash;
 };
+
+static std::uint64_t dgraphs_matrix_hash(SEXP X) {
+    const auto* bytes = reinterpret_cast<const unsigned char*>(REAL(X));
+    const size_t size = static_cast<size_t>(Rf_xlength(X)) * sizeof(double);
+    std::uint64_t hash = 14695981039346656037ULL;
+    for (size_t i = 0; i < size; ++i) { hash ^= bytes[i]; hash *= 1099511628211ULL; }
+    return hash;
+}
 
 knn_search_result_t compute_knn(SEXP RX, int k);
 knn_search_result_t compute_knn_by_metric(SEXP RX, int k, int knn_metric_id, double linf_tol);
@@ -138,6 +147,7 @@ knn_cache_load_status_t read_knn_cache_file(
     int required_k,
     int expected_metric_id,
     double expected_metric_param,
+    std::uint64_t expected_source_hash,
     knn_search_result_t& out_knn_results,
     std::string& out_reason);
 void write_knn_cache_file_atomic(
@@ -145,7 +155,8 @@ void write_knn_cache_file_atomic(
     const knn_search_result_t& knn_results,
     int n_features,
     int metric_id,
-    double metric_param);
+    double metric_param,
+    std::uint64_t source_hash);
 const char* knn_cache_mode_label(knn_cache_mode_t mode);
 
 std::vector<int> union_find(const std::vector<std::vector<int>>& adj_vect);
@@ -822,6 +833,7 @@ SEXP S_create_single_iknn_graph(SEXP s_X,
             k,
             knn_metric_id,
             (knn_metric_id == 1 ? linf_tol : 0.0),
+            dgraphs_matrix_hash(s_X),
             knn_results,
             cache_reason
         );
@@ -842,7 +854,8 @@ SEXP S_create_single_iknn_graph(SEXP s_X,
                                         knn_results,
                                         n_features,
                                         knn_metric_id,
-                                        (knn_metric_id == 1 ? linf_tol : 0.0));
+                                        (knn_metric_id == 1 ? linf_tol : 0.0),
+                                        dgraphs_matrix_hash(s_X));
             knn_cache_written = true;
         }
     }
@@ -1506,7 +1519,7 @@ void print_stage_done(const char* stage_name,
 namespace {
 
 constexpr char k_knn_cache_magic[8] = {'G', 'F', 'L', 'K', 'N', 'N', '0', '1'};
-constexpr std::uint32_t k_knn_cache_version = 2U;
+constexpr std::uint32_t k_knn_cache_version = 3U;
 constexpr std::uint32_t k_knn_cache_endian_marker = 0x01020304U;
 std::atomic<std::uint64_t> g_knn_cache_tmp_counter(0U);
 
@@ -1549,6 +1562,7 @@ knn_cache_load_status_t read_knn_cache_file(
     int required_k,
     int expected_metric_id,
     double expected_metric_param,
+    std::uint64_t expected_source_hash,
     knn_search_result_t& out_knn_results,
     std::string& out_reason) {
 
@@ -1590,11 +1604,15 @@ knn_cache_load_status_t read_knn_cache_file(
         out_reason = "cache ncol mismatch";
         return knn_cache_load_status_t::invalid;
     }
-    if (header.k < static_cast<std::uint64_t>(required_k)) {
+    if (header.source_hash != expected_source_hash) {
+        out_reason = "cache point values or row order mismatch";
+        return knn_cache_load_status_t::invalid;
+    }
+    if (header.k < static_cast<std::uint64_t>(required_k - 1)) {
         out_reason = "cache k is smaller than required k";
         return knn_cache_load_status_t::invalid;
     }
-    if (header.k > static_cast<std::uint64_t>(INT_MAX)) {
+    if (header.k >= static_cast<std::uint64_t>(expected_n_points)) {
         out_reason = "cache k exceeds INT_MAX";
         return knn_cache_load_status_t::invalid;
     }
@@ -1611,11 +1629,12 @@ knn_cache_load_status_t read_knn_cache_file(
     }
 
     const int cached_k = static_cast<int>(header.k);
-    knn_search_result_t loaded_knn(static_cast<size_t>(expected_n_points), static_cast<size_t>(cached_k));
+    knn_search_result_t loaded_knn(static_cast<size_t>(expected_n_points), static_cast<size_t>(cached_k + 1));
 
     for (int i = 0; i < expected_n_points; ++i) {
         std::vector<int>& indices_row = loaded_knn.indices[static_cast<size_t>(i)];
-        in.read(reinterpret_cast<char*>(indices_row.data()), static_cast<std::streamsize>(cached_k * sizeof(int)));
+        indices_row[0] = i;
+        in.read(reinterpret_cast<char*>(indices_row.data() + 1), static_cast<std::streamsize>(cached_k * sizeof(int)));
         if (!in) {
             out_reason = "cache file is truncated (indices)";
             return knn_cache_load_status_t::invalid;
@@ -1623,7 +1642,7 @@ knn_cache_load_status_t read_knn_cache_file(
     }
     for (int i = 0; i < expected_n_points; ++i) {
         std::vector<double>& dist_row = loaded_knn.distances[static_cast<size_t>(i)];
-        in.read(reinterpret_cast<char*>(dist_row.data()), static_cast<std::streamsize>(cached_k * sizeof(double)));
+        in.read(reinterpret_cast<char*>(dist_row.data() + 1), static_cast<std::streamsize>(cached_k * sizeof(double)));
         if (!in) {
             out_reason = "cache file is truncated (distances)";
             return knn_cache_load_status_t::invalid;
@@ -1639,13 +1658,18 @@ knn_cache_load_status_t read_knn_cache_file(
     for (int i = 0; i < expected_n_points; ++i) {
         const auto& idx_row = loaded_knn.indices[static_cast<size_t>(i)];
         const auto& dist_row = loaded_knn.distances[static_cast<size_t>(i)];
-        for (int j = 0; j < cached_k; ++j) {
+        for (int j = 1; j <= cached_k; ++j) {
             const int idx = idx_row[static_cast<size_t>(j)];
-            if (idx < 0 || idx >= expected_n_points) {
+            if (idx < 0 || idx >= expected_n_points || idx == i) {
                 out_reason = "cache contains out-of-range neighbor index";
                 return knn_cache_load_status_t::invalid;
             }
             const double d = dist_row[static_cast<size_t>(j)];
+            if (std::find(idx_row.begin()+1, idx_row.begin()+j, idx) != idx_row.begin()+j ||
+                (j > 1 && std::make_pair(dist_row[j-1], idx_row[j-1]) > std::make_pair(d, idx))) {
+                out_reason = "cache neighbors are duplicated or incorrectly ordered";
+                return knn_cache_load_status_t::invalid;
+            }
             if (!std::isfinite(d) || d < 0.0) {
                 out_reason = "cache contains invalid distance";
                 return knn_cache_load_status_t::invalid;
@@ -1663,7 +1687,8 @@ void write_knn_cache_file_atomic(
     const knn_search_result_t& knn_results,
     int n_features,
     int metric_id,
-    double metric_param) {
+    double metric_param,
+    std::uint64_t source_hash) {
 
     if (cache_path.empty()) {
         Rf_error("knn.cache.path cannot be empty.");
@@ -1676,7 +1701,8 @@ void write_knn_cache_file_atomic(
     header.endian_marker = k_knn_cache_endian_marker;
     header.n_points = static_cast<std::uint64_t>(knn_results.n_points);
     header.n_features = static_cast<std::uint64_t>(n_features);
-    header.k = static_cast<std::uint64_t>(knn_results.k);
+    header.k = static_cast<std::uint64_t>(knn_results.k - 1);
+    header.source_hash = source_hash;
     header.metric_id = static_cast<std::uint32_t>(metric_id);
     header.metric_param = metric_param;
 
@@ -1694,8 +1720,8 @@ void write_knn_cache_file_atomic(
 
         for (size_t i = 0; i < knn_results.n_points; ++i) {
             const auto& idx_row = knn_results.indices[i];
-            out.write(reinterpret_cast<const char*>(idx_row.data()),
-                      static_cast<std::streamsize>(knn_results.k * sizeof(int)));
+            out.write(reinterpret_cast<const char*>(idx_row.data() + 1),
+                      static_cast<std::streamsize>((knn_results.k - 1) * sizeof(int)));
             if (!out) {
                 std::remove(tmp_path.c_str());
                 Rf_error("Failed to write cache indices to '%s'.", tmp_path.c_str());
@@ -1703,8 +1729,8 @@ void write_knn_cache_file_atomic(
         }
         for (size_t i = 0; i < knn_results.n_points; ++i) {
             const auto& dist_row = knn_results.distances[i];
-            out.write(reinterpret_cast<const char*>(dist_row.data()),
-                      static_cast<std::streamsize>(knn_results.k * sizeof(double)));
+            out.write(reinterpret_cast<const char*>(dist_row.data() + 1),
+                      static_cast<std::streamsize>((knn_results.k - 1) * sizeof(double)));
             if (!out) {
                 std::remove(tmp_path.c_str());
                 Rf_error("Failed to write cache distances to '%s'.", tmp_path.c_str());
@@ -2141,6 +2167,7 @@ SEXP S_create_iknn_graphs(
             kmax,
             knn_metric_id,
             (knn_metric_id == 1 ? linf_tol : 0.0),
+            dgraphs_matrix_hash(s_X),
             knn_results,
             cache_reason
         );
@@ -2161,7 +2188,8 @@ SEXP S_create_iknn_graphs(
                                         knn_results,
                                         n_features,
                                         knn_metric_id,
-                                        (knn_metric_id == 1 ? linf_tol : 0.0));
+                                        (knn_metric_id == 1 ? linf_tol : 0.0),
+                                        dgraphs_matrix_hash(s_X));
             knn_cache_written = true;
         }
     }

@@ -14,14 +14,14 @@ generate.circle.graph(n, type = "random", seed = NULL)
 \item{seed}{Optional random seed used when \code{type = "random"}.}
 }
 \value{
-A list with \code{adj.list} and \code{weight.list}.
+A \code{dgraph} with circle chord lengths and coordinates in \code{metadata}.
 }
 \description{
 Generate a Weighted Circle Graph
 }
 \examples{
 circle <- generate.circle.graph(6, type = "uniform")
-circle$adj.list[[1]]
-circle$weight.list[[1]]
+graph.adjacency(circle)[[1]]
+graph.lengths(circle)[[1]]
 
 }

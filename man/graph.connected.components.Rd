@@ -4,10 +4,12 @@
 \alias{graph.connected.components}
 \title{Assign Vertices to Connected Components}
 \usage{
-graph.connected.components(adj.list)
+graph.connected.components(graph, stage = "final")
 }
 \arguments{
-\item{adj.list}{A graph adjacency list using 1-based vertex indices.}
+\item{graph}{A \code{dgraph}.}
+
+\item{stage}{Stored graph stage.}
 }
 \value{
 Integer vector of component IDs, one per vertex.
@@ -16,7 +18,6 @@ Integer vector of component IDs, one per vertex.
 Assign Vertices to Connected Components
 }
 \examples{
-graph <- list(2L, 1L, integer(0))
+graph <- dgraph(list(2L, 1L, integer()))
 graph.connected.components(graph)
-
 }

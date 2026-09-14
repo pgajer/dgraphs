@@ -9,7 +9,7 @@
 #' @param adj.list A list where each element is a vector of adjacent vertex
 #'        indices (1-based) for the corresponding vertex. Must represent an
 #'        undirected graph.
-#' @param weight.list A list where each element is a vector of edge weights
+#' @param length.list A list where each element is a vector of edge weights
 #'        corresponding to the adjacencies in \code{adj.list}. All weights
 #'        must be positive.
 #' @param grid.size A positive integer (>= 2) specifying the approximate
@@ -19,18 +19,9 @@
 #' @param precision Precision threshold for convergence of the algorithm.
 #'        Must be between 0 and 0.5. Default is 0.1.
 #'
-#' @return A list with class "maximal_packing" containing five components:
-#'   \item{adj_list}{A list of adjacency vectors for each vertex in the
-#'         resulting grid graph}
-#'   \item{weight_list}{A list of weight vectors corresponding to each
-#'         adjacency}
-#'   \item{grid_vertices}{An integer vector of vertex indices that form
-#'         the maximal packing}
-#'   \item{graph_diameter}{A numeric value representing the maximum shortest
-#'         path distance between any two vertices in the graph}
-#'   \item{max_packing_radius}{A numeric value representing the optimal radius
-#'         used for the final packing, which is the minimum guaranteed distance
-#'         between any two vertices in the packing}
+#' @return A `maximal_packing` result containing its `graph` (a `dgraph`),
+#'   `grid_vertices` (packing indices), `graph_diameter`, and
+#'   `max_packing_radius` (the guaranteed separation of packing vertices).
 #'
 #' @details The function computes a maximal packing by iteratively selecting
 #'     vertices that are approximately \code{grid.size} apart from each other.
@@ -53,9 +44,9 @@
 #'
 #' @examples
 #' adj.list <- list(c(2), c(1, 3), c(2, 4), c(3, 5), c(4))
-#' weight.list <- list(c(1), c(1, 1), c(1, 1), c(1, 1), c(1))
+#' length.list <- list(c(1), c(1, 1), c(1, 1), c(1, 1), c(1))
 #'
-#' result <- create.maximal.packing(adj.list, weight.list, grid.size = 2)
+#' result <- create.maximal.packing(adj.list, length.list, grid.size = 2)
 #' result$grid_vertices
 #' result$max_packing_radius
 #'
@@ -63,7 +54,7 @@
 #'          \code{\link{verify.maximal.packing}}
 #' @export
 create.maximal.packing <- function(adj.list,
-                                   weight.list,
+                                   length.list,
                                    grid.size,
                                    max.iterations = 20,
                                    precision = 0.1) {
@@ -73,8 +64,8 @@ create.maximal.packing <- function(adj.list,
     stop("'adj.list' must be a list")
   }
 
-  if (!is.list(weight.list)) {
-    stop("'weight.list' must be a list")
+  if (!is.list(length.list)) {
+    stop("'length.list' must be a list")
   }
 
   # Check if lists have the same length
@@ -84,8 +75,8 @@ create.maximal.packing <- function(adj.list,
     stop("'adj.list' must have at least 2 vertices")
   }
 
-  if (length(weight.list) != n.vertices) {
-    stop("'adj.list' and 'weight.list' must have the same length")
+  if (length(length.list) != n.vertices) {
+    stop("'adj.list' and 'length.list' must have the same length")
   }
 
   # Validate grid.size
@@ -141,19 +132,19 @@ create.maximal.packing <- function(adj.list,
     }
 
     # Check weight list
-    if (!is.numeric(weight.list[[i]])) {
-      stop(sprintf("weight.list[[%d]] must be a numeric vector", i))
+    if (!is.numeric(length.list[[i]])) {
+      stop(sprintf("length.list[[%d]] must be a numeric vector", i))
     }
 
     # Check matching lengths
-    if (length(adj.list[[i]]) != length(weight.list[[i]])) {
-      stop(sprintf("Length mismatch at vertex %d: adj.list has %d elements, weight.list has %d",
-                   i, length(adj.list[[i]]), length(weight.list[[i]])))
+    if (length(adj.list[[i]]) != length(length.list[[i]])) {
+      stop(sprintf("Length mismatch at vertex %d: adj.list has %d elements, length.list has %d",
+                   i, length(adj.list[[i]]), length(length.list[[i]])))
     }
 
     # Check for positive weights
-    if (length(weight.list[[i]]) > 0 && any(weight.list[[i]] <= 0)) {
-      stop(sprintf("All weights in weight.list[[%d]] must be positive", i))
+    if (length(length.list[[i]]) > 0 && any(length.list[[i]] <= 0)) {
+      stop(sprintf("All weights in length.list[[%d]] must be positive", i))
     }
   }
 
@@ -173,9 +164,9 @@ create.maximal.packing <- function(adj.list,
         stop(sprintf("Multiple edges detected between vertices %d and %d", i, neighbor))
       }
 
-      if (abs(weight.list[[i]][j] - weight.list[[neighbor]][idx]) > .Machine$double.eps) {
+      if (abs(length.list[[i]][j] - length.list[[neighbor]][idx]) > .Machine$double.eps) {
         stop(sprintf("Weight mismatch for edge (%d, %d): %g vs %g",
-                     i, neighbor, weight.list[[i]][j], weight.list[[neighbor]][idx]))
+                     i, neighbor, length.list[[i]][j], length.list[[neighbor]][idx]))
       }
     }
   }
@@ -186,12 +177,13 @@ create.maximal.packing <- function(adj.list,
   # Call the C++ implementation
   result <- .Call("S_create_maximal_packing",
                   adj.list.0based,
-                  weight.list,
+                  length.list,
                   as.integer(grid.size),
                   as.integer(max.iterations),
                   as.numeric(precision))
 
-  # Add class attribute
+  result$graph <- dgraph(result$adj_list, result$weight_list)
+  result[c("adj_list", "weight_list")] <- NULL
   class(result) <- c("maximal_packing", "list")
 
   return(result)
@@ -207,7 +199,7 @@ create.maximal.packing <- function(adj.list,
 #'
 #' @param adj.list A list where each element is a vector of adjacent vertex
 #'        indices (1-based) for the corresponding vertex.
-#' @param weight.list A list where each element is a vector of edge weights
+#' @param length.list A list where each element is a vector of edge weights
 #'        corresponding to the adjacencies in \code{adj.list}.
 #' @param packing.vertices An integer vector of vertex indices (1-based) that
 #'        form the packing to be validated.
@@ -242,28 +234,28 @@ create.maximal.packing <- function(adj.list,
 #'
 #' @examples
 #' adj.list <- list(c(2), c(1, 3), c(2, 4), c(3, 5), c(4))
-#' weight.list <- list(c(1), c(1, 1), c(1, 1), c(1, 1), c(1))
+#' length.list <- list(c(1), c(1, 1), c(1, 1), c(1, 1), c(1))
 #' packing <- c(1, 3, 5)
 #' radius <- 2
 #'
-#' result <- validate.maximal.packing(adj.list, weight.list, packing, radius)
+#' result <- validate.maximal.packing(adj.list, length.list, packing, radius)
 #' result$valid
 #' result$is.maximal
 #'
 #' @importFrom igraph graph_from_data_frame distances E
 #' @export
 validate.maximal.packing <- function(adj.list,
-                                     weight.list,
+                                     length.list,
                                      packing.vertices,
                                      max.packing.radius) {
 
   # Input validation
-  if (!is.list(adj.list) || !is.list(weight.list)) {
-    stop("Both 'adj.list' and 'weight.list' must be lists")
+  if (!is.list(adj.list) || !is.list(length.list)) {
+    stop("Both 'adj.list' and 'length.list' must be lists")
   }
 
-  if (length(adj.list) != length(weight.list)) {
-    stop("'adj.list' and 'weight.list' must have the same length")
+  if (length(adj.list) != length(length.list)) {
+    stop("'adj.list' and 'length.list' must have the same length")
   }
 
   if (!is.numeric(packing.vertices) || length(packing.vertices) == 0) {
@@ -294,7 +286,7 @@ validate.maximal.packing <- function(adj.list,
 
   # Validate adjacency and weight list consistency
   if (!all(sapply(seq_along(adj.list), function(i) {
-    length(adj.list[[i]]) == length(weight.list[[i]])
+    length(adj.list[[i]]) == length(length.list[[i]])
   }))) {
     stop("Each adjacency list entry must have a corresponding weight list of the same length")
   }
@@ -315,7 +307,7 @@ validate.maximal.packing <- function(adj.list,
         new_edges <- data.frame(
           from = i,
           to = neighbors[mask],
-          weight = weight.list[[i]][mask]
+          weight = length.list[[i]][mask]
         )
         edge_list <- rbind(edge_list, new_edges)
       }
@@ -507,8 +499,8 @@ print.packing_validation <- function(x, ...) {
 #'
 #' @examples
 #' adj.list <- list(c(2), c(1, 3), c(2, 4), c(3, 5), c(4))
-#' weight.list <- list(c(1), c(1, 1), c(1, 1), c(1, 1), c(1))
-#' result <- create.maximal.packing(adj.list, weight.list, grid.size = 2)
+#' length.list <- list(c(1), c(1, 1), c(1, 1), c(1, 1), c(1))
+#' result <- create.maximal.packing(adj.list, length.list, grid.size = 2)
 #'
 #' verify.maximal.packing(result, verbose = FALSE)
 #'
@@ -522,7 +514,7 @@ verify.maximal.packing <- function(packing.result, verbose = TRUE) {
     stop("'packing.result' must be an object of class 'maximal_packing'")
   }
 
-  required_components <- c("adj_list", "weight_list", "grid_vertices",
+  required_components <- c("graph", "grid_vertices",
                           "graph_diameter", "max_packing_radius")
 
   missing_components <- setdiff(required_components, names(packing.result))
@@ -536,15 +528,15 @@ verify.maximal.packing <- function(packing.result, verbose = TRUE) {
   }
 
   # Extract components from the packing result
-  adj.list <- packing.result$adj_list
-  weight.list <- packing.result$weight_list
+  adj.list <- graph.adjacency(packing.result$graph)
+  length.list <- graph.lengths(packing.result$graph)
   packing.vertices <- packing.result$grid_vertices
   max.packing.radius <- packing.result$max_packing_radius
 
   # Validate the packing
   validation <- validate.maximal.packing(
     adj.list,
-    weight.list,
+    length.list,
     packing.vertices,
     max.packing.radius
   )
@@ -604,7 +596,7 @@ verify.maximal.packing <- function(packing.result, verbose = TRUE) {
 #'
 #' @examples
 #' x <- list(
-#'   adj_list = list(c(2L), c(1L, 3L), c(2L, 4L), c(3L)),
+#'   graph = create.chain.graph(4),
 #'   graph_diameter = 3,
 #'   max_packing_radius = 1.5,
 #'   grid_vertices = c(1L, 4L)
@@ -616,7 +608,7 @@ verify.maximal.packing <- function(packing.result, verbose = TRUE) {
 print.maximal_packing <- function(x, ...) {
   cat("Maximal Packing Result\n")
   cat("----------------------\n")
-  cat("Number of vertices in graph:", length(x$adj_list), "\n")
+  cat("Number of vertices in graph:", graph.order(x$graph), "\n")
   cat("Graph diameter:", format(x$graph_diameter, digits = 4), "\n")
   cat("Packing radius:", format(x$max_packing_radius, digits = 4), "\n")
   cat("Number of packing vertices:", length(x$grid_vertices), "\n")

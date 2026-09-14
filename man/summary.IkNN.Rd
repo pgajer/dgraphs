@@ -19,15 +19,7 @@ Prints a summary of an IkNN graph object, including the number of vertices,
 edges, and pruning statistics.
 }
 \examples{
-graph <- list(
-  pruned_adj_list = list(c(2L, 3L), c(1L, 3L), c(1L, 2L)),
-  n_edges = 3L,
-  n_pruned_edges = 2L,
-  n_removed_edges = 1L,
-  edge_reduction_ratio = 1 / 3
-)
-class(graph) <- c("IkNN", "list")
-
+graph <- create.single.iknn.graph(matrix(c(0, 1, 3, 6), ncol = 1),
+                                   k = 1, verbose = FALSE)
 summary(graph)
-
 }

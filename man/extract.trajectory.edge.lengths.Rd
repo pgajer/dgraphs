@@ -7,7 +7,7 @@
 extract.trajectory.edge.lengths(
   traj,
   adj.list,
-  edge.length.list,
+  length.list,
   add.quantiles = FALSE
 )
 }
@@ -16,7 +16,7 @@ extract.trajectory.edge.lengths(
 
 \item{adj.list}{Adjacency list.}
 
-\item{edge.length.list}{Edge-length list aligned with \code{adj.list}.}
+\item{length.list}{Edge-length list aligned with \code{adj.list}.}
 
 \item{add.quantiles}{Logical; if \code{TRUE}, add edge-length empirical
 quantiles.}

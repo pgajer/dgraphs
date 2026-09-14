@@ -5,8 +5,8 @@
 \title{Compute divergence between two graphs using a selected graph summary}
 \usage{
 graph.summary.divergence(
-  g1,
-  g2,
+  graph1,
+  graph2,
   summary = c("degree_distribution", "edge_weight_distribution",
     "component_size_distribution", "neighborhood_label_distribution"),
   divergence = c("js"),
@@ -17,9 +17,9 @@ graph.summary.divergence(
 )
 }
 \arguments{
-\item{g1}{First graph-like object.}
+\item{graph1}{First \code{dgraph} object.}
 
-\item{g2}{Second graph-like object.}
+\item{graph2}{Second \code{dgraph} object.}
 
 \item{summary}{Summary type to compare.}
 
@@ -58,8 +58,8 @@ Currently the supported divergence is Jensen-Shannon divergence, implemented
 via \code{\link[=jensen.shannon.divergence]{jensen.shannon.divergence()}}.
 }
 \examples{
-path <- list(2L, c(1L, 3L), 2L)
-triangle <- list(c(2L, 3L), c(1L, 3L), c(1L, 2L))
+path <- dgraph(list(2L, c(1L, 3L), 2L))
+triangle <- dgraph(list(c(2L, 3L), c(1L, 3L), c(1L, 2L)))
 graph.summary.divergence(
   path,
   triangle,

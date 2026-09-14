@@ -1,7 +1,7 @@
 #' Computes Shortest Path Distances for Selected Vertices
 #'
-#' @param graph A graph adjacency list using 1-based vertex indices.
-#' @param edge.lengths Edge-length list matching `graph`.
+#' @param adj.list A graph adjacency list using 1-based vertex indices.
+#' @param length.list Edge-length list matching `adj.list`.
 #' @param vertices Integer vector of vertices for which to compute distances.
 #'
 #' @return A numeric matrix of shortest-path distances.
@@ -12,27 +12,27 @@
 #' shortest.path(graph, lengths, vertices = 1:3)
 #'
 #' @export
-shortest.path <- function(graph, edge.lengths, vertices) {
-    graph <- .dgraphs.validate.adj.list(graph)
-    edge.lengths <- .dgraphs.validate.weight.list(graph, edge.lengths)
+shortest.path <- function(adj.list, length.list, vertices) {
+    adj.list <- .dgraphs.validate.adj.list(adj.list)
+    length.list <- .dgraphs.validate.length.list(adj.list, length.list)
     if (!is.numeric(vertices) || length(vertices) == 0L ||
         any(!is.finite(vertices)) || any(vertices != floor(vertices)) ||
-        any(vertices < 1L) || any(vertices > length(graph))) {
+        any(vertices < 1L) || any(vertices > length(adj.list))) {
         stop("'vertices' must contain valid 1-based vertex indices.",
              call. = FALSE)
     }
-    graph.0based <- lapply(graph, function(x) as.integer(x - 1L))
+    graph.0based <- lapply(adj.list, function(x) as.integer(x - 1L))
     .Call("S_shortest_path",
           graph.0based,
-          edge.lengths,
+          length.list,
           as.integer(vertices - 1L),
           PACKAGE = "dgraphs")
 }
 
 #' Create a Path Graph with Limited Hop Distance
 #'
-#' @param graph A graph adjacency list using 1-based vertex indices.
-#' @param edge.lengths Edge-length list matching `graph`.
+#' @param adj.list A graph adjacency list using 1-based vertex indices.
+#' @param length.list Edge-length list matching `adj.list`.
 #' @param h Integer maximum hop count.
 #'
 #' @return An object of class `"path.graph"`.
@@ -43,22 +43,22 @@ shortest.path <- function(graph, edge.lengths, vertices) {
 #' create.path.graph(graph, lengths, h = 2)
 #'
 #' @export
-create.path.graph <- function(graph, edge.lengths, h) {
-    graph <- .dgraphs.validate.adj.list(graph)
-    edge.lengths <- .dgraphs.validate.weight.list(graph, edge.lengths)
+create.path.graph <- function(adj.list, length.list, h) {
+    adj.list <- .dgraphs.validate.adj.list(adj.list)
+    length.list <- .dgraphs.validate.length.list(adj.list, length.list)
     h <- as.integer(h)
     if (length(h) != 1L || is.na(h) || h < 1L) {
         stop("'h' must be a positive integer.", call. = FALSE)
     }
-    graph.0based <- lapply(graph, function(x) as.integer(x - 1L))
+    graph.0based <- lapply(adj.list, function(x) as.integer(x - 1L))
     res <- .Call("S_create_path_graph_plus",
                  graph.0based,
-                 edge.lengths,
+                 length.list,
                  h,
                  PACKAGE = "dgraphs")
     new.path.graph(
         adj.list = res$adj_list,
-        edge.length.list = res$edge_length_list,
+        length.list = res$edge_length_list,
         hop.list = res$hop_list,
         shortest.paths = res$shortest_paths
     )
@@ -70,21 +70,15 @@ create.path.graph <- function(graph, edge.lengths, h) {
 #'   edge-length, and hop-count lists together with the stored shortest paths.
 #'
 #' @keywords internal
-new.path.graph <- function(adj.list, edge.length.list, hop.list, shortest.paths) {
-    structure(
-        list(
-            adj.list = adj.list,
-            edge.length.list = edge.length.list,
-            hop.list = hop.list,
-            shortest.paths = shortest.paths
-        ),
-        class = "path.graph"
-    )
+new.path.graph <- function(adj.list, length.list, hop.list, shortest.paths) {
+    structure(list(graph = dgraph(adj.list, length.list,
+                                  edge.attributes = list(hops = hop.list)),
+                   shortest.paths = shortest.paths), class = "path.graph")
 }
 
 #' Get Shortest Path Between Two Vertices
 #'
-#' @param pg A `"path.graph"` object.
+#' @param path.result A `"path.graph"` object.
 #' @param from Source vertex.
 #' @param to Target vertex.
 #'
@@ -97,23 +91,23 @@ new.path.graph <- function(adj.list, edge.length.list, hop.list, shortest.paths)
 #' get.shortest.path(pg, from = 1, to = 3)
 #'
 #' @export
-get.shortest.path <- function(pg, from, to) {
-    if (!inherits(pg, "path.graph")) {
-        stop("'pg' must be a path.graph object.", call. = FALSE)
+get.shortest.path <- function(path.result, from, to) {
+    if (!inherits(path.result, "path.graph")) {
+        stop("'path.result' must be a path.graph object.", call. = FALSE)
     }
     from <- as.integer(from)
     to <- as.integer(to)
-    n.vertices <- length(pg$adj.list)
+    n.vertices <- length(graph.adjacency(path.result$graph))
     if (length(from) != 1L || is.na(from) || from < 1L || from > n.vertices ||
         length(to) != 1L || is.na(to) || to < 1L || to > n.vertices) {
         stop("'from' and 'to' must be valid vertex indices.", call. = FALSE)
     }
-    idx <- which(pg$shortest.paths$i == from & pg$shortest.paths$j == to)
+    idx <- which(path.result$shortest.paths$i == from & path.result$shortest.paths$j == to)
     if (length(idx) == 0L) return(NULL)
-    path <- pg$shortest.paths$paths[[idx[[1L]]]]
-    edge.idx <- which(pg$adj.list[[from]] == to)
+    path <- path.result$shortest.paths$paths[[idx[[1L]]]]
+    edge.idx <- which(graph.adjacency(path.result$graph)[[from]] == to)
     path.length <- if (length(edge.idx)) {
-        pg$edge.length.list[[from]][[edge.idx[[1L]]]]
+        graph.lengths(path.result$graph)[[from]][[edge.idx[[1L]]]]
     } else {
         NA_real_
     }
@@ -130,16 +124,16 @@ get.shortest.path <- function(pg, from, to) {
 #'   path, or `NA` if no paths), and `avg.degree` (mean adjacency-list length).
 #' @examples
 #' chain <- create.chain.graph(n.vertices = 5)
-#' paths <- create.path.graph(chain$adj.list, chain$edge.lengths, h = 2)
+#' paths <- create.path.graph(graph.adjacency(chain), graph.lengths(chain), h = 2)
 #' print(paths)
 #' summary(paths)
 #' @name inspect.path.graph
 #' @export
 print.path.graph <- function(x, ...) {
     cat("Path graph object\n")
-    cat("  Number of vertices:", length(x$adj.list), "\n")
+    cat("  Number of vertices:", length(graph.adjacency(x$graph)), "\n")
     cat("  Number of stored paths:", length(x$shortest.paths$paths), "\n")
-    cat("  Number of edges in path graph:", sum(vapply(x$adj.list, length, integer(1))), "\n")
+    cat("  Number of edges in path graph:", sum(vapply(graph.adjacency(x$graph), length, integer(1))), "\n")
     invisible(x)
 }
 
@@ -148,14 +142,14 @@ print.path.graph <- function(x, ...) {
 summary.path.graph <- function(object, ...) {
     n.paths <- length(object$shortest.paths$paths)
     stats <- list(
-        n.vertices = length(object$adj.list),
+        n.vertices = length(graph.adjacency(object$graph)),
         n.paths = n.paths,
         avg.path.length = if (n.paths > 0L) {
             mean(vapply(object$shortest.paths$paths, length, integer(1)))
         } else {
             NA_real_
         },
-        avg.degree = mean(vapply(object$adj.list, length, integer(1)))
+        avg.degree = mean(vapply(graph.adjacency(object$graph), length, integer(1)))
     )
     print(stats)
     invisible(stats)
@@ -163,8 +157,8 @@ summary.path.graph <- function(object, ...) {
 
 #' Create a Series of Path Graphs
 #'
-#' @param graph A graph adjacency list.
-#' @param edge.lengths Edge-length list.
+#' @param adj.list A graph adjacency list.
+#' @param length.list Edge-length list.
 #' @param h.values Positive integer hop limits.
 #'
 #' @return A list of `"path.graph"` objects.
@@ -175,23 +169,23 @@ summary.path.graph <- function(object, ...) {
 #' create.path.graph.series(graph, lengths, h.values = 1:2)
 #'
 #' @export
-create.path.graph.series <- function(graph, edge.lengths, h.values) {
-    graph <- .dgraphs.validate.adj.list(graph)
-    edge.lengths <- .dgraphs.validate.weight.list(graph, edge.lengths)
+create.path.graph.series <- function(adj.list, length.list, h.values) {
+    adj.list <- .dgraphs.validate.adj.list(adj.list)
+    length.list <- .dgraphs.validate.length.list(adj.list, length.list)
     if (!is.numeric(h.values) || length(h.values) == 0L || any(h.values < 1)) {
         stop("'h.values' must contain positive hop limits.", call. = FALSE)
     }
     h.values <- sort(unique(as.integer(h.values)))
-    graph.0based <- lapply(graph, function(x) as.integer(x - 1L))
+    graph.0based <- lapply(adj.list, function(x) as.integer(x - 1L))
     res <- .Call("S_create_path_graph_series",
                  graph.0based,
-                 edge.lengths,
+                 length.list,
                  as.integer(h.values),
                  PACKAGE = "dgraphs")
     out <- mapply(function(pg, h) {
         pg.obj <- new.path.graph(
             adj.list = pg$adj_list,
-            edge.length.list = pg$edge_length_list,
+            length.list = pg$edge_length_list,
             hop.list = pg$hop_list,
             shortest.paths = pg$shortest_paths
         )

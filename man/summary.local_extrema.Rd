@@ -30,8 +30,8 @@ Summarize Local Extrema
 }
 \examples{
 chain <- create.chain.graph(n.vertices = 5)
-extrema <- detect.local.extrema(chain$adj.list, chain$edge.lengths,
-  y = c(1, 3, 1, 2, 0), max.radius = 1, min.neighborhood.size = 2)
+extrema <- detect.local.extrema(graph.adjacency(chain), graph.lengths(chain), y = c(1, 3, 1, 2,
+    0), max.radius = 1, min.neighborhood.size = 2)
 summary(extrema)
 print(summary(extrema))
 }

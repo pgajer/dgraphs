@@ -8,13 +8,24 @@
 \description{
 Construct and analyze graphs derived from numerical observations.
 }
-\seealso{
-Useful links:
+\section{Start here}{
+
 \itemize{
-  \item \url{https://github.com/pgajer/dgraphs}
-  \item Report bugs at \url{https://github.com/pgajer/dgraphs/issues}
+\item \href{../doc/function-guide.html}{Finding your way around dgraphs}:
+a task-oriented catalog of public functions and object methods.
+\item \href{../doc/synthetic-geometry.html}{Synthetic geometry and point sampling}:
+reproducible curves, surfaces, embeddings and graph examples.
+\item \href{../doc/data-derived-graph-workflow.html}{Constructing and Diagnosing Data-Derived Graphs}:
+graph-family comparisons, connectivity repair and diagnostics.
+}
+These links open installed HTML guides. From the console, use
+\code{vignette("function-guide", package = "dgraphs")} or
+\code{vignette("synthetic-geometry", package = "dgraphs")}.
 }
 
+\seealso{
+\code{\link[=create.sknn.graph]{create.sknn.graph()}}, \code{\link[=create.rknn.graph]{create.rknn.graph()}},
+\code{\link[=graph.geodesic.distances]{graph.geodesic.distances()}}, \code{\link[=sample.synthetic.geometry]{sample.synthetic.geometry()}}
 }
 \author{
 \strong{Maintainer}: Pawel Gajer \email{pgajer@gmail.com}

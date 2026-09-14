@@ -1,30 +1,28 @@
 #' Create a Refined Graph with Approximately Uniform Edge Spacing
 #'
 #' @param adj.list Input graph adjacency list.
-#' @param weight.list Edge-length list matching `adj.list`.
+#' @param length.list Edge-length list matching `adj.list`.
 #' @param grid.size Target grid size parameter.
 #' @param start.vertex Starting vertex used for breadth-first grid placement.
 #' @param snap.tolerance Grid snapping tolerance.
 #'
-#' @return A list with `adj_list`, `weight_list`, and `grid_vertices`.
+#' @return A `dgraph` object. Use [graph.adjacency()], [graph.lengths()],
+#'   [graph.edges()] and [graph.stages()] to inspect its stored graph stages.
+#'   Construction and diagnostic information is stored in `metadata`.
 #'
 #' @examples
 #' chain <- create.chain.graph(n.vertices = 3)
-#' grid <- create.grid.graph(
-#'   chain$adj.list,
-#'   chain$edge.lengths,
-#'   grid.size = 5
-#' )
-#' grid$grid_vertices
+#' grid <- create.grid.graph(graph.adjacency(chain), graph.lengths(chain), grid.size = 5)
+#' grid$metadata$grid_vertices
 #'
 #' @export
 create.grid.graph <- function(adj.list,
-                              weight.list,
+                              length.list,
                               grid.size,
                               start.vertex = 1L,
                               snap.tolerance = 0.1) {
     adj.list <- .dgraphs.validate.adj.list(adj.list)
-    weight.list <- .dgraphs.validate.weight.list(adj.list, weight.list)
+    length.list <- .dgraphs.validate.length.list(adj.list, length.list)
     grid.size <- as.integer(grid.size)
     if (length(grid.size) != 1L || is.na(grid.size) || grid.size < 2L) {
         stop("'grid.size' must be an integer >= 2.", call. = FALSE)
@@ -40,11 +38,12 @@ create.grid.graph <- function(adj.list,
         stop("'snap.tolerance' must be between 0 and 0.5.", call. = FALSE)
     }
     adj.list.0based <- lapply(adj.list, function(x) as.integer(x - 1L))
-    .Call("S_create_uniform_grid_graph",
+    result <- .Call("S_create_uniform_grid_graph",
           adj.list.0based,
-          weight.list,
+          length.list,
           as.integer(grid.size),
           as.integer(start.vertex - 1L),
           as.numeric(snap.tolerance),
           PACKAGE = "dgraphs")
+    .dgraph.from.native(result, "dgraph")
 }

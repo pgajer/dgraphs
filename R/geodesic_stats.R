@@ -7,7 +7,7 @@
 #'
 #' @param adj.list List of integer vectors. Each vector contains indices of vertices
 #'        adjacent to the corresponding vertex. Indices should be 1-based.
-#' @param weight.list List of numeric vectors. Each vector contains weights of edges
+#' @param length.list List of numeric vectors. Each vector contains weights of edges
 #'        corresponding to adjacencies in adj.list.
 #' @param min.radius Numeric. Minimum radius as a fraction of graph diameter.
 #' @param max.radius Numeric. Maximum radius as a fraction of graph diameter.
@@ -29,19 +29,13 @@
 #'
 #' @examples
 #' graph <- generate.circle.graph(8, type = "uniform")
-#' stats <- compute.geodesic.stats(
-#'   graph$adj.list,
-#'   graph$weight.list,
-#'   min.radius = 0.3,
-#'   max.radius = 0.5,
-#'   n.steps = 2,
-#'   n.packing.vertices = 4
-#' )
+#' stats <- compute.geodesic.stats(graph.adjacency(graph), graph.lengths(graph), min.radius = 0.3,
+#'     max.radius = 0.5, n.steps = 2, n.packing.vertices = 4)
 #' stats$summary
 #'
 #' @export
 compute.geodesic.stats <- function(adj.list,
-                                 weight.list,
+                                 length.list,
                                  min.radius = 0.2,
                                  max.radius = 0.5,
                                  n.steps = 5,
@@ -51,11 +45,11 @@ compute.geodesic.stats <- function(adj.list,
                                  verbose = FALSE) {
 
     # Input validation
-    if (!is.list(adj.list) || !is.list(weight.list))
-        stop("adj.list and weight.list must be lists")
+    if (!is.list(adj.list) || !is.list(length.list))
+        stop("adj.list and length.list must be lists")
 
-    if (length(adj.list) != length(weight.list))
-        stop("adj.list and weight.list must have the same length")
+    if (length(adj.list) != length(length.list))
+        stop("adj.list and length.list must have the same length")
 
     if (min.radius <= 0 || max.radius <= min.radius)
         stop("Invalid radius range: min.radius must be positive and max.radius > min.radius")
@@ -69,7 +63,7 @@ compute.geodesic.stats <- function(adj.list,
     # Call the C++ function
     result <- .Call("S_compute_geodesic_stats",
                    adj.list.0based,
-                   weight.list,
+                   length.list,
                    as.double(min.radius),
                    as.double(max.radius),
                    as.integer(n.steps),
@@ -242,8 +236,8 @@ summary.geodesic_stats <- function(object, type = c("rays", "composite", "overla
 #'
 #' @examples
 #' graph <- generate.circle.graph(8, type = "uniform")
-#' stats <- compute.geodesic.stats(graph$adj.list, graph$weight.list,
-#'   min.radius = 0.3, max.radius = 0.5, n.steps = 2, n.packing.vertices = 4)
+#' stats <- compute.geodesic.stats(graph.adjacency(graph), graph.lengths(graph), min.radius = 0.3,
+#'     max.radius = 0.5, n.steps = 2, n.packing.vertices = 4)
 #' print(stats)
 #' @export
 print.geodesic_stats <- function(x, ...) {
@@ -268,7 +262,7 @@ print.geodesic_stats <- function(x, ...) {
 #'
 #' @param adj.list List of integer vectors. Each vector contains indices of vertices
 #'        adjacent to the corresponding vertex. Indices should be 1-based.
-#' @param weight.list List of numeric vectors. Each vector contains weights of edges
+#' @param length.list List of numeric vectors. Each vector contains weights of edges
 #'        corresponding to adjacencies in adj.list.
 #' @param grid.vertex Integer. The grid vertex to analyze.
 #' @param min.radius Numeric. Minimum radius as a fraction of graph diameter.
@@ -293,18 +287,13 @@ print.geodesic_stats <- function(x, ...) {
 #'
 #' @examples
 #' graph <- generate.circle.graph(8, type = "uniform")
-#' compute.vertex.geodesic.stats(
-#'   graph$adj.list,
-#'   graph$weight.list,
-#'   grid.vertex = 1,
-#'   min.radius = 0.3,
-#'   max.radius = 0.5,
-#'   n.steps = 2
-#' )
+#' compute.vertex.geodesic.stats(graph.adjacency(graph), graph.lengths(graph),
+#'     grid.vertex = 1, min.radius = 0.3,
+#'     max.radius = 0.5, n.steps = 2)
 #'
 #' @export
 compute.vertex.geodesic.stats <- function(adj.list,
-                                          weight.list,
+                                          length.list,
                                           grid.vertex,
                                           min.radius = 0.2,
                                           max.radius = 0.5,
@@ -313,11 +302,11 @@ compute.vertex.geodesic.stats <- function(adj.list,
                                           packing.precision = 0.0001) {
 
                                         # Input validation
-    if (!is.list(adj.list) || !is.list(weight.list))
-        stop("adj.list and weight.list must be lists")
+    if (!is.list(adj.list) || !is.list(length.list))
+        stop("adj.list and length.list must be lists")
 
-    if (length(adj.list) != length(weight.list))
-        stop("adj.list and weight.list must have the same length")
+    if (length(adj.list) != length(length.list))
+        stop("adj.list and length.list must have the same length")
 
     if (grid.vertex < 1 || grid.vertex > length(adj.list))
         stop("grid.vertex must be between 1 and length(adj.list)")
@@ -328,7 +317,7 @@ compute.vertex.geodesic.stats <- function(adj.list,
     ## Call the C++ function
     result <- .Call("S_compute_vertex_geodesic_stats",
                     adj.list.0based,
-                    weight.list,
+                    length.list,
                     as.integer(grid.vertex),
                     as.double(min.radius),
                     as.double(max.radius),

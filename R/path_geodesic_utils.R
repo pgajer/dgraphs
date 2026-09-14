@@ -78,11 +78,11 @@ path.length <- function(X) {
 #' @export
 subdivide.path <- function(path, n.subdivision.pts) {
     n.pts <- dim(path)[1]
-    edge.lengths <- sapply(
+    length.list <- sapply(
         seq(n.pts - 1),
         function(i) .point.euclidean.distance(path[i, ], path[i + 1, ])
     )
-    total.length <- sum(edge.lengths)
+    total.length <- sum(length.list)
     subdiv.dist <- total.length / (n.subdivision.pts - 1)
 
     subdivision.pts <- matrix(nrow = n.subdivision.pts, ncol = ncol(path))
@@ -95,7 +95,7 @@ subdivide.path <- function(path, n.subdivision.pts) {
     while (path.pt < n.pts) {
         edge.subdivision.dist <- edge.subdivision.dist + subdiv.dist
 
-        while (edge.subdivision.dist <= edge.lengths[path.pt]) {
+        while (edge.subdivision.dist <= length.list[path.pt]) {
             if (edge.subdivision.dist > 0) {
                 v <- path[path.pt + 1, ] - path[path.pt, ]
                 unit.v <- v / sqrt(sum(v^2))
@@ -109,7 +109,7 @@ subdivide.path <- function(path, n.subdivision.pts) {
             edge.subdivision.dist <- edge.subdivision.dist + subdiv.dist
         }
 
-        start.offset <- edge.subdivision.dist - edge.lengths[path.pt]
+        start.offset <- edge.subdivision.dist - length.list[path.pt]
         edge.subdivision.dist <- start.offset
         path.pt <- path.pt + 1
     }
@@ -123,17 +123,17 @@ subdivide.path <- function(path, n.subdivision.pts) {
 #'
 #' @param X Numeric matrix of observations.
 #' @param k Number of nearest neighbors to return.
-#' @param K Number of neighbors used to build the graph.
-#' @param G Optional legacy graph argument passed to `estimate.geodesic.distances`.
+#' @param k.graph Number of neighbors used to construct the auxiliary graph.
+#' @param graph Optional `dgraph` containing stored edge lengths.
 #'
 #' @return A list with `nn.index` and `nn.dist` matrices.
 #'
 #' @examples
 #' X <- cbind(seq(0, 1, length.out = 8), 0)
-#' geodesic.knn(X, k = 2, K = 3)
+#' geodesic.knn(X, k = 2, k.graph = 3)
 #'
 #' @export
-geodesic.knn <- function(X, k, K = 5, G = NULL) {
+geodesic.knn <- function(X, k, k.graph = 5, graph = NULL) {
     if (!is.matrix(X)) {
         X <- try(as.matrix(X), silent = TRUE)
         if (inherits(X, "try-error")) {
@@ -147,7 +147,7 @@ geodesic.knn <- function(X, k, K = 5, G = NULL) {
         stop("X cannot contain NA, NaN, or Inf values")
     }
     stopifnot(k > 0)
-    d <- estimate.geodesic.distances(X, K, G)
+    d <- estimate.geodesic.distances(X, k.graph, graph)
     r <- .dist.to.knn(d, k)
     list(nn.index = r$nn.i, nn.dist = r$nn.d)
 }
@@ -156,7 +156,7 @@ geodesic.knn <- function(X, k, K = 5, G = NULL) {
 #'
 #' @param points Numeric matrix or data frame with points in rows.
 #' @param k Positive integer k for k-NN graph construction.
-#' @param graph Optional igraph object to use directly.
+#' @param graph Optional `dgraph` with stored lengths to use directly.
 #' @param method Graph construction method, `"knn.graph"` or `"mst"`.
 #'
 #' @return Numeric matrix of graph shortest-path distances.
@@ -170,6 +170,10 @@ estimate.geodesic.distances <- function(points,
                                         k = 5,
                                         graph = NULL,
                                         method = "knn.graph") {
+    if (!is.null(graph)) {
+        if (graph.order(graph) != nrow(as.matrix(points))) stop("graph and points must have the same vertex order and count.")
+        return(graph.geodesic.distances(graph))
+    }
     if (!is.matrix(points) && !is.data.frame(points)) {
         stop("points must be a matrix or data frame.")
     }
@@ -269,8 +273,7 @@ estimate.geodesic.distances <- function(points,
 #' @param X.grid Numeric grid matrix associated with `X`.
 #' @param k Number of nearest data neighbors returned for each grid point.
 #' @param method Legacy graph construction method argument.
-#' @param K Legacy graph neighbor argument. The implementation resets this to
-#'   `2^ncol(X)`.
+#' @param k.graph Number of neighbors used to construct the auxiliary graph.
 #'
 #' @return A list with graph vertices, graph edges, `nn.index`, and `nn.dist`.
 #'
@@ -280,7 +283,7 @@ estimate.geodesic.distances <- function(points,
 #' geodesic.knnx(X, X.grid, k = 2)
 #'
 #' @export
-geodesic.knnx <- function(X, X.grid, k, method = "knn.graph", K = 5) {
+geodesic.knnx <- function(X, X.grid, k, method = "knn.graph", k.graph = 5) {
     if (!is.matrix(X)) {
         X <- try(as.matrix(X), silent = TRUE)
         if (inherits(X, "try-error")) {
@@ -304,13 +307,14 @@ geodesic.knnx <- function(X, X.grid, k, method = "knn.graph", K = 5) {
         E.grid[ii, ] <- cbind(seq(N), nn$nn.index[, i])
         ii <- ii + N
     }
-    K <- 2^ncol(X)
-    nn <- FNN::get.knnx(X.grid, X, k = K)
+    if (length(k.graph) != 1L || !is.finite(k.graph) || k.graph != floor(k.graph) ||
+        k.graph < 1 || k.graph > nrow(X.grid)) stop("k.graph must be a valid neighbor count for X.grid.")
+    nn <- FNN::get.knnx(X.grid, X, k = k.graph)
     nn.i <- nn$nn.index
-    E <- matrix(nrow = K * n, ncol = 2)
+    E <- matrix(nrow = k.graph * n, ncol = 2)
     l <- 1
     for (i in seq(n)) {
-        for (j in seq(K)) {
+        for (j in seq(k.graph)) {
             E[l, ] <- c(i + N, nn.i[i, j])
             l <- l + 1
         }
@@ -343,7 +347,7 @@ geodesic.knnx <- function(X, X.grid, k, method = "knn.graph", K = 5) {
 #' Select Graph Endpoints by Core-Eccentricity Geometry
 #'
 #' @param adj.list Graph adjacency list using 1-based vertex indices.
-#' @param weight.list Edge-length list aligned with `adj.list`.
+#' @param length.list Edge-length list aligned with `adj.list`.
 #' @param core.quantile Numeric in `(0, 1)` defining the low-eccentricity core.
 #' @param endpoint.quantile Numeric in `[0, 1]` for endpoint candidate scores.
 #' @param use.approx.eccentricity Use landmark-based eccentricity approximation.
@@ -356,16 +360,13 @@ geodesic.knnx <- function(X, X.grid, k, method = "knn.graph", K = 5) {
 #'
 #' @examples
 #' graph <- create.chain.graph(n.vertices = 8)
-#' endpoints <- geodesic.core.endpoints(
-#'   graph$adj.list,
-#'   graph$edge.lengths,
-#'   use.approx.eccentricity = FALSE
-#' )
+#' endpoints <- geodesic.core.endpoints(graph.adjacency(graph), graph.lengths(graph),
+#'     use.approx.eccentricity = FALSE)
 #' endpoints$endpoints
 #'
 #' @export
 geodesic.core.endpoints <- function(adj.list,
-                                    weight.list,
+                                    length.list,
                                     core.quantile = 0.10,
                                     endpoint.quantile = 0.90,
                                     use.approx.eccentricity = TRUE,
@@ -374,9 +375,9 @@ geodesic.core.endpoints <- function(adj.list,
                                     seed = 1L,
                                     verbose = FALSE) {
     if (!is.list(adj.list)) stop("'adj.list' must be a list.")
-    if (!is.list(weight.list)) stop("'weight.list' must be a list.")
-    if (length(adj.list) != length(weight.list)) {
-        stop("'adj.list' and 'weight.list' must have the same length.")
+    if (!is.list(length.list)) stop("'length.list' must be a list.")
+    if (length(adj.list) != length(length.list)) {
+        stop("'adj.list' and 'length.list' must have the same length.")
     }
     if (!is.numeric(core.quantile) || length(core.quantile) != 1L ||
         !is.finite(core.quantile) || core.quantile <= 0 || core.quantile >= 1) {
@@ -414,7 +415,7 @@ geodesic.core.endpoints <- function(adj.list,
     res <- .Call(
         "S_geodesic_core_endpoints",
         adj.list.0,
-        weight.list,
+        length.list,
         as.double(core.quantile),
         as.double(endpoint.quantile),
         as.logical(use.approx.eccentricity),
@@ -458,7 +459,7 @@ geodesic.core.endpoints <- function(adj.list,
 
 #' Compare Paths Across Hop Limits
 #'
-#' @param x A `path.graph.series` object.
+#' @param path.result A `path.graph.series` object.
 #' @param from Source vertex index.
 #' @param to Target vertex index.
 #'
@@ -471,24 +472,24 @@ geodesic.core.endpoints <- function(adj.list,
 #' compare.paths(series, from = 1, to = 3)
 #'
 #' @export compare.paths
-#' @usage compare.paths(x, from, to)
-compare.paths <- function(x, from, to) {
-    if (!inherits(x, "path.graph.series")) {
-        stop("'x' must be a path.graph.series object.", call. = FALSE)
+#' @usage compare.paths(path.result, from, to)
+compare.paths <- function(path.result, from, to) {
+    if (!inherits(path.result, "path.graph.series")) {
+        stop("'path.result' must be a path.graph.series object.", call. = FALSE)
     }
 
-    h.values <- sapply(x, attr, "h")
+    h.values <- sapply(path.result, attr, "h")
     results <- data.frame(
         h = h.values,
-        path_exists = logical(length(x)),
-        path_length = numeric(length(x)),
-        n_hops = integer(length(x)),
+        path_exists = logical(length(path.result)),
+        path_length = numeric(length(path.result)),
+        n_hops = integer(length(path.result)),
         stringsAsFactors = FALSE
     )
-    results$path <- vector("list", length(x))
+    results$path <- vector("list", length(path.result))
 
-    for (i in seq_along(x)) {
-        path.info <- get.shortest.path(x[[i]], from, to)
+    for (i in seq_along(path.result)) {
+        path.info <- get.shortest.path(path.result[[i]], from, to)
         results$path_exists[i] <- !is.null(path.info)
 
         if (!is.null(path.info)) {
@@ -506,7 +507,7 @@ compare.paths <- function(x, from, to) {
 
 #' Find the Minimum Hop Limit for Path Existence
 #'
-#' @param x A `path.graph.series` object.
+#' @param path.result A `path.graph.series` object.
 #' @param from Source vertex index.
 #' @param to Target vertex index.
 #'
@@ -519,14 +520,14 @@ compare.paths <- function(x, from, to) {
 #' minh.limit(series, from = 1, to = 3)
 #'
 #' @export
-minh.limit <- function(x, from, to) {
-    if (!inherits(x, "path.graph.series")) {
-        stop("'x' must be a path.graph.series object.", call. = FALSE)
+minh.limit <- function(path.result, from, to) {
+    if (!inherits(path.result, "path.graph.series")) {
+        stop("'path.result' must be a path.graph.series object.", call. = FALSE)
     }
 
-    for (i in seq_along(x)) {
-        if (!is.null(get.shortest.path(x[[i]], from, to))) {
-            return(attr(x[[i]], "h"))
+    for (i in seq_along(path.result)) {
+        if (!is.null(get.shortest.path(path.result[[i]], from, to))) {
+            return(attr(path.result[[i]], "h"))
         }
     }
 
@@ -535,8 +536,8 @@ minh.limit <- function(x, from, to) {
 
 #' Create a Path Length Matrix Graph Structure
 #'
-#' @param graph Adjacency list using 1-based vertex indices.
-#' @param edge.lengths Edge-length list matching `graph`.
+#' @param adj.list Adjacency list using 1-based vertex indices.
+#' @param length.list Edge-length list matching `adj.list`.
 #' @param h Odd positive integer maximum path length in hops.
 #'
 #' @return An object of class `path.graph.plm`.
@@ -547,44 +548,44 @@ minh.limit <- function(x, from, to) {
 #' create.plm.graph(graph, lengths, h = 3)
 #'
 #' @export
-create.plm.graph <- function(graph, edge.lengths, h) {
-    if (!is.list(graph) || length(graph) == 0) {
-        stop("'graph' must be a non-empty list.", call. = FALSE)
+create.plm.graph <- function(adj.list, length.list, h) {
+    if (!is.list(adj.list) || length(adj.list) == 0) {
+        stop("'adj.list' must be a non-empty list.", call. = FALSE)
     }
-    if (!is.list(edge.lengths) || length(edge.lengths) == 0) {
-        stop("'edge.lengths' must be a non-empty list.", call. = FALSE)
+    if (!is.list(length.list) || length(length.list) == 0) {
+        stop("'length.list' must be a non-empty list.", call. = FALSE)
     }
-    if (length(graph) != length(edge.lengths)) {
-        stop("'graph' and 'edge.lengths' must have the same length.", call. = FALSE)
+    if (length(adj.list) != length(length.list)) {
+        stop("'adj.list' and 'length.list' must have the same length.", call. = FALSE)
     }
 
-    for (i in seq_along(graph)) {
-        if (!is.numeric(graph[[i]]) && length(graph[[i]]) > 0) {
-            stop(sprintf("graph[[%d]] must be numeric or empty.", i), call. = FALSE)
+    for (i in seq_along(adj.list)) {
+        if (!is.numeric(adj.list[[i]]) && length(adj.list[[i]]) > 0) {
+            stop(sprintf("adj.list[[%d]] must be numeric or empty.", i), call. = FALSE)
         }
-        if (!is.numeric(edge.lengths[[i]]) && length(edge.lengths[[i]]) > 0) {
-            stop(sprintf("edge.lengths[[%d]] must be numeric or empty.", i), call. = FALSE)
+        if (!is.numeric(length.list[[i]]) && length(length.list[[i]]) > 0) {
+            stop(sprintf("length.list[[%d]] must be numeric or empty.", i), call. = FALSE)
         }
-        if (length(graph[[i]]) != length(edge.lengths[[i]])) {
+        if (length(adj.list[[i]]) != length(length.list[[i]])) {
             stop(sprintf(
-                "graph[[%d]] and edge.lengths[[%d]] must have the same length.",
+                "adj.list[[%d]] and length.list[[%d]] must have the same length.",
                 i,
                 i
             ), call. = FALSE)
         }
-        if (length(edge.lengths[[i]]) > 0 && any(edge.lengths[[i]] <= 0)) {
+        if (length(length.list[[i]]) > 0 && any(length.list[[i]] <= 0)) {
             stop(sprintf(
-                "All edge lengths in edge.lengths[[%d]] must be positive.",
+                "All edge lengths in length.list[[%d]] must be positive.",
                 i
             ), call. = FALSE)
         }
-        if (length(graph[[i]]) > 0) {
-            invalid.idx <- graph[[i]] < 1 | graph[[i]] > length(graph)
+        if (length(adj.list[[i]]) > 0) {
+            invalid.idx <- adj.list[[i]] < 1 | adj.list[[i]] > length(adj.list)
             if (any(invalid.idx)) {
                 stop(sprintf(
-                    "Invalid vertex indices in graph[[%d]]: indices must be between 1 and %d.",
+                    "Invalid vertex indices in adj.list[[%d]]: indices must be between 1 and %d.",
                     i,
-                    length(graph)
+                    length(adj.list)
                 ), call. = FALSE)
             }
         }
@@ -601,10 +602,10 @@ create.plm.graph <- function(graph, edge.lengths, h) {
         stop("'h' must be odd (1, 3, 5, ...).", call. = FALSE)
     }
 
-    for (i in seq_along(graph)) {
-        for (j.idx in seq_along(graph[[i]])) {
-            j <- graph[[i]][j.idx]
-            if (!(i %in% graph[[j]])) {
+    for (i in seq_along(adj.list)) {
+        for (j.idx in seq_along(adj.list[[i]])) {
+            j <- adj.list[[i]][j.idx]
+            if (!(i %in% adj.list[[j]])) {
                 warning(sprintf(
                     "Graph may not be undirected: edge %d->%d exists but %d->%d does not.",
                     i,
@@ -616,21 +617,21 @@ create.plm.graph <- function(graph, edge.lengths, h) {
         }
     }
 
-    graph.0based <- lapply(graph, function(x) {
+    graph.0based <- lapply(adj.list, function(x) {
         if (length(x) == 0) integer(0) else as.integer(x - 1)
     })
 
     res <- .Call(
         "S_create_path_graph_plm",
         graph.0based,
-        edge.lengths,
+        length.list,
         h,
         PACKAGE = "dgraphs"
     )
 
-    res$h <- h
-    class(res) <- "path.graph.plm"
-    res
+    graph <- dgraph(res$adj_list, res$edge_length_list, edge.attributes = list(hops = res$hop_list))
+    structure(list(graph = graph, h = h, shortest.paths = res$shortest_paths, vertex.paths = res$vertex_paths),
+              class = "path.graph.plm")
 }
 
 #' Print a Path-Length-Metric Graph
@@ -643,11 +644,11 @@ create.plm.graph <- function(graph, edge.lengths, h) {
 #' @export
 print.path.graph.plm <- function(x, ...) {
     cat("PLM Path Graph\n")
-    cat("  Number of vertices:", length(x$adj_list), "\n")
+    cat("  Number of vertices:", length(graph.adjacency(x$graph)), "\n")
     cat("  Maximum path length (h):", x$h, "\n")
-    cat("  Number of stored paths:", length(x$shortest_paths$paths), "\n")
+    cat("  Number of stored paths:", length(x$shortest.paths$paths), "\n")
 
-    n.edges <- sum(sapply(x$adj_list, length)) / 2
+    n.edges <- sum(sapply(graph.adjacency(x$graph), length)) / 2
     cat("  Number of edges:", n.edges, "\n")
 
     invisible(x)

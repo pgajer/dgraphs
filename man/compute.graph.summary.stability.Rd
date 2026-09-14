@@ -32,7 +32,7 @@ compute.graph.summary.stability(
 
 \item{k.values}{Optional integer vector of k values. If \code{graphs} is an
 \code{"iknn_graphs"} object and \code{k.values} is \code{NULL}, the values
-are derived from its \code{kmin} and \code{kmax} attributes.}
+are derived from its \code{k.values} attribute.}
 
 \item{graph.type}{If \code{graphs} is an \code{"iknn_graphs"} object, choose
 either \code{"geom"} or \code{"isize"}.}
@@ -61,8 +61,8 @@ degree-profile Jensen-Shannon calculation currently used in
 }
 \examples{
 graphs <- list(
-  list(2L, c(1L, 3L), 2L),
-  list(c(2L, 3L), c(1L, 3L), c(1L, 2L)),
+  dgraph(list(2L, c(1L, 3L), 2L)),
+  dgraph(list(c(2L, 3L), c(1L, 3L), c(1L, 2L))),
   create.complete.graph(3)
 )
 compute.graph.summary.stability(

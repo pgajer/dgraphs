@@ -21,8 +21,8 @@ Plot Method for IkNN Stability Metrics
 \examples{
 set.seed(1)
 X <- matrix(rnorm(60), ncol = 2)
-graphs <- create.iknn.graphs(X, kmin = 2, kmax = 4,
-  compute.full = TRUE, n.cores = 1, verbose = FALSE)
+graphs <- create.iknn.graphs(X, k.values = seq.int(2, 4), compute.full = TRUE, n.cores = 1,
+    verbose = FALSE)
 stability <- compute.stability.metrics(graphs)
 plot(stability, with.pwlm = FALSE)
 }

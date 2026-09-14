@@ -4,12 +4,12 @@
 \alias{edge.diff}
 \title{Compute Edge Difference Between Two Graphs}
 \usage{
-edge.diff(graph1, graph2)
+edge.diff(adj.list1, adj.list2)
 }
 \arguments{
-\item{graph1}{First adjacency list.}
+\item{adj.list1}{First adjacency list.}
 
-\item{graph2}{Second adjacency list.}
+\item{adj.list2}{Second adjacency list.}
 }
 \value{
 A list containing neighbors present in \code{graph1} but not \code{graph2} for

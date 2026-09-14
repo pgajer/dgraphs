@@ -45,14 +45,9 @@ adaptive-radius \code{k.scale} value.
 }
 \examples{
 X <- matrix(c(0, 1, 3, 4), ncol = 1)
-graphs <- create.rknn.graphs(
-  X,
-  kmin = 1,
-  kmax = 2,
-  radius.search = "all.pairs",
-  graph.detail = "minimal",
-  prune.method = "none"
-)
+graphs <- create.rknn.graphs(X, k.values = seq.int(1, 2), radius.search = "all.pairs",
+    graph.detail = "minimal",
+    prune.method = "none")
 summary(graphs)
 
 }

@@ -4,12 +4,12 @@
 \alias{geodesic.disk}
 \title{Geodesic Disk in a Weighted Graph}
 \usage{
-geodesic.disk(adj.list, weight.list, center.vertex, radius = NULL, n = NULL)
+geodesic.disk(adj.list, length.list, center.vertex, radius = NULL, n = NULL)
 }
 \arguments{
 \item{adj.list}{Adjacency list.}
 
-\item{weight.list}{Edge-length list aligned with \code{adj.list}.}
+\item{length.list}{Edge-length list aligned with \code{adj.list}.}
 
 \item{center.vertex}{Center vertex.}
 

@@ -4,24 +4,16 @@
 \alias{compute.graph.distance}
 \title{Compute a Weighted Shortest-Path Distance}
 \usage{
-compute.graph.distance(
-  star.obj = NULL,
-  i,
-  j,
-  adj.list = NULL,
-  edge.lengths = NULL
-)
+compute.graph.distance(graph, i, j, stage = "final")
 }
 \arguments{
-\item{star.obj}{Optional object containing \code{adj.list} and \code{edge.lengths}.}
+\item{graph}{A \code{dgraph} with stored lengths.}
 
 \item{i}{Source vertex.}
 
 \item{j}{Target vertex.}
 
-\item{adj.list}{Adjacency list.}
-
-\item{edge.lengths}{Edge-length list matching \code{adj.list}.}
+\item{stage}{Stored graph stage.}
 }
 \value{
 Numeric shortest-path distance.
@@ -32,11 +24,6 @@ Compute a Weighted Shortest-Path Distance
 \examples{
 graph <- list(2L, c(1L, 3L), 2L)
 weights <- list(1, c(1, 2), 2)
-compute.graph.distance(
-  i = 1,
-  j = 3,
-  adj.list = graph,
-  edge.lengths = weights
-)
+compute.graph.distance(i = 1, j = 3, graph = dgraph(graph, weights))
 
 }

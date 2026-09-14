@@ -35,37 +35,9 @@ Ignored if \code{pca.dim} is NULL. Default is 0.99.}
 computation. Default is \code{TRUE}.}
 }
 \value{
-An object of class \code{mst_completion_graph}, which is a list
-containing:
-\describe{
-\item{\code{mst_adj_list}}{A list of length n, where element i contains
-the indices of vertices adjacent to vertex i in the MST.}
-\item{\code{mst_weight_list}}{A list of length n, where element i
-contains the edge weights corresponding to the adjacent vertices in
-\code{mst_adj_list[[i]]}.}
-\item{\code{cmst_adj_list}}{A list of length n containing adjacency
-information for the completed MST graph.}
-\item{\code{cmst_weight_list}}{A list of length n containing edge
-weights for the completed MST graph.}
-\item{\code{mst_edge_weights}}{Numeric vector containing all unique MST
-edge weights.}
-\item{\code{cmst_distance_threshold}}{Numeric scalar containing the
-actual Euclidean distance threshold used for completion.}
-}
-
-The returned object also has the following attributes:
-\describe{
-\item{\code{q_thld}}{The quantile threshold used for MST completion.}
-\item{\code{pca}}{If PCA was applied, a list containing:
-\itemize{
-\item \code{original_dim}: The original number of dimensions
-\item \code{n_components}: The number of PCA components used
-\item \code{variance_explained}: The proportion of variance explained
-\item \code{cumulative_variance}: Cumulative variance by component (if applicable)
-}
-}
-\item{\code{call}}{The matched function call.}
-}
+A \code{dgraph} with \code{raw} (MST) and \code{final} (completed) stages.
+Use graph accessors to inspect topology and lengths; construction details
+are in \code{metadata}.
 }
 \description{
 Constructs a completion of the Minimal Spanning Tree (MST) graph from a
@@ -91,8 +63,8 @@ for high-dimensional data while preserving the most important variation.
 set.seed(123)
 X <- matrix(rnorm(60), nrow = 20, ncol = 3)
 graph <- create.cmst.graph(X, verbose = FALSE)
-graph$n_vertices
-graph$n_edges
+graph.order(graph)
+nrow(graph.edges(graph))
 }
 \references{
 Gower, J. C., & Ross, G. J. S. (1969). Minimum spanning trees and single

@@ -1,5 +1,7 @@
 > Relocation note (2026-09-11): maintained code below is now owned by dgraphs.
-> Historical `native/package_profile/` and manuscript sources remain in geosmooth.
+> Historical `native/package_profile/` remains in geosmooth. Manuscript sources
+> moved on 2026-09-12 to the sibling private `dgraphs_manuscripts` repository,
+> under `reports/quadform_geodesics/`; derived assets are in its `build/` directory.
 > Old invocation examples referring to a geosmooth checkout describe historical
 > runs; use this dgraphs checkout and its installed library for new runs.
 
@@ -21,7 +23,8 @@ Nothing here is an exported package API; `dev/` is excluded from R builds.
 The later package-integrated C++ solver is a separate configuration,
 `self-contained-cpp-analytic-v3`, documented in
 [the native solver guide](native/standalone/README.md) and Appendix B of
-[the mathematical specification](../../fixtures/quadform_geodesics/adaptive_quadform_geodesic_refinement.tex).
+the mathematical specification,
+`dgraphs_manuscripts/reports/quadform_geodesics/adaptive_quadform_geodesic_refinement.tex`.
 Its exact computed-weight graph sums, cancellation-safe returned heights,
 occurrence IDs, short-path initialization and incomplete-exploration labels
 do not alter the historical adapter protocol described below.
@@ -48,7 +51,7 @@ Adaptive backend requirements belong to the adapters, not to this control suite.
 
 ## Experimental three-point configuration
 
-Appendix A of the [refinement specification](../../fixtures/quadform_geodesics/adaptive_quadform_geodesic_refinement.tex)
+Appendix A of the refinement specification in the manuscript repository above
 defines `qg-three-point-center-v1`. It starts with 16 equal-surface-length
 segments of the direct lifted curve, visits interior points in a fresh random
 order each epoch, and draws 32 candidates from the domain-clipped disk centered

@@ -18,13 +18,6 @@ Invisibly returns the input object.
 Prints a concise summary of a mutual k-nearest neighbor graph object.
 }
 \examples{
-graph <- list(
-  n_vertices = 3L,
-  n_edges = 2L,
-  k = 2L,
-  adj_list = list(c(2L), c(1L, 3L), c(2L))
-)
-class(graph) <- c("mknn_graph", "list")
-
+graph <- create.mknn.graph(matrix(c(0, 1, 3, 6), ncol = 1), k = 2)
 print(graph)
 }

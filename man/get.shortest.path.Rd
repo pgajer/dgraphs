@@ -4,10 +4,10 @@
 \alias{get.shortest.path}
 \title{Get Shortest Path Between Two Vertices}
 \usage{
-get.shortest.path(pg, from, to)
+get.shortest.path(path.result, from, to)
 }
 \arguments{
-\item{pg}{A \code{"path.graph"} object.}
+\item{path.result}{A \code{"path.graph"} object.}
 
 \item{from}{Source vertex.}
 

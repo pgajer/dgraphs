@@ -19,7 +19,7 @@ Print Method for Maximal Packing Results
 }
 \examples{
 x <- list(
-  adj_list = list(c(2L), c(1L, 3L), c(2L, 4L), c(3L)),
+  graph = create.chain.graph(4),
   graph_diameter = 3,
   max_packing_radius = 1.5,
   grid_vertices = c(1L, 4L)

@@ -230,10 +230,8 @@ internal.find.local.minima <- function(x, k.values,
 #' @examples
 #' set.seed(1)
 #' x <- matrix(rnorm(60), ncol = 2)
-#' graphs <- create.iknn.graphs(
-#'   x, kmin = 2, kmax = 4, compute.full = TRUE,
-#'   n.cores = 1, verbose = FALSE
-#' )
+#' graphs <- create.iknn.graphs(x, k.values = seq.int(2, 4), compute.full = TRUE, n.cores = 1,
+#'     verbose = FALSE)
 #' stability <- compute.stability.metrics(graphs)
 #' stability$edit.distances
 #' @export
@@ -258,13 +256,7 @@ compute.stability.metrics <- function(
         stop("graphs must be an object of class 'iknn_graphs' returned by create.iknn.graphs().")
     }
 
-    kmin <- attr(graphs, "kmin")
-    kmax <- attr(graphs, "kmax")
-    if (!is.numeric(kmin) || !is.numeric(kmax) || length(kmin) != 1L || length(kmax) != 1L) {
-        stop("graphs must have numeric scalar attributes 'kmin' and 'kmax'.")
-    }
-
-    k.values <- as.integer(kmin:kmax)
+    k.values <- .validate.k.values(attr(graphs, "k.values"), Inf)
     graphs.list <- if (graph.type == "geom") graphs$geom_pruned_graphs else graphs$isize_pruned_graphs
     if (is.null(graphs.list)) {
         if (graph.type == "isize") {
@@ -273,7 +265,7 @@ compute.stability.metrics <- function(
         stop("Requested pruned graphs are not available. Recompute create.iknn.graphs(..., compute.full = TRUE).")
     }
     if (length(graphs.list) != length(k.values)) {
-        stop("Length mismatch: pruned graph list length does not match kmin:kmax.")
+        stop("Length mismatch: pruned graph list length does not match k.values.")
     }
 
     k.stats <- graphs$k_statistics
@@ -308,8 +300,8 @@ compute.stability.metrics <- function(
     if (any(!is.finite(n.edges.in.pruned.graph))) {
         for (i in seq_along(k.values)) {
             g <- graphs.list[[i]]
-            if (!is.null(g$adj_list)) {
-                n.edges.in.pruned.graph[i] <- sum(vapply(g$adj_list, length, integer(1))) / 2
+            if (!is.null(graph.adjacency(g))) {
+                n.edges.in.pruned.graph[i] <- sum(vapply(graph.adjacency(g), length, integer(1))) / 2
             }
         }
     }
@@ -379,10 +371,10 @@ compute.stability.metrics <- function(
     result
 }
 
-compute.degrees.js.divergence <- function(g1, g2) {
+compute.degrees.js.divergence <- function(graph1, graph2) {
     graph.summary.divergence(
-        g1 = g1,
-        g2 = g2,
+        graph1 = graph1,
+        graph2 = graph2,
         summary = "degree_distribution",
         divergence = "js",
         return.details = FALSE
@@ -420,28 +412,19 @@ compute.edit.distances <- function(graphs.list) {
     for (i in seq_len(n.graphs - 1L)) {
         g1 <- graphs.list[[i]]
         g2 <- graphs.list[[i + 1L]]
-        if (is.null(g1$adj_list) || is.null(g2$adj_list)) {
+        if (is.null(graph.adjacency(g1)) || is.null(graph.adjacency(g2))) {
             stop("Each graph must contain an 'adj_list'.")
         }
-        e1 <- edge.keys(g1$adj_list)
-        e2 <- edge.keys(g2$adj_list)
+        e1 <- edge.keys(graph.adjacency(g1))
+        e2 <- edge.keys(graph.adjacency(g2))
         edit.distances[i] <- length(setdiff(e1, e2)) + length(setdiff(e2, e1))
     }
     edit.distances
 }
 
 find.optimal.k <- function(x, ...) {
-    if (inherits(x, "iknn_stability_metrics")) {
-        return(find.optimal.k.from.stability(x, ...))
-    }
-    args <- list(...)
-    kmin <- args$kmin
-    kmax <- args$kmax
-    matrix.type <- if (is.null(args$matrix_type)) "geom" else args$matrix_type
-    if (is.null(kmin) || is.null(kmax)) {
-        stop("For birth-death input, you must supply kmin and kmax (e.g., find.optimal.k(bd, kmin=..., kmax=...)).")
-    }
-    find.optimal.k.from.birth.death(x, kmin = kmin, kmax = kmax, matrix_type = matrix.type)
+    if (inherits(x, "iknn_stability_metrics")) return(find.optimal.k.from.stability(x, ...))
+    find.optimal.k.from.birth.death(x, ...)
 }
 
 find.optimal.k.from.stability <- function(x,
@@ -499,19 +482,21 @@ find.optimal.k.from.stability <- function(x,
     )
 }
 
-find.optimal.k.from.birth.death <- function(birth.death.matrix, kmin, kmax, matrix_type = "geom") {
+find.optimal.k.from.birth.death <- function(birth.death.matrix, k.values, matrix_type = "geom") {
+    k.values <- .validate.k.values(k.values, Inf)
+    kmax <- max(k.values)
     if (is.null(birth.death.matrix) || nrow(birth.death.matrix) == 0L) {
         warning(paste("Empty", matrix_type, "birth/death matrix. Returning middle k value."))
         return(list(
-            stability.scores = rep(0, kmax - kmin + 1L),
-            k.values = kmin:kmax,
-            opt.k = floor((kmin + kmax) / 2)
+            stability.scores = rep(0, length(k.values)),
+            k.values = k.values,
+            opt.k = k.values[ceiling(length(k.values) / 2)]
         ))
     }
 
     persistence <- birth.death.matrix[, "death_time"] - birth.death.matrix[, "birth_time"]
-    stability.scores <- numeric(kmax - kmin + 1L)
-    for (k in kmin:kmax) {
+    stability.scores <- numeric(length(k.values))
+    for (k in k.values) {
         edges.at.k <- birth.death.matrix[, "birth_time"] <= k &
             birth.death.matrix[, "death_time"] > k
         if (sum(edges.at.k) > 0L) {
@@ -521,14 +506,14 @@ find.optimal.k.from.birth.death <- function(birth.death.matrix, kmin, kmax, matr
                 k - birth.death.matrix[edges.at.k, "birth_time"],
                 birth.death.matrix[edges.at.k, "death_time"] - k
             ))
-            stability.scores[k - kmin + 1L] <- avg.persistence * persistent.ratio * edge.stability
+            stability.scores[match(k, k.values)] <- avg.persistence * persistent.ratio * edge.stability
         }
     }
 
     list(
         stability.scores = stability.scores,
-        k.values = kmin:kmax,
-        opt.k = kmin - 1L + which.max(stability.scores)
+        k.values = k.values,
+        opt.k = k.values[which.max(stability.scores)]
     )
 }
 
@@ -543,8 +528,8 @@ find.optimal.k.from.birth.death <- function(birth.death.matrix, kmin, kmax, matr
 #' @examples
 #' set.seed(1)
 #' X <- matrix(rnorm(60), ncol = 2)
-#' graphs <- create.iknn.graphs(X, kmin = 2, kmax = 4,
-#'   compute.full = TRUE, n.cores = 1, verbose = FALSE)
+#' graphs <- create.iknn.graphs(X, k.values = seq.int(2, 4), compute.full = TRUE, n.cores = 1,
+#'     verbose = FALSE)
 #' stability <- compute.stability.metrics(graphs)
 #' plot(stability, with.pwlm = FALSE)
 #' @export
@@ -672,7 +657,7 @@ internal.compute.edit.distances <- function(graphs) {
 }
 
 trim.X.to.main.cc <- function(X, adj.list, verbose = FALSE) {
-    cc <- graph.connected.components(adj.list)
+    cc <- .graph.components(adj.list)$component_id
     cc.tbl <- table(cc)
     main.cc <- as.integer(names(sort(cc.tbl, decreasing = TRUE)[1L]))
     in.main <- cc == main.cc
@@ -1169,7 +1154,7 @@ plot.cst_graph_mixing_stats <- function(x,
 #' stability, label-mixing stability, or both.
 #'
 #' @param X Numeric observation-by-feature matrix.
-#' @param kmin,kmax Minimum and maximum neighborhood sizes.
+#' @param k.values Strictly increasing integer vector of neighborhood sizes, each between 1 and n - 1.
 #' @param method Selection criterion.
 #' @param pca.dim,variance.explained PCA controls forwarded to
 #'   [create.iknn.graphs()].
@@ -1199,15 +1184,13 @@ plot.cst_graph_mixing_stats <- function(x,
 #' @examples
 #' set.seed(1)
 #' x <- matrix(rnorm(60), ncol = 2)
-#' selected <- build.iknn.graphs.and.selectk(
-#'   x, kmin = 2, kmax = 4, method = "edit",
-#'   n.cores = 1, verbose = FALSE
-#' )
+#' selected <- build.iknn.graphs.and.selectk(x, k.values = seq.int(2, 4),
+#'     method = "edit", n.cores = 1,
+#'     verbose = FALSE)
 #' selected$k.opt.edit
 #' @export
 build.iknn.graphs.and.selectk <- function(X,
-                                          kmin,
-                                          kmax,
+                                          k.values,
                                           method = c("both", "edit", "mixing", "none"),
                                           pca.dim = 100,
                                           variance.explained = 0.99,
@@ -1251,14 +1234,8 @@ build.iknn.graphs.and.selectk <- function(X,
 
     sample.ids <- rownames(X)
     if (is.null(sample.ids)) sample.ids <- as.character(seq_len(nrow(X)))
-    kmin <- as.integer(kmin)
-    kmax <- as.integer(kmax)
-    if (!is.finite(kmin) || !is.finite(kmax) || kmin < 1L) stop("`kmin` must be an integer >= 1.")
-    if (kmax < kmin) stop("`kmax` must be >= kmin.")
-    if (kmax >= nrow(X)) {
-        kmax <- nrow(X) - 1L
-        if (isTRUE(verbose)) cat("NOTE: reducing kmax to nrow(X)-1 =", kmax, "\n")
-    }
+    k.values <- .validate.k.values(k.values, nrow(X))
+    kmin <- min(k.values); kmax <- max(k.values)
 
     method <- match.arg(method)
     mixing.metric <- match.arg(mixing.metric)
@@ -1391,7 +1368,7 @@ build.iknn.graphs.and.selectk <- function(X,
     }
 
     edge.codes.from.graph <- function(g.obj, n) {
-        el <- adjlist.to.edge.mat(g.obj$adj_list, g.obj$weight_list, n = n)
+        el <- adjlist.to.edge.mat(graph.adjacency(g.obj), graph.lengths(g.obj), n = n)
         if (nrow(el$edge.mat) == 0L) return(integer(0))
         sort(unique(as.integer((el$edge.mat[, 1L] - 1L) * n + el$edge.mat[, 2L])))
     }
@@ -1505,8 +1482,7 @@ build.iknn.graphs.and.selectk <- function(X,
 
     X.graphs <- create.iknn.graphs(
         X,
-        kmin = kmin,
-        kmax = kmax,
+        k.values = k.values,
         pca.dim = pca.dim,
         variance.explained = variance.explained,
         compute.full = TRUE,
@@ -1538,7 +1514,7 @@ build.iknn.graphs.and.selectk <- function(X,
         lcc.frac <- numeric(length(k.values))
         n.edges <- integer(length(k.values))
         for (i in seq_along(k.values)) {
-            el <- adjlist.to.edge.mat(g.list[[i]]$adj_list, g.list[[i]]$weight_list, n = n)
+            el <- adjlist.to.edge.mat(graph.adjacency(g.list[[i]]), graph.lengths(g.list[[i]]), n = n)
             n.edges[i] <- nrow(el$edge.mat)
             gi <- igraph::make_empty_graph(n = n, directed = FALSE)
             if (nrow(el$edge.mat) > 0L) gi <- igraph::add_edges(gi, as.vector(t(el$edge.mat)))
@@ -1576,7 +1552,7 @@ build.iknn.graphs.and.selectk <- function(X,
         best.idx <- best.idx[which.min(conn$k[best.idx])]
         k.trim <- conn$k[best.idx]
         trim.info$k.trim <- k.trim
-        el <- adjlist.to.edge.mat(g.list[[best.idx]]$adj_list, g.list[[best.idx]]$weight_list, n = nrow(X))
+        el <- adjlist.to.edge.mat(graph.adjacency(g.list[[best.idx]]), graph.lengths(g.list[[best.idx]]), n = nrow(X))
         gi <- igraph::make_empty_graph(n = nrow(X), directed = FALSE)
         if (nrow(el$edge.mat) > 0L) gi <- igraph::add_edges(gi, as.vector(t(el$edge.mat)))
         comp <- igraph::components(gi)
@@ -1595,11 +1571,10 @@ build.iknn.graphs.and.selectk <- function(X,
         trim.info$trimmed <- TRUE
         trim.info$keep.idx <- keep
         trim.info$dropped.idx <- setdiff(seq_len(old.n), keep)
-        if (kmax >= nrow(X)) kmax <- nrow(X) - 1L
+        if (any(k.values >= nrow(X))) stop("Requested k.values do not fit the trimmed sample; choose smaller values.")
         X.graphs <- create.iknn.graphs(
             X,
-            kmin = kmin,
-            kmax = kmax,
+            k.values = k.values,
             pca.dim = pca.dim,
             variance.explained = variance.explained,
             compute.full = TRUE,
@@ -1686,7 +1661,7 @@ build.iknn.graphs.and.selectk <- function(X,
                 idx.ref <- which(conn$k == trim.info$k.trim)
                 if (length(idx.ref) == 0L) idx.ref <- idx.mix[1L]
             }
-            el.ref <- adjlist.to.edge.mat(g.list[[idx.ref]]$adj_list, g.list[[idx.ref]]$weight_list, n = nrow(X))
+            el.ref <- adjlist.to.edge.mat(graph.adjacency(g.list[[idx.ref]]), graph.lengths(g.list[[idx.ref]]), n = nrow(X))
             sigma.used <- estimate.sigma.from.lengths(el.ref$weights)
             if (isTRUE(verbose)) {
                 cat("Estimated affinity.sigma =", signif(sigma.used, 5), "from k =", conn$k[idx.ref], "\n")
@@ -1707,7 +1682,7 @@ build.iknn.graphs.and.selectk <- function(X,
             ii <- idx.mix[jj]
             g.obj <- g.list[[ii]]
             n0 <- nrow(X)
-            el <- adjlist.to.edge.mat(g.obj$adj_list, g.obj$weight_list, n = n0)
+            el <- adjlist.to.edge.mat(graph.adjacency(g.obj), graph.lengths(g.obj), n = n0)
             if (nrow(el$edge.mat) == 0L) next
             w.use <- NULL
             if (isTRUE(use.edge.weights)) {
@@ -1789,8 +1764,7 @@ build.iknn.graphs.and.selectk <- function(X,
         trim = trim.info,
         params = list(
             method = method,
-            kmin = kmin,
-            kmax = kmax,
+            k.values = k.values,
             pca.dim = pca.dim,
             variance.explained = variance.explained,
             n.cores = n.cores,
@@ -1825,8 +1799,9 @@ build.iknn.graphs.and.selectk <- function(X,
 #' @examples
 #' set.seed(1)
 #' X <- matrix(rnorm(60), ncol = 2)
-#' selected <- build.iknn.graphs.and.selectk(X, kmin = 2, kmax = 4,
-#'   method = "edit", n.cores = 1, verbose = FALSE)
+#' selected <- build.iknn.graphs.and.selectk(X, k.values = seq.int(2, 4),
+#'     method = "edit", n.cores = 1,
+#'     verbose = FALSE)
 #' print(selected)
 #' @export
 print.build_iknn_graphs_and_selectk <- function(x, ...) {
@@ -1857,8 +1832,9 @@ print.build_iknn_graphs_and_selectk <- function(x, ...) {
 #' @examples
 #' set.seed(1)
 #' X <- matrix(rnorm(60), ncol = 2)
-#' selected <- build.iknn.graphs.and.selectk(X, kmin = 2, kmax = 4,
-#'   method = "edit", n.cores = 1, verbose = FALSE)
+#' selected <- build.iknn.graphs.and.selectk(X, k.values = seq.int(2, 4),
+#'     method = "edit", n.cores = 1,
+#'     verbose = FALSE)
 #' plot(selected, which = "connect")
 #' @export
 plot.build_iknn_graphs_and_selectk <- function(x,

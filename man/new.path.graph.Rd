@@ -4,7 +4,7 @@
 \alias{new.path.graph}
 \title{Construct a path.graph object}
 \usage{
-new.path.graph(adj.list, edge.length.list, hop.list, shortest.paths)
+new.path.graph(adj.list, length.list, hop.list, shortest.paths)
 }
 \value{
 A list of class \code{"path.graph"} containing aligned adjacency,

@@ -23,7 +23,7 @@ set.seed(1)
 x <- matrix(rnorm(80), ncol = 2)
 graph <- create.mknn.graph(x, k = 4)
 
-graph$n_edges
+nrow(graph.edges(graph))
 ```
 
 For an end-to-end introduction to graph construction, connectivity repair,
@@ -33,9 +33,26 @@ parameter sequences, conversion, and diagnostics, run:
 vignette("data-derived-graph-workflow", package = "dgraphs")
 ```
 
-## Synthetic geometry (development version)
+## Guides
 
-The development version supplies reusable surfaces, curves and point samplers.
+- [Finding your way around dgraphs](vignettes/function-guide.Rmd): choose an
+  entry point by task and browse the complete public-function catalog.
+- [Synthetic geometry and point sampling](vignettes/synthetic-geometry.Rmd):
+  create reproducible curves, surfaces and compositions, then build graphs.
+- [Constructing and Diagnosing Data-Derived Graphs](vignettes/data-derived-graph-workflow.Rmd):
+  compare graph families, connectivity repair and geodesic diagnostics.
+
+After installing a version containing the new guides, open the rendered
+vignettes with:
+
+```r
+vignette("function-guide", package = "dgraphs")
+vignette("synthetic-geometry", package = "dgraphs")
+```
+
+## Synthetic geometry (0.3.0)
+
+Version 0.3.0 supplies reusable surfaces, curves and point samplers.
 For example, construct a graph on a quadratic saddle:
 
 ```r
@@ -47,7 +64,6 @@ graph <- create.mknn.graph(points$predictors, k = 6)
 
 Geometry-only samples contain coordinates, geometric metadata and reproducible
 random-state information. Statistical truth, responses, named recipe registries
-and dataset identities remain in geosmooth. Existing geosmooth geometry names
-are temporarily reexported for compatibility. The development Geometry Lab app
+and dataset identities remain in geosmooth. The forthcoming geosmooth release imports these geometry helpers from dgraphs. The development Geometry Lab app
 is documented in `dev/apps/embedding-explorer/README.md`; it is not installed
 with the R package.

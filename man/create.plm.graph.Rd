@@ -4,12 +4,12 @@
 \alias{create.plm.graph}
 \title{Create a Path Length Matrix Graph Structure}
 \usage{
-create.plm.graph(graph, edge.lengths, h)
+create.plm.graph(adj.list, length.list, h)
 }
 \arguments{
-\item{graph}{Adjacency list using 1-based vertex indices.}
+\item{adj.list}{Adjacency list using 1-based vertex indices.}
 
-\item{edge.lengths}{Edge-length list matching \code{graph}.}
+\item{length.list}{Edge-length list matching \code{adj.list}.}
 
 \item{h}{Odd positive integer maximum path length in hops.}
 }

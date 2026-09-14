@@ -1,75 +1,69 @@
-## Update to dgraphs 0.2.1
+## dgraphs 0.3.0 release candidate
 
-This maintenance update fixes the type reported by summaries of empty local
-extrema and hardens native error handling. ANN errors now propagate through
-C++ exceptions to registered R entry points rather than returning silently.
-Point/tree ownership and native kNN input validation were strengthened.
+This release introduces a breaking common `dgraph` representation and stage
+accessors, consistent `adj.list`/`length.list` arguments, increasing `k.values`,
+and a uniform self-plus-k-other-vertices intersection convention. Superseded
+interfaces are removed without wrappers. It also adds reusable synthetic
+geometry, embeddings and point sampling
+migrated from geosmooth, a symmetric-kNN parameter sequence, and two installed
+vignettes covering the complete API and synthetic geometry workflows.
+The geometry vignette includes six ivue galleries with 36 selectable 3D
+examples and labeled coordinate axes; static projections are available when
+the optional visualization packages are absent.
+Statistical responses, truth, recipe registries and model fitting remain in
+geosmooth; dgraphs has no dependency on geosmooth.
 
-Global compiler-diagnostic suppression and unsupported native OpenMP branches
-were removed. Native graph construction remains serial, as in the standard
-0.2.0 build. Compatibility arguments remain accepted. Every exported function
-and registered S3 method now has documented results and runnable examples.
-Adjacency-list comparisons are silent unless `verbose = TRUE` is requested.
+The release carries forward native ANN error-handling and ownership fixes,
+serial construction with unsupported OpenMP branches removed, complete S3
+method documentation and silent adjacency-list comparison by default. The
+0.2.0 fix for CRAN's LTO One Definition Rule diagnostic remains intact.
+LICENSE identifies Pawel Gajer as copyright holder, matching Authors@R.
 
-The copyright-holder name in LICENSE is corrected to Pawel Gajer, matching
-Authors@R, following the maintainer's confirmation. The maintainer email is
-pgajer@gmail.com.
+## Completed local checks — 2026-09-14
 
-The 0.2.0 fix for CRAN's LTO One Definition Rule diagnostic is preserved:
-the unused conflicting `edge_t` was removed, and the MST helper type remains
-renamed and confined to an unnamed namespace. No public functions are removed
-in 0.2.1 and graph scoring/edge conventions are unchanged.
+Checked the source tarball dgraphs_0.3.0.tar.gz on macOS Tahoe 26.6.1,
+Apple Silicon (aarch64-apple-darwin23), R-devel 4.7.0
+(2026-06-24 r90190), Apple Clang 21.0.0 and SDK 26.5.
 
-## Completed checks (2026-09-03)
+`R_TIDYCMD=/opt/homebrew/bin/tidy make check` builds the package and runs
+`R CMD check --as-cran`. Result: 0 errors, 0 warnings, 1 note.
+The note reports `ivue` under "Suggests or Enhances not in mainstream
+repositories". ivue 0.1.0 is installed locally but was absent from the CRAN
+source index checked on 2026-09-14. This new optional dependency must be
+coordinated with the ivue release before submission.
+All 2,626 test expectations passed with no failures, warnings or skips.
+The installed self-containment script, examples, all three vignettes and their
+rebuilds, PDF manual and HTML validation passed. All declared dependencies
+were available locally. A separate forced-static render also passed.
+All 36 interactive choices were exercised in a WebGL browser over local HTTP;
+rotation, camera reset and examples from all six galleries were inspected.
+The standalone HTML embeds its assets and has no local/private URLs.
 
-* macOS 26.6.1, Apple Silicon, R-devel 4.7.0 (2026-06-24 r90190),
-  Apple Clang 21 and GNU Fortran 14.2:
-  full `R CMD check --as-cran`: 0 errors, 0 warnings, 1 note.
-  Examples, tests, vignettes, PDF manual and HTML validation passed. HTML Tidy
-  5.8.0 was selected explicitly with `R_TIDYCMD=/opt/homebrew/bin/tidy`.
-* 432 test expectations: no failures, warnings or skips, under both the
-  standard Clang build and a GCC 16.1 build with link-time optimization.
-* Standalone ANN error-path tests passed with Clang AddressSanitizer and
-  UndefinedBehaviorSanitizer, and with GCC 16.1.
-* Documentation coverage includes all 86 exports and 36 registered S3 methods.
-* GitHub Actions on Ubuntu, R 4.6.1, R-devel (2026-09-02 r90473) and
-  R 4.5.3: 0 errors, 0 warnings, 0 notes for each configuration.
-* R-hub Linux, R-devel (2026-09-02 r90473), GCC 13.3, and Windows,
-  R-devel (2026-09-02 r90474 UCRT), GCC 14.3: both report Status: OK.
-* R-hub macOS 15.7.9, Intel, R-devel 4.7.0, Apple Clang 17:
-  Status: OK.
-* Fresh isolated installations and test suites of owned downstream packages:
-  gflow (1006 passes, 10 skips), gflowx (1568 passes, 3 skips), geosmooth
-  (12058 passes, 1 skip), and gflowui (1579 passes, 1 skip), with no failures
-  or warnings. Skips are declared by those packages. gflow's source-only
-  documentation test required regenerating its help files; the failure also
-  reproduced against dgraphs 0.2.0. gflowx/gflowui required current optional
-  ivue in the isolated library. No downstream source fixes were required.
-* Current CRAN metadata lists no hard reverse dependencies.
+The API catalog contains exactly one row for each of 122 explicit exports;
+all 38 registered S3 methods have documented help references. Installed help
+resolves for every export and method. Both new guides and the existing graph
+workflow appear in the installed vignette index with HTML, Rmd and R sources.
 
-## Notes and compiler diagnostics
+The native installation emits 15 unused-variable diagnostics from RcppEigen
+headers under Clang. These remain visible and unsuppressed; they did not
+produce R CMD check warnings.
 
-The incoming-feasibility note reports three days since the previous update.
-This is a release-timing consideration, not an environment-only note. The
-candidate is being prepared for a later submission; the interval and test
-evidence must be refreshed at submission time.
+## Evidence still to refresh before submission
 
-An initial environment note about Apple's old HTML Tidy was resolved for the
-final check by selecting the already-installed modern validator explicitly.
-No user startup file was modified.
+Resolve ivue repository availability before submitting this candidate.
 
-With suppression removed, the installed RcppEigen 0.3.4.0.2 headers expose an
-unused-variable warning in SparseCore/TriangularSolver.h under Clang and
-class-memaccess warnings in Eigen NEON headers under GCC. GCC's additional
-`-Wextra` flags also report standard R/Rcpp native-registration function-pointer
-casts. These diagnostics remain visible; none is suppressed by the package.
-No ODR diagnostic was reported in the GCC LTO build.
+A separate source-loaded pkgload debug run aborted at the existing native
+invalid-matrix conversion test, including after a clean debug rebuild. The
+standard optimized installation passed that test and the complete suite.
+The debug-build-specific failure remains unresolved; it is not reported as
+a passed configuration. See dev/design/graph-api-validation.md for the audit.
 
-## Evidence to refresh before upload
+No Windows, Linux, other R-version, remote-builder or downstream checks were
+run against this 0.3.0 candidate. Earlier platform checks concerned a different
+maintenance candidate and are not presented as evidence for this tarball.
+Refresh these checks, verify final release contents, and reconcile any private
+submission correspondence before uploading. No CRAN submission was made here.
 
-Win-builder responses are being collected for the source before the
-copyright-name correction. That tarball was accepted for Win-builder release,
-devel and oldrelease. These are pending evidence, not completed checks.
-The completed external/downstream checks predate the copyright-name correction;
-the rebuilt candidate differs only in LICENSE and the generated Packaged timestamp.
-Historical 0.2.0 platform results are not presented as checks of this candidate.
+Once the release is available, geosmooth should require dgraphs (>= 0.3.0)
+and refresh its CRAN-only dependency check. Local version metadata and a
+successful local check do not establish CRAN availability.

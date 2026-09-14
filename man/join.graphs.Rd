@@ -7,23 +7,24 @@
 join.graphs(graph1, graph2, i1, i2)
 }
 \arguments{
-\item{graph1}{First adjacency list.}
+\item{graph1}{First \code{dgraph}.}
 
-\item{graph2}{Second adjacency list.}
+\item{graph2}{Second \code{dgraph}.}
 
 \item{i1}{Vertex in \code{graph1} to connect.}
 
 \item{i2}{Vertex in \code{graph2} to connect.}
 }
 \value{
-A joined adjacency list using 1-based vertex indices.
+A \code{dgraph} with vertices \code{i1} and \code{i2} identified. Both inputs must
+have lengths or both omit them, and must share their edge-attribute names.
 }
 \description{
 Join Two Adjacency-List Graphs
 }
 \examples{
-first <- list(2L, 1L)
-second <- list(2L, 1L)
+first <- dgraph(list(2L, 1L))
+second <- dgraph(list(2L, 1L))
 join.graphs(first, second, i1 = 2, i2 = 1)
 
 }

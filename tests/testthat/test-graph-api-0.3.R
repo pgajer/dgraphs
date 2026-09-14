@@ -35,7 +35,7 @@ test_that("common graphs validate and sort aligned values without losing isolate
     expect_error(dgraph(list(integer()), list(1)), "length")
     expect_error(graph.adjacency(graph, "missing"), "no stored stage")
     expect_error(graph.edge.attribute(graph, "absent"), "No edge attribute")
-    unweighted <- create.circular.graph(4)
+    unweighted <- create.graph("cycle", 4)
     expect_null(graph.lengths(unweighted))
     expect_error(graph.geodesic.distances(unweighted), "length")
     expect_equal(graph.geodesic.distances(unweighted, distance="hop")[1,3], 2)
@@ -112,7 +112,7 @@ test_that("all retained stages convert with their lengths and attributes", {
        expect_equal(igraph::ecount(ig),nrow(graph.edges(g,stage)))
        expect_equal(igraph::edge_attr(ig,"length"),graph.edges(g,stage)$length)
     }
-    joined <- join.graphs(create.chain.graph(2),create.chain.graph(3),2,1)
+    joined <- join.graphs(create.graph("chain", 2),create.graph("chain", 3),2,1)
     expect_equal(graph.order(joined),4)
     expect_equal(graph.geodesic.distances(joined)[1,4],3)
     sub <- create.subgraph(joined,c(4,3))
@@ -130,13 +130,13 @@ test_that("raw symmetrization preserves vertex order and isolated vertices", {
     expect_identical(undirected,list(first=c(3L,4L), isolated=integer(), third=1L, last=1L))
     expect_equal(graph.order(dgraph(undirected)),4)
     set.seed(1)
-    graph <- create.random.graph(10,2)
+    graph <- create.graph("random", n = 10, mean.degree = 2)
     expect_equal(length(unique(graph.connected.components(graph))),1)
     expect_equal(nrow(graph.edges(graph)),10)
 })
 
 test_that("packing results contain a directly inspectable graph", {
-    graph <- create.chain.graph(5)
+    graph <- create.graph("chain", 5)
     packing <- create.maximal.packing(graph.adjacency(graph), graph.lengths(graph),grid.size=2)
     expect_s3_class(packing$graph,"dgraph")
     expect_true(verify.maximal.packing(packing,verbose=FALSE))

@@ -26,6 +26,20 @@ graph <- create.mknn.graph(x, k = 4)
 nrow(graph.edges(graph))
 ```
 
+For standard graph examples, choose a type with `create.graph()`:
+
+```r
+chain <- create.graph("chain", n = 10, span = 2, labels = 101:110)
+circle <- create.graph("circle", n = 20, sampling = "uniform",
+                        edge.length = "chord")
+graph.edges(chain)
+circle$metadata$coordinates
+```
+
+Other types are `"empty"`, `"complete"`, `"cycle"`, `"complete_bipartite"`,
+`"star"` and `"random"`. Type-specific arguments are documented together in
+`help("create.graph")` and the function guide.
+
 For an end-to-end introduction to graph construction, connectivity repair,
 parameter sequences, conversion, and diagnostics, run:
 

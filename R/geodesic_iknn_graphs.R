@@ -14,7 +14,7 @@
 #'   `metadata$neighborhood` records requested and effective sizes and the tie rule.
 #'
 #' @examples
-#' graph <- create.chain.graph(3)
+#' graph <- create.graph("chain", 3)
 #' create.geodesic.iknn.graph(graph, k = 1)
 #' @export
 create.geodesic.iknn.graph <- function(graph, k,

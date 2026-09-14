@@ -122,7 +122,7 @@ The function works with terminal regions in an embedding; returned endpoints
 need not be degree-1 vertices.
 }
 \examples{
-chain <- create.chain.graph(n.vertices = 8)
+chain <- create.graph("chain", n = 8)
 layout <- cbind(seq_len(8), 0, 0)
 endpoints <- detect.graph.endpoints(graph.adjacency(chain), graph.lengths(chain),
     layout, k = c(2,

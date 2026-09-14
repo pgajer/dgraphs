@@ -43,7 +43,7 @@ saved by older versions lack this setting; their summaries report \code{NA} for
 the extrema type because it cannot be recovered from empty vectors.
 }
 \examples{
-chain <- create.chain.graph(n.vertices = 5)
+chain <- create.graph("chain", n = 5)
 extrema <- detect.local.extrema(graph.adjacency(chain), graph.lengths(chain), y = c(1, 3, 1, 2,
     0), max.radius = 1, min.neighborhood.size = 2)
 extrema$vertices

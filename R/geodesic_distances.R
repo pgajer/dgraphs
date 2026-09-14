@@ -8,9 +8,9 @@
 #' @return A numeric matrix of shortest-path distances; unreachable pairs
 #'   have infinite distance. A zero-length edge remains traversable.
 #' @examples
-#' graph <- create.chain.graph(5)
+#' graph <- create.graph("chain", 5)
 #' graph.geodesic.distances(graph, vertices = c(1, 5))
-#' graph.geodesic.distances(create.circular.graph(5), distance = "hop")
+#' graph.geodesic.distances(create.graph("cycle", 5), distance = "hop")
 #' @export
 graph.geodesic.distances <- function(graph, vertices = NULL, stage = "final",
                                       distance = c("length", "hop")) {

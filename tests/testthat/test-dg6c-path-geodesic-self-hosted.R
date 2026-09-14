@@ -72,7 +72,7 @@ test_that("DG6c graph core endpoints run self-hosted", {
 })
 
 test_that("DG6c single-vertex geodesic statistics use R vertex indices", {
-    graph <- dgraphs::generate.circle.graph(8, type = "uniform")
+    graph <- dgraphs::create.graph("circle", n = 8, sampling = "uniform")
     result <- dgraphs::compute.vertex.geodesic.stats(graph.adjacency(graph), graph.lengths(graph), grid.vertex = 1,
         min.radius = 0.3, max.radius = 0.5, n.steps = 2)
     expect_s3_class(result, "vertex_geodesic_stats")

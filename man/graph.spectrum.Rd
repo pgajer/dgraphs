@@ -30,7 +30,7 @@ A list with \code{evalues}, \code{evectors}, and optionally \code{laplacian}.
 Compute Graph Spectrum
 }
 \examples{
-graph <- create.circular.graph(8)
+graph <- create.graph("cycle", 8)
 spectrum <- graph.spectrum(graph, nev = 3)
 spectrum$evalues
 

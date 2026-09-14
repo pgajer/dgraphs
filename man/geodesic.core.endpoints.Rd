@@ -42,7 +42,7 @@ A \code{geodesic_core_endpoints} list of endpoints and diagnostics.
 Select Graph Endpoints by Core-Eccentricity Geometry
 }
 \examples{
-graph <- create.chain.graph(n.vertices = 8)
+graph <- create.graph("chain", n = 8)
 endpoints <- geodesic.core.endpoints(graph.adjacency(graph), graph.lengths(graph),
     use.approx.eccentricity = FALSE)
 endpoints$endpoints

@@ -23,7 +23,7 @@ extremum's stored neighborhood, optionally excluding its center.
 Extract a Local-Extremum Neighborhood
 }
 \examples{
-chain <- create.chain.graph(n.vertices = 5)
+chain <- create.graph("chain", n = 5)
 extrema <- detect.local.extrema(graph.adjacency(chain), graph.lengths(chain), y = c(1, 3, 1, 2,
     0), max.radius = 1, min.neighborhood.size = 2)
 vertices(extrema, extrema$labels[[1]])

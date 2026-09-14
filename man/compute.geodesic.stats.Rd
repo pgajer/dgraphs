@@ -54,7 +54,7 @@ This function helps determine if collapsing/clustering geodesics is necessary
 and provides insights into the graph structure around grid vertices.
 }
 \examples{
-graph <- generate.circle.graph(8, type = "uniform")
+graph <- create.graph("circle", n = 8, sampling = "uniform")
 stats <- compute.geodesic.stats(graph.adjacency(graph), graph.lengths(graph), min.radius = 0.3,
     max.radius = 0.5, n.steps = 2, n.packing.vertices = 4)
 stats$summary

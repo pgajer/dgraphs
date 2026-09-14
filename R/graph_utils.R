@@ -171,7 +171,7 @@ edge.diff <- function(adj.list1, adj.list2) {
 #' @return A `dgraph` with compact indices and aligned lengths and attributes.
 #'   `metadata$original.vertices` maps its vertices back to the original graph.
 #' @examples
-#' graph <- create.chain.graph(4)
+#' graph <- create.graph("chain", 4)
 #' sub <- create.subgraph(graph, vertices = c(4, 3))
 #' graph.edges(sub)
 #' sub$metadata$original.vertices

@@ -28,7 +28,7 @@
 #' }
 #'
 #' @examples
-#' graph <- generate.circle.graph(8, type = "uniform")
+#' graph <- create.graph("circle", n = 8, sampling = "uniform")
 #' stats <- compute.geodesic.stats(graph.adjacency(graph), graph.lengths(graph), min.radius = 0.3,
 #'     max.radius = 0.5, n.steps = 2, n.packing.vertices = 4)
 #' stats$summary
@@ -235,7 +235,7 @@ summary.geodesic_stats <- function(object, type = c("rays", "composite", "overla
 #' @return The object invisibly.
 #'
 #' @examples
-#' graph <- generate.circle.graph(8, type = "uniform")
+#' graph <- create.graph("circle", n = 8, sampling = "uniform")
 #' stats <- compute.geodesic.stats(graph.adjacency(graph), graph.lengths(graph), min.radius = 0.3,
 #'     max.radius = 0.5, n.steps = 2, n.packing.vertices = 4)
 #' print(stats)
@@ -286,7 +286,7 @@ print.geodesic_stats <- function(x, ...) {
 #' }
 #'
 #' @examples
-#' graph <- generate.circle.graph(8, type = "uniform")
+#' graph <- create.graph("circle", n = 8, sampling = "uniform")
 #' compute.vertex.geodesic.stats(graph.adjacency(graph), graph.lengths(graph),
 #'     grid.vertex = 1, min.radius = 0.3,
 #'     max.radius = 0.5, n.steps = 2)

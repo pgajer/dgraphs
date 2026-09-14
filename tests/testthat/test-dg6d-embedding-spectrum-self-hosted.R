@@ -38,7 +38,7 @@ test_that("DG6d graph.embedding returns stable layout-shaped matrices", {
     empty <- dgraphs::graph.embedding(dgraph(list()), dim = 3)
     expect_equal(dim(empty), c(0L, 3L))
     set.seed(321)
-    no.edges <- dgraphs::graph.embedding(create.empty.graph(3), dim = 2)
+    no.edges <- dgraphs::graph.embedding(create.graph("empty", 3), dim = 2)
     expect_equal(dim(no.edges), c(3L, 2L))
     expect_true(all(is.finite(no.edges)))
 })

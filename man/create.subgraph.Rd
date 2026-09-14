@@ -21,7 +21,7 @@ A \code{dgraph} with compact indices and aligned lengths and attributes.
 Extract an Induced Subgraph
 }
 \examples{
-graph <- create.chain.graph(4)
+graph <- create.graph("chain", 4)
 sub <- create.subgraph(graph, vertices = c(4, 3))
 graph.edges(sub)
 sub$metadata$original.vertices

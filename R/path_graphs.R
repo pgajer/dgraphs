@@ -123,7 +123,7 @@ get.shortest.path <- function(path.result, from, to) {
 #'   `n.vertices`, `n.paths`, `avg.path.length` (number of vertices per stored
 #'   path, or `NA` if no paths), and `avg.degree` (mean adjacency-list length).
 #' @examples
-#' chain <- create.chain.graph(n.vertices = 5)
+#' chain <- create.graph("chain", n = 5)
 #' paths <- create.path.graph(graph.adjacency(chain), graph.lengths(chain), h = 2)
 #' print(paths)
 #' summary(paths)

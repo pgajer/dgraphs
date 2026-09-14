@@ -40,7 +40,7 @@ Plot a Graph with Colored Vertices
 }
 \examples{
 embedding <- rbind(c(0, 0), c(1, 0), c(1, 1), c(0, 1))
-graph <- create.circular.graph(4)
+graph <- create.graph("cycle", 4)
 plot2D.colored.graph(
   embedding,
   graph.adjacency(graph),

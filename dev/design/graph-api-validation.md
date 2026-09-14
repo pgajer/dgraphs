@@ -22,17 +22,46 @@ with zero disabling pruning. The random connected-graph generator now samples
 from singleton vertex vectors correctly and assigns reciprocal edge lengths.
 Raw symmetrization preserves vertex order and isolated vertices.
 
+## Standard graph construction
+
+The ten basic constructors have been consolidated into `create.graph(type, ...)`.
+The old exports and their definitions are removed; there are no compatibility
+wrappers. Eight types cover empty, complete, chain, cycle, complete bipartite,
+star, random and sampled-circle graphs. Chains use `span` for the number of
+positions on each side. Labels apply to every type independently of compact
+adjacency indices, and coordinate-sorted chains retain an explicit input-order
+mapping. A subdivided star specifies the number of edges in each arm.
+
+Circle graphs now return coordinates and distinguish shorter arc lengths from
+chords, correcting the old help/implementation mismatch. Random graphs enforce
+an exact feasible edge budget and document the growing-tree sampling procedure
+and quadratic candidate storage. Explicit seeds restore the caller's random
+state; omitted seeds advance the current stream. Type-specific names and
+conflicting sizes are validated strictly.
+
+The new tests check each defining topology, chain ordering and zero lengths,
+labels on all eight types, geometric length identities, random edge budgets
+and connectivity, RNG preservation, invalid arguments and absence of the
+retired functions from the namespace. A follow-up read-only scan of geosmooth,
+gflow, ivue, grip, linf and gcstflow R sources and namespaces found no direct
+qualified calls or imports of these ten constructors. The broader downstream
+migration requirements below remain unchanged.
+
 ## Validation
 
 The source tarball passed `R_TIDYCMD=/opt/homebrew/bin/tidy make check` on
 macOS Apple Silicon with R-devel 4.7.0: 0 errors, 0 warnings, 1 NOTE for ivue
-being absent from mainstream repositories. All 2,626 expectations passed
+being absent from mainstream repositories. All 2,754 expectations passed
 without failures, warnings or skips. Installed examples, self-containment,
-three vignettes and their rebuilds passed. The catalog verifies 122 explicit
-exports and 38 registered S3 methods. HTML validation checked 482 local links.
-All 36 gallery choices updated in a WebGL browser; saddle rotation, labeled
-x/y/z axes, camera reset and guide navigation were inspected. The forced-static
-geometry render passed as well.
+three vignettes and their rebuilds passed. The catalog verifies 113 explicit
+exports and 38 registered S3 methods. HTML validation checked 500 local links.
+Before the standard-constructor consolidation, all 36 gallery choices updated
+in a WebGL browser; saddle rotation, labeled x/y/z axes, camera reset and guide
+navigation were inspected. The forced-static geometry render passed as well.
+The unchanged geometry gallery was rebuilt for this update. The new standard-graph
+tables and their example results were checked in generated HTML, including
+column counts and section navigation. A fresh browser preview was blocked by
+the browser local-URL policy; no workaround or fresh visual inspection is claimed.
 
 The first check identified stale argument documentation and an installed test
 reading retired fields. A later sparse-sequence test exposed the pruning-ratio

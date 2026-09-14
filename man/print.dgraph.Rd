@@ -18,5 +18,5 @@ The unchanged graph, invisibly.
 Print an Undirected Graph
 }
 \examples{
-print(create.empty.graph(3))
+print(create.graph("empty", 3))
 }

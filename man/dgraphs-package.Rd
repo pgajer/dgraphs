@@ -24,7 +24,7 @@ These links open installed HTML guides. From the console, use
 }
 
 \seealso{
-\code{\link[=create.sknn.graph]{create.sknn.graph()}}, \code{\link[=create.rknn.graph]{create.rknn.graph()}},
+\code{\link[=create.graph]{create.graph()}}, \code{\link[=create.sknn.graph]{create.sknn.graph()}}, \code{\link[=create.rknn.graph]{create.rknn.graph()}},
 \code{\link[=graph.geodesic.distances]{graph.geodesic.distances()}}, \code{\link[=sample.synthetic.geometry]{sample.synthetic.geometry()}}
 }
 \author{

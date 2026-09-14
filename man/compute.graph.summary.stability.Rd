@@ -63,7 +63,7 @@ degree-profile Jensen-Shannon calculation currently used in
 graphs <- list(
   dgraph(list(2L, c(1L, 3L), 2L)),
   dgraph(list(c(2L, 3L), c(1L, 3L), c(1L, 2L))),
-  create.complete.graph(3)
+  create.graph("complete", 3)
 )
 compute.graph.summary.stability(
   graphs,

@@ -21,7 +21,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 6, fig.height
 
 `dgraphs` turns numerical observations into graphs and provides tools to inspect
 their connectivity, paths and geometry. Start with the question you want to
-answer. The catalog covers all 122 explicit public exports exactly once;
+answer. The catalog covers all 113 explicit public exports exactly once;
 38 registered S3 methods are described separately through object workflows.
 Internal helpers and development applications are not public entry points.
 
@@ -68,6 +68,69 @@ continuous arc lengths. For a longer comparison of graph families, repair and
 diagnostics, read [Constructing and Diagnosing Data-Derived Graphs](data-derived-graph-workflow.html).
 For sampling and embedding details, read [Synthetic geometry and point sampling](synthetic-geometry.html).
 
+## Constructing a standard graph
+
+Use `create.graph(type, ...)` when you want a familiar topology or a small
+example. The required `type` selects the graph; arguments following `n` must
+be named. Every result uses the same graph accessors as a data-derived graph.
+
+| Type | Arguments | Edge lengths |
+|---|---|---|
+| `"empty"` | `n` (zero allowed) | Absent |
+| `"complete"` | `n` | Absent |
+| `"chain"` | `n` or `x`; optional `span = 1`, `y` | One, or absolute coordinate differences |
+| `"cycle"` | `n >= 3` | Absent |
+| `"complete_bipartite"` | `sizes = c(n1, n2)` | Absent |
+| `"star"` | `arms`: positive edge counts along each arm | Absent |
+| `"random"` | `n`, `mean.degree`; optional `connected = TRUE`, `seed` | Independent uniform lengths on [0.5, 1.5] |
+| `"circle"` | `n >= 3`; optional `sampling`, `edge.length`, `seed` | Shorter unit-circle arcs (default) or chords |
+
+```{r standard-graphs}
+standard <- list(
+  empty = create.graph("empty", n = 5),
+  complete = create.graph("complete", n = 5),
+  chain = create.graph("chain", n = 5, span = 2, labels = 101:105),
+  cycle = create.graph("cycle", n = 5),
+  complete_bipartite = create.graph("complete_bipartite", sizes = c(2, 3)),
+  star = create.graph("star", arms = c(1, 2, 1)),
+  random = create.graph("random", n = 5, mean.degree = 2, seed = 23),
+  circle = create.graph("circle", n = 5, sampling = "uniform",
+                        edge.length = "chord")
+)
+knitr::kable(data.frame(
+  type = names(standard),
+  vertices = vapply(standard, graph.order, integer(1)),
+  edges = vapply(standard, function(g) nrow(graph.edges(g)), integer(1)),
+  stored.lengths = vapply(standard, function(g) !is.null(graph.lengths(g)), logical(1))
+), row.names = FALSE)
+```
+
+For chains, `span` counts positions on **each side**, so an interior vertex
+has at most `2 * span` neighbors. This differs from `k` in nearest-neighbor
+workflows. Optional `x` sorts vertices by coordinate, with ties resolved by
+input position; `y` and `labels` follow the same ordering. The sorted-to-input
+mapping is `metadata$order`. An ordinary star has all arm counts equal to one;
+larger counts subdivide its arms.
+
+A cycle describes topology. A circle also records unit-circle coordinates in
+`metadata$coordinates` and angles in `metadata$angles`. Circle sampling is
+`"random"` by default; `"uniform"` spaces angles equally. Choose
+`edge.length = "chord"` for Euclidean edge lengths or `"arc"` for shorter
+circular arcs. A shorter arc can cross an unsampled gap; graph shortest paths
+still follow the edges actually present. Arc lengths are measured in radians
+on the unit circle, not squared distances or conductances.
+
+Random graphs have `floor(n * mean.degree / 2)` edges. A connected graph needs
+at least `n - 1`, and an impossible request errors. With `connected = TRUE`,
+a growing random tree precedes additional edges; the result is not a uniform
+draw from all connected graphs. With `connected = FALSE`, edges are sampled
+uniformly without replacement from all vertex pairs. Candidate storage is
+quadratic in the number of vertices, so this generator is intended for small
+examples. For both random graphs and randomly sampled circles, an explicit
+`seed` restores the caller's random state after generation; `seed = NULL`
+uses and advances the current stream. Uniform circle sampling uses no random
+numbers. Unknown or irrelevant arguments error instead of being ignored.
+
 ## Conventions that affect your choice
 
 ### A common graph object
@@ -90,8 +153,9 @@ use `weights = igraph::E(ig)$length`. Raw-list matrix conversions retain
 Path-search results contain their graph in `$graph` and paths in
 `$shortest.paths`; a parameter sequence contains separate graph objects.
 Subgraphs use compact indices and record `metadata$original.vertices`.
-`create.chain.graph.with.offset()` offsets labels and the original-vertex
-mapping, while adjacency indices remain within the returned graph.
+`create.graph(type, ..., labels = ...)` assigns vertex labels independently
+of adjacency indices. For example, `labels = 101:110` names ten vertices
+without changing their internal indices `1:10`.
 
 ### Neighborhood sizes and edge quantities
 
@@ -212,16 +276,7 @@ release or development installation.
 
 | Function | Purpose |
 |---|---|
-| `create.empty.graph()` | Create a graph with no edges. |
-| `create.complete.graph()` | Connect every pair of vertices. |
-| `create.chain.graph()` | Connect vertices in a chain. |
-| `create.chain.graph.with.offset()` | Create a chain with offset vertex labels and compact adjacency indices. |
-| `create.bi.kNN.chain.graph()` | Connect nearby positions in a chain in both directions. |
-| `create.circular.graph()` | Create an unweighted circular graph. |
-| `create.bipartite.graph()` | Connect vertices across two parts. |
-| `create.star.graph()` | Connect peripheral vertices to a central vertex. |
-| `create.random.graph()` | Create a random undirected graph with lengths. |
-| `generate.circle.graph()` | Generate a circle graph with random or uniform angles and chord lengths. |
+| `create.graph()` | Construct standard graph types, labeled chains, random graphs and sampled circles. |
 | `dgraph()` | Validate aligned neighbor, length and attribute lists as an undirected graph. |
 | `graph.adjacency()` | Read the neighbor list for a stored stage. |
 | `graph.lengths()` | Read aligned lengths, or NULL when absent. |

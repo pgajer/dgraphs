@@ -170,7 +170,7 @@ graph.edges <- function(graph, stage = "final") {
 #' @param ... Unused.
 #' @return The unchanged graph, invisibly.
 #' @examples
-#' print(create.empty.graph(3))
+#' print(create.graph("empty", 3))
 #' @export
 print.dgraph <- function(x, ...) {
     cat("Undirected graph:", graph.order(x), "vertices,", nrow(graph.edges(x)), "edges\n")

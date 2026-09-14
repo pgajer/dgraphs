@@ -25,7 +25,7 @@ path, or \code{NA} if no paths), and \code{avg.degree} (mean adjacency-list leng
 Inspect a Path Graph
 }
 \examples{
-chain <- create.chain.graph(n.vertices = 5)
+chain <- create.graph("chain", n = 5)
 paths <- create.path.graph(graph.adjacency(chain), graph.lengths(chain), h = 2)
 print(paths)
 summary(paths)

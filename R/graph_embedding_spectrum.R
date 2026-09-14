@@ -33,7 +33,7 @@ elapsed.time <- function(start.time,
 #'
 #' @examples
 #' set.seed(1)
-#' graph <- create.circular.graph(6)
+#' graph <- create.graph("cycle", 6)
 #' graph.embedding(graph, dim = 2, method = "fr")
 #'
 #' @export
@@ -74,7 +74,7 @@ graph.embedding <- function(graph, edge.attribute = NULL,
 #'
 #' @examples
 #' embedding <- rbind(c(0, 0), c(1, 0), c(1, 1), c(0, 1))
-#' graph <- create.circular.graph(4)
+#' graph <- create.graph("cycle", 4)
 #' plot2D.colored.graph(
 #'   embedding,
 #'   graph.adjacency(graph),
@@ -171,7 +171,7 @@ plot2D.colored.graph <- function(embedding, adj.list, vertex.colors,
 #' @return A list with `evalues`, `evectors`, and optionally `laplacian`.
 #'
 #' @examples
-#' graph <- create.circular.graph(8)
+#' graph <- create.graph("cycle", 8)
 #' spectrum <- graph.spectrum(graph, nev = 3)
 #' spectrum$evalues
 #'
@@ -261,7 +261,7 @@ graph.spectrum <- function(graph,
 #' @return Numeric spectral embedding matrix.
 #'
 #' @examples
-#' graph <- create.circular.graph(8)
+#' graph <- create.graph("cycle", 8)
 #' spectrum <- graph.spectrum(graph, nev = 4)
 #' graph.spectral.embedding(spectrum$evectors, dim = 2)
 #'

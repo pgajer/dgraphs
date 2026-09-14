@@ -25,6 +25,6 @@ Equal distances are resolved by ascending vertex index. Intersecting covers
 create edges whose lengths are shortest-path distances in the input graph.
 }
 \examples{
-graph <- create.chain.graph(3)
+graph <- create.graph("chain", 3)
 create.geodesic.iknn.graph(graph, k = 1)
 }

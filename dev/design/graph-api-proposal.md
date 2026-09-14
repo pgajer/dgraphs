@@ -136,7 +136,7 @@ names. For example, convert raw lists using
 `as_igraph(gflow.graph, weight.list = ...)` overload and legacy basin adapter.
 
 Basic constructors return graph objects. Code needing just the list uses
-`graph.adjacency(create.chain.graph(n))`. The generic `vertices()` remains
+`graph.adjacency(create.graph("chain", n))`. The generic `vertices()` remains
 for result objects such as local-extrema results; it should not become a
 second spelling of the graph adjacency accessor.
 

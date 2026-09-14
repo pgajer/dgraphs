@@ -11,7 +11,7 @@
 #'   Construction and diagnostic information is stored in `metadata`.
 #'
 #' @examples
-#' chain <- create.chain.graph(n.vertices = 3)
+#' chain <- create.graph("chain", n = 3)
 #' grid <- create.grid.graph(graph.adjacency(chain), graph.lengths(chain), grid.size = 5)
 #' grid$metadata$grid_vertices
 #'

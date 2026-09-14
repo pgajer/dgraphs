@@ -1,5 +1,11 @@
 # dgraphs 0.3.0
 
+* Replace ten basic graph constructors with `create.graph(type, ...)`, without
+  compatibility wrappers. Eight types share vertex counts, optional labels and
+  strict argument validation. Chains use per-side `span`; circles return
+  coordinates and explicit arc/chord lengths; random graphs enforce feasible
+  edge budgets and support isolated seeds.
+
 * Breaking graph API: every constructor returns `dgraph`; use `graph.adjacency`,
   `graph.lengths`, `graph.edges`, `graph.order`, `graph.stages` and
   `graph.edge.attribute`. Raw metric inputs use `adj.list` and `length.list`.

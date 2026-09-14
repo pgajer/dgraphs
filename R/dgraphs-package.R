@@ -15,7 +15,7 @@
 #' \code{vignette("function-guide", package = "dgraphs")} or
 #' \code{vignette("synthetic-geometry", package = "dgraphs")}.
 #'
-#' @seealso [create.sknn.graph()], [create.rknn.graph()],
+#' @seealso [create.graph()], [create.sknn.graph()], [create.rknn.graph()],
 #'   [graph.geodesic.distances()], [sample.synthetic.geometry()]
 #' @keywords internal
 #' @useDynLib dgraphs, .registration = TRUE

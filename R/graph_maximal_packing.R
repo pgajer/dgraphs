@@ -596,7 +596,7 @@ verify.maximal.packing <- function(packing.result, verbose = TRUE) {
 #'
 #' @examples
 #' x <- list(
-#'   graph = create.chain.graph(4),
+#'   graph = create.graph("chain", 4),
 #'   graph_diameter = 3,
 #'   max_packing_radius = 1.5,
 #'   grid_vertices = c(1L, 4L)

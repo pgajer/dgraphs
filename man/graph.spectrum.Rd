@@ -2,36 +2,74 @@
 % Please edit documentation in R/graph_embedding_spectrum.R
 \name{graph.spectrum}
 \alias{graph.spectrum}
-\title{Compute Graph Spectrum}
+\title{Compute the Positive Spectrum of an Unweighted Graph Laplacian}
 \usage{
 graph.spectrum(
   graph,
   nev = NULL,
   use.R = FALSE,
   return.Laplacian = FALSE,
-  return.dense = FALSE
+  return.dense = FALSE,
+  tol = NULL
 )
 }
 \arguments{
-\item{graph}{A \code{dgraph}; only topology is used for its unweighted Laplacian.}
+\item{graph}{A \code{dgraph}; the final-stage topology defines the combinatorial
+Laplacian \code{L = D - A}. Stored edge lengths and attributes are not used.}
 
-\item{nev}{Number of nontrivial eigenvalues/eigenvectors to compute.}
+\item{nev}{Number of smallest positive eigenpairs, in increasing eigenvalue
+order. \code{NULL} requests all \code{n - nullity} positive modes; zero requests none.
+Explicit counts must be integers in that range; they are never truncated.}
 
-\item{use.R}{Logical; use R/igraph implementation instead of native backend.}
+\item{use.R}{Logical; use base R's dense symmetric eigensolver instead of
+the native backend. Both return the same numerical contract.}
 
 \item{return.Laplacian}{Logical; include the graph Laplacian in the result.}
 
-\item{return.dense}{Logical; return a dense Laplacian when requested.}
+\item{return.dense}{Logical; return a base matrix when \code{TRUE}, otherwise a
+sparse Matrix object. If Matrix is unavailable, warn and return dense.
+Ignored when \code{return.Laplacian = FALSE}.}
+
+\item{tol}{Positive absolute eigenvalue tolerance. By default, use
+\code{100 * .Machine$double.eps * max(1, 2 * max.degree)}. Computed zero modes
+must have absolute eigenvalues at most \code{tol}; returned modes must exceed
+it. An unresolved separation from zero is an error, not silent truncation.}
 }
 \value{
-A list with \code{evalues}, \code{evectors}, and optionally \code{laplacian}.
+A \code{graph_spectrum} list with \code{evalues} (the requested positive
+eigenvalues in increasing order), \code{evectors} (one row per original vertex,
+one orthonormal column per eigenvalue), \code{nullity} (the exact number of
+connected components), \code{components} (component IDs in vertex order), and
+the resolved \code{tolerance}. When requested, \code{laplacian} contains \code{L}.
+An empty or edgeless graph has no positive modes and an \code{n} by zero
+eigenvector matrix when \code{nev = NULL} or \code{nev = 0}.
 }
 \description{
-Compute Graph Spectrum
+Compute the Positive Spectrum of an Unweighted Graph Laplacian
+}
+\details{
+Every component contributes one zero mode, including isolated vertices.
+These modes are omitted from \code{evalues} and \code{evectors}; their number is
+determined from topology and checked against the computed spectrum.
+The native backend uses sparse Lanczos for partial spectra, requesting the
+component zero modes as well, and a dense eigensolver for the full spectrum.
+The R backend computes the full dense spectrum before selection. Thus a
+small explicit \code{nev} is preferable for large graphs. Dense solves require
+quadratic memory; requesting all positive modes is not a sparse operation.
+
+Eigenvector signs and bases within repeated-eigenvalue subspaces are not
+unique. If \code{nev} or an embedding dimension cuts through a repeated
+eigenvalue, the selected subspace and embedding distances can differ between
+backends. Include the whole tied eigenspace for invariant comparisons.
 }
 \examples{
-graph <- create.graph("cycle", 8)
+graph <- create.graph("chain", 8)
 spectrum <- graph.spectrum(graph, nev = 3)
 spectrum$evalues
+spectrum$nullity # one omitted zero mode
+graph.spectral.embedding(spectrum, dim = 2)
 
+}
+\seealso{
+\code{\link[=graph.spectral.embedding]{graph.spectral.embedding()}}, \code{\link[=graph.connected.components]{graph.connected.components()}}
 }

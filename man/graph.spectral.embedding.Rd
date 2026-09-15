@@ -2,26 +2,49 @@
 % Please edit documentation in R/graph_embedding_spectrum.R
 \name{graph.spectral.embedding}
 \alias{graph.spectral.embedding}
-\title{Generate Spectral Embedding of a Graph}
+\title{Embed a Connected Graph Using its Positive Laplacian Spectrum}
 \usage{
-graph.spectral.embedding(evectors, dim, evalues = NULL)
+graph.spectral.embedding(spectrum, dim = 2, scale = c("none", "inverse.sqrt"))
 }
 \arguments{
-\item{evectors}{Numeric matrix of graph Laplacian eigenvectors.}
+\item{spectrum}{A \code{graph_spectrum} object returned by \code{\link[=graph.spectrum]{graph.spectrum()}}.}
 
-\item{dim}{Embedding dimension.}
+\item{dim}{Positive integer number of coordinates, no greater than the
+number of positive eigenpairs in \code{spectrum}.}
 
-\item{evalues}{Optional eigenvalues used for scaling.}
+\item{scale}{Coordinate scaling: \code{"none"} uses the orthonormal eigenvectors;
+\code{"inverse.sqrt"} divides each column by the square root of its eigenvalue.}
 }
 \value{
-Numeric spectral embedding matrix.
+Numeric matrix with one row per vertex and columns \code{Dim1}, \code{Dim2},
+and so on. Columns use the smallest \code{dim} positive eigenvalues.
 }
 \description{
-Generate Spectral Embedding of a Graph
+Embed a Connected Graph Using its Positive Laplacian Spectrum
+}
+\details{
+The spectrum object carries the eigenvalue ordering, zero-mode tolerance
+and component information, so embedding never discards a column by position
+in an arbitrary eigenvector matrix. Disconnected graphs are rejected:
+embed each component separately with \code{\link[=create.subgraph]{create.subgraph()}} and
+\code{\link[=graph.spectrum]{graph.spectrum()}}. There is no implied distance between separate components.
+Singleton and empty graphs have no positive-dimensional spectral embedding.
+
+Unscaled coordinates are a spectral representation, not original physical
+coordinates. On a connected graph, inverse-square-root scaling using all
+positive modes makes squared Euclidean distances equal to effective
+resistance; using fewer modes gives a truncated representation. Neither
+choice generally reproduces shortest-path or manifold geodesic distances.
+Signs and bases within tied eigenvalues can vary; choose whole tied
+eigenspaces when comparing embedding distances across backends.
 }
 \examples{
-graph <- create.graph("cycle", 8)
-spectrum <- graph.spectrum(graph, nev = 4)
-graph.spectral.embedding(spectrum$evectors, dim = 2)
+graph <- create.graph("chain", 8)
+spectrum <- graph.spectrum(graph, nev = 3)
+graph.spectral.embedding(spectrum, dim = 2)
+graph.spectral.embedding(spectrum, dim = 3, scale = "inverse.sqrt")
 
+}
+\seealso{
+\code{\link[=graph.spectrum]{graph.spectrum()}}, \code{\link[=graph.embedding]{graph.embedding()}}
 }

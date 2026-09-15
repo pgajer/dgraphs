@@ -85,7 +85,11 @@ writeLines(c(
     "if (!is.list(spectrum) || !all(c(\"evalues\", \"evectors\") %in% names(spectrum))) {",
     "    stop(\"graph.spectrum returned an unexpected result\", call. = FALSE)",
     "}",
-    "assert.no.gflow(\"graph.spectrum\")"
+    "assert.no.gflow(\"graph.spectrum\")",
+    "stopifnot(inherits(spectrum, \"graph_spectrum\"), length(spectrum$evalues) == 3L,",
+    "          all(spectrum$evalues > spectrum$tolerance), all(diff(spectrum$evalues) >= 0))",
+    "chain.spectrum <- graph.spectrum(create.graph(\"chain\", 5), nev = 2)",
+    "stopifnot(identical(dim(graph.spectral.embedding(chain.spectrum, 2)), c(5L, 2L)))"
 ), script)
 
 cmd <- file.path(R.home("bin"), "Rscript")

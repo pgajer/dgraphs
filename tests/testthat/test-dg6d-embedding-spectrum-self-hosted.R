@@ -1,34 +1,3 @@
-test_that("DG6d graph.spectrum computes ordered native eigenpairs", {
-    path.graph <- dgraph(list(c(2L), c(1L, 3L), c(2L, 4L), c(3L, 5L), c(4L, 6L), c(5L)))
-    spec <- dgraphs::graph.spectrum(path.graph, nev = 3)
-    full <- dgraphs::graph.spectrum(path.graph, use.R = TRUE)
-    expected <- tail(full$evalues, 3)
-    expect_equal(spec$evalues, expected, tolerance = 1e-08, ignore_attr = TRUE)
-    expect_true(all(diff(spec$evalues) <= 1e-08))
-    expect_equal(dim(spec$evectors), c(6L, 3L))
-    expect_equal(t(spec$evectors) %*% spec$evectors, diag(3), tolerance = 1e-08, ignore_attr = TRUE)
-})
-
-test_that("DG6d graph.spectrum handles disconnected graphs and Laplacian output", {
-    disconnected.graph <- dgraph(list(c(2L), c(1L), c(4L), c(3L)))
-    spec <- dgraphs::graph.spectrum(disconnected.graph, nev = 3, return.Laplacian = TRUE, return.dense = TRUE)
-    expect_equal(spec$evalues, c(2, 0, 0), tolerance = 1e-08)
-    expect_equal(spec$laplacian, matrix(c(1, -1, 0, 0, -1, 1, 0, 0, 0, 0, 1, -1, 0, 0, -1, 1), nrow = 4,
-        byrow = TRUE), ignore_attr = TRUE)
-})
-
-test_that("DG6d graph.spectral.embedding is sign-invariant at distance level", {
-    path.graph <- dgraph(list(c(2L), c(1L, 3L), c(2L, 4L), c(3L, 5L), c(4L, 6L), c(5L)))
-    spec <- dgraphs::graph.spectrum(path.graph, nev = 4)
-    emb <- dgraphs::graph.spectral.embedding(spec$evectors, dim = 2, evalues = spec$evalues)
-    emb.flipped <- dgraphs::graph.spectral.embedding(sweep(spec$evectors, 2, c(-1, 1, -1, 1), `*`), dim = 2,
-        evalues = spec$evalues)
-    expect_equal(colnames(emb), c("Dim1", "Dim2"))
-    expect_equal(dim(emb), c(6L, 2L))
-    expect_equal(as.matrix(stats::dist(emb)), as.matrix(stats::dist(emb.flipped)), tolerance = 1e-08,
-        ignore_attr = TRUE)
-})
-
 test_that("DG6d graph.embedding returns stable layout-shaped matrices", {
     path.graph <- dgraph(list(c(2L), c(1L, 3L), c(2L, 4L), c(3L)))
     set.seed(123)

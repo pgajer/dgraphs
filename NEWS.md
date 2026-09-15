@@ -1,5 +1,18 @@
 # dgraphs (development version)
 
+* Unify graph spectra across the native and R backends: `nev` counts the
+  smallest positive eigenpairs in increasing order, and defaults to all
+  positive modes. Results have class `graph_spectrum`, with exact component
+  nullity, vertex component IDs, and a resolved zero-mode tolerance. All
+  component zero modes are excluded. Counts are validated without truncation;
+  empty/edgeless graphs return zero-column spectra. Both backends honor dense
+  versus sparse Laplacian output; native full spectra use a dense solver.
+* Breaking spectral embedding interface: use
+  `graph.spectral.embedding(spectrum, dim, scale)` with the complete spectrum
+  object, replacing the separate eigenvector/eigenvalue arguments. Choose
+  `scale = "none"` or `"inverse.sqrt"`. Disconnected graphs must be embedded
+  component by component. No compatibility wrappers are retained.
+
 * Correct `subdivide.path()` to include both endpoints and interpolate at equal
   arc-length intervals along the polyline, skipping repeated points instead of
   returning missing rows. Singleton and zero-length paths now have length zero,

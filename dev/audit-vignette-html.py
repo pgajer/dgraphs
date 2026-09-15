@@ -8,11 +8,14 @@ class Page(HTMLParser):
     def __init__(self, path):
         super().__init__()
         self.ids, self.links, self.assets = set(), [], []
-        self.feed(path.read_text(encoding="utf-8"))
+        raw = path.read_text(encoding="utf-8")
+        assert "&lt;a href=" not in raw, (path, "escaped/malformed help link")
+        self.feed(raw)
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
         if "id" in attrs:
+            assert attrs["id"] not in self.ids, (attrs["id"], "duplicate HTML id")
             self.ids.add(attrs["id"])
         if "href" in attrs:
             self.links.append(attrs["href"])

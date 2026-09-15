@@ -48,3 +48,9 @@ project-owned material here is under the package's MIT license under the
 recorded copyright-holder authorization, to the extent the holder has the
 necessary rights. This does not relicense earlier geosmooth distributions or
 third-party material. Existing third-party notices remain applicable.
+
+Graph Reconstruction Explorer
+The application sources and stylesheet under inst/shiny/graph-explorer
+were moved from dggraphui on 2026-09-15. They retain their original
+GPL (>= 3) license; see that component's LICENSE. The original author is
+Pawel Gajer. No third-party notices have been removed.

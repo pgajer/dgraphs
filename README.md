@@ -91,3 +91,15 @@ random-state information. Statistical truth, responses, named recipe registries
 and dataset identities remain in geosmooth. The forthcoming geosmooth release imports these geometry helpers from dgraphs. The development Geometry Lab app
 is documented in `dev/apps/embedding-explorer/README.md`; it is not installed
 with the R package.
+
+## Graph Reconstruction Explorer
+
+Open saved graph reconstruction benchmarks with `dgraphs::explore.graphs()`.
+The optional app dependencies are `shiny`, `bslib`, `plotly`, and `digest`.
+Use `explore.graphs(project = run_directory)` to open an existing benchmark,
+or remember it with `register.graph.project(run_directory, name = "My study")`.
+The no-argument launcher presents your saved projects. Scientific data stay
+outside the package; opening them does not rerun analysis. `grip` is needed only
+when you explicitly generate a missing weighted layout.
+
+See `?explore.graphs` for project paths, caches, and dggraphui compatibility.

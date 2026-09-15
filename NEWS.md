@@ -1,3 +1,13 @@
+# dgraphs (development version)
+
+* Add `explore.graphs()`, the Graph Reconstruction Explorer migrated from
+  dggraphui, with optional Shiny dependencies. `read.graph.benchmark()` reads
+  existing benchmark manifests; `register.graph.project()` remembers external
+  projects without moving or changing their data.
+* Retain saved-layout viewing and add current weighted-GRIP support for explicit
+  missing-layout generation. Cache keys distinguish full project paths; legacy
+  cache entries require matching graph provenance.
+
 # dgraphs 0.3.0
 
 * Consolidate distance matrices under `graph.geodesic.distances()`, accepting

@@ -21,7 +21,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 6, fig.height
 
 `dgraphs` turns numerical observations into graphs and provides tools to inspect
 their connectivity, paths and geometry. Start with the question you want to
-answer. The catalog covers all 109 explicit public exports exactly once;
+answer. The catalog covers all 112 explicit public exports exactly once;
 39 registered S3 methods are described separately through object workflows.
 Internal helpers and development applications are not public entry points.
 
@@ -494,6 +494,19 @@ release or development installation.
 | `synthetic.sampling.dirichlet.zeros()` | Specify compositional draws with a fraction on a structural-zero face. |
 | `synthetic.sampling.quadform.lab()` | Specify versioned quadratic-surface sampling, including surface-area rejection sampling. |
 | `validate.synthetic.sampling()` | Validate a sampling specification and its compatibility with a geometry. |
+
+### Interactive graph reconstruction explorer
+
+| Function | Purpose | Input and interpretation |
+|---|---|---|
+| `explore.graphs()` | Open the Graph Reconstruction Explorer. | A saved benchmark directory, manifest, or registered project name; optional Shiny dependencies. |
+| `read.graph.benchmark()` | Read saved benchmark indexes without launching an app. | Existing dggraphui manifests and asset tables; relative paths resolve within the run. |
+| `register.graph.project()` | Add a benchmark to the local project picker. | Stores a name and path; scientific assets remain outside the package. |
+
+Opening a project reads saved results without refitting. An explicit action can
+compute a missing weighted layout using grip and save it to a separate user cache.
+The explorer retains its historical per-axis display normalization; use the saved
+metric tables for quantitative distance comparisons.
 
 ## Object workflows and method help
 

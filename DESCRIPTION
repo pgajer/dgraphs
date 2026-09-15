@@ -1,6 +1,6 @@
 Package: dgraphs
 Title: Data-Derived Graph Construction Utilities
-Version: 0.3.0
+Version: 0.3.0.9000
 Authors@R: c(
     person("Pawel", "Gajer", role = c("aut", "cre"),
            email = "pgajer@gmail.com"),
@@ -56,6 +56,11 @@ LinkingTo:
     Rcpp,
     RcppEigen
 Suggests:
+    shiny,
+    bslib,
+    plotly,
+    grip,
+    digest,
     geometry,
     htmltools,
     htmlwidgets,

@@ -14,4 +14,5 @@ for(p in list.files("build/site", "[.]html$",recursive=TRUE,full.names=TRUE)) {
   writeLines(text,p)
 }
 writeLines(capture.output(sessionInfo()),"build/site/session-info.txt")
-file.copy(list.files("build","[.]provenance[.]json$",full.names=TRUE),"build/site")
+stopifnot(all(file.copy(list.files("build","[.]provenance[.]json$",full.names=TRUE),
+                       "build/site", overwrite=TRUE)))

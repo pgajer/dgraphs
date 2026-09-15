@@ -26,7 +26,14 @@ render_dgraphs_reference <- function() {
             } else if (!grepl('^(https?:|#|mailto:)', url)) {
                 # Other packages' reference links are explicitly online fallbacks.
                 package <- if (grepl('^../../',url)) strsplit(url,'/')[[1]][3] else 'base'
-                paste0('href="https://search.r-project.org/CRAN/refmans/',package,'/html/',basename(url),'"')
+                # R's local help filenames encode punctuation as +hh. The
+                # public reference server uses ordinary URL-encoded names.
+                filename <- utils::URLencode(utils::URLdecode(
+                    gsub('+', '%', basename(url), fixed=TRUE)), reserved=TRUE)
+                section <- if (package %in% c('base', 'compiler', 'datasets',
+                    'grDevices', 'graphics', 'grid', 'methods', 'parallel',
+                    'splines', 'stats', 'stats4', 'tcltk', 'tools', 'utils')) 'R' else 'CRAN'
+                paste0('href="https://search.r-project.org/',section,'/refmans/',package,'/html/',filename,'"')
             } else link
             html <- gsub(link, replacement, html, fixed=TRUE)
         }

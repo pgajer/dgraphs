@@ -8,7 +8,7 @@ class Page(HTMLParser):
     def __init__(self, path):
         super().__init__()
         self.ids, self.links, self.assets = set(), [], []
-        self.feed(path.read_text())
+        self.feed(path.read_text(encoding="utf-8"))
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)

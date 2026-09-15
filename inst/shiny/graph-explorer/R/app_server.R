@@ -127,10 +127,9 @@ dg_app_server <- function(input, output, session, default_run_dir = "") {
       lapply(sel$fields, function(field) {
         shiny::div(
           class = "dg-control-row",
-          shiny::tags$label(dg_scalar_chr(field$label, field$id)),
           shiny::selectInput(
             inputId = dg_scalar_chr(field$input_id),
-            label = NULL,
+            label = dg_scalar_chr(field$label, field$id),
             choices = field$choices,
             selected = dg_scalar_chr(field$selected),
             width = "100%"
@@ -219,6 +218,7 @@ dg_app_server <- function(input, output, session, default_run_dir = "") {
       margin = list(l = 30, r = 25, b = 35, t = 34),
       scene = list(
         aspectmode = "data",
+        camera = list(eye = list(x = 1.8, y = 1.8, z = 1.4)),
         xaxis = list(title = "x", showgrid = TRUE, zeroline = TRUE, visible = TRUE),
         yaxis = list(title = "y", showgrid = TRUE, zeroline = TRUE, visible = TRUE),
         zaxis = list(title = "z", showgrid = TRUE, zeroline = TRUE, visible = TRUE)
@@ -247,7 +247,7 @@ dg_app_server <- function(input, output, session, default_run_dir = "") {
         p,
         x = edge_xyz[, 1], y = edge_xyz[, 2], z = edge_xyz[, 3],
         type = "scatter3d", mode = "lines", hoverinfo = "skip",
-        line = list(color = "rgba(17,24,39,0.20)", width = 1),
+        line = list(color = "rgba(17,24,39,0.65)", width = 2),
         showlegend = FALSE
       )
     }
@@ -266,6 +266,7 @@ dg_app_server <- function(input, output, session, default_run_dir = "") {
       margin = list(l = 30, r = 25, b = 35, t = 34),
       scene = list(
         aspectmode = "data",
+        camera = list(eye = list(x = 1.8, y = 1.8, z = 1.4)),
         xaxis = list(title = "x", showgrid = TRUE, zeroline = TRUE, visible = TRUE),
         yaxis = list(title = "y", showgrid = TRUE, zeroline = TRUE, visible = TRUE),
         zaxis = list(title = "z", showgrid = TRUE, zeroline = TRUE, visible = TRUE)

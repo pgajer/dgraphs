@@ -5,7 +5,7 @@ from urllib.parse import urlsplit, unquote
 import sys
 class Page(HTMLParser):
     def __init__(self,p):
-        super().__init__();self.ids=set();self.links=[];self.images=[];self.feed(p.read_text())
+        super().__init__();self.ids=set();self.links=[];self.images=[];self.feed(p.read_text(encoding="utf-8"))
     def handle_starttag(self,tag,attrs):
         a=dict(attrs)
         if 'id' in a:self.ids.add(a['id'])

@@ -1,53 +1,66 @@
 name: R-CMD-check
-
 on:
   push:
-    branches:
-      - main
-      - master
+    branches: [main, master]
   pull_request:
-    branches:
-      - main
-      - master
   workflow_dispatch:
-
-permissions: read-all
-
+permissions:
+  contents: read
 jobs:
-  R-CMD-check:
-    runs-on: ubuntu-latest
-    name: R ${{ matrix.r }}
-
+  check:
     strategy:
       fail-fast: false
       matrix:
-        r:
-          - devel
-          - release
-          - oldrel-1
-
+        include:
+          - {os: ubuntu-latest, r: release}
+          - {os: ubuntu-latest, r: devel}
+          - {os: ubuntu-latest, r: oldrel-1}
+          - {os: windows-latest, r: release}
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} / R ${{ matrix.r }} / static
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      R_KEEP_PKG_SOURCE: yes
-
+      DGRAPHS_STATIC_VIGNETTES: 'true'
+      _R_CHECK_FORCE_SUGGESTS_: 'false'
+      R_KEEP_PKG_SOURCE: 'yes'
     steps:
       - uses: actions/checkout@v4
-
-      - name: Check public source tree
-        run: python3 dev/check-no-manuscripts.py
-
       - uses: r-lib/actions/setup-pandoc@v2
-
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.r }}
           use-public-rspm: true
-
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
-          needs: check
-
-      - uses: r-lib/actions/check-r-package@v2
+          dependencies: '"hard"'
+          extra-packages: |
+            any::rcmdcheck
+            any::knitr
+            any::rmarkdown
+            any::testthat
+            any::withr
+            any::Matrix
+            any::geometry
+      - name: Build exact source archive
+        shell: bash
+        run: make build
+      - name: Check archive
+        shell: Rscript {0}
+        run: |
+          archive <- list.files("build", "[.]tar[.]gz$", full.names = TRUE)
+          stopifnot(length(archive) == 1L)
+          rcmdcheck::rcmdcheck(archive, args=c("--as-cran", "--no-manual"), error_on="warning", check_dir="build")
+      - name: Validate installed help and fingerprint
+        shell: bash
+        run: |
+          Rscript dev/validate-installed-guides.R
+          python3 dev/audit-vignette-html.py build/dgraphs.Rcheck/dgraphs/doc
+      - name: Preserve check evidence
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          upload-snapshots: true
+          name: check-${{ matrix.os }}-${{ matrix.r }}
+          path: |
+            build/*.json
+            build/*.Rcheck/00*
+            build/*.Rcheck/tests/*.Rout*

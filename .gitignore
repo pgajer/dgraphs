@@ -40,3 +40,5 @@ audit_artifacts/
 /papers/
 /reports/
 /dev/papers/
+
+/inst/build-provenance.json

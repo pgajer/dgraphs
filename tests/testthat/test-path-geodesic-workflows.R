@@ -1,8 +1,4 @@
 test_that("DG6c path distance helpers run self-hosted", {
-    d <- matrix(c(0, 1, 4, 1, 0, 2, 4, 2, 0), nrow = 3, byrow = TRUE)
-    knn <- dgraphs:::.dist.to.knn(d, k = 2)
-    expect_equal(knn$nn.i, matrix(c(1L, 2L, 2L, 1L, 3L, 2L), nrow = 3, byrow = TRUE))
-    expect_equal(knn$nn.d, matrix(c(0, 1, 0, 1, 0, 2), nrow = 3, byrow = TRUE))
     V <- matrix(c(0, 0, 1, 0, 1, 1, 2, 1), ncol = 2, byrow = TRUE)
     expect_equal(dgraphs::path.dist(c(1L, 2L, 3L, 4L), V), c(0, 1/3, 2/3, 1))
     expect_equal(dgraphs::path.length(V), 3)
@@ -19,8 +15,8 @@ test_that("DG6c geodesic distance helpers run self-hosted", {
     expect_equal(D, matrix(c(0, 1, 2, 3, 1, 0, 1, 2, 2, 1, 0, 1, 3, 2, 1, 0), nrow = 4, byrow = TRUE),
         ignore_attr = TRUE)
     gnn <- dgraphs::geodesic.knn(X, k = 2, k.graph = 1)
-    expect_equal(gnn$nn.index[1, ], c(1L, 2L))
-    expect_equal(gnn$nn.index[4, ], c(4L, 3L))
+    expect_equal(gnn$nn.index[1, ], c(2L, 3L))
+    expect_equal(gnn$nn.index[4, ], c(3L, 2L))
     graph <- dgraph(list(2L, 1L, 4L, 3L), rep(list(1), 4))
     disconnected <- dgraphs::graph.geodesic.distances(graph = graph)
     expect_true(is.infinite(disconnected[1, 3]))

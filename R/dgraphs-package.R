@@ -18,7 +18,12 @@
 #' @seealso [create.graph()], [create.sknn.graph()], [create.rknn.graph()],
 #'   [graph.geodesic.distances()], [create.path.graph()], [plot.dgraph()],
 #'   [sample.synthetic.geometry()]
-#' @keywords internal
+#' @examples
+#' graph <- create.graph("chain", n = 5)
+#' print(graph)
+#' graph.geodesic.distances(graph, vertices = c(1, 5))
+#' # The endpoint distance is four unit-length edges.
+#' @keywords package
 #' @useDynLib dgraphs, .registration = TRUE
 #' @importFrom Rcpp evalCpp
 #' @importFrom graphics contour grid image legend lines par points rect segments text

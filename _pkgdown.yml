@@ -1,0 +1,190 @@
+url: https://pgajer.github.io/dgraphs/
+destination: build/site
+template:
+  bootstrap: 5
+development:
+  mode: devel
+  destination: .
+home:
+  title: Data-derived graphs and reproducible geometry
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+articles:
+  - title: Learn dgraphs
+    navbar: ~
+    contents:
+      - function-guide
+      - data-derived-graph-workflow
+      - synthetic-geometry
+reference:
+  - title: Graph construction and parameter sequences
+    contents:
+      - create.mknn.graph
+      - create.mknn.graphs
+      - create.sknn.graph
+      - create.sknn.graphs
+      - create.rknn.graph
+      - create.rknn.graphs
+      - create.cknn.graph
+      - create.single.iknn.graph
+      - create.iknn.graphs
+      - create.geodesic.iknn.graph
+      - create.iterated.iknn.graphs
+      - build.iknn.graphs.and.selectk
+      - create.cmst.graph
+      - create.threshold.distance.graph
+      - nerve.graph
+  - title: Basic graphs and representation
+    contents:
+      - create.graph
+      - dgraph
+      - as_igraph
+      - convert.adjacency.list.to.adjacency.matrix
+      - convert.weighted.adjacency.matrix.to.adjacency.list
+      - convert.adjacency.to.edge.matrix
+      - count.edges
+      - compare.adj.lists
+      - edge.diff
+      - identical.vertex.set.weighted.graph.similarity
+  - title: Connectivity and graph editing
+    contents:
+      - graph.connected.components
+      - convert.to.undirected
+      - rm.self.loops
+      - join.graphs
+      - create.subgraph
+      - create.grid.graph
+  - title: Paths and distances
+    contents:
+      - graph.geodesic.distances
+      - compute.graph.distance
+      - compute.graph.diameter
+      - get.shortest.path
+      - geodesic.disk
+      - geodesic.knn
+      - geodesic.knnx
+      - create.path.graph
+      - create.plm.graph
+      - compare.paths
+      - minh.limit
+      - path.length
+      - path.dist
+      - subdivide.path
+  - title: Edge lengths and pruning
+    contents:
+      - extract.trajectory.edge.lengths
+      - wgraph.prune.long.edges
+  - title: Diagnostics, endpoints and packing
+    contents:
+      - compute.graph.summary.pmf
+      - graph.summary.divergence
+      - jensen.shannon.divergence
+      - compute.graph.summary.stability
+      - compute.stability.metrics
+      - compute.geodesic.stats
+      - compute.vertex.geodesic.stats
+      - compute.graph.endpoint.scores
+      - detect.graph.endpoints
+      - geodesic.core.endpoints
+      - detect.local.extrema
+      - vertices
+      - remove.knn.outliers
+      - create.maximal.packing
+      - validate.maximal.packing
+      - verify.maximal.packing
+      - isometry.scale
+      - isometry.rel.rms.error
+      - isometry.rel.abs.error
+      - isometry.distortion.quantiles
+      - isometry.distance.correlations
+      - isometry.geodesic.diagnostics
+      - summarize.isometry.deviation
+  - title: Spectral methods and graph display
+    contents:
+      - graph.spectrum
+      - graph.spectral.embedding
+      - graph.embedding
+  - title: Synthetic geometry and embedding
+    contents:
+      - synthetic.quadform
+      - synthetic.circle
+      - synthetic.helix
+      - synthetic.trefoil
+      - synthetic.sphere.cap
+      - synthetic.torus.patch
+      - synthetic.simplex
+      - synthetic.stratum.point
+      - synthetic.stratum.segment
+      - synthetic.stratum.rectangle
+      - synthetic.stratified
+      - synthetic.point.line.junction
+      - embed.synthetic.geometry
+      - embed.quadform.surface
+      - quadform.gradient
+      - quadform.metric
+      - edge.lengths.synthetic.geometry
+      - validate.synthetic.geometry
+  - title: Point sampling
+    contents:
+      - sample.synthetic.geometry
+      - synthetic.sampling.uniform.interval
+      - synthetic.sampling.grid.interval
+      - synthetic.sampling.uniform.box
+      - synthetic.sampling.uniform.rectangle
+      - synthetic.sampling.uniform.disk
+      - synthetic.sampling.truncated.normal
+      - synthetic.sampling.gapped.uniform
+      - synthetic.sampling.clustered
+      - synthetic.sampling.dirichlet.zeros
+      - synthetic.sampling.quadform.lab
+      - validate.synthetic.sampling
+  - title: Interactive graph reconstruction explorer
+    contents:
+      - explore.graphs
+      - read.graph.benchmark
+      - register.graph.project
+  - title: Object methods and supporting reference
+    contents:
+      - dgraphs-package
+      - dot-dgraphs.validate.adj.list
+      - inspect.path.graph
+      - inspect.path.graph.series
+      - inspect.synthetic_geometry_sample
+      - new.path.graph
+      - overlap.distribution.plot
+      - plot.IkNNgraphs
+      - plot.build_iknn_graphs_and_selectk
+      - plot.cst_graph_mixing_stats
+      - plot.dgraph
+      - plot.geodesic_stats
+      - plot.iknn_stability_metrics
+      - plot.vertex_geodesic_stats
+      - print.build_iknn_graphs_and_selectk
+      - print.dgraph
+      - print.geodesic_stats
+      - print.graph.constructors
+      - print.knn.outliers
+      - print.maximal_packing
+      - print.mknn_graph
+      - print.mknn_graphs
+      - print.mst_completion_graph
+      - print.packing_validation
+      - print.path.graph.plm
+      - print.summary.knn.outliers
+      - print.summary.mst_completion_graph
+      - quadform_geodesics
+      - quadform_geodesics_best_of_six
+      - quadform_geodesics_solver
+      - summarize_overlap_statistics
+      - summary.IkNN
+      - summary.geodesic_stats
+      - summary.iknn_graphs
+      - summary.iterated_iknn_graphs
+      - summary.knn.outliers
+      - summary.local_extrema
+      - summary.mknn_graphs
+      - summary.mst_completion_graph
+      - summary.rknn_graphs
+      - summary.vertex_geodesic_stats
+      - vertices.local_extrema

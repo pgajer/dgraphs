@@ -23,6 +23,12 @@ These links open installed HTML guides. From the console, use
 \code{vignette("synthetic-geometry", package = "dgraphs")}.
 }
 
+\examples{
+graph <- create.graph("chain", n = 5)
+print(graph)
+graph.geodesic.distances(graph, vertices = c(1, 5))
+# The endpoint distance is four unit-length edges.
+}
 \seealso{
 \code{\link[=create.graph]{create.graph()}}, \code{\link[=create.sknn.graph]{create.sknn.graph()}}, \code{\link[=create.rknn.graph]{create.rknn.graph()}},
 \code{\link[=graph.geodesic.distances]{graph.geodesic.distances()}}, \code{\link[=create.path.graph]{create.path.graph()}}, \code{\link[=plot.dgraph]{plot.dgraph()}},
@@ -50,4 +56,4 @@ Other contributors:
 }
 
 }
-\keyword{internal}
+\keyword{package}

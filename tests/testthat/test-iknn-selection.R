@@ -9,7 +9,7 @@
 test_that("DG6e stability diagnostics can be computed and plotted without gflow", {
     X <- .dg6e.selfhost.point.cloud()
     graphs <- dgraphs::create.iknn.graphs(X, k.values = seq.int(2, 5), pca.dim = NULL, variance.explained = NULL,
-        compute.full = TRUE, with.isize.pruning = TRUE, n.cores = 1, verbose = FALSE)
+        compute.full = TRUE, with.isize.pruning = TRUE, verbose = FALSE)
     summary.out <- capture.output(summary(graphs))
     expect_true(any(grepl("Summary of iknn_graphs object", summary.out)))
     stab <- dgraphs::compute.stability.metrics(graphs, graph.type = "geom")
@@ -30,7 +30,7 @@ test_that("DG6e stability diagnostics can be computed and plotted without gflow"
 test_that("DG6e build/select edit object can be printed and plotted without gflow", {
     X <- .dg6e.selfhost.point.cloud()
     res <- dgraphs:::build.iknn.graphs.and.selectk(X, k.values = seq.int(2, 5), method = "edit", pca.dim = NULL,
-        variance.explained = NULL, n.cores = 1, verbose = FALSE)
+        variance.explained = NULL, verbose = FALSE)
     expect_s3_class(res, "build_iknn_graphs_and_selectk")
     expect_equal(res$k.values, 2:5)
     expect_false(is.null(res$connectivity))
@@ -50,7 +50,7 @@ test_that("DG6e label-mixing selection path is self-hosted", {
     labels <- rep(c("A", "B"), length.out = nrow(X))
     res <- dgraphs:::build.iknn.graphs.and.selectk(X, k.values = seq.int(2, 5), method = "mixing", labels = labels,
         mixing.metric = "homophily.adjusted", n.perm = 0, pca.dim = NULL, variance.explained = NULL,
-        n.cores = 1, verbose = FALSE)
+        verbose = FALSE)
     expect_s3_class(res, "build_iknn_graphs_and_selectk")
     expect_false(is.null(res$mixing))
     expect_named(res$mixing, c("k", "metric", "homophily.z", "homophily.effect", "homophily.adjusted",

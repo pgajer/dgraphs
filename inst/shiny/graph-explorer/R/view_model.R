@@ -70,7 +70,7 @@ dg_view_state <- function(run, selection) {
   layout <- NULL
   layout_source <- "missing"
   layout_path <- ""
-  existing_cache <- if (file.exists(cache_path)) cache_path else dg_legacy_layout_cache_path(run, key, graph_path)
+  existing_cache <- if (file.exists(cache_path)) cache_path else ""
   if (nzchar(existing_cache)) {
     parsed <- dg_parse_layout_asset(existing_cache)
     if (!identical(parsed$status, "ok")) {
@@ -84,7 +84,7 @@ dg_view_state <- function(run, selection) {
         graph = graph,
         graph_asset_file = graph_path,
         layout_asset_file = existing_cache,
-        layout_source = "dggraphui_cache",
+        layout_source = "dgraphs_cache",
         cache_path = cache_path,
         dataset = dataset,
         metrics = metrics,
@@ -92,7 +92,7 @@ dg_view_state <- function(run, selection) {
       ))
     }
     layout <- parsed
-    layout_source <- "dggraphui_cache"
+    layout_source <- "dgraphs_cache"
     layout_path <- existing_cache
   } else {
     layout_hit <- dg_exact_layout_row(run, key, method = "weighted_grip")

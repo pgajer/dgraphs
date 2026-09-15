@@ -31,7 +31,6 @@ build.iknn.graphs.and.selectk(
   affinity.eps = 1e-08,
   simplify.multiple = TRUE,
   seed = 1L,
-  n.cores = 1L,
   verbose = TRUE,
   ...
 )
@@ -71,8 +70,6 @@ for the mixing curve.}
 
 \item{seed}{Random seed.}
 
-\item{n.cores}{Number of worker processes.}
-
 \item{verbose}{Logical; report progress.}
 
 \item{...}{Additional arguments forwarded to \code{\link[=create.iknn.graphs]{create.iknn.graphs()}}.}
@@ -90,7 +87,7 @@ stability, label-mixing stability, or both.
 set.seed(1)
 x <- matrix(rnorm(60), ncol = 2)
 selected <- build.iknn.graphs.and.selectk(x, k.values = seq.int(2, 4),
-    method = "edit", n.cores = 1,
+    method = "edit",
     verbose = FALSE)
 selected$k.opt.edit
 }

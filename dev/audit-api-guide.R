@@ -8,8 +8,8 @@ guide <- readLines("vignettes/function-guide.Rmd", warn = FALSE)
 a <- match("## Function catalog", guide)
 b <- match("## Object workflows and method help", guide)
 stopifnot(!is.na(a), !is.na(b), a < b)
-rows <- grep("^\\| `[^`]+[(][)]` \\|", guide[seq.int(a, b - 1L)], value = TRUE)
-catalog <- sub("^\\| `([^`]+)[(][)]`.*$", "\\1", rows)
+rows <- grep("^\\| \\[", guide[seq.int(a, b - 1L)], value = TRUE)
+catalog <- sub("^.*#help-([^)]*)[)].*$", "\\1", rows)
 fail <- function(label, x) if (length(x)) stop(label, ": ", paste(x, collapse = ", "))
 fail("Missing catalog exports", setdiff(exports, catalog))
 fail("Nonexported catalog entries", setdiff(catalog, exports))
@@ -22,9 +22,9 @@ for (p in list.files("man", "[.]Rd$", full.names = TRUE)) {
     aliases <- c(aliases, paste(unlist(x), collapse = ""))
 }
 fail("Undocumented exports or methods", setdiff(c(exports, methods), aliases))
-links <- regmatches(paste(guide, collapse = "\n"),
-                    gregexpr("refman/dgraphs[.]html#[^)]+", paste(guide, collapse = "\n")))[[1L]]
-linked.methods <- sub(".*#", "", links)
+method.text <- paste(guide[seq.int(b, length(guide))], collapse = "\n")
+links <- regmatches(method.text, gregexpr("#help-[^)]*", method.text))[[1L]]
+linked.methods <- setdiff(sub("#help-", "", links), exports)
 fail("Missing method help links", setdiff(methods, linked.methods))
 fail("Invalid method help links", setdiff(linked.methods, methods))
 fail("Duplicate method help links", linked.methods[duplicated(linked.methods)])

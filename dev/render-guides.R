@@ -1,6 +1,9 @@
 # Render from the maintained sources using the package installed by R CMD check.
 root <- normalizePath(".")
-lib <- file.path(root, "build", "dgraphs.Rcheck")
+args <- commandArgs(trailingOnly = TRUE)
+lib <- if (length(args)) normalizePath(args[1]) else file.path(root, "build", "dgraphs.Rcheck")
+status <- system2("python3", c("dev/artifact-provenance.py", "verify", shQuote(lib)))
+if (status != 0L) stop("The installed artifact does not match current package inputs.")
 if (!dir.exists(file.path(lib, "dgraphs")))
   stop("Run make check first to install the candidate in build/dgraphs.Rcheck.")
 .libPaths(c(lib, .libPaths()))

@@ -1,5 +1,25 @@
 # dgraphs (development version)
 
+* Geodesic nearest-neighbor queries now count other vertices, exclude self by
+  identity, preserve coincident observations and break ties by vertex index.
+  Insufficient reachable neighbors error unless `small.component = "truncate"`;
+  truncation pads missing indices/distances with NA/Inf and reports effective.k.
+* Remove no-op intersection parallel controls, path.dist edge.col,
+  geodesic.knnx method, plot.IkNNgraphs k, and the explorer run_dir alias and
+  old cache option. graph.embedding verbose now reports elapsed layout time.
+* Add concise print/summary methods for geometry samples and path collections.
+* Include a deterministic saved circle benchmark in the explorer. Preserve
+  coordinate proportions by default, label axes and optional normalization,
+  and disclose edge thinning without changing saved metrics.
+* Make the package overview visible in installed help. Link every catalog and
+  method entry to detailed help generated from the same installed Rd database,
+  including offline copies. Add perspective static galleries and figure alt text.
+* Separate release/development installation examples, add a reproducible README
+  figure and a pkgdown site, and validate static and interactive documentation
+  separately in CI with exact source/archive fingerprints and Windows coverage.
+* Separate path measurement, geodesic neighbors, intersection stability and
+  display modules; rename their regression suites by enduring workflow names.
+
 * Unify graph spectra across the native and R backends: `nev` counts the
   smallest positive eigenpairs in increasing order, and defaults to all
   positive modes. Results have class `graph_spectrum`, with exact component
@@ -25,8 +45,7 @@
   existing benchmark manifests; `register.graph.project()` remembers external
   projects without moving or changing their data.
 * Retain saved-layout viewing and add current weighted-GRIP support for explicit
-  missing-layout generation. Cache keys distinguish full project paths; legacy
-  cache entries require matching graph provenance.
+  missing-layout generation. Cache keys distinguish full project paths.
 
 # dgraphs 0.3.0
 

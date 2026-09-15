@@ -21,17 +21,33 @@ Moving a run that contains absolute references requires updating those paths.
 The project catalog contains only names and locations. Reading a project does
 not refit or change benchmark results. The explicit **Generate Weighted Layout**
 action computes a missing layout through grip and writes it to a separate
-user cache. Legacy dggraphui cache entries are accepted only when they identify
-the same graph. Unverified old cache files remain untouched.
+user cache keyed by the full project path and graph setting. The cache option is
+`dgraphs.graph_explorer_cache_dir`; old package cache options are not consulted.
 
-The default 3D display preserves dggraphui's per-axis normalization. Compare
-saved metric values for quantitative distances; displayed axis scales are not
-original physical distances. A parameter scan and the selected graph's metrics
-and diagnostics remain available in their own tabs.
+The default display preserves original coordinates with equal x/y/z data units.
+Graph layout coordinates are arbitrary visualization coordinates, not physical
+ambient coordinates. Optional centering with one scale factor preserves shape;
+per-axis normalization explicitly warns that it distorts proportions. Above
+4,000 edges, deterministic display thinning is disclosed beside the plots.
+Saved metric tables always describe the full graph and remain unchanged.
 
-## Migration
+## Try the installed example
 
-The app source and tests moved from dggraphui to dgraphs on 2026-09-15.
-The old package now supplies compatibility wrappers for its three exported
-functions. Existing data paths and scientific files were retained.
-This component retains its original GPL (>= 3) license; see LICENSE.
+Choose **Open circle demo**, or run:
+
+```r
+demo <- system.file("extdata", "graph-explorer-demo", package = "dgraphs")
+benchmark <- dgraphs::read.graph.benchmark(demo)
+dgraphs::explore.graphs(demo)
+```
+
+The example has twelve equally spaced unit-circle points, two symmetric
+nearest-neighbor graphs (k=2 and k=4), saved GRIP layouts, and errors against
+exact shorter circle arcs. Extra chords at k=4 shorten distances and increase
+relative RMS error from about 1.14% to 4.13%. Layout appearance is not that
+error measure. The installed demo README defines all metrics and provenance.
+No fitting, registration, or write to the installed package occurs on opening.
+
+The saved benchmark format remains readable after migration from dggraphui.
+Use `project`, not the removed `run_dir` R argument. This component's license
+is recorded in LICENSE and the package copyright inventory.

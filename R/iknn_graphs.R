@@ -59,15 +59,7 @@
 #'     \code{knn.metric = "linf.simplex"} to identify active simplex faces and
 #'     validate that \code{max(row) = 1}.
 #'
-#' @param n.cores Integer or `NULL`. Retained for compatibility; native graph
-#'     construction is serial and uses one core.
-#'
-#' @param parallel.mode Character execution-mode request, retained for compatibility:
-#'     `"auto"`, `"k"`, `"bucket"`, `"hybrid"` (or alias `"bucket.prune"`).
-#'     All requests use serial graph construction.
-#'
-#' @param hybrid.batch.size Positive integer retained for compatibility;
-#'     unused during serial construction.
+#' Native graph construction is serial.
 #'
 #' @param knn.cache.path Optional character scalar path to a binary kNN cache file.
 #'     Used only when `knn.cache.mode != "none"`.
@@ -114,12 +106,12 @@
 #' X <- matrix(rnorm(100 * 5), 100, 5)
 #'
 #' # Basic usage
-#' res1 <- create.iknn.graphs(X, k.values = seq.int(3, 10), n.cores = 1, compute.full = FALSE)
+#' res1 <- create.iknn.graphs(X, k.values = seq.int(3, 10), compute.full = FALSE)
 #'
 #' # With custom pruning parameters
 #' res2 <- create.iknn.graphs(X, k.values = seq.int(3, 10),
 #'     max.path.edge.ratio.deviation.thld = 0.1,
-#'     path.edge.ratio.percentile = 0.5, compute.full = TRUE, n.cores = 1, verbose = TRUE)
+#'     path.edge.ratio.percentile = 0.5, compute.full = TRUE, verbose = TRUE)
 #'
 #' # View statistics for each k
 #' print(res2$k_statistics)
@@ -137,9 +129,6 @@ create.iknn.graphs <- function(X,
                                variance.explained = 0.99,
                                knn.metric = c("euclidean", "linf.simplex"),
                                linf.tol = sqrt(.Machine$double.eps),
-                               n.cores = 1L,
-                               parallel.mode = c("auto", "k", "bucket", "hybrid", "bucket.prune"),
-                               hybrid.batch.size = 2L,
                                verbose = TRUE,
                                knn.cache.path = NULL,
                                knn.cache.mode = c("none", "read", "write", "readwrite")) {
@@ -190,19 +179,6 @@ create.iknn.graphs <- function(X,
         stop("with.edge.pruning.stats must be TRUE/FALSE.")
     if (!is.logical(verbose) || length(verbose) != 1)
         stop("verbose must be TRUE/FALSE.")
-    parallel.mode <- match.arg(parallel.mode)
-    if (identical(parallel.mode, "bucket.prune")) {
-        parallel.mode <- "hybrid"
-    }
-    parallel.mode.id <- switch(parallel.mode,
-                               auto = 0L,
-                               k = 1L,
-                               bucket = 2L,
-                               hybrid = 3L)
-    if (!is.numeric(hybrid.batch.size) || length(hybrid.batch.size) != 1 ||
-        hybrid.batch.size < 1 || hybrid.batch.size != floor(hybrid.batch.size)) {
-        stop("hybrid.batch.size must be a positive integer.")
-    }
     knn.cache.mode <- match.arg(knn.cache.mode)
     knn.cache.path <- .normalize.knn.cache.path(knn.cache.path, knn.cache.mode)
     knn.metric.id <- .knn.metric.id(knn.metric)
@@ -289,9 +265,7 @@ create.iknn.graphs <- function(X,
                     as.logical(compute.full),
                     as.logical(with.isize.pruning),
                     as.logical(with.edge.pruning.stats),
-                    if (is.null(n.cores)) NULL else as.integer(n.cores),
-                    as.integer(parallel.mode.id),
-                    as.integer(hybrid.batch.size),
+                    1L, 0L, 2L, # serial native execution
                     if (is.null(knn.cache.path)) NULL else as.character(knn.cache.path),
                     as.integer(knn.cache.mode.id),
                     as.integer(knn.metric.id),
@@ -352,8 +326,6 @@ create.iknn.graphs <- function(X,
     attr(result, "path_edge_ratio_percentile") <- path.edge.ratio.percentile
     attr(result, "with.isize.pruning") <- with.isize.pruning
     attr(result, "with.edge.pruning.stats") <- with.edge.pruning.stats
-    attr(result, "parallel.mode") <- parallel.mode
-    attr(result, "hybrid.batch.size") <- as.integer(hybrid.batch.size)
     attr(result, "knn.metric") <- knn.metric
     attr(result, "linf.tol") <- linf.tol
     if (!is.null(pca_info)) attr(result, "pca") <- pca_info
@@ -433,7 +405,7 @@ create.iknn.graphs <- function(X,
 #' x <- matrix(rnorm(1000), ncol = 5)
 #'
 #' # Generate intersection kNN graphs
-#' iknn.res <- create.iknn.graphs(x, k.values = seq.int(3, 10), n.cores = 1,
+#' iknn.res <- create.iknn.graphs(x, k.values = seq.int(3, 10),
 #'     with.isize.pruning = TRUE)
 #'
 #' # Summarize the geometrically pruned graphs

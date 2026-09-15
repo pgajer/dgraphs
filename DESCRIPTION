@@ -35,7 +35,7 @@ Description: Constructs data-derived graphs from numerical observations using
     <doi:10.2307/2346439>.
 License: MIT + file LICENSE
 Copyright: file inst/COPYRIGHTS
-URL: https://github.com/pgajer/dgraphs
+URL: https://pgajer.github.io/dgraphs/, https://github.com/pgajer/dgraphs
 BugReports: https://github.com/pgajer/dgraphs/issues
 Encoding: UTF-8
 Language: en-US

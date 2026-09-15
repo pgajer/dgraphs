@@ -14,9 +14,6 @@ create.iterated.iknn.graphs(
   threshold.percentile = 0,
   pca.dim = 100,
   variance.explained = 0.99,
-  n.cores = 1L,
-  parallel.mode = c("auto", "k", "bucket", "hybrid", "bucket.prune"),
-  hybrid.batch.size = 2L,
   verbose = TRUE,
   knn.cache.path = NULL,
   knn.cache.mode = c("none", "read", "write", "readwrite")
@@ -36,7 +33,7 @@ create.iterated.iknn.graphs(
 default deviation and quantile thresholds are zero so that \code{G0} is the
 unpruned iKNN 1-skeleton.}
 
-\item{pca.dim, variance.explained, n.cores, parallel.mode, hybrid.batch.size, verbose, knn.cache.path, knn.cache.mode}{Additional arguments forwarded to \code{create.iknn.graphs()} for the initial
+\item{pca.dim, variance.explained, verbose, knn.cache.path, knn.cache.mode}{Additional arguments forwarded to \code{create.iknn.graphs()} for the initial
 \code{G0} construction.}
 }
 \value{

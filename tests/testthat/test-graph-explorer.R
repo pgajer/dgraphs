@@ -149,13 +149,13 @@ make_dg_fixture <- function(root, missing_graph = FALSE, missing_layout = FALSE,
 with_dg_cache <- function(code) {
   cache_dir <- tempfile("dggraphui-cache-")
   dir.create(cache_dir, recursive = TRUE, showWarnings = FALSE)
-  old <- getOption("dggraphui.cache_dir", NULL)
-  options(dggraphui.cache_dir = cache_dir)
+  old <- getOption("dgraphs.graph_explorer_cache_dir", NULL)
+  options(dgraphs.graph_explorer_cache_dir = cache_dir)
   on.exit({
     if (is.null(old)) {
-      options(dggraphui.cache_dir = NULL)
+      options(dgraphs.graph_explorer_cache_dir = NULL)
     } else {
-      options(dggraphui.cache_dir = old)
+      options(dgraphs.graph_explorer_cache_dir = old)
     }
     unlink(cache_dir, recursive = TRUE, force = TRUE)
   }, add = TRUE)
@@ -299,7 +299,7 @@ test_that("generated layout cache takes priority over benchmark layout", {
 
     st <- graph_explorer_test_env$dg_view_state(run, sel)
     expect_equal(st$status, "ok")
-    expect_equal(st$layout_source, "dggraphui_cache")
+    expect_equal(st$layout_source, "dgraphs_cache")
     expect_equal(st$layout_coords[1, 1], 42)
   })
 })
@@ -340,7 +340,7 @@ test_that("Shiny app constructs and renders benchmark selector controls", {
       expect_match(html, "Optimal", fixed = TRUE)
       expect_match(html, "Graph family", fixed = TRUE)
       compare_html <- paste(as.character(output$compare_view), collapse = "")
-      expect_match(compare_html, "graph-stage key", fixed = TRUE)
+      expect_match(compare_html, "edges displayed", fixed = TRUE)
     })
   })
 })
@@ -380,27 +380,16 @@ test_that("projects reopen by name and relocated relative manifests without muta
   })
 })
 
-test_that("same-named runs have separate caches and legacy cache provenance is checked", {
-  skip_if_not_installed("digest")
+test_that("same-named runs have separate caches", {
   root <- tempfile("dg-cache-isolation-")
   first <- make_dg_fixture(file.path(root, "first"))
   second <- make_dg_fixture(file.path(root, "second"))
   on.exit(unlink(root, recursive = TRUE), add = TRUE)
   with_dg_cache({
-    a <- read.graph.benchmark(first$run)
-    b <- read.graph.benchmark(second$run)
+    a <- read.graph.benchmark(first$run); b <- read.graph.benchmark(second$run)
     e <- graph_explorer_test_env
-    expect_false(identical(e$dg_run_id(a), e$dg_run_id(b)))
-    old.path <- e$dg_generated_layout_cache_path("run", first$key)
-    dir.create(dirname(old.path), recursive = TRUE, showWarnings = FALSE)
-    saveRDS(list(coords = matrix(42, nrow = 10, ncol = 3), graph_asset_file = first$graph_file), old.path)
-    va <- e$dg_view_state(a, e$dg_selector_state(a, list(selection_mode = "manual")))
-    vb <- e$dg_view_state(b, e$dg_selector_state(b, list(selection_mode = "manual")))
-    expect_equal(va$layout_coords[1, 1], 42)
-    expect_equal(va$layout_asset_file, old.path)
-    expect_equal(vb$layout_source, "benchmark")
-    saveRDS(list(coords = matrix(42, nrow = 10, ncol = 3)), old.path)
-    expect_equal(e$dg_legacy_layout_cache_path(a, first$key, first$graph_file), "")
+    expect_false(identical(e$dg_generated_layout_cache_path(e$dg_run_id(a), first$key),
+                           e$dg_generated_layout_cache_path(e$dg_run_id(b), second$key)))
   })
 })
 
@@ -412,8 +401,8 @@ test_that("launcher and saved-project selection work without starting a server",
   withr::local_options(dgraphs.projects_dir = file.path(root, "catalog"))
   register.graph.project(fx$run, "Fixture")
   expect_s3_class(explore.graphs(project = "Fixture", launch = FALSE), "shiny.appobj")
-  expect_s3_class(explore.graphs(run_dir = fx$run, launch = FALSE), "shiny.appobj")
-  expect_error(explore.graphs(project = fx$run, run_dir = fx$run, launch = FALSE), "only one")
+  expect_error(explore.graphs(run_dir = fx$run, launch = FALSE), "removed")
+  expect_error(explore.graphs(project = fx$run, run_dir = fx$run, launch = FALSE), "removed")
   with_dg_cache({
     shiny::testServer(function(input, output, session) {
       graph_explorer_test_env$dg_app_server(input, output, session)
@@ -421,7 +410,7 @@ test_that("launcher and saved-project selection work without starting a server",
       session$flushReact()
       session$setInputs(saved_project = fx$run)
       session$flushReact()
-      expect_match(paste(output$compare_view, collapse = ""), "graph-stage key", fixed = TRUE)
+      expect_match(paste(output$compare_view, collapse = ""), "edges displayed", fixed = TRUE)
       session$setInputs(project_name = "Another name", remember_project = 1L)
       session$flushReact()
       expect_true("Another name" %in% .graph_project_catalog()$name)
@@ -442,4 +431,38 @@ test_that("current public GRIP can explicitly generate a missing weighted layout
   expect_equal(dim(result$coords), c(10L, 3L))
   expect_true(all(is.finite(result$coords)))
   expect_false(file.exists(fx$layout_file))
+})
+
+
+test_that("display modes preserve proportions unless distortion is requested", {
+  e <- graph_explorer_test_env
+  X <- rbind(c(0,0,0), c(10,1,2), c(4,1,0))
+  expect_equal(unname(e$dg_normalize_coord_matrix(X)), X)
+  Y <- e$dg_normalize_coord_matrix(X, "isotropic")
+  expect_equal(as.numeric(dist(Y)), as.numeric(dist(X))/10)
+  expect_false(isTRUE(all.equal(as.numeric(dist(e$dg_normalize_coord_matrix(X,"per.axis"))), as.numeric(dist(Y)))))
+  expect_null(e$dg_normalize_coord_matrix(rbind(c(NA,1,2),c(1,2,3))))
+  set.seed(4101); before <- .Random.seed
+  g <- create.graph("complete",100)
+  expect_equal(nrow(e$dg_display_edges(graph.adjacency(g))),4000)
+  expect_identical(.Random.seed,before)
+})
+
+test_that("installed demo opens both saved settings without changing assets or registry", {
+  e <- graph_explorer_test_env
+  demo <- system.file("extdata","graph-explorer-demo",package="dgraphs")
+  files <- list.files(demo,recursive=TRUE,full.names=TRUE)
+  before <- tools::md5sum(files)
+  registry <- tempfile(); withr::local_options(dgraphs.projects_dir=registry)
+  run <- read.graph.benchmark(demo)
+  expect_equal(nrow(run$graph_assets),2L)
+  for (k in c("2","4")) {
+    sel <- e$dg_selector_state(run,list(selection_mode="manual",k=k))
+    st <- e$dg_view_state(run,sel)
+    expect_equal(st$status,"ok")
+    expect_equal(nrow(st$layout_coords),12L)
+  }
+  expect_equal(run$metrics$rel_rms_error,c(0.0113840705346307,0.0412747672229985))
+  expect_identical(tools::md5sum(files),before)
+  expect_false(dir.exists(registry))
 })

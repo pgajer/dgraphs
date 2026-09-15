@@ -219,7 +219,7 @@ dg_parse_layout_asset <- function(path) {
 }
 
 dg_cache_root <- function() {
-  opt <- getOption("dgraphs.graph_explorer_cache_dir", getOption("dggraphui.cache_dir", NULL))
+  opt <- getOption("dgraphs.graph_explorer_cache_dir", NULL)
   if (!is.null(opt) && nzchar(dg_scalar_chr(opt))) {
     return(dg_normalize_path(opt, must_work = FALSE))
   }
@@ -249,23 +249,6 @@ dg_weighted_layout_fun <- function() {
   function(adj_list, weight_list, ...) {
     f(adj_list = adj_list, weight_list = weight_list, metric = "edge_length", ...)
   }
-}
-
-# Old cache keys used only the directory basename (often "full"). Accept an
-# old entry only if it identifies exactly the selected graph, avoiding leakage
-# between different studies with the same run name and graph identifiers.
-dg_legacy_layout_cache_path <- function(run, key, graph_path) {
-  parts <- dg_split_stage_key(key)
-  root <- getOption("dggraphui.cache_dir",
-                    file.path(tools::R_user_dir("dggraphui", "cache"), "layouts"))
-  path <- file.path(root, dg_safe_token(basename(run$run_dir), "run"),
-    dg_safe_token(parts$dataset_id, "dataset"), dg_safe_token(parts$setting_id, "setting"),
-    sprintf("%s_weighted_grip_3d.rds", dg_safe_token(parts$stage, "stage")))
-  if (!file.exists(path)) return("")
-  obj <- tryCatch(readRDS(path), error = function(e) NULL)
-  if (!is.list(obj) || !nzchar(dg_scalar_chr(obj$graph_asset_file))) return("")
-  if (!identical(dg_normalize_path(obj$graph_asset_file), dg_normalize_path(graph_path))) return("")
-  dg_normalize_path(path)
 }
 
 dg_generate_weighted_layout <- function(graph_asset_path, output_path, params = list(), weighted_layout_fun = dg_weighted_layout_fun()) {

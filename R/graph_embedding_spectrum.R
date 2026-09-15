@@ -45,8 +45,14 @@ graph.embedding <- function(graph, edge.attribute = NULL,
     method <- match.arg(method)
     transform <- match.arg(transform)
     if (length(dim) != 1L || !dim %in% c(2, 3)) stop("dim must be 2 or 3.")
+    if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose))
+        stop("verbose must be TRUE or FALSE.")
+    started <- proc.time()[["elapsed"]]
     g <- as_igraph(graph, stage)
-    if (!graph.order(graph)) return(matrix(numeric(), 0L, dim))
+    if (!graph.order(graph)) {
+        if (verbose) message("Graph layout: empty graph.")
+        return(matrix(numeric(), 0L, dim))
+    }
     weights <- NULL
     if (!is.null(edge.attribute)) {
         edges <- graph.edges(graph, stage)
@@ -57,8 +63,11 @@ graph.embedding <- function(graph, edge.attribute = NULL,
             stop("Layout edge values must be strictly positive, including before reciprocal transformation.")
         if (transform == "reciprocal") weights <- 1 / weights
     } else if (transform != "identity") stop("Select edge.attribute before transforming edge values.")
-    if (method == "fr") igraph::layout_with_fr(g, dim = dim, weights = weights) else
+    out <- if (method == "fr") igraph::layout_with_fr(g, dim = dim, weights = weights) else
         igraph::layout_with_kk(g, dim = dim, weights = weights)
+    if (verbose) message(sprintf("Graph layout (%s): %d vertices in %.3f seconds.",
+                                 method, nrow(out), proc.time()[["elapsed"]] - started))
+    out
 }
 
 #' Compute the Positive Spectrum of an Unweighted Graph Laplacian

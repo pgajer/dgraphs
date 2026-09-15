@@ -63,7 +63,7 @@ create.geodesic.iknn.graph <- function(graph, k,
 #'   Initial `G0` pruning arguments forwarded to `create.iknn.graphs()`. The
 #'   default deviation and quantile thresholds are zero so that `G0` is the
 #'   unpruned iKNN 1-skeleton.
-#' @param pca.dim,variance.explained,n.cores,parallel.mode,hybrid.batch.size,verbose,knn.cache.path,knn.cache.mode
+#' @param pca.dim,variance.explained,verbose,knn.cache.path,knn.cache.mode
 #'   Additional arguments forwarded to `create.iknn.graphs()` for the initial
 #'   `G0` construction.
 #'
@@ -95,9 +95,6 @@ create.iterated.iknn.graphs <- function(X,
                                         threshold.percentile = 0,
                                         pca.dim = 100,
                                         variance.explained = 0.99,
-                                        n.cores = 1L,
-                                        parallel.mode = c("auto", "k", "bucket", "hybrid", "bucket.prune"),
-                                        hybrid.batch.size = 2L,
                                         verbose = TRUE,
                                         knn.cache.path = NULL,
                                         knn.cache.mode = c("none", "read", "write", "readwrite")) {
@@ -110,7 +107,6 @@ create.iterated.iknn.graphs <- function(X,
 
     k.values <- .validate.k.values(k.values, nrow(as.matrix(X)))
     small.component <- match.arg(small.component)
-    parallel.mode <- match.arg(parallel.mode)
     knn.cache.mode <- match.arg(knn.cache.mode)
 
     initial.graphs <- create.iknn.graphs(
@@ -124,9 +120,6 @@ create.iterated.iknn.graphs <- function(X,
         with.edge.pruning.stats = FALSE,
         pca.dim = pca.dim,
         variance.explained = variance.explained,
-        n.cores = n.cores,
-        parallel.mode = parallel.mode,
-        hybrid.batch.size = hybrid.batch.size,
         verbose = verbose,
         knn.cache.path = knn.cache.path,
         knn.cache.mode = knn.cache.mode

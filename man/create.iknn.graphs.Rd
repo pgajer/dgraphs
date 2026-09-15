@@ -17,9 +17,6 @@ create.iknn.graphs(
   variance.explained = 0.99,
   knn.metric = c("euclidean", "linf.simplex"),
   linf.tol = sqrt(.Machine$double.eps),
-  n.cores = 1L,
-  parallel.mode = c("auto", "k", "bucket", "hybrid", "bucket.prune"),
-  hybrid.batch.size = 2L,
   verbose = TRUE,
   knn.cache.path = NULL,
   knn.cache.mode = c("none", "read", "write", "readwrite")
@@ -75,17 +72,9 @@ exceeds this threshold, capped by \code{pca.dim}.}
 
 \item{linf.tol}{Positive numeric tolerance used only when
 \code{knn.metric = "linf.simplex"} to identify active simplex faces and
-validate that \code{max(row) = 1}.}
+validate that \code{max(row) = 1}.
 
-\item{n.cores}{Integer or \code{NULL}. Retained for compatibility; native graph
-construction is serial and uses one core.}
-
-\item{parallel.mode}{Character execution-mode request, retained for compatibility:
-\code{"auto"}, \code{"k"}, \code{"bucket"}, \code{"hybrid"} (or alias \code{"bucket.prune"}).
-All requests use serial graph construction.}
-
-\item{hybrid.batch.size}{Positive integer retained for compatibility;
-unused during serial construction.}
+Native graph construction is serial.}
 
 \item{verbose}{Logical; print progress and timing.}
 
@@ -141,12 +130,12 @@ are \code{NULL}.
 X <- matrix(rnorm(100 * 5), 100, 5)
 
 # Basic usage
-res1 <- create.iknn.graphs(X, k.values = seq.int(3, 10), n.cores = 1, compute.full = FALSE)
+res1 <- create.iknn.graphs(X, k.values = seq.int(3, 10), compute.full = FALSE)
 
 # With custom pruning parameters
 res2 <- create.iknn.graphs(X, k.values = seq.int(3, 10),
     max.path.edge.ratio.deviation.thld = 0.1,
-    path.edge.ratio.percentile = 0.5, compute.full = TRUE, n.cores = 1, verbose = TRUE)
+    path.edge.ratio.percentile = 0.5, compute.full = TRUE, verbose = TRUE)
 
 # View statistics for each k
 print(res2$k_statistics)

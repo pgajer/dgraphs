@@ -1,0 +1,71 @@
+name: Documentation and explorer
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      RGL_USE_NULL: 'true'
+      _R_CHECK_FORCE_SUGGESTS_: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          dependencies: '"hard"'
+          extra-packages: |
+            github::pgajer/ivue@a952ab6816636a19f2038ba0709181608b71770d
+            any::pkgdown
+            any::knitr
+            any::rmarkdown
+            any::htmltools
+            any::htmlwidgets
+            any::rgl
+            any::shiny
+            any::bslib
+            any::plotly
+            any::digest
+            any::testthat
+            any::withr
+            any::Matrix
+            any::geometry
+      - name: Build and install interactive documentation
+        run: |
+          make build
+          mkdir -p build/site-library
+          R CMD INSTALL -l build/site-library build/dgraphs_*.tar.gz
+          Rscript dev/validate-installed-guides.R build/site-library
+          python3 dev/audit-vignette-html.py build/site-library/dgraphs/doc
+      - name: Build site and test installed explorer
+        shell: Rscript {0}
+        run: |
+          .libPaths(c(normalizePath("build/site-library"), .libPaths()))
+          library(dgraphs)
+          testthat::test_file("tests/testthat/test-graph-explorer.R", env=new.env(parent=asNamespace("dgraphs")), stop_on_failure=TRUE)
+          source("dev/build-site.R")
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/site
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: documentation
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy version-matched documentation
+        id: deployment
+        uses: actions/deploy-pages@v4

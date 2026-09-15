@@ -21,9 +21,8 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 6, fig.height
 
 `dgraphs` turns numerical observations into graphs and provides tools to inspect
 their connectivity, paths and geometry. Start with the question you want to
-answer. The catalog covers all 112 explicit public exports exactly once;
-39 registered S3 methods are described separately through object workflows.
-Internal helpers and development applications are not public entry points.
+answer. Use the [task map](#choose-a-starting-point), follow a small workflow,
+then consult the [complete catalog](#function-catalog).
 
 ## Choose a starting point
 
@@ -31,13 +30,13 @@ Internal helpers and development applications are not public entry points.
 |---|---|---|
 | Which nearby observations should be linked? | `create.mknn.graph()` or `create.sknn.graph()` | Mutual neighbors require agreement; symmetric neighbors accept either direction. |
 | How should support adapt to sampling density? | `create.rknn.graph()` or `create.cknn.graph()` | Fixed radius, local radius rules, or a geometric mean of local scales. |
-| Should overlapping neighborhoods define edges? | `create.single.iknn.graph()` | Intersection graphs can connect points that are not direct nearest neighbors. |
+| Should overlapping neighborhoods define edges? | [`create.single.iknn.graph()`](#help-create.single.iknn.graph) | Intersection graphs can connect points that are not direct nearest neighbors. |
 | How sensitive is my graph to neighborhood size? | Plural constructors such as `create.sknn.graphs()` | Inspect a parameter sequence and its component counts. |
 | Do I need paths between every pair? | `graph.connected.components()`, then constructor repair controls | Bridge edges make a modeling assumption across gaps. |
-| How far apart are vertices along this graph? | `graph.geodesic.distances()` | Edge values must represent additive lengths or costs. |
-| Does the graph preserve known distances? | `summarize.isometry.deviation()` | Requires a reference distance matrix with matching vertex order. |
+| How far apart are vertices along this graph? | [`graph.geodesic.distances()`](#help-graph.geodesic.distances) | Edge values must represent additive lengths or costs. |
+| Does the graph preserve known distances? | [`summarize.isometry.deviation()`](#help-summarize.isometry.deviation) | Requires a reference distance matrix with matching vertex order. |
 | Do I need coordinates for a graph? | `graph.embedding()` or `graph.spectral.embedding()` | A visualization layout and a spectral representation serve different purposes. |
-| How can I generate points with known geometry? | `sample.synthetic.geometry()` | Pair a geometry with a compatible sampling specification. |
+| How can I generate points with known geometry? | [`sample.synthetic.geometry()`](#help-sample.synthetic.geometry) | Pair a geometry with a compatible sampling specification. |
 
 ## A first graph
 
@@ -349,13 +348,13 @@ Use `vertex.values` for numeric values mapped through a palette, or
 `vertex.colors` for explicit colors; supplying both errors. Constant numeric
 values use the palette midpoint. Every undirected edge is drawn once.
 
-```{r graph-layout, fig.width=6, fig.height=4}
+```{r graph-layout, fig.width=6, fig.height=4, fig.alt="Graph layout with vertex colors defined by the example; the same coordinates are reused for comparison."}
 cycle <- create.graph("cycle", n = 8)
 set.seed(4101)
 xy <- plot(cycle, vertex.values = seq_len(8), main = "Numeric vertex values")
 ```
 
-```{r graph-layout-reuse, fig.width=6, fig.height=4}
+```{r graph-layout-reuse, fig.width=6, fig.height=4, fig.alt="Graph layout with vertex colors defined by the example; the same coordinates are reused for comparison."}
 plot(cycle, coordinates = xy, vertex.values = rep(7, 8),
      main = "Same layout, constant values")
 ```
@@ -365,7 +364,7 @@ three-dimensional coordinates, choose an explicit two-column projection;
 the plotting method never silently discards a coordinate. Layout generation
 itself remains available in both two and three dimensions.
 
-```{r graph-projection, fig.width=6, fig.height=4}
+```{r graph-projection, fig.width=6, fig.height=4, fig.alt="Graph layout with vertex colors defined by the example; the same coordinates are reused for comparison."}
 set.seed(4102)
 xyz <- graph.embedding(cycle, dim = 3)
 colnames(xyz) <- c("x", "y", "z")
@@ -396,6 +395,11 @@ public functions to call directly.
 
 ## Function catalog
 
+The catalog covers all 112 explicit public exports exactly once;
+44 registered S3 methods are described separately through object workflows.
+Internal helpers and development applications are not public entry points.
+Links open the exact help included with this build, offline.
+
 Each row is one explicit export. Open exact arguments and examples with
 `help("create.sknn.graph", package = "dgraphs")`, replacing the name as needed.
 The [package reference manual](https://CRAN.R-project.org/package=dgraphs/dgraphs.pdf)
@@ -406,168 +410,185 @@ release or development installation.
 
 | Function | Purpose |
 |---|---|
-| `create.mknn.graph()` | Build a mutual Euclidean nearest-neighbor graph, with optional pruning and repair. |
-| `create.mknn.graphs()` | Build mutual-neighbor graphs across a range of neighborhood sizes. |
-| `create.sknn.graph()` | Build a symmetric Euclidean nearest-neighbor graph, with optional pruning and repair. |
-| `create.sknn.graphs()` | Build a symmetric-neighbor sequence using a shared ANN search. |
-| `create.rknn.graph()` | Build a fixed-radius or adaptive-radius Euclidean graph. |
-| `create.rknn.graphs()` | Vary the local neighborhood scale in adaptive-radius graphs. |
-| `create.cknn.graph()` | Build a continuous-kNN graph using geometric-mean local scales. |
-| `create.single.iknn.graph()` | Build one intersection-neighborhood graph with optional pruning. |
-| `create.iknn.graphs()` | Build an intersection-neighborhood sequence and its pruning branches. |
-| `create.geodesic.iknn.graph()` | Rebuild intersection neighborhoods using an existing graph's distances. |
-| `create.iterated.iknn.graphs()` | Repeat intersection construction in successive graph metrics. |
-| `build.iknn.graphs.and.selectk()` | Select an intersection neighborhood size using structural or label-mixing stability. |
-| `create.cmst.graph()` | Complete a Euclidean minimum spanning tree using an edge-length quantile. |
-| `create.threshold.distance.graph()` | Connect points satisfying a distance threshold. |
-| `nerve.graph()` | Construct a graph from overlaps between sets in a cover. |
+| [`create.mknn.graph()`](#help-create.mknn.graph) | Build a mutual Euclidean nearest-neighbor graph, with optional pruning and repair. |
+| [`create.mknn.graphs()`](#help-create.mknn.graphs) | Build mutual-neighbor graphs across a range of neighborhood sizes. |
+| [`create.sknn.graph()`](#help-create.sknn.graph) | Build a symmetric Euclidean nearest-neighbor graph, with optional pruning and repair. |
+| [`create.sknn.graphs()`](#help-create.sknn.graphs) | Build a symmetric-neighbor sequence using a shared ANN search. |
+| [`create.rknn.graph()`](#help-create.rknn.graph) | Build a fixed-radius or adaptive-radius Euclidean graph. |
+| [`create.rknn.graphs()`](#help-create.rknn.graphs) | Vary the local neighborhood scale in adaptive-radius graphs. |
+| [`create.cknn.graph()`](#help-create.cknn.graph) | Build a continuous-kNN graph using geometric-mean local scales. |
+| [`create.single.iknn.graph()`](#help-create.single.iknn.graph) | Build one intersection-neighborhood graph with optional pruning. |
+| [`create.iknn.graphs()`](#help-create.iknn.graphs) | Build an intersection-neighborhood sequence and its pruning branches. |
+| [`create.geodesic.iknn.graph()`](#help-create.geodesic.iknn.graph) | Rebuild intersection neighborhoods using an existing graph's distances. |
+| [`create.iterated.iknn.graphs()`](#help-create.iterated.iknn.graphs) | Repeat intersection construction in successive graph metrics. |
+| [`build.iknn.graphs.and.selectk()`](#help-build.iknn.graphs.and.selectk) | Select an intersection neighborhood size using structural or label-mixing stability. |
+| [`create.cmst.graph()`](#help-create.cmst.graph) | Complete a Euclidean minimum spanning tree using an edge-length quantile. |
+| [`create.threshold.distance.graph()`](#help-create.threshold.distance.graph) | Connect points satisfying a distance threshold. |
+| [`nerve.graph()`](#help-nerve.graph) | Construct a graph from overlaps between sets in a cover. |
 
 ### Basic graphs and representation
 
 | Function | Purpose |
 |---|---|
-| `create.graph()` | Construct standard graph types, labeled chains, random graphs and sampled circles. |
-| `dgraph()` | Validate aligned neighbor, length and attribute lists as an undirected graph. |
-| `graph.adjacency()` | Read the neighbor list for a stored stage. |
-| `graph.lengths()` | Read aligned lengths, or NULL when absent. |
-| `graph.edges()` | Read one ordered row per undirected edge, with lengths and attributes. |
-| `graph.order()` | Count vertices, including isolates. |
-| `graph.stages()` | List stages actually stored in a graph. |
-| `graph.edge.attribute()` | Read an explicitly named edge attribute. |
-| `as_igraph()` | Convert a dgraph stage to an undirected igraph object. |
-| `convert.adjacency.list.to.adjacency.matrix()` | Convert bare neighbor lists to an adjacency matrix. |
-| `convert.weighted.adjacency.matrix.to.adjacency.list()` | Convert a weighted adjacency matrix to aligned lists. |
-| `convert.adjacency.to.edge.matrix()` | Extract an edge matrix and optional aligned weights. |
-| `count.edges()` | Count undirected edges once from reciprocal neighbor lists. |
-| `compare.adj.lists()` | Compare neighbor sets, optionally reporting differences. |
-| `edge.diff()` | Find edges present in one graph but absent from another. |
-| `identical.vertex.set.weighted.graph.similarity()` | Compare weighted graphs on the same vertex set. |
+| [`create.graph()`](#help-create.graph) | Construct standard graph types, labeled chains, random graphs and sampled circles. |
+| [`dgraph()`](#help-dgraph) | Validate aligned neighbor, length and attribute lists as an undirected graph. |
+| [`graph.adjacency()`](#help-graph.adjacency) | Read the neighbor list for a stored stage. |
+| [`graph.lengths()`](#help-graph.lengths) | Read aligned lengths, or NULL when absent. |
+| [`graph.edges()`](#help-graph.edges) | Read one ordered row per undirected edge, with lengths and attributes. |
+| [`graph.order()`](#help-graph.order) | Count vertices, including isolates. |
+| [`graph.stages()`](#help-graph.stages) | List stages actually stored in a graph. |
+| [`graph.edge.attribute()`](#help-graph.edge.attribute) | Read an explicitly named edge attribute. |
+| [`as_igraph()`](#help-as_igraph) | Convert a dgraph stage to an undirected igraph object. |
+| [`convert.adjacency.list.to.adjacency.matrix()`](#help-convert.adjacency.list.to.adjacency.matrix) | Convert bare neighbor lists to an adjacency matrix. |
+| [`convert.weighted.adjacency.matrix.to.adjacency.list()`](#help-convert.weighted.adjacency.matrix.to.adjacency.list) | Convert a weighted adjacency matrix to aligned lists. |
+| [`convert.adjacency.to.edge.matrix()`](#help-convert.adjacency.to.edge.matrix) | Extract an edge matrix and optional aligned weights. |
+| [`count.edges()`](#help-count.edges) | Count undirected edges once from reciprocal neighbor lists. |
+| [`compare.adj.lists()`](#help-compare.adj.lists) | Compare neighbor sets, optionally reporting differences. |
+| [`edge.diff()`](#help-edge.diff) | Find edges present in one graph but absent from another. |
+| [`identical.vertex.set.weighted.graph.similarity()`](#help-identical.vertex.set.weighted.graph.similarity) | Compare weighted graphs on the same vertex set. |
 
 ### Connectivity and graph editing
 
 | Function | Purpose |
 |---|---|
-| `graph.connected.components()` | Assign a component identifier to every vertex. |
-| `convert.to.undirected()` | Add reciprocal links to a directed adjacency list. |
-| `rm.self.loops()` | Remove each vertex from its own neighbor list. |
-| `join.graphs()` | Identify one vertex from each of two graphs. |
-| `create.subgraph()` | Extract the graph induced by selected vertices. |
-| `create.grid.graph()` | Refine graph edges toward approximately uniform spatial spacing. |
+| [`graph.connected.components()`](#help-graph.connected.components) | Assign a component identifier to every vertex. |
+| [`convert.to.undirected()`](#help-convert.to.undirected) | Add reciprocal links to a directed adjacency list. |
+| [`rm.self.loops()`](#help-rm.self.loops) | Remove each vertex from its own neighbor list. |
+| [`join.graphs()`](#help-join.graphs) | Identify one vertex from each of two graphs. |
+| [`create.subgraph()`](#help-create.subgraph) | Extract the graph induced by selected vertices. |
+| [`create.grid.graph()`](#help-create.grid.graph) | Refine graph edges toward approximately uniform spatial spacing. |
 
 ### Paths and distances
 
 | Function | Purpose |
 |---|---|
-| `graph.geodesic.distances()` | Compute shortest-path distances for a supported graph object and stage. |
-| `compute.graph.distance()` | Compute a weighted shortest-path distance between two vertices. |
-| `compute.graph.diameter()` | Compute a weighted graph diameter. |
-| `get.shortest.path()` | Recover a shortest vertex path. |
-| `geodesic.disk()` | Find a graph neighborhood within a distance radius. |
-| `geodesic.knn()` | Find nearest vertices in a graph metric. |
-| `geodesic.knnx()` | Find graph-metric nearest neighbors for query vertices. |
-| `create.path.graph()` | Construct a collection of path results for one or several hop limits. |
-| `create.plm.graph()` | Build a path-length-matrix graph structure. |
-| `compare.paths()` | Compare paths obtained under different hop limits. |
-| `minh.limit()` | Find a minimum hop limit that permits a path. |
-| `path.length()` | Measure Euclidean length along a coordinate path. |
-| `path.dist()` | Compute normalized cumulative distance along a vertex path. |
-| `subdivide.path()` | Include both endpoints and space points equally along a polyline; repeat the location for zero-length paths. |
+| [`graph.geodesic.distances()`](#help-graph.geodesic.distances) | Compute shortest-path distances for a supported graph object and stage. |
+| [`compute.graph.distance()`](#help-compute.graph.distance) | Compute a weighted shortest-path distance between two vertices. |
+| [`compute.graph.diameter()`](#help-compute.graph.diameter) | Compute a weighted graph diameter. |
+| [`get.shortest.path()`](#help-get.shortest.path) | Recover a shortest vertex path. |
+| [`geodesic.disk()`](#help-geodesic.disk) | Find a graph neighborhood within a distance radius. |
+| [`geodesic.knn()`](#help-geodesic.knn) | Find nearest vertices in a graph metric. |
+| [`geodesic.knnx()`](#help-geodesic.knnx) | Find graph-metric nearest neighbors for query vertices. |
+| [`create.path.graph()`](#help-create.path.graph) | Construct a collection of path results for one or several hop limits. |
+| [`create.plm.graph()`](#help-create.plm.graph) | Build a path-length-matrix graph structure. |
+| [`compare.paths()`](#help-compare.paths) | Compare paths obtained under different hop limits. |
+| [`minh.limit()`](#help-minh.limit) | Find a minimum hop limit that permits a path. |
+| [`path.length()`](#help-path.length) | Measure Euclidean length along a coordinate path. |
+| [`path.dist()`](#help-path.dist) | Compute normalized cumulative distance along a vertex path. |
+| [`subdivide.path()`](#help-subdivide.path) | Include both endpoints and space points equally along a polyline; repeat the location for zero-length paths. |
 
 ### Edge lengths and pruning
 
 | Function | Purpose |
 |---|---|
-| `extract.trajectory.edge.lengths()` | Extract stored edge lengths along a graph vertex trajectory. |
-| `wgraph.prune.long.edges()` | Prune edges using length constraints on alternative paths. |
+| [`extract.trajectory.edge.lengths()`](#help-extract.trajectory.edge.lengths) | Extract stored edge lengths along a graph vertex trajectory. |
+| [`wgraph.prune.long.edges()`](#help-wgraph.prune.long.edges) | Prune edges using length constraints on alternative paths. |
 
 ### Diagnostics, endpoints and packing
 
 | Function | Purpose |
 |---|---|
-| `compute.graph.summary.pmf()` | Represent a degree, weight, component-size or label-neighborhood summary as probability masses. |
-| `graph.summary.divergence()` | Compare graph-summary probability masses using a chosen divergence. |
-| `jensen.shannon.divergence()` | Measure Jensen-Shannon divergence between probability distributions. |
-| `compute.graph.summary.stability()` | Track summary divergence between consecutive graphs. |
-| `compute.stability.metrics()` | Summarize structural stability of an intersection-graph sequence. |
-| `compute.geodesic.stats()` | Summarize geodesic growth around grid vertices. |
-| `compute.vertex.geodesic.stats()` | Inspect geodesic growth around one grid vertex. |
-| `compute.graph.endpoint.scores()` | Score directional concentration in a 3D embedding using graph neighborhoods. |
-| `detect.graph.endpoints()` | Select and consolidate candidate geometric endpoints. |
-| `geodesic.core.endpoints()` | Detect endpoints using a graph-geodesic core. |
-| `detect.local.extrema()` | Find graph-local maxima or minima of vertex values. |
-| `vertices()` | Extract vertices through the generic, currently for local-extrema results. |
-| `remove.knn.outliers()` | Identify and remove observations with unusual nearest-neighbor distances. |
-| `create.maximal.packing()` | Select separated vertices at a requested graph scale. |
-| `validate.maximal.packing()` | Check separation and maximality of a vertex packing. |
-| `verify.maximal.packing()` | Verify a packing result using its graph and scale. |
-| `isometry.scale()` | Fit a global scale aligning estimated distances with reference distances. |
-| `isometry.rel.rms.error()` | Measure target-normalized root-mean-square distance error. |
-| `isometry.rel.abs.error()` | Summarize quantiles of relative absolute distance errors. |
-| `isometry.distortion.quantiles()` | Summarize multiplicative distance distortion. |
-| `isometry.distance.correlations()` | Compare estimated and reference distances by correlation. |
-| `isometry.geodesic.diagnostics()` | Diagnose shortcuts and distance-scale-dependent geodesic bias. |
-| `summarize.isometry.deviation()` | Combine scale, error, distortion and correlation diagnostics. |
+| [`compute.graph.summary.pmf()`](#help-compute.graph.summary.pmf) | Represent a degree, weight, component-size or label-neighborhood summary as probability masses. |
+| [`graph.summary.divergence()`](#help-graph.summary.divergence) | Compare graph-summary probability masses using a chosen divergence. |
+| [`jensen.shannon.divergence()`](#help-jensen.shannon.divergence) | Measure Jensen-Shannon divergence between probability distributions. |
+| [`compute.graph.summary.stability()`](#help-compute.graph.summary.stability) | Track summary divergence between consecutive graphs. |
+| [`compute.stability.metrics()`](#help-compute.stability.metrics) | Summarize structural stability of an intersection-graph sequence. |
+| [`compute.geodesic.stats()`](#help-compute.geodesic.stats) | Summarize geodesic growth around grid vertices. |
+| [`compute.vertex.geodesic.stats()`](#help-compute.vertex.geodesic.stats) | Inspect geodesic growth around one grid vertex. |
+| [`compute.graph.endpoint.scores()`](#help-compute.graph.endpoint.scores) | Score directional concentration in a 3D embedding using graph neighborhoods. |
+| [`detect.graph.endpoints()`](#help-detect.graph.endpoints) | Select and consolidate candidate geometric endpoints. |
+| [`geodesic.core.endpoints()`](#help-geodesic.core.endpoints) | Detect endpoints using a graph-geodesic core. |
+| [`detect.local.extrema()`](#help-detect.local.extrema) | Find graph-local maxima or minima of vertex values. |
+| [`vertices()`](#help-vertices) | Extract vertices through the generic, currently for local-extrema results. |
+| [`remove.knn.outliers()`](#help-remove.knn.outliers) | Identify and remove observations with unusual nearest-neighbor distances. |
+| [`create.maximal.packing()`](#help-create.maximal.packing) | Select separated vertices at a requested graph scale. |
+| [`validate.maximal.packing()`](#help-validate.maximal.packing) | Check separation and maximality of a vertex packing. |
+| [`verify.maximal.packing()`](#help-verify.maximal.packing) | Verify a packing result using its graph and scale. |
+| [`isometry.scale()`](#help-isometry.scale) | Fit a global scale aligning estimated distances with reference distances. |
+| [`isometry.rel.rms.error()`](#help-isometry.rel.rms.error) | Measure target-normalized root-mean-square distance error. |
+| [`isometry.rel.abs.error()`](#help-isometry.rel.abs.error) | Summarize quantiles of relative absolute distance errors. |
+| [`isometry.distortion.quantiles()`](#help-isometry.distortion.quantiles) | Summarize multiplicative distance distortion. |
+| [`isometry.distance.correlations()`](#help-isometry.distance.correlations) | Compare estimated and reference distances by correlation. |
+| [`isometry.geodesic.diagnostics()`](#help-isometry.geodesic.diagnostics) | Diagnose shortcuts and distance-scale-dependent geodesic bias. |
+| [`summarize.isometry.deviation()`](#help-summarize.isometry.deviation) | Combine scale, error, distortion and correlation diagnostics. |
 
 ### Spectral methods and graph display
 
 | Function | Purpose |
 |---|---|
-| `graph.spectrum()` | Compute the smallest positive Laplacian eigenpairs, with component nullity. |
-| `graph.spectral.embedding()` | Embed a connected graph from its spectrum, with explicit coordinate scaling. |
-| `graph.embedding()` | Compute a graph visualization layout. |
+| [`graph.spectrum()`](#help-graph.spectrum) | Compute the smallest positive Laplacian eigenpairs, with component nullity. |
+| [`graph.spectral.embedding()`](#help-graph.spectral.embedding) | Embed a connected graph from its spectrum, with explicit coordinate scaling. |
+| [`graph.embedding()`](#help-graph.embedding) | Compute a graph visualization layout. |
 
 ### Synthetic geometry and embedding
 
 | Function | Purpose |
 |---|---|
-| `synthetic.quadform()` | Specify a flat or quadratic geometry with intrinsic and ambient dimensions. |
-| `synthetic.circle()` | Specify a circle or circular arc. |
-| `synthetic.helix()` | Specify a helical curve. |
-| `synthetic.trefoil()` | Specify the supported trefoil parameterization. |
-| `synthetic.sphere.cap()` | Specify a spherical cap over a planar footprint. |
-| `synthetic.torus.patch()` | Specify a torus patch over two angular parameters. |
-| `synthetic.simplex()` | Specify a compositional simplex with a given number of parts. |
-| `synthetic.stratum.point()` | Specify a zero-dimensional point stratum. |
-| `synthetic.stratum.segment()` | Specify a one-dimensional line-segment stratum. |
-| `synthetic.stratum.rectangle()` | Specify a two-dimensional rectangular stratum. |
-| `synthetic.stratified()` | Assemble compatible strata and optional junction metadata; general sampling is not implemented. |
-| `synthetic.point.line.junction()` | Specify a point and segment junction. |
-| `embed.synthetic.geometry()` | Deterministically map supported latent coordinates to ambient coordinates. |
-| `embed.quadform.surface()` | Lift two-column coordinates using the versioned Geometry Lab quadratic arithmetic. |
-| `quadform.gradient()` | Evaluate gradients of quadratic height functions. |
-| `quadform.metric()` | Evaluate the induced metric of a quadratic geometry. |
-| `edge.lengths.synthetic.geometry()` | Measure lifted straight latent segments; currently supports quadforms only. |
-| `validate.synthetic.geometry()` | Validate a geometry specification or latent coordinate matrix. |
+| [`synthetic.quadform()`](#help-synthetic.quadform) | Specify a flat or quadratic geometry with intrinsic and ambient dimensions. |
+| [`synthetic.circle()`](#help-synthetic.circle) | Specify a circle or circular arc. |
+| [`synthetic.helix()`](#help-synthetic.helix) | Specify a helical curve. |
+| [`synthetic.trefoil()`](#help-synthetic.trefoil) | Specify the supported trefoil parameterization. |
+| [`synthetic.sphere.cap()`](#help-synthetic.sphere.cap) | Specify a spherical cap over a planar footprint. |
+| [`synthetic.torus.patch()`](#help-synthetic.torus.patch) | Specify a torus patch over two angular parameters. |
+| [`synthetic.simplex()`](#help-synthetic.simplex) | Specify a compositional simplex with a given number of parts. |
+| [`synthetic.stratum.point()`](#help-synthetic.stratum.point) | Specify a zero-dimensional point stratum. |
+| [`synthetic.stratum.segment()`](#help-synthetic.stratum.segment) | Specify a one-dimensional line-segment stratum. |
+| [`synthetic.stratum.rectangle()`](#help-synthetic.stratum.rectangle) | Specify a two-dimensional rectangular stratum. |
+| [`synthetic.stratified()`](#help-synthetic.stratified) | Assemble compatible strata and optional junction metadata; general sampling is not implemented. |
+| [`synthetic.point.line.junction()`](#help-synthetic.point.line.junction) | Specify a point and segment junction. |
+| [`embed.synthetic.geometry()`](#help-embed.synthetic.geometry) | Deterministically map supported latent coordinates to ambient coordinates. |
+| [`embed.quadform.surface()`](#help-embed.quadform.surface) | Lift two-column coordinates using the versioned Geometry Lab quadratic arithmetic. |
+| [`quadform.gradient()`](#help-quadform.gradient) | Evaluate gradients of quadratic height functions. |
+| [`quadform.metric()`](#help-quadform.metric) | Evaluate the induced metric of a quadratic geometry. |
+| [`edge.lengths.synthetic.geometry()`](#help-edge.lengths.synthetic.geometry) | Measure lifted straight latent segments; currently supports quadforms only. |
+| [`validate.synthetic.geometry()`](#help-validate.synthetic.geometry) | Validate a geometry specification or latent coordinate matrix. |
 
 ### Point sampling
 
 | Function | Purpose |
 |---|---|
-| `sample.synthetic.geometry()` | Realize geometry-only points with an explicit seed or random-state plan. |
-| `synthetic.sampling.uniform.interval()` | Specify uniform interval draws and their ordering. |
-| `synthetic.sampling.grid.interval()` | Specify deterministic interval points and endpoint inclusion. |
-| `synthetic.sampling.uniform.box()` | Specify uniform box draws with scalar or coordinate-wise bounds. |
-| `synthetic.sampling.uniform.rectangle()` | Specify two-dimensional rectangle draws. |
-| `synthetic.sampling.uniform.disk()` | Specify parameter-area-uniform disk draws. |
-| `synthetic.sampling.truncated.normal()` | Specify bounded normal draws on an interval. |
-| `synthetic.sampling.gapped.uniform()` | Specify draws across disjoint intervals with allocation controls. |
-| `synthetic.sampling.clustered()` | Specify a fixed number of two-dimensional clusters and observations per cluster. |
-| `synthetic.sampling.dirichlet.zeros()` | Specify compositional draws with a fraction on a structural-zero face. |
-| `synthetic.sampling.quadform.lab()` | Specify versioned quadratic-surface sampling, including surface-area rejection sampling. |
-| `validate.synthetic.sampling()` | Validate a sampling specification and its compatibility with a geometry. |
+| [`sample.synthetic.geometry()`](#help-sample.synthetic.geometry) | Realize geometry-only points with an explicit seed or random-state plan. |
+| [`synthetic.sampling.uniform.interval()`](#help-synthetic.sampling.uniform.interval) | Specify uniform interval draws and their ordering. |
+| [`synthetic.sampling.grid.interval()`](#help-synthetic.sampling.grid.interval) | Specify deterministic interval points and endpoint inclusion. |
+| [`synthetic.sampling.uniform.box()`](#help-synthetic.sampling.uniform.box) | Specify uniform box draws with scalar or coordinate-wise bounds. |
+| [`synthetic.sampling.uniform.rectangle()`](#help-synthetic.sampling.uniform.rectangle) | Specify two-dimensional rectangle draws. |
+| [`synthetic.sampling.uniform.disk()`](#help-synthetic.sampling.uniform.disk) | Specify parameter-area-uniform disk draws. |
+| [`synthetic.sampling.truncated.normal()`](#help-synthetic.sampling.truncated.normal) | Specify bounded normal draws on an interval. |
+| [`synthetic.sampling.gapped.uniform()`](#help-synthetic.sampling.gapped.uniform) | Specify draws across disjoint intervals with allocation controls. |
+| [`synthetic.sampling.clustered()`](#help-synthetic.sampling.clustered) | Specify a fixed number of two-dimensional clusters and observations per cluster. |
+| [`synthetic.sampling.dirichlet.zeros()`](#help-synthetic.sampling.dirichlet.zeros) | Specify compositional draws with a fraction on a structural-zero face. |
+| [`synthetic.sampling.quadform.lab()`](#help-synthetic.sampling.quadform.lab) | Specify versioned quadratic-surface sampling, including surface-area rejection sampling. |
+| [`validate.synthetic.sampling()`](#help-validate.synthetic.sampling) | Validate a sampling specification and its compatibility with a geometry. |
 
 ### Interactive graph reconstruction explorer
 
 | Function | Purpose | Input and interpretation |
 |---|---|---|
-| `explore.graphs()` | Open the Graph Reconstruction Explorer. | A saved benchmark directory, manifest, or registered project name; optional Shiny dependencies. |
-| `read.graph.benchmark()` | Read saved benchmark indexes without launching an app. | Existing dggraphui manifests and asset tables; relative paths resolve within the run. |
-| `register.graph.project()` | Add a benchmark to the local project picker. | Stores a name and path; scientific assets remain outside the package. |
+| [`explore.graphs()`](#help-explore.graphs) | Open the Graph Reconstruction Explorer. | A saved benchmark directory, manifest, or registered project name; optional Shiny dependencies. |
+| [`read.graph.benchmark()`](#help-read.graph.benchmark) | Read saved benchmark indexes without launching an app. | Existing dggraphui manifests and asset tables; relative paths resolve within the run. |
+| [`register.graph.project()`](#help-register.graph.project) | Add a benchmark to the local project picker. | Stores a name and path; scientific assets remain outside the package. |
 
 Opening a project reads saved results without refitting. An explicit action can
 compute a missing weighted layout using grip and save it to a separate user cache.
-The explorer retains its historical per-axis display normalization; use the saved
-metric tables for quantitative distance comparisons.
+The default display preserves original coordinates with equal x/y/z units.
+A centered common-scale view preserves proportions; optional per-axis scaling
+is labeled as distorting proportions. Saved metric tables never change with the display.
+
+Try the installed, deterministic twelve-point circle project:
+
+```{r explorer-demo}
+demo <- system.file("extdata", "graph-explorer-demo", package = "dgraphs")
+benchmark <- read.graph.benchmark(demo)
+nrow(benchmark$graph_assets)
+```
+
+```{r explorer-launch, eval=FALSE}
+explore.graphs(demo)
+```
+
+Compare k = 2 with k = 4. The additional chords shorten graph distances
+relative to exact shorter unit-circle arcs. The saved GRIP layouts visualize
+the graphs; their apparent circularity is not the distance-error metric.
 
 ## Object workflows and method help
 
@@ -575,21 +596,20 @@ Call a generic such as `print(x)`, `summary(x)` or `plot(x)`; R selects its
 registered S3 method from the object's class. A class need not support all
 three operations. For example, print a symmetric graph, summarize a mutual
 sequence, or plot an intersection stability result. `vertices(extrema)`
-extracts vertices from `detect.local.extrema()` output. Geometry samples are
-lists without specialized registered print or plot methods: plot their
-coordinate matrices explicitly.
+extracts vertices from `detect.local.extrema()` output. Geometry samples have concise print and summary methods; plot their
+coordinate matrices explicitly. Path-series summaries compare hop limits in a table.
 
-The following method links open the matching topic in the online reference
-manual for the released package. Locally, use the listed help name in
-`help("print.sknn_graph", package = "dgraphs")`. These are method help
-references, not extra rows in the export catalog.
+The method links open version-matched help below. From R, the same topics
+are available through `help("print.sknn_graph", package = "dgraphs")`.
+Links inside another package's help may require online access; dgraphs topics
+and their examples are included here and work without a network connection.
 
 | Generic | Object class and detailed method help |
 |---|---|
-| `print()` | [`dgraph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.dgraph); [`adaptive_radius_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.adaptive_radius_graph); [`build_iknn_graphs_and_selectk`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.build_iknn_graphs_and_selectk); [`cknn_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.cknn_graph); [`geodesic_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.geodesic_stats); [`knn.outliers`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.knn.outliers); [`maximal_packing`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.maximal_packing); [`mknn_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.mknn_graph); [`mknn_graphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.mknn_graphs); [`mst_completion_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.mst_completion_graph); [`packing_validation`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.packing_validation); [`path.graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.path.graph); [`path.graph.plm`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.path.graph.plm); [`radius_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.radius_graph); [`rknn_graphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.rknn_graphs); [`sknn_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.sknn_graph); [`sknn_graphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.sknn_graphs); [`summary.knn.outliers`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.summary.knn.outliers); [`summary.local_extrema`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.summary.local_extrema); [`summary.mst_completion_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#print.summary.mst_completion_graph) |
-| `summary()` | [`IkNN`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.IkNN); [`geodesic_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.geodesic_stats); [`iknn_graphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.iknn_graphs); [`iterated_iknn_graphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.iterated_iknn_graphs); [`knn.outliers`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.knn.outliers); [`local_extrema`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.local_extrema); [`mknn_graphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.mknn_graphs); [`mst_completion_graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.mst_completion_graph); [`path.graph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.path.graph); [`rknn_graphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.rknn_graphs); [`vertex_geodesic_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#summary.vertex_geodesic_stats) |
-| `plot()` | [`dgraph`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.dgraph); [`IkNNgraphs`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.IkNNgraphs); [`build_iknn_graphs_and_selectk`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.build_iknn_graphs_and_selectk); [`cst_graph_mixing_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.cst_graph_mixing_stats); [`geodesic_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.geodesic_stats); [`iknn_stability_metrics`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.iknn_stability_metrics); [`vertex_geodesic_stats`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#plot.vertex_geodesic_stats) |
-| `vertices()` | [`local_extrema`](https://CRAN.R-project.org/package=dgraphs/refman/dgraphs.html#vertices.local_extrema) |
+| `print()` | [`dgraph`](#help-print.dgraph); [`adaptive_radius_graph`](#help-print.adaptive_radius_graph); [`build_iknn_graphs_and_selectk`](#help-print.build_iknn_graphs_and_selectk); [`cknn_graph`](#help-print.cknn_graph); [`geodesic_stats`](#help-print.geodesic_stats); [`knn.outliers`](#help-print.knn.outliers); [`maximal_packing`](#help-print.maximal_packing); [`mknn_graph`](#help-print.mknn_graph); [`mknn_graphs`](#help-print.mknn_graphs); [`mst_completion_graph`](#help-print.mst_completion_graph); [`packing_validation`](#help-print.packing_validation); [`path.graph`](#help-print.path.graph); [`path.graph.plm`](#help-print.path.graph.plm); [`radius_graph`](#help-print.radius_graph); [`rknn_graphs`](#help-print.rknn_graphs); [`sknn_graph`](#help-print.sknn_graph); [`sknn_graphs`](#help-print.sknn_graphs); [`summary.knn.outliers`](#help-print.summary.knn.outliers); [`summary.local_extrema`](#help-print.summary.local_extrema); [`summary.mst_completion_graph`](#help-print.summary.mst_completion_graph); [`synthetic_geometry_sample`](#help-print.synthetic_geometry_sample); [`summary.synthetic_geometry_sample`](#help-print.summary.synthetic_geometry_sample); [`path.graph.series`](#help-print.path.graph.series) |
+| `summary()` | [`IkNN`](#help-summary.IkNN); [`geodesic_stats`](#help-summary.geodesic_stats); [`iknn_graphs`](#help-summary.iknn_graphs); [`iterated_iknn_graphs`](#help-summary.iterated_iknn_graphs); [`knn.outliers`](#help-summary.knn.outliers); [`local_extrema`](#help-summary.local_extrema); [`mknn_graphs`](#help-summary.mknn_graphs); [`mst_completion_graph`](#help-summary.mst_completion_graph); [`path.graph`](#help-summary.path.graph); [`rknn_graphs`](#help-summary.rknn_graphs); [`vertex_geodesic_stats`](#help-summary.vertex_geodesic_stats); [`synthetic_geometry_sample`](#help-summary.synthetic_geometry_sample); [`path.graph.series`](#help-summary.path.graph.series) |
+| `plot()` | [`dgraph`](#help-plot.dgraph); [`IkNNgraphs`](#help-plot.IkNNgraphs); [`build_iknn_graphs_and_selectk`](#help-plot.build_iknn_graphs_and_selectk); [`cst_graph_mixing_stats`](#help-plot.cst_graph_mixing_stats); [`geodesic_stats`](#help-plot.geodesic_stats); [`iknn_stability_metrics`](#help-plot.iknn_stability_metrics); [`vertex_geodesic_stats`](#help-plot.vertex_geodesic_stats) |
+| [`vertices()`](#help-vertices) | [`local_extrema`](#help-vertices.local_extrema) |
 
 ## Finding more help
 
@@ -605,3 +625,19 @@ and its [usage examples](https://hbiostat.org/r/hmisc/).
 The task groups here follow dgraphs' own API. The source repository's
 `make audit-guides` target checks catalog completeness and method-help coverage
 against `NAMESPACE` and the maintained help sources.
+
+## Detailed help for this build
+
+These expandable topics are generated from the installed package's help
+sources. They are the same documentation opened by `help()` in R.
+
+```{r offline-reference, echo=FALSE, results='asis'}
+source(system.file("doc-tools", "reference.R", package = "dgraphs"), local = TRUE)
+render_dgraphs_reference()
+```
+
+<style>
+.offline-help { margin: 1em 0; padding: .7em; border: 1px solid #ccd7dd; }
+.offline-help summary { cursor: pointer; font-weight: 600; }
+:focus-visible { outline: 3px solid #176a8a; outline-offset: 3px; }
+</style>

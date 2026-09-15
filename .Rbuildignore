@@ -18,3 +18,5 @@
 ^papers$
 ^reports$
 ^\.git$
+
+^_pkgdown\.yml$

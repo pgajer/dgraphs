@@ -56,7 +56,7 @@ set.seed(123)
 x <- matrix(rnorm(1000), ncol = 5)
 
 # Generate intersection kNN graphs
-iknn.res <- create.iknn.graphs(x, k.values = seq.int(3, 10), n.cores = 1,
+iknn.res <- create.iknn.graphs(x, k.values = seq.int(3, 10),
     with.isize.pruning = TRUE)
 
 # Summarize the geometrically pruned graphs

@@ -110,27 +110,39 @@ dg_coord_matrix <- function(coords) {
     return(NULL)
   }
   num <- suppressWarnings(matrix(as.numeric(coords), nrow = nrow(coords), ncol = ncol(coords)))
-  if (!is.matrix(num) || ncol(num) < 3L || !any(is.finite(num))) {
+  if (!is.matrix(num) || ncol(num) < 3L || !all(is.finite(num))) {
     return(NULL)
   }
   num <- num[, seq_len(3L), drop = FALSE]
-  num[!is.finite(num)] <- 0
   num
 }
 
-dg_normalize_coord_matrix <- function(coords) {
+# Display transformations never modify saved coordinates or metric tables.
+dg_normalize_coord_matrix <- function(coords, mode = c("original", "isotropic", "per.axis")) {
+  mode <- match.arg(mode)
   coords <- dg_coord_matrix(coords)
-  if (is.null(coords)) {
-    return(matrix(numeric(0), ncol = 3L))
-  }
-  for (jj in seq_len(ncol(coords))) {
-    rng <- range(coords[, jj], finite = TRUE)
-    if (all(is.finite(rng)) && diff(rng) > 0) {
-      coords[, jj] <- (coords[, jj] - mean(rng)) / diff(rng)
-    }
-  }
-  coords
+  if (is.null(coords)) return(NULL)
+  colnames(coords) <- c("x", "y", "z")
+  if (mode == "original") return(coords)
+  bounds <- apply(coords, 2, range)
+  coords <- sweep(coords, 2, colMeans(bounds), "-")
+  spans <- bounds[2, ] - bounds[1, ]
+  if (mode == "isotropic") spans[] <- max(spans)
+  spans[spans == 0] <- 1
+  sweep(coords, 2, spans, "/")
 }
+
+dg_display_edges <- function(adj_list, limit = 4000L) {
+  edges <- dg_adj_edges(adj_list)
+  if (nrow(edges) > limit)
+    edges <- edges[unique(round(seq(1, nrow(edges), length.out = limit))), , drop = FALSE]
+  edges
+}
+
+dg_display_description <- function(mode) switch(mode,
+  original = "Original coordinates; equal x/y/z units in each view.",
+  isotropic = "Centered coordinates; one scale factor per view preserves proportions.",
+  per.axis = "Per-axis normalization distorts proportions; axes show normalized units.")
 
 dg_adj_edges <- function(adj_list) {
   if (!is.list(adj_list) || length(adj_list) < 1L) {

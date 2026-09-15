@@ -56,6 +56,10 @@ dg_app_server <- function(input, output, session, default_run_dir = "") {
     load_selected_run(default_run_dir)
   }
 
+  shiny::observeEvent(input$open_demo, {
+    load_selected_run(system.file("extdata", "graph-explorer-demo", package = "dgraphs"))
+  }, ignoreInit = TRUE)
+
   shiny::observeEvent(input$load_run, {
     load_selected_run(input$run_dir)
   }, ignoreInit = TRUE)
@@ -195,7 +199,7 @@ dg_app_server <- function(input, output, session, default_run_dir = "") {
     shiny::req(is.list(st), st$status %in% c("ok", "missing_layout", "layout_error"))
     dataset <- st$dataset
     shiny::req(is.list(dataset), identical(dataset$status, "ok"))
-    coords <- dg_normalize_coord_matrix(dataset$coords)
+    coords <- dg_normalize_coord_matrix(dataset$coords, input$display_scale %||% "original")
     row <- st$selected_row
     title <- sprintf(
       "Original data: %s, n=%s, seed=%s",
@@ -212,11 +216,12 @@ dg_app_server <- function(input, output, session, default_run_dir = "") {
         marker = list(size = 3.5, color = "#2563eb", opacity = 0.88)
       ),
       title = list(text = title, font = list(size = 13)),
-      margin = list(l = 0, r = 0, b = 0, t = 34),
+      margin = list(l = 30, r = 25, b = 35, t = 34),
       scene = list(
-        xaxis = list(title = "", showgrid = FALSE, zeroline = FALSE, visible = FALSE),
-        yaxis = list(title = "", showgrid = FALSE, zeroline = FALSE, visible = FALSE),
-        zaxis = list(title = "", showgrid = FALSE, zeroline = FALSE, visible = FALSE)
+        aspectmode = "data",
+        xaxis = list(title = "x", showgrid = TRUE, zeroline = TRUE, visible = TRUE),
+        yaxis = list(title = "y", showgrid = TRUE, zeroline = TRUE, visible = TRUE),
+        zaxis = list(title = "z", showgrid = TRUE, zeroline = TRUE, visible = TRUE)
       )
     )
   })
@@ -224,14 +229,10 @@ dg_app_server <- function(input, output, session, default_run_dir = "") {
   output$graph_plot <- plotly::renderPlotly({
     st <- view_state()
     shiny::req(is.list(st), identical(st$status, "ok"))
-    coords <- dg_normalize_coord_matrix(st$layout_coords)
+    coords <- dg_normalize_coord_matrix(st$layout_coords, input$display_scale %||% "original")
     adj <- st$graph$adj_list
     shiny::req(is.matrix(coords), is.list(adj), nrow(coords) == length(adj))
-    edges <- dg_adj_edges(adj)
-    if (is.matrix(edges) && nrow(edges) > 4000L) {
-      set.seed(1L)
-      edges <- edges[sort(sample.int(nrow(edges), 4000L)), , drop = FALSE]
-    }
+    edges <- dg_display_edges(adj)
     edge_xyz <- matrix(NA_real_, nrow = 0L, ncol = 3L)
     if (is.matrix(edges) && nrow(edges) > 0L) {
       edge_xyz <- matrix(NA_real_, nrow = nrow(edges) * 3L, ncol = 3L)
@@ -239,7 +240,7 @@ dg_app_server <- function(input, output, session, default_run_dir = "") {
       edge_xyz[seq(2L, nrow(edge_xyz), by = 3L), ] <- coords[edges[, 2], , drop = FALSE]
     }
     row <- st$selected_row
-    title <- "Weighted graph layout"
+    title <- "Saved graph layout"
     p <- plotly::plot_ly()
     if (nrow(edge_xyz) > 0L) {
       p <- plotly::add_trace(
@@ -262,11 +263,12 @@ dg_app_server <- function(input, output, session, default_run_dir = "") {
     plotly::layout(
       p,
       title = list(text = title, font = list(size = 13)),
-      margin = list(l = 0, r = 0, b = 0, t = 34),
+      margin = list(l = 30, r = 25, b = 35, t = 34),
       scene = list(
-        xaxis = list(title = "", showgrid = FALSE, zeroline = FALSE, visible = FALSE),
-        yaxis = list(title = "", showgrid = FALSE, zeroline = FALSE, visible = FALSE),
-        zaxis = list(title = "", showgrid = FALSE, zeroline = FALSE, visible = FALSE)
+        aspectmode = "data",
+        xaxis = list(title = "x", showgrid = TRUE, zeroline = TRUE, visible = TRUE),
+        yaxis = list(title = "y", showgrid = TRUE, zeroline = TRUE, visible = TRUE),
+        zaxis = list(title = "z", showgrid = TRUE, zeroline = TRUE, visible = TRUE)
       )
     )
   })
@@ -284,7 +286,11 @@ dg_app_server <- function(input, output, session, default_run_dir = "") {
     }
     shiny::div(
       class = "dg-main",
-      shiny::div(class = "dg-heading", shiny::h3(dg_selection_summary(st$selection)), shiny::p(class = "dg-muted", sprintf("graph-stage key: %s | layout source: %s", st$key, st$layout_source))),
+      shiny::div(class = "dg-heading", shiny::h3(dg_selection_summary(st$selection)),
+        shiny::p(dg_display_description(input$display_scale %||% "original")),
+        shiny::p(class = "dg-muted", "Left: ambient coordinates. Right: saved layout in arbitrary layout units."),
+        shiny::p(sprintf("%d of %d edges displayed. Saved metrics use the full graph; layout appearance is not a distance-error measure.",
+          nrow(dg_display_edges(st$graph$adj_list)), nrow(dg_adj_edges(st$graph$adj_list))))),
       shiny::div(
         class = "dg-plot-grid",
         shiny::div(class = "dg-plot-panel", plotly::plotlyOutput("original_plot", height = "58vh")),

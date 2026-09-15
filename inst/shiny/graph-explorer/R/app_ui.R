@@ -36,10 +36,15 @@ dg_app_ui <- function(default_run_dir = "") {
         shiny::selectInput("saved_project", "Saved projects", choices = c("Choose a project" = "", stats::setNames(.graph_project_catalog()$path, .graph_project_catalog()$name))),
         shiny::textInput("run_dir", NULL, value = default_run_dir, placeholder = "/path/to/benchmark/runs/full"),
         shiny::actionButton("load_run", "Open", class = "btn-primary dg-wide"),
+        shiny::actionButton("open_demo", "Open circle demo", class = "dg-wide"),
         shiny::textInput("project_name", "Remember as", placeholder = "A name for this project"),
         shiny::actionButton("remember_project", "Remember Project"),
         shiny::p(class = "dg-muted", "Saved results open without refitting. Files stay in their existing directory.")
       ),
+      shiny::selectInput("display_scale", "Coordinate display", choices = c(
+        "Original coordinates (equal units)" = "original",
+        "Centered, one scale factor" = "isotropic",
+        "Per-axis normalization (distorts proportions)" = "per.axis")),
       shiny::uiOutput("selector_panel"),
       shiny::uiOutput("asset_panel")
     ),

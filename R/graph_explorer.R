@@ -67,8 +67,6 @@
 #' @param project Optional benchmark directory, benchmark manifest file, or
 #'   name previously stored by [register.graph.project()]. When omitted, the
 #'   app opens a project selector. No dataset is loaded or fitted automatically.
-#' @param run_dir Compatibility argument for older dggraphui launch scripts.
-#'   Supply either this or `project`, not both.
 #' @param launch If `TRUE`, run the application; if `FALSE`, return its Shiny
 #'   application object without starting a server.
 #' @param host Interface on which to listen; defaults to the local computer.
@@ -81,18 +79,23 @@
 #' the explorer. The optional grip package is needed only when explicitly
 #' generating a missing weighted layout. Opening a project reads saved results;
 #' it does not reconstruct graphs, fit layouts or overwrite benchmark assets.
-#' Newly generated layouts are stored in a separate user cache. Legacy
-#' dggraphui caches are used only when their graph provenance matches.
+#' Newly generated layouts are stored in a separate dgraphs user cache.
 #'
 #' Project registration stores locations in the user's dgraphs data directory,
 #' outside the installed package. Set `options(dgraphs.projects_dir = ...)`
 #' to choose another catalog directory. Set
 #' `options(dgraphs.graph_explorer_cache_dir = ...)` to choose the layout cache.
-#' The older `dggraphui.cache_dir` option is also accepted.
 #'
-#' The viewer retains dggraphui's per-axis display normalization. These display
-#' coordinates are not the original metric coordinates; metric tables continue
-#' to report the saved benchmark values.
+#' The default display preserves original coordinates and equal x/y/z units.
+#' Optional centering with a single scale factor preserves proportions.
+#' Per-axis normalization is labeled as distorting proportions. The displayed
+#' edge count discloses thinning above 4000 edges; saved metrics always use the
+#' complete graph and are never recomputed by display controls.
+#'
+#' Choose Open circle demo in the app, or use the installed project below.
+#' Its two chord-weighted graphs use 12 equally spaced unit-circle points.
+#' Increasing k from 2 to 4 introduces shortcuts relative to exact shorter
+#' circle arcs. Layouts and metrics are already saved; no fitting is needed.
 #'
 #' @return When `launch = FALSE`, a `shiny.appobj`; otherwise the result of
 #'   [shiny::runApp()], invisibly.
@@ -101,11 +104,14 @@
 #' @examples
 #' if (interactive() && all(vapply(c("shiny", "bslib", "plotly", "digest"),
 #'                                requireNamespace, logical(1), quietly = TRUE))) {
-#'     explore.graphs()
+#'     demo <- system.file("extdata", "graph-explorer-demo", package = "dgraphs")
+#'     explore.graphs(demo)
 #' }
-explore.graphs <- function(project = NULL, run_dir = NULL, launch = TRUE,
+explore.graphs <- function(project = NULL, launch = TRUE,
                            host = "127.0.0.1", port = getOption("shiny.port"),
                            launch.browser = interactive(), ...) {
+    dots <- list(...)
+    if ("run_dir" %in% names(dots)) stop("run_dir has been removed; use project.", call. = FALSE)
     packages <- c("shiny", "bslib", "plotly", "digest")
     missing <- packages[!vapply(packages, requireNamespace, logical(1), quietly = TRUE)]
     if (length(missing)) {
@@ -113,13 +119,9 @@ explore.graphs <- function(project = NULL, run_dir = NULL, launch = TRUE,
              paste(missing, collapse = ", "), ". Install them before launching.",
              call. = FALSE)
     }
-    if (!is.null(project) && !is.null(run_dir)) {
-        stop("Supply only one of project and run_dir.", call. = FALSE)
-    }
     if (!is.logical(launch) || length(launch) != 1L || is.na(launch)) {
         stop("launch must be TRUE or FALSE.", call. = FALSE)
     }
-    if (is.null(project)) project <- run_dir
     path <- if (is.null(project)) "" else .graph_project_path(project)
     env <- .graph_explorer_env()
     app <- shiny::shinyApp(

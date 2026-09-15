@@ -6,7 +6,6 @@
 \usage{
 explore.graphs(
   project = NULL,
-  run_dir = NULL,
   launch = TRUE,
   host = "127.0.0.1",
   port = getOption("shiny.port"),
@@ -18,9 +17,6 @@ explore.graphs(
 \item{project}{Optional benchmark directory, benchmark manifest file, or
 name previously stored by \code{\link[=register.graph.project]{register.graph.project()}}. When omitted, the
 app opens a project selector. No dataset is loaded or fitted automatically.}
-
-\item{run_dir}{Compatibility argument for older dggraphui launch scripts.
-Supply either this or \code{project}, not both.}
 
 \item{launch}{If \code{TRUE}, run the application; if \code{FALSE}, return its Shiny
 application object without starting a server.}
@@ -47,23 +43,29 @@ The optional packages shiny, bslib, plotly and digest are required only for
 the explorer. The optional grip package is needed only when explicitly
 generating a missing weighted layout. Opening a project reads saved results;
 it does not reconstruct graphs, fit layouts or overwrite benchmark assets.
-Newly generated layouts are stored in a separate user cache. Legacy
-dggraphui caches are used only when their graph provenance matches.
+Newly generated layouts are stored in a separate dgraphs user cache.
 
 Project registration stores locations in the user's dgraphs data directory,
 outside the installed package. Set \code{options(dgraphs.projects_dir = ...)}
 to choose another catalog directory. Set
 \code{options(dgraphs.graph_explorer_cache_dir = ...)} to choose the layout cache.
-The older \code{dggraphui.cache_dir} option is also accepted.
 
-The viewer retains dggraphui's per-axis display normalization. These display
-coordinates are not the original metric coordinates; metric tables continue
-to report the saved benchmark values.
+The default display preserves original coordinates and equal x/y/z units.
+Optional centering with a single scale factor preserves proportions.
+Per-axis normalization is labeled as distorting proportions. The displayed
+edge count discloses thinning above 4000 edges; saved metrics always use the
+complete graph and are never recomputed by display controls.
+
+Choose Open circle demo in the app, or use the installed project below.
+Its two chord-weighted graphs use 12 equally spaced unit-circle points.
+Increasing k from 2 to 4 introduces shortcuts relative to exact shorter
+circle arcs. Layouts and metrics are already saved; no fitting is needed.
 }
 \examples{
 if (interactive() && all(vapply(c("shiny", "bslib", "plotly", "digest"),
                                requireNamespace, logical(1), quietly = TRUE))) {
-    explore.graphs()
+    demo <- system.file("extdata", "graph-explorer-demo", package = "dgraphs")
+    explore.graphs(demo)
 }
 }
 \seealso{

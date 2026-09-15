@@ -6,13 +6,48 @@ nearest-neighbor graphs, radius and adaptive-radius graphs, and
 minimum-spanning-tree completion. Utilities for conversion, pruning,
 diagnostics, spectral embedding, endpoints, and paths are also provided.
 
-## Installation
+## Install the version used here
 
-Install the released package from CRAN with:
+This page and the [website](https://pgajer.github.io/dgraphs/) document
+**development version 0.3.0.9000**. CRAN currently supplies **0.2.0**
+(checked 15 September 2026), which has an older public API. Changing the
+repository version does not publish a CRAN release.
+
+For all examples on this page, install the development package, including
+its offline guides. A C++17 toolchain and Pandoc are required for this source
+installation (Rtools on Windows; Xcode command-line tools on macOS):
+
+```r
+install.packages(c("remotes", "knitr", "rmarkdown"))
+remotes::install_github("pgajer/dgraphs", dependencies = NA,
+                        build_vignettes = TRUE)
+library(dgraphs)
+packageVersion("dgraphs")  # 0.3.0.9000
+```
+
+The guides include static figures without optional viewers. For the 3D
+quadratic-form galleries, install `htmlwidgets` and `rgl`, then install the
+pinned viewer before building dgraphs:
+
+```r
+install.packages(c("htmlwidgets", "rgl"))
+remotes::install_github("pgajer/ivue@a952ab6816636a19f2038ba0709181608b71770d",
+                        dependencies = NA)
+```
+
+To stay on CRAN 0.2.0, use this separate, release-compatible example:
 
 ```r
 install.packages("dgraphs")
+library(dgraphs)
+set.seed(1)
+x <- matrix(rnorm(80), ncol = 2)
+graph <- create.mknn.graph(x, k = 4)
+print(graph)
 ```
+
+The remaining examples use the development installation above. Breaking
+changes are described in [NEWS](https://pgajer.github.io/dgraphs/news/index.html).
 
 ## Example
 
@@ -59,14 +94,14 @@ vignette("data-derived-graph-workflow", package = "dgraphs")
 
 ## Guides
 
-- [Finding your way around dgraphs](vignettes/function-guide.Rmd): choose an
+- [Finding your way around dgraphs](https://pgajer.github.io/dgraphs/articles/function-guide.html): choose an
   entry point by task and browse the complete public-function catalog.
-- [Synthetic geometry and point sampling](vignettes/synthetic-geometry.Rmd):
+- [Synthetic geometry and point sampling](https://pgajer.github.io/dgraphs/articles/synthetic-geometry.html):
   create reproducible curves, surfaces and compositions, then build graphs.
-- [Constructing and Diagnosing Data-Derived Graphs](vignettes/data-derived-graph-workflow.Rmd):
+- [Constructing and Diagnosing Data-Derived Graphs](https://pgajer.github.io/dgraphs/articles/data-derived-graph-workflow.html):
   compare graph families, connectivity repair and geodesic diagnostics.
 
-After installing a version containing the new guides, open the rendered
+After installing the development package with `build_vignettes = TRUE`, open the rendered
 vignettes with:
 
 ```r
@@ -83,8 +118,16 @@ For example, construct a graph on a quadratic saddle:
 surface <- synthetic.quadform(2, 3, list(diag(c(1, -1))))
 points <- sample.synthetic.geometry(surface,
   synthetic.sampling.uniform.disk(1), n = 100, seed = 4101)
-graph <- create.mknn.graph(points$predictors, k = 6)
+graph <- create.sknn.graph(points$predictors, k = 6, connect.components = FALSE)
 ```
+
+![Perspective of 100 points sampled on a saddle, with symmetric six-neighbor chord edges and equal-unit x/y/z axes.](man/figures/README-saddle.png)
+
+The figure uses the exact seed and sample above. Edges carry Euclidean chord
+lengths, not surface geodesic lengths. Color represents height, from blue
+(low) through cream to red (high). Its [generation recipe](dev/build-readme-figure.R)
+also defines the labeled perspective view. The [full geometry gallery](https://pgajer.github.io/dgraphs/articles/synthetic-geometry.html)
+compares forms, sampling densities, coordinate frames and dimensions.
 
 Geometry-only samples contain coordinates, geometric metadata and reproducible
 random-state information. Statistical truth, responses, named recipe registries
@@ -102,4 +145,17 @@ The no-argument launcher presents your saved projects. Scientific data stay
 outside the package; opening them does not rerun analysis. `grip` is needed only
 when you explicitly generate a missing weighted layout.
 
-See `?explore.graphs` for project paths, caches, and dggraphui compatibility.
+Start with the bundled twelve-point circle comparison:
+
+```r
+install.packages(c("shiny", "bslib", "plotly", "digest"))
+demo <- system.file("extdata", "graph-explorer-demo", package = "dgraphs")
+benchmark <- read.graph.benchmark(demo)
+explore.graphs(demo)
+```
+
+Compare k = 2 and k = 4: extra chords increase error relative to exact circle
+arcs. Both graph layouts and metric tables are saved, so this demonstration
+needs no fitting or project registration. The default display preserves
+coordinate proportions, with labeled x/y/z axes. See `?explore.graphs` for
+project paths and cache controls.

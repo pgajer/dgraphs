@@ -94,3 +94,18 @@ test_that("Geometry Lab policy preserves disk draw order and continuation", {
     synthetic.circle()), "requires a canonical")
   expect_error(synthetic.sampling.quadform.lab(algorithm="v2"),"Unknown")
 })
+
+test_that("RNG state validation respects current R header fields", {
+  old <- RNGkind(); on.exit(do.call(RNGkind,as.list(old)),add=TRUE)
+  for (kind in c("L'Ecuyer-CMRG","Mersenne-Twister")) {
+    RNGkind(kind,"Inversion","Rejection");set.seed(17)
+    state <- .Random.seed
+    expect_identical(.synthetic.validate.state(state,"sampling"),state)
+    unsupported <- state; unsupported[1] <- state[1] %% 100000L + 200000L
+    expect_error(.synthetic.validate.state(unsupported,"sampling"),"state")
+    modern <- state; modern[1] <- state[1] %% 100000L + 100000L
+    if ("binom.kind" %in% names(formals(RNGkind)))
+      expect_identical(.synthetic.validate.state(modern,"sampling"),modern)
+    else expect_error(.synthetic.validate.state(modern,"sampling"),"state")
+  }
+})

@@ -169,7 +169,7 @@ an exact continuous surface.
 To rebuild interactive views, install ivue and its optional `rgl` backend.
 The ivue source is available from its [package repository](https://github.com/pgajer/ivue).
 The numerical examples execute independently of ivue. Builds without the
-optional visualization packages show static coordinate projections instead;
+optional visualization packages show labeled static perspective views instead;
 an HTML built with ivue contains its interactive views and needs only a
 WebGL-capable browser to read it, with no running R or Shiny session.
 
@@ -190,13 +190,15 @@ quad.view <- function(X, description, triangles = NULL, edges = NULL, values = X
 }
 quad.gallery <- function(views, id) {
     if (!have.ivue) {
-        old <- par(mfrow = c(ceiling(length(views)/3), 3), mar = c(2, 1, 3, 1))
+        old <- par(mfrow = c(ceiling(length(views)/3), 3), mar = c(3, 1, 3, 1))
         on.exit(par(old), add = TRUE)
         bounds <- do.call(rbind, lapply(views, function(v) v$X))
         for (j in seq_along(views)) {
             v <- views[[j]]
             dgraphs_perspective(v$X, names(views)[j], v$labels, v$values,
                                 v$triangles, v$edges, limits = bounds)
+            mtext(paste0(v$color.title, ": ", paste(signif(range(v$values), 2), collapse = " to ")),
+                  side = 1, line = 1, cex = 0.55)
         }
         return(invisible(NULL))
     }

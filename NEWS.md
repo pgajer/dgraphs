@@ -14,6 +14,9 @@
 * Make the package overview visible in installed help. Link every catalog and
   method entry to detailed help generated from the same installed Rd database,
   including offline copies. Add perspective static galleries and figure alt text.
+* Accept the additional binomial-generator field in R-devel RNG state headers
+  when supported by the runtime, preserving replay tokens and existing word
+  validation instead of rejecting freshly generated states.
 * Separate release/development installation examples, add a reproducible README
   figure and a pkgdown site, and validate static and interactive documentation
   separately in CI with exact source/archive fingerprints and Windows coverage.

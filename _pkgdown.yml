@@ -4,7 +4,7 @@ template:
   bootstrap: 5
 development:
   mode: devel
-  destination: .
+  destination: "."
 home:
   title: Data-derived graphs and reproducible geometry
 navbar:
@@ -146,12 +146,10 @@ reference:
       - register.graph.project
   - title: Object methods and supporting reference
     contents:
-      - dgraphs-package
-      - dot-dgraphs.validate.adj.list
+      - dgraphs
       - inspect.path.graph
       - inspect.path.graph.series
       - inspect.synthetic_geometry_sample
-      - new.path.graph
       - overlap.distribution.plot
       - plot.IkNNgraphs
       - plot.build_iknn_graphs_and_selectk
@@ -173,10 +171,6 @@ reference:
       - print.path.graph.plm
       - print.summary.knn.outliers
       - print.summary.mst_completion_graph
-      - quadform_geodesics
-      - quadform_geodesics_best_of_six
-      - quadform_geodesics_solver
-      - summarize_overlap_statistics
       - summary.IkNN
       - summary.geodesic_stats
       - summary.iknn_graphs
@@ -188,3 +182,4 @@ reference:
       - summary.rknn_graphs
       - summary.vertex_geodesic_stats
       - vertices.local_extrema
+llm-docs: false

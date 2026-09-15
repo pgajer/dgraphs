@@ -77,13 +77,20 @@ validate.synthetic.sampling <- function(sampling, geometry = NULL) {
 .synthetic.validate.state <- function(state, name) {
   # Explicit state interchange supports the two RNG kinds used by the
   # historical generators, with Inversion normals and Rejection sampling.
-  if (!is.integer(state) || anyNA(state) ||
-      !((length(state) == 7L && state[1L] == 10407L) ||
-        (length(state) == 626L && state[1L] == 10403L)))
+  # R 4.7 adds a binomial-generator digit above the existing RNG fields.
+  # Preserve it in replay tokens; reject tokens unsupported by this R runtime.
+  if (!is.integer(state) || anyNA(state) || !length(state))
+    stop(name, " must be a complete integer RNG state.", call. = FALSE)
+  header <- state[1L] %% 100000L
+  binomial <- state[1L] %/% 100000L
+  supported.binomial <- if ("binom.kind" %in% names(formals(RNGkind))) 0:1 else 0L
+  if (state[1L] < 0L || !binomial %in% supported.binomial ||
+      !((length(state) == 7L && header == 10407L) ||
+        (length(state) == 626L && header == 10403L)))
     stop(name, " must be a complete L'Ecuyer-CMRG or Mersenne-Twister state with Inversion/Rejection.", call. = FALSE)
-  if (state[1L] == 10403L && (state[2L] < 0L || state[2L] > 624L))
+  if (header == 10403L && (state[2L] < 0L || state[2L] > 624L))
     stop(name, " has an invalid Mersenne-Twister position.", call. = FALSE)
-  if (state[1L] == 10407L) {
+  if (header == 10407L) {
     words <- as.double(state[-1L]); words[words < 0] <- words[words < 0] + 2^32
     if (any(words[1:3] >= 4294967087) || any(words[4:6] >= 4294944443) ||
         all(words[1:3] == 0) || all(words[4:6] == 0))
@@ -107,7 +114,10 @@ validate.synthetic.sampling <- function(sampling, geometry = NULL) {
 #'   `"sampling.frame"` or `"frame.sampling"`, and `sampling` and `frame` RNG
 #'   states. States are complete integer `.Random.seed` vectors for
 #'   L'Ecuyer-CMRG or Mersenne-Twister with Inversion/Rejection. `frame` is `NULL`
-#'   unless a random frame is requested. Retry/substream selection belongs to
+#'   unless a random frame is requested. State headers retain R's binomial
+#'   generator field when supported by the running R version; a newer state
+#'   cannot be replayed on an R version that does not support it.
+#'   Retry/substream selection belongs to
 #'   the caller. The standalone seed assigns sampling its initial stream and
 #'   the random frame the next independent stream. Alternatively, `"current"`
 #'   consumes the current R stream directly, sampling before any random frame.

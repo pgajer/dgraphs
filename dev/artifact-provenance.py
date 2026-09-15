@@ -15,7 +15,9 @@ if __name__ == '__main__':
     command = sys.argv[1]
     if command == 'write':
         record = dict(source_files=snapshot(), git_revision=subprocess.check_output(
-            ['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(), platform=platform.platform(),
+            ['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
+            working_tree_dirty=bool(subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip()),
+            platform=platform.platform(),
             media_mode='static' if os.getenv('DGRAPHS_STATIC_VIGNETTES') == 'true' else 'interactive-if-available')
         (ROOT/'inst/build-provenance.json').write_text(json.dumps(record,indent=2)+'\n')
     elif command == 'verify':

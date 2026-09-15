@@ -10,6 +10,7 @@ pkgdown::build_site(new_process=FALSE,install=FALSE)
 for(p in list.files("build/site", "[.]html$",recursive=TRUE,full.names=TRUE)) {
   text <- readLines(p,warn=FALSE)
   text <- gsub('href="../doc/', 'href="../articles/', text, fixed=TRUE)
+  text <- gsub('href="dev/', 'href="https://github.com/pgajer/dgraphs/blob/main/dev/', text, fixed=TRUE)
   writeLines(text,p)
 }
 writeLines(capture.output(sessionInfo()),"build/site/session-info.txt")

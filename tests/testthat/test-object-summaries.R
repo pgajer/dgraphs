@@ -22,3 +22,13 @@ test_that("path series reports stored graph and route counts", {
   text <- capture.output(out <- withVisible(print(x)))
   expect_lte(length(text),14); expect_false(out$visible); expect_identical(out$value,x)
 })
+
+test_that("mixed-dimensional samples report region dimensions and counts", {
+  x <- sample.synthetic.geometry(synthetic.simplex(3),
+    synthetic.sampling.dirichlet.zeros(c(1,1,1),zero.fraction=.5,zero.parts=3),n=10,seed=17)
+  s <- summary(x)
+  expect_output(print(x),"varies by region")
+  expect_equal(s$intrinsic.dim.by.region,c(interior=2,zero=1))
+  expect_equal(as.numeric(s$regions),c(5,5))
+  expect_output(print(s),"Intrinsic dimensions by region")
+})

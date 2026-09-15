@@ -14,7 +14,7 @@
 #' @export
 print.synthetic_geometry_sample <- function(x, ...) {
     cat("Synthetic geometry sample:", x$geometry.spec$family, "\n")
-    cat("Points:", x$n, "| Intrinsic dimension:", x$intrinsic.dim,
+    cat("Points:", x$n, "| Intrinsic dimension:", if (is.na(x$intrinsic.dim)) "varies by region" else x$intrinsic.dim,
         "| Ambient dimension:", x$ambient.dim, "\n")
     cat("Sampler:", x$sampling.spec$family, "| Frame:", x$geometry.spec$parameters$frame, "\n")
     cat("RNG:", if (identical(x$rng$plan, "current")) "current stream" else "isolated seed/state plan", "\n")
@@ -30,6 +30,7 @@ summary.synthetic_geometry_sample <- function(object, ...) {
     rownames(ranges) <- if (is.null(colnames(X))) paste0("coordinate", seq_len(ncol(X))) else colnames(X)
     structure(list(family = object$geometry.spec$family, sampling = object$sampling.spec$family,
         n = object$n, intrinsic.dim = object$intrinsic.dim, ambient.dim = object$ambient.dim,
+        intrinsic.dim.by.region = object$intrinsic.dim.by.region,
         ranges = ranges, regions = table(object$region),
         rng.mode = if (identical(object$rng$plan, "current")) "current stream" else "isolated seed/state plan"),
         class = "summary.synthetic_geometry_sample")
@@ -37,9 +38,12 @@ summary.synthetic_geometry_sample <- function(object, ...) {
 #' @rdname inspect.synthetic_geometry_sample
 #' @export
 print.summary.synthetic_geometry_sample <- function(x, ...) {
-    cat(x$family, "sample:", x$n, "points;", x$intrinsic.dim, "intrinsic and", x$ambient.dim, "ambient dimensions\n")
+    cat(x$family, "sample:", x$n, "points;", x$ambient.dim, "ambient dimensions\n")
+    if (is.na(x$intrinsic.dim)) { cat("Intrinsic dimensions by region:\n"); print(x$intrinsic.dim.by.region) }
+    else cat("Intrinsic dimension:", x$intrinsic.dim, "\n")
     cat("Sampler:", x$sampling, "| RNG:", x$rng.mode, "\n")
-    print(x$ranges)
+    print(utils::head(x$ranges, 10))
+    if (nrow(x$ranges) > 10) cat("More coordinate ranges in summary(x)$ranges.\n")
     if (length(x$regions)) { cat("Observed region counts:\n"); print(x$regions) }
     invisible(x)
 }

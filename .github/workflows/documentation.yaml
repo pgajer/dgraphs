@@ -52,6 +52,8 @@ jobs:
           library(dgraphs)
           testthat::test_file("tests/testthat/test-graph-explorer.R", env=new.env(parent=asNamespace("dgraphs")), stop_on_failure=TRUE)
           source("dev/build-site.R")
+      - name: Audit published navigation and image descriptions
+        run: python3 dev/audit-site.py
       - uses: actions/upload-pages-artifact@v3
         with:
           path: build/site

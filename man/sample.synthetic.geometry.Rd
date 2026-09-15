@@ -26,7 +26,10 @@ Supply exactly one of \code{seed} and \code{rng.plan}.}
 \code{"sampling.frame"} or \code{"frame.sampling"}, and \code{sampling} and \code{frame} RNG
 states. States are complete integer \code{.Random.seed} vectors for
 L'Ecuyer-CMRG or Mersenne-Twister with Inversion/Rejection. \code{frame} is \code{NULL}
-unless a random frame is requested. Retry/substream selection belongs to
+unless a random frame is requested. State headers retain R's binomial
+generator field when supported by the running R version; a newer state
+cannot be replayed on an R version that does not support it.
+Retry/substream selection belongs to
 the caller. The standalone seed assigns sampling its initial stream and
 the random frame the next independent stream. Alternatively, \code{"current"}
 consumes the current R stream directly, sampling before any random frame.

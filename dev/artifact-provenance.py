@@ -4,7 +4,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 def snapshot():
     paths = [ROOT / n for n in ('DESCRIPTION','NAMESPACE','LICENSE','NEWS.md','README.md')]
-    for directory in ('R','src','man','vignettes','inst'):
+    for directory in ('R','src','man','vignettes','inst','tests'):
         paths.extend(p for p in (ROOT / directory).rglob('*') if p.is_file()
                      and p.suffix not in ('.o','.so','.dll','.dylib')
                      and p.name != 'build-provenance.json')

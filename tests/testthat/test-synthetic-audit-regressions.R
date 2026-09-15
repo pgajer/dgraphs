@@ -32,7 +32,8 @@ test_that("current-stream mode preserves selected generators and hidden normal c
   kinds <- RNGkind(); withr::defer(do.call(RNGkind, as.list(kinds)))
   for (kind in c("Mersenne-Twister", "L'Ecuyer-CMRG", "Wichmann-Hill")) {
     for (normal in c("Inversion", "Box-Muller")) {
-      RNGkind(kind,normal,"Rejection"); set.seed(93); invisible(rnorm(1))
+      RNGkind(kind,normal,"Rejection")
+      selected.kinds <- RNGkind(); set.seed(93); invisible(rnorm(1))
       expected <- matrix(runif(4,-1,1),2,2); following <- rnorm(5); end <- .Random.seed
       set.seed(93); invisible(rnorm(1))
       a <- sample.synthetic.geometry(synthetic.quadform(2,2),
@@ -40,7 +41,7 @@ test_that("current-stream mode preserves selected generators and hidden normal c
       expect_identical(a$latent,expected)
       expect_identical(rnorm(5),following)
       expect_identical(.Random.seed,end)
-      expect_identical(RNGkind(),c(kind,normal,"Rejection"))
+      expect_identical(RNGkind(),selected.kinds)
       expect_identical(a$rng$plan,"current")
     }
   }

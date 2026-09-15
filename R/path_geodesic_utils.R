@@ -14,50 +14,86 @@
     list(nn.i = nn.i, nn.d = nn.d)
 }
 
+# Validate once at the public boundary, preserving one-dimensional matrices.
+.path.coordinates <- function(X, name) {
+    if (!is.matrix(X) || !is.numeric(X) || is.complex(X) || nrow(X) < 1L || ncol(X) < 1L ||
+        any(!is.finite(X))) {
+        stop(name, " must be a finite numeric matrix with at least one row and one column.",
+             call. = FALSE)
+    }
+    storage.mode(X) <- "double"
+    X
+}
+
+.path.cumulative.distances <- function(X) {
+    n <- nrow(X)
+    if (n == 1L) return(0)
+    lengths <- vapply(seq_len(n - 1L), function(i) {
+        delta <- X[i + 1L, ] - X[i, ]
+        scale <- max(abs(delta))
+        if (!is.finite(scale)) return(Inf)
+        if (scale == 0) return(0)
+        # Scaling avoids overflow/underflow when squaring finite differences.
+        scale * sqrt(sum((delta / scale)^2))
+    }, numeric(1))
+    distances <- c(0, cumsum(lengths))
+    if (any(!is.finite(distances)))
+        stop("The total path length exceeds the finite numeric range.", call. = FALSE)
+    distances
+}
+
 #' Normalized Cumulative Distance Along a Vertex Path
 #'
-#' @param s Sequence of vertex indices.
-#' @param V Vertex coordinate matrix.
+#' @param s Nonempty numeric vector of integer vertex indices in `1:nrow(V)`.
+#'   Repeated indices are allowed and the supplied order defines the path.
+#' @param V Finite numeric vertex coordinate matrix with at least one row and
+#'   one column.
 #' @param edge.col Legacy argument retained for compatibility.
 #'
-#' @return Numeric vector of cumulative path distances normalized to end at 1.
+#' @return Numeric vector of length `length(s)`. For a positive-length path,
+#'   cumulative Euclidean distances start at zero and end at one. A singleton
+#'   or zero-length path returns all zeros. Empty paths and total lengths
+#'   exceeding the finite numeric range are rejected.
+#' @seealso [path.length()], [subdivide.path()]
 #'
 #' @examples
 #' vertices <- rbind(c(0, 0), c(1, 0), c(1, 2))
 #' path.dist(1:3, vertices)
+#' path.dist(2, vertices) # a singleton has normalized distance zero
 #'
 #' @export
 path.dist <- function(s, V, edge.col = "gray") {
-    n <- length(s)
-    d <- numeric(n)
-    for (i in 2:n) {
-        M <- rbind(V[s[i - 1], ], V[s[i], ])
-        d[i] <- d[i - 1] + as.numeric(stats::dist(M))
+    V <- .path.coordinates(V, "V")
+    if (!is.numeric(s) || is.complex(s) || !is.null(dim(s)) || length(s) == 0L ||
+        any(!is.finite(s)) || any(s != floor(s)) ||
+        any(s < 1 | s > nrow(V))) {
+        stop("s must be a nonempty vector of integer vertex indices in 1:nrow(V).",
+             call. = FALSE)
     }
-    d / d[n]
+    distances <- .path.cumulative.distances(V[s, , drop = FALSE])
+    total <- distances[length(distances)]
+    if (total == 0) distances else distances / total
 }
 
 #' Compute Euclidean Path Length
 #'
-#' @param X Numeric matrix whose rows are consecutive path points.
+#' @param X Finite numeric matrix whose rows are consecutive path points,
+#'   with at least one row and one column.
 #'
-#' @return Total Euclidean length of the path.
+#' @return Total Euclidean length of the polyline. Singleton paths and paths
+#'   whose points all coincide have length zero. Empty paths and total lengths
+#'   exceeding the finite numeric range are rejected.
+#' @seealso [path.dist()], [subdivide.path()]
 #'
 #' @examples
 #' path.length(rbind(c(0, 0), c(1, 0), c(1, 2)))
+#' path.length(matrix(c(1, 2), nrow = 1)) # zero
 #'
 #' @export
 path.length <- function(X) {
-    stopifnot(is.numeric(X))
-    stopifnot(is.finite(X))
-    nrX <- nrow(X)
-
-    path.len <- 0
-    for (i in 2:nrX) {
-        path.len <- path.len + sqrt(sum((X[i, ] - X[i - 1, ])^2))
-    }
-
-    path.len
+    X <- .path.coordinates(X, "X")
+    distances <- .path.cumulative.distances(X)
+    distances[length(distances)]
 }
 
 .point.euclidean.distance <- function(p1, p2) {
@@ -66,57 +102,62 @@ path.length <- function(X) {
 
 #' Subdivide a Path into Arc-Length Spaced Points
 #'
-#' @param path Matrix of consecutive path points.
-#' @param n.subdivision.pts Number of output points.
+#' @param path Finite numeric matrix of consecutive path points, with at least
+#'   one row and one column. Repeated consecutive points are allowed.
+#' @param n.subdivision.pts Integer number of output points, at least two.
 #'
-#' @return Matrix of subdivided path coordinates.
+#' @return Numeric matrix with `n.subdivision.pts` rows and `ncol(path)` columns,
+#'   preserving coordinate column names. The first and last rows are the path
+#'   endpoints. A singleton or zero-length path repeats its location in every
+#'   output row. Empty paths are rejected.
+#'
+#' @details
+#' Points are interpolated at equally spaced cumulative Euclidean distances
+#' along the input polyline. Zero-length segments are skipped. Equal spacing
+#' along the polyline does not imply equal straight-line distances between
+#' output points that straddle a corner, and an interior vertex need not appear
+#' in the output. Distances are evaluated in floating-point arithmetic; paths
+#' whose total length exceeds the finite numeric range are rejected.
+#' @seealso [path.length()], [path.dist()]
 #'
 #' @examples
 #' path <- rbind(c(0, 0), c(1, 0), c(1, 2))
 #' subdivide.path(path, n.subdivision.pts = 5)
+#' # Arc distances 0, 0.75, 1.5, 2.25, 3 give:
+#' # (0, 0), (0.75, 0), (1, 0.5), (1, 1.25), (1, 2).
+#' subdivide.path(matrix(c(1, 2), nrow = 1), n.subdivision.pts = 3)
 #'
 #' @export
 subdivide.path <- function(path, n.subdivision.pts) {
-    n.pts <- dim(path)[1]
-    length.list <- sapply(
-        seq(n.pts - 1),
-        function(i) .point.euclidean.distance(path[i, ], path[i + 1, ])
-    )
-    total.length <- sum(length.list)
-    subdiv.dist <- total.length / (n.subdivision.pts - 1)
-
-    subdivision.pts <- matrix(nrow = n.subdivision.pts, ncol = ncol(path))
-
-    start.offset <- 0
-    edge.subdivision.dist <- start.offset
-    subdivision.ix <- 1
-    path.pt <- 1
-
-    while (path.pt < n.pts) {
-        edge.subdivision.dist <- edge.subdivision.dist + subdiv.dist
-
-        while (edge.subdivision.dist <= length.list[path.pt]) {
-            if (edge.subdivision.dist > 0) {
-                v <- path[path.pt + 1, ] - path[path.pt, ]
-                unit.v <- v / sqrt(sum(v^2))
-                subdivision.pts[subdivision.ix, ] <-
-                    path[path.pt, ] + edge.subdivision.dist * unit.v
-            } else {
-                subdivision.pts[subdivision.ix, ] <- path[path.pt, ]
-            }
-
-            subdivision.ix <- subdivision.ix + 1
-            edge.subdivision.dist <- edge.subdivision.dist + subdiv.dist
-        }
-
-        start.offset <- edge.subdivision.dist - length.list[path.pt]
-        edge.subdivision.dist <- start.offset
-        path.pt <- path.pt + 1
+    path <- .path.coordinates(path, "path")
+    if (!is.numeric(n.subdivision.pts) || is.complex(n.subdivision.pts) ||
+        !is.null(dim(n.subdivision.pts)) || length(n.subdivision.pts) != 1L ||
+        !is.finite(n.subdivision.pts) || n.subdivision.pts < 2 ||
+        n.subdivision.pts != floor(n.subdivision.pts) ||
+        n.subdivision.pts > .Machine$integer.max) {
+        stop("n.subdivision.pts must be an integer between 2 and .Machine$integer.max.",
+             call. = FALSE)
     }
-
-    subdivision.pts[n.subdivision.pts, ] <- path[n.pts, ]
-
-    subdivision.pts
+    distances <- .path.cumulative.distances(path)
+    total <- distances[length(distances)]
+    if (total == 0) {
+        out <- path[rep.int(1L, n.subdivision.pts), , drop = FALSE]
+    } else {
+        # Strictly increasing knots avoid division by zero at repeated points.
+        keep <- c(TRUE, diff(distances) > 0)
+        knots <- distances[keep]
+        points <- path[keep, , drop = FALSE]
+        targets <- seq(0, 1, length.out = n.subdivision.pts) * total
+        segment <- pmin(findInterval(targets, knots), length(knots) - 1L)
+        fraction <- (targets - knots[segment]) /
+            (knots[segment + 1L] - knots[segment])
+        out <- (1 - fraction) * points[segment, , drop = FALSE] +
+            fraction * points[segment + 1L, , drop = FALSE]
+        out[1L, ] <- path[1L, ]
+        out[n.subdivision.pts, ] <- path[nrow(path), ]
+    }
+    rownames(out) <- NULL
+    out
 }
 
 #' Estimate Geodesic Nearest Neighbors Within a Point Cloud

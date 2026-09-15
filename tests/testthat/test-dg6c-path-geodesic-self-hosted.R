@@ -9,7 +9,7 @@ test_that("DG6c path distance helpers run self-hosted", {
     expect_equal(dgraphs:::.point.euclidean.distance(c(0, 0), c(3, 4)), 5)
     subdivided <- dgraphs::subdivide.path(V, n.subdivision.pts = 6)
     expect_equal(dim(subdivided), c(6L, 2L))
-    expect_equal(subdivided, matrix(c(0.6, 0, 1, 0.8, 2, 1, NA, NA, NA, NA, 2, 1), ncol = 2, byrow = TRUE))
+    expect_equal(subdivided, matrix(c(0, 0, 0.6, 0, 1, 0.2, 1, 0.8, 1.4, 1, 2, 1), ncol = 2, byrow = TRUE))
     expect_equal(subdivided[6, ], V[4, ])
 })
 

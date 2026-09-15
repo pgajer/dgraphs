@@ -7,14 +7,19 @@
 path.dist(s, V, edge.col = "gray")
 }
 \arguments{
-\item{s}{Sequence of vertex indices.}
+\item{s}{Nonempty numeric vector of integer vertex indices in \code{1:nrow(V)}.
+Repeated indices are allowed and the supplied order defines the path.}
 
-\item{V}{Vertex coordinate matrix.}
+\item{V}{Finite numeric vertex coordinate matrix with at least one row and
+one column.}
 
 \item{edge.col}{Legacy argument retained for compatibility.}
 }
 \value{
-Numeric vector of cumulative path distances normalized to end at 1.
+Numeric vector of length \code{length(s)}. For a positive-length path,
+cumulative Euclidean distances start at zero and end at one. A singleton
+or zero-length path returns all zeros. Empty paths and total lengths
+exceeding the finite numeric range are rejected.
 }
 \description{
 Normalized Cumulative Distance Along a Vertex Path
@@ -22,5 +27,9 @@ Normalized Cumulative Distance Along a Vertex Path
 \examples{
 vertices <- rbind(c(0, 0), c(1, 0), c(1, 2))
 path.dist(1:3, vertices)
+path.dist(2, vertices) # a singleton has normalized distance zero
 
+}
+\seealso{
+\code{\link[=path.length]{path.length()}}, \code{\link[=subdivide.path]{subdivide.path()}}
 }

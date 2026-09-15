@@ -7,15 +7,22 @@
 path.length(X)
 }
 \arguments{
-\item{X}{Numeric matrix whose rows are consecutive path points.}
+\item{X}{Finite numeric matrix whose rows are consecutive path points,
+with at least one row and one column.}
 }
 \value{
-Total Euclidean length of the path.
+Total Euclidean length of the polyline. Singleton paths and paths
+whose points all coincide have length zero. Empty paths and total lengths
+exceeding the finite numeric range are rejected.
 }
 \description{
 Compute Euclidean Path Length
 }
 \examples{
 path.length(rbind(c(0, 0), c(1, 0), c(1, 2)))
+path.length(matrix(c(1, 2), nrow = 1)) # zero
 
+}
+\seealso{
+\code{\link[=path.dist]{path.dist()}}, \code{\link[=subdivide.path]{subdivide.path()}}
 }

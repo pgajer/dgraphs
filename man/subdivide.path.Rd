@@ -7,18 +7,36 @@
 subdivide.path(path, n.subdivision.pts)
 }
 \arguments{
-\item{path}{Matrix of consecutive path points.}
+\item{path}{Finite numeric matrix of consecutive path points, with at least
+one row and one column. Repeated consecutive points are allowed.}
 
-\item{n.subdivision.pts}{Number of output points.}
+\item{n.subdivision.pts}{Integer number of output points, at least two.}
 }
 \value{
-Matrix of subdivided path coordinates.
+Numeric matrix with \code{n.subdivision.pts} rows and \code{ncol(path)} columns,
+preserving coordinate column names. The first and last rows are the path
+endpoints. A singleton or zero-length path repeats its location in every
+output row. Empty paths are rejected.
 }
 \description{
 Subdivide a Path into Arc-Length Spaced Points
 }
+\details{
+Points are interpolated at equally spaced cumulative Euclidean distances
+along the input polyline. Zero-length segments are skipped. Equal spacing
+along the polyline does not imply equal straight-line distances between
+output points that straddle a corner, and an interior vertex need not appear
+in the output. Distances are evaluated in floating-point arithmetic; paths
+whose total length exceeds the finite numeric range are rejected.
+}
 \examples{
 path <- rbind(c(0, 0), c(1, 0), c(1, 2))
 subdivide.path(path, n.subdivision.pts = 5)
+# Arc distances 0, 0.75, 1.5, 2.25, 3 give:
+# (0, 0), (0.75, 0), (1, 0.5), (1, 1.25), (1, 2).
+subdivide.path(matrix(c(1, 2), nrow = 1), n.subdivision.pts = 3)
 
+}
+\seealso{
+\code{\link[=path.length]{path.length()}}, \code{\link[=path.dist]{path.dist()}}
 }

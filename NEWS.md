@@ -1,5 +1,12 @@
 # dgraphs (development version)
 
+* Correct `subdivide.path()` to include both endpoints and interpolate at equal
+  arc-length intervals along the polyline, skipping repeated points instead of
+  returning missing rows. Singleton and zero-length paths now have length zero,
+  normalized cumulative distances of zero, and repeated-location subdivisions.
+  Empty/malformed paths and invalid subdivision counts or vertex indices are
+  rejected explicitly; subdivision requires at least two output points.
+
 * Add `explore.graphs()`, the Graph Reconstruction Explorer migrated from
   dggraphui, with optional Shiny dependencies. `read.graph.benchmark()` reads
   existing benchmark manifests; `register.graph.project()` remembers external

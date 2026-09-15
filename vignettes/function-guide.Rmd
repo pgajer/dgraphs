@@ -279,6 +279,24 @@ are supported; a vertex's route to itself has length and hop count zero.
 For equal-length routes, fewer hops are preferred. These all-pairs route
 collections can require substantial memory; use modest hop limits when possible.
 
+For a path expressed as coordinates, `path.length()` sums Euclidean segment
+lengths and `subdivide.path()` includes both endpoints at equally spaced
+distances along the polyline. Points on opposite sides of a corner need not
+have equal straight-line distances from each other.
+
+```{r coordinate-path}
+polyline <- rbind(c(0, 0), c(1, 0), c(1, 2))
+path.length(polyline) # 3
+subdivide.path(polyline, n.subdivision.pts = 5)
+path.dist(1:3, polyline) # normalized cumulative distances: 0, 1/3, 1
+```
+
+The five subdivision rows correspond to arc distances 0, 0.75, 1.5, 2.25 and 3.
+Repeated consecutive points contribute zero length. For a singleton or a path
+whose points all coincide, length and normalized cumulative distances are zero,
+and subdivision repeats that location. Empty paths are rejected; subdivision
+requires at least two output points.
+
 ### Plotting a graph and reusing its layout
 
 `graph.embedding()` computes coordinates without drawing. The standard
@@ -410,7 +428,7 @@ release or development installation.
 | `minh.limit()` | Find a minimum hop limit that permits a path. |
 | `path.length()` | Measure Euclidean length along a coordinate path. |
 | `path.dist()` | Compute normalized cumulative distance along a vertex path. |
-| `subdivide.path()` | Place points at approximately equal arc-length intervals along a path. |
+| `subdivide.path()` | Include both endpoints and space points equally along a polyline; repeat the location for zero-length paths. |
 
 ### Edge lengths and pruning
 

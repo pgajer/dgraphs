@@ -39,18 +39,21 @@ Proposed end products:
 | 01: fixed optimization replay | Independently accepted | Native LP feasibility and small replay timing/memory evidence. |
 | 02: historical discrepancy and persistent sequences | Independently accepted | Representation/backend settings explain the large historical timing discrepancy; persistent Python/native timings were near equal; native benchmark-client peak memory was 52–61% lower. These are not complete-engine claims. |
 | 03: small complete engine | Independently accepted | Three-condition agreement on four small fixtures and tested checkpoint failures; only four pruning iterations on one ordinary input. |
-| 04: longer trajectories and readable native stages | Submitted; independent audit pending | Implementer evidence: native/evaluated-Python agreement through 182 and 176 pruning iterations, retuning and isolate creation. Original-expression/evaluated-Python intermediate-array limits fail on both selected inputs despite equal discrete decisions. |
+| 04: longer trajectories and readable native stages | Independently accepted as a bounded deliverable; no corrective patch required | Audit reproduced native/evaluated-Python agreement through 182 and 176 pruning iterations, retuning and isolate creation. Original-expression/evaluated-Python intermediate-array limits remain failed on both selected inputs despite equal discrete decisions. |
 
 The accepted phase 03 baseline is `7d030ff669be9e4a090ec75829c6477c25a7091c`.
 The submitted phase 04 candidate is `df4dcb271369d65302fdf62ce6b7e6c4a13fbb32`.
-This roadmap does not alter either submission. See the
+This roadmap does not alter either submission. The
+[phase 04 independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-4/audit.md)
+accepts the bounded deliverable while preserving the failed historical-expression
+compatibility results. See the
 [phase 04 report](../phase04/REPORT.md) and
 [handoff](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase04-implementer-handoff.md).
 
 ## Phase 05 — Audit closure and numerical contract
 
-Close phase 04 audit findings before treating its evidence as accepted. Then
-write a short, versioned compatibility specification distinguishing:
+The phase 04 audit is accepted as a bounded deliverable and requires no corrective
+patch. Next write a short, versioned compatibility specification distinguishing:
 
 - The mathematical LP and algorithm policy.
 - The chosen numerical execution baseline.
@@ -255,9 +258,17 @@ operational and interface gates. A build feasibility check or synthetic research
 design can run earlier as a bounded subtask; changing the numerical baseline and
 algorithm at the same time should be avoided.
 
-Immediate recommendation: obtain the phase 04 independent disposition, settle
-the numerical contract in phase 05, and implement the reusable/interruptible core
-before escalating input size. Do not reopen an unrestricted solver competition,
+Immediate recommendation following review 4: settle the numerical contract in
+phase 05, then perform the auditor's bounded decision-sensitivity study before
+advancing to the reusable/interruptible core or escalating input size. The study
+should include frozen pruning and retuning boundary cases and an unrelated
+geometry, use fixed-state comparisons to identify the first numerical effect,
+and complete trajectories to measure its propagation. Keep the native/evaluated
+implementation check separate from the original/evaluated representation check.
+Any discrete representation divergence is a documented behavioral difference,
+not automatically a native defect or an acceptable change. This remains a
+proposal: the numerical-reference decision and new experiments have not been
+authorized by the audit itself. Do not reopen an unrestricted solver competition,
 port the legacy conic expression solely to chase matching vectors, or start a
 full cohort run merely because the small native timings look favorable.
 

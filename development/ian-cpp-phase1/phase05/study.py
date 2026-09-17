@@ -25,7 +25,8 @@ def summarize_comparison(left, right, out):
     endpoint = None
     if A[-1]['event'] == B[-1]['event'] == 'complete':
         endpoint = dict(affinity=arrays(A[-1]['affinity'], B[-1]['affinity'], 1e-7, 1e-7),
-                        scales=arrays(A[-1]['scales'], B[-1]['scales'], 1e-7/A[1]['scl'], 1e-7))
+                        scales=arrays(A[-1]['scales'], B[-1]['scales'],
+                            1e-7/next(e['scl'] for e in A if e['event']=='processed'), 1e-7))
         ga = next(e for e in reversed(A) if 'edges' in e)
         gb = next(e for e in reversed(B) if 'edges' in e)
         endpoint['edge_symmetric_difference'] = sorted(set(map(tuple, ga['edges'])) ^ set(map(tuple, gb['edges'])))
@@ -131,7 +132,19 @@ def main():
             ledger['comparisons'][key] = summary
             print(key, 'passed', summary['passed'], flush=True)
             save()
-            if not summary['passed'] and key not in ack['comparisons']:
+            known_array_class = (ack.get('continue_historical_array_class', False) and pair == 'historical'
+                and summary.get('discrete_agreement', False) and summary.get('raw_valid', False)
+                and all(set(c['fields']) <= {'scales', 'ratios', 'stats', 'wstats', 'location',
+                    'dispersion', 'threshold', 'raw_threshold', 'floored_threshold', 'cap', 'median',
+                    'median_residual', 'threshold_margins', 'median_margin'}
+                    for c in summary.get('failing_events', []))
+                and (summary.get('endpoint') is None or (
+                    summary['endpoint']['affinity']['pass_limit'] and summary['endpoint']['scales']['pass_limit']
+                    and not summary['endpoint']['edge_symmetric_difference'])))
+            if known_array_class and not summary['passed']:
+                summary['continuation_class'] = 'historical_array_only_retained_failure'
+                save()
+            if not summary['passed'] and key not in ack['comparisons'] and not known_array_class:
                 ledger['paused_on'] = dict(comparison=key)
                 save()
                 return 4

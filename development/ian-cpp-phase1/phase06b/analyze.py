@@ -12,7 +12,7 @@ from support import revision,load,write,sha,check_lp
 p=argparse.ArgumentParser();p.add_argument('root',type=Path);p.add_argument('output',type=Path);a=p.parse_args()
 rev=revision();a.output.mkdir(parents=True,exist_ok=False)
 reg1=load(a.root/'regressions-v1/checks.json');reg2=load(a.root/'regressions-v2/checks.json')
-recovery=load(a.root/'recovery-v1/checks.json');schema=load(a.root/'schema-v1/checks.json')
+recovery=load(a.root/'recovery-v1/checks.json');schema=load(a.root/'schema-v2/checks.json')
 assert all(x['complete'] for x in [reg1,reg2,recovery,schema])
 raw=[];snapshots=[];stages=[];resource_records=[]
 tool=a.root/'build-v3/ian_checkpoint_tool'

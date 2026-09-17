@@ -26,7 +26,7 @@ assert sha(worker/'phase07b/manifest-v1.json')=='e2ae47375b6f7d884dfe5020c5f9eb6
 assert sha(worker/'phase07b-implementer-handoff.md')=='e095160b0ecd158dcd526dd9a30fbb88ac75691c97d19481016923e337c2dd57'
 assert sha(worker/'phase06b/build-v3/ian_engine')==previous['engine_sha256']
 backend=worker/'phase06a/clean-v2/prefix/lib/libclarabel_c.dylib';assert sha(backend)==previous['backend_sha256']
-analysis=load(root/'analysis-v2/results.json');assert analysis['complete'] and analysis['primary_attempts']==1882 and analysis['primary_rejected']==18
+analysis=load(root/'analysis-v3/results.json');assert analysis['complete'] and analysis['primary_attempts']==1882 and analysis['primary_rejected']==18
 assert analysis['total']['attempts']==3789 and analysis['operation_attempts']==25
 assert load(root/'checks-v1/results.json')['passed'] and load(root/'derivation-v1.json')['passed']
 identity=build_identity(root/'build-v2');assert identity==analysis['build_provenance']['final']

@@ -45,6 +45,7 @@ for f in fixtures:
 # Physical guarded executions only: joined and falsified traces are not new solves.
 processes=old['processes']+panel['processes']+ops['processes'];census=[];total=Counter()
 for p in processes:
+ if not p['observed_solves']:continue  # Diagnostic arguments name existing input traces, not new executions.
  child=next((Path(arg) for arg in p['command'] if str(arg).endswith('/child')),None)
  if child is None or not (child/'trace.jsonl').exists():continue
  counts=Counter()

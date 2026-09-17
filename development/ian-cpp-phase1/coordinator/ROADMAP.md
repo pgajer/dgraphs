@@ -4,7 +4,9 @@ Status: phases 01–05 independently accepted for their bounded scopes. Authoriz
 Phase06A is independently accepted for its bounded scope; F1 is closed.
 Phase06B is independently accepted for bounded single-host restart/recovery.
 Its nonblocking documentation comment N1 is corrected in this roadmap. The user
-has authorized Phase07; its bounded plan is [here](../phase07/PLAN.md).
+has authorized Phase07; its bounded study is now complete with independent
+acceptance pending. The [report](../phase07/REPORT.md) records a shared numerical
+refusal and the closed 1,000-profile expansion gate.
 Milestones after Phase07 remain proposals requiring their own authorization. Updated 17 September 2026
 following the [auditor's roadmap review](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/roadmap-review-20260917/review.md)
 and [Phase 05 independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-5/audit.md).
@@ -54,6 +56,7 @@ Proposed end products:
 | 05: numerical contract and decision sensitivity | Independently accepted as a bounded deliverable; no corrective patch required | Audit verified all 1,330 submitted payloads and reproduced 51 executions containing 1,302 fresh solves exactly apart from timing. Native/evaluated agreement passes under IAN evaluated-LP 1.0. Historical intermediate-array failures, incomplete pruning calibration and unresolved diagnostic warnings remain limitations. |
 | 06A: reusable core and early interface feasibility | Independently accepted; F1 closed | Typed in-memory core, optional observation and file/R adapters. Eight complete native traces and twelve boundary probes reproduce accepted traces apart from timing. A fresh dependency build, installed-header C++ client and minimal R call pass. No resume or cross-platform claim. |
 | 06B: durable checkpoints and resumability | Independently accepted for bounded single-host scope | Reviewed restart continuations, signal/storage failures, schema refusals, owned state, and preserved numerical behavior. No cross-platform or power-loss claim. |
+| 07: bounded scale and coverage | Study complete; independent acceptance pending; 1,000-profile expansion gated | Native/evaluated comparisons pass for four 500-profile attempts: three complete and one shared numerical refusal. PreSSMat reaches 396 pruning iterations; separated disks produce two components containing edges. |
 
 The accepted phase 03 baseline is `7d030ff669be9e4a090ec75829c6477c25a7091c`.
 The submitted phase 04 candidate is `df4dcb271369d65302fdf62ce6b7e6c4a13fbb32`.
@@ -198,7 +201,12 @@ a correction phase without becoming an unfinished study.
 ## Phase 07 — Bounded scale and generalization validation
 
 Authorized by the user after the Phase06B audit. The [frozen plan](../phase07/PLAN.md)
-defines the workload, conditional expansion and measurement limitations.
+defines the workload, conditional expansion and measurement limitations. The
+[report](../phase07/REPORT.md) records 1,028 solves, including three numerical
+rejections, and the [amendment](../phase07/AMENDMENT-1.md) accounts for completing
+the already frozen 500-profile panel after the shared helix refusal. All 1,000
+executions remain gated. A bounded numerical diagnosis is proposed before
+expansion; it is not authorization to change the reference policy.
 
 Use a small predeclared size ladder, initially around 500 then 1,000 unique
 profiles, rather than jumping to full cohorts. Exact sizes, candidate counts,
@@ -411,7 +419,8 @@ checks; failed historical arrays remain failed. The study found no discrete
 representation divergence, without proving it impossible. Phase06A's extracted
 core preserves the tested reference behavior and includes the early clean-build/R
 checks. Phase06B checkpoint and resume work is independently accepted for its bounded
-single-host scope. Phase07 is authorized and underway. Carry the accepted boundary cases and unresolved diagnostic warnings
+single-host scope. Phase07 is study-complete with independent acceptance pending;
+its shared helix numerical refusal blocks the 1,000-profile expansion. Carry the accepted boundary cases and unresolved diagnostic warnings
 forward. Do not reopen an unrestricted
 solver competition, port the legacy conic expression solely to chase matching
 vectors, or start a full cohort run based on small-example agreement.

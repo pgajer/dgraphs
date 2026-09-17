@@ -1,9 +1,16 @@
-# IAN implementation and improvement: proposed project roadmap
+# IAN implementation and improvement: project roadmap
 
-Status: proposed for discussion, not approval of later experiments or deployment.
-Prepared after the phase 04 submission, 17 September 2026.
+Status: phases 01–04 independently accepted for their bounded scopes; authorized
+Phase 05 complete and submitted, independent acceptance pending. Later milestones
+remain proposals requiring their own authorization. Updated 17 September 2026
+following the [auditor's roadmap review](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/roadmap-review-20260917/review.md).
 Scientific owner: Pawel Gajer. Coordinator and implementer: this task.
 Independent audit remains a separate role.
+
+This coordination update follows the frozen Phase 05 submission at
+`b2e132562ae61a8849d2c1b8bca317fb805f76b1`. That submission's manifest identifies
+the roadmap bytes at that commit. Its evidence, manifest, report, contract and
+handoff are not rewritten by this later planning revision.
 
 ## Objective and end products
 
@@ -81,23 +88,57 @@ Python diagnostic dot-product warnings remain unexplained at the library level,
 although saved finite values and independent summations agree. This submission
 does not claim warning-free execution or arbitrary-input robustness.
 
-Deliverable: audited disposition, numerical contract and named reference version.
-Exit: no unexplained implementation discrepancy; every remaining historical
-compatibility limitation is stated and its consequence accepted by the owner.
+Deliverable: completed study, numerical contract and named reference version;
+independent disposition is recorded separately. Study completion means all frozen
+attempts and failures are accounted for. Implementation acceptance requires the
+named numerical/fidelity criteria to pass within the stated scope. Advancement
+requires an owner decision accepting remaining limitations for the next use.
 
-## Phase 06 — Reusable core and reliable execution
+## Phase 06A — Reusable core with unchanged numerical behavior
 
 Turn the current prototype into a library with a thin CLI and typed boundaries
 for input, graph state, LP/backend, retuning, pruning, affinity and diagnostics.
 Separate algorithm policy from file formats and language interfaces. Preserve
 numeric operation ordering where it affects the accepted reference contract.
 
-Add versioned input/result/checkpoint schemas, structured errors, cancellation at
+Add versioned input/result schemas and structured errors. Collect a named
+scientific consumer contract for EXP-038 and EXP-039: discrete adjacency, metric
+edge lengths, affinities with support and diagonal conventions, local scales and
+units, specimen/profile duplicate mappings, and supplied participant mappings.
+If an operator replaces a stored affinity matrix, specify exactly which matrix
+it applies and how zeros/support are represented. Participant identities must
+come from declared input metadata, never be inferred from profile equality.
+
+After the interface stabilizes, include one clean build in a fresh environment
+that does not rely on the development environment's installed dependencies, and
+one minimal R call using a public synthetic example. Record dependency setup,
+indexing, ownership and data-copy behavior. This small feasibility check does not
+qualify a release or authorize installation into a shared production library.
+Comprehensive portability and package qualification remain in Phase 09.
+
+Deliverable: reusable core, thin CLI, schemas/consumer contract and a bounded
+build/R feasibility record, including any failures. Acceptance for advancement:
+the unchanged trajectory suite meets the existing discrete and numerical limits;
+interface/build limitations are recorded and adjudicated for the next milestone.
+No resumability claim follows from this refactor.
+
+## Phase 06B — Durable checkpoints and resumability
+
+Build on the reviewed core. Add versioned checkpoint schemas, cancellation at
 safe boundaries, progress records and resource accounting. Add periodic accepted
 iteration checkpoints before implementing resumability. A resumable state must
 include the graph, bounds, multiplier/bracket phase, mapping, numerical policy
 and required solver bookkeeping; it must reject mismatched input/configuration
 or incompatible schema versions.
+
+Declare supported restart boundaries and equivalence before execution. The initial
+proposal is restart from a completed accepted iteration, preserving identical
+subsequent discrete choices and the frozen numerical comparison limits. A fresh
+solver is allowed only if it satisfies that promise. Preserve graph/bounds,
+ordering, multiplier and relevant retuning phase, mappings, numerical policy and
+all solver bookkeeping needed for it. Do not promise mid-solve restart or exact
+byte equality without separate implementation and evidence. Distinguish complete,
+partial, failed and resumable states explicitly.
 
 Test uninterrupted versus interrupted/resumed trajectories, intentional process
 termination around checkpoint commits, incomplete writes and storage failures.
@@ -105,9 +146,11 @@ Never infer restart safety from the existing controlled-exception tests. Keep
 optional diagnostics separate from native graph acceptance. Record time/memory
 for distinct phases with matching boundaries across implementations.
 
-Deliverable: reusable core and CLI, schema documentation and operational tests.
-Exit: unchanged regression behavior, truthful failure states, demonstrated resume
-equivalence under the specified policy, and independently reviewed checkpoints.
+Deliverable: checkpoint/restart implementation, schema documentation and all
+prespecified operational-test outcomes. Acceptance for advancement: truthful
+failure states, demonstrated resume equivalence under the declared policy, and
+independently reviewed checkpoints. A completed negative test study can require
+a correction phase without becoming an unfinished study.
 
 ## Phase 07 — Bounded scale and generalization validation
 
@@ -129,7 +172,8 @@ checks; large final graph agreement alone is insufficient. Measure initializatio
 assembly, solver, pruning, affinity, checkpoint and diagnostic resource costs.
 
 Deliverable: scale/coverage report and measured resource envelope.
-Exit: no unexplained implementation differences, known failure behavior and a
+Acceptance for expansion: no unexplained implementation differences within the
+named fidelity scope, known failure behavior and a
 defensible budget for the next size. A resource failure is reported and redirects
 engineering work; it does not trigger automatic expansion or a silent algorithm
 change.
@@ -158,18 +202,28 @@ because the implementation is native.
 
 Deliverable: measured improvement with costs and limitations, or a supported
 decision to retain the simpler implementation.
-Exit: benefit under the intended workload without unexplained correctness loss.
+Acceptance for adopting a change: measured benefit under the intended workload
+without unexplained correctness loss. A completed study may instead retain the
+existing implementation and report that no tested change earned adoption.
 Approximate initialization, stronger affinity truncation, changed tie rules and
 modified pruning belong to the experimental-method phase instead.
 
 ## Phase 09 — Portable R-facing release
 
-Test installation and execution on declared supported macOS, Linux and Windows
-targets; record compiler/solver combinations and the dependency distribution
+Choose and explicitly name supported targets from macOS, Linux and Windows;
+test installation and execution on those targets. Record compiler/solver combinations and the dependency distribution
 strategy. Complete attribution and redistribution inventories. Choose the final
 companion-package versus direct-integration design from this evidence. A thin
 companion package is the current preference, keeping native solver dependencies
 out of dgraphs until the maintenance consequences are understood.
+
+Separate three reproducibility promises: reproduction in the pinned reference
+environment; discrete/numerical agreement across each supported environment
+under prospectively declared criteria; and byte-for-byte agreement only where
+explicitly promised and tested. Do not loosen current limits retrospectively
+to hide platform differences. A restricted internal release may support one
+validated platform without claiming the others. The early Phase 06A feasibility
+check is evidence about interface/build assumptions, not release qualification.
 
 The R interface should return stable specimen/profile maps, graph edges,
 components, isolates, scales in input units, affinity or an explicitly defined
@@ -179,7 +233,7 @@ agreement and account for conversion/peak-memory costs. Build small user example
 that do not depend on private cohort data.
 
 Deliverable: versioned internal release with supported-platform tests and docs.
-Exit: reproducible installation, API/output parity, resource-aware cancellation
+Acceptance for a named release: reproducible installation, API/output parity, resource-aware cancellation
 and independent package review. Public/CRAN release is a separate choice, not a
 necessary dependency for internal scientific use.
 
@@ -200,9 +254,20 @@ within-context residual covariance separately; an IAN engine is infrastructure,
 not validation of those estimators. Participant dependence and assay/visit
 selection belong in the scientific analysis specification.
 
+Record two distinct decisions: acceptance of engine graph/scales/affinity
+artifacts for a numerical and data scope, and acceptance of the estimator that
+uses them for molecular means, associations or biomarkers. Apply the Phase 06A
+consumer contract at that boundary. The [EXP-039 revision-2 response](/Users/pgajer/current_projects/ZB/experiments/039-crispatus-neighborhood-multiomics/reports/audit-response-v2.md)
+reports refused observed-response fits under its conditioning checks and repeated
+immunomics records requiring adjudication. These remain downstream numerical/data
+issues; this roadmap neither re-audits them nor treats IAN acceptance as their
+resolution. They do not block unrelated core-library engineering. That record is
+implementer evidence with independent re-review pending, not an IAN finding.
+
 Deliverable: audited cohort artifacts and a precise statement of the supported
-scientific use. Exit: reproducible execution within resources and accepted
-analysis-specific validation. Historical interrupted-run recovery, new full fits
+scientific use. Acceptance for deployment: reproducible execution within resources
+and separately accepted engine artifacts and analysis-specific validation for the
+requested use. Historical interrupted-run recovery, new full fits
 and production replacement each require their own named scope.
 
 ## Phase 11 — Algorithm improvement as a separate research programme
@@ -219,6 +284,24 @@ geodesic distortion where true distances are known, and stability under sampling
 or perturbation. Resampling for cohort questions should respect participants;
 outcome labels must not tune an allegedly outcome-independent reference graph.
 Connectivity, a pleasing embedding or CST concordance is not a universal score.
+
+Add a small known-conditional-mean benchmark when the consuming estimator is
+ready. On a declared latent geometry, prescribe a smooth scalar function m(z),
+a sampling distribution and a noise model, for example Y=m(z)+epsilon with
+E[epsilon|z]=0. Evaluate recovery of that known mean alongside neighborhood and
+geodesic recovery. Fix the smoother and its tuning rule in advance so graph
+comparisons do not simultaneously change the estimator. Declare evaluation
+populations, held-out observations and error measures before execution. Later
+clustered-sampling or missing-response variants must specify participant dependence
+and the missingness mechanism rather than assume away assay-selection effects.
+
+If latent points are mapped into compositions, distinguish truth in the latent
+metric, the induced observation metric and the conditional mean being estimated.
+A conditional mean given latent state need not equal a mean given observations
+if the mapping loses information. This is a controlled estimator benchmark, not
+a realistic synthetic vaginal microbiome claim or a new Phase 05 requirement.
+An all-visits descriptive graph also does not establish enrollment-time prediction
+performance; those populations and validation designs remain separate.
 
 Select one documented failure mechanism and one change at a time. Potential
 families are pruning/calibration rules, explicit degeneracy/isolate behavior,
@@ -239,8 +322,18 @@ later decisions, not the existence of an IAN implementation.
 
 The coordinator/implementer maintains a single project status ledger, the next
 bounded phase specification, dependencies, source/evidence inventory, decision
-log and open limitations. Each phase distinguishes proposed, running, submitted,
-accepted and superseded work. Completion of code or tests is not audit acceptance.
+log and open limitations. Each phase records three separate states:
+
+| State | Meaning |
+|---|---|
+| Study complete | Every frozen attempt, including failures, is accounted for and evidence is handed off. An informative negative result can complete a study. |
+| Implementation accepted for a named scope | Independent disposition and the numerical/fidelity requirements support the stated claim. Completion alone does not establish this. |
+| Advance or deploy authorized | The owner accepts remaining limitations for a specified next activity or use. Audit acceptance alone does not authorize it. |
+
+The evidence table above records bounded study/disposition status; it grants no
+deployment permission. All later acceptance and promotion criteria are separate
+from the common study-completion criterion. A negative finding may block a claim
+or adoption while leaving the completed study available for review.
 Reports use the same short format: question, scope, conditions, results/failures,
 interpretation, limitations and durable handoff.
 
@@ -256,7 +349,8 @@ it does not authorize me to independently audit my own work or restrict an audit
 to my preferred questions. No new agent/task, messaging or automation is implied
 by this roadmap.
 
-Default dependency order is 05 → 06 → 07. Then measured optimization (08) and
+Default dependency order is 05 → 06A → 06B → 07. The small clean-build/R check
+follows interface stabilization in 06A. Then measured optimization (08) and
 packaging (09) can be prioritized from the scale findings, while research (11)
 uses the frozen baseline. Deployment (10) follows the relevant correctness,
 operational and interface gates. A build feasibility check or synthetic research

@@ -121,8 +121,8 @@ primal/dual vectors, objectives and iteration counts. Across all pairs, the
 largest scale difference is 1.046e-9 and the largest dual-vector difference is
 2.752e-6; dual equality is not a frozen cross-path requirement, and each returned
 dual is checked independently. These differences also occur in the exactly
-preserved accepted same-path histories. All 19 helix pairs are identical in
-these raw fields.
+preserved accepted same-path histories. Seventeen of the 19 helix pairs are identical in
+these raw fields; the other two satisfy the frozen comparison limits.
 
 There are **3,789 actual attempts across both panels and operational tests**,
 within the frozen 8,000-attempt allowance. Of these, 1,882 belong to the preliminary

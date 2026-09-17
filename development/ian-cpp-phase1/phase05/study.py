@@ -90,7 +90,8 @@ def main():
                 if proc['exit_code'] == 0:
                     if a.mode == 'full':
                         check = inspect_run(child)
-                        check['graph_units'] = graph_units(child)
+                        if condition == 'native':
+                            check['graph_units'] = graph_units(child)
                     elif a.mode == 'stages':
                         check = dict(eligible=True, solves=0)
                     else:

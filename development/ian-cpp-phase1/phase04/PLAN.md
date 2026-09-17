@@ -101,3 +101,31 @@ handoff with limitations, commands, clean commit, immutable-baseline boundaries
 and reusable-workflow classification. Stop for independent audit. A completed
 bounded search that misses the coverage target is reported as such, never as
 evidence for longer histories.
+
+## Recorded continuation after the first representation difference
+
+The frozen selection chose Hellinger 256 and 300. The first evaluated-Python run
+completed, but the original/evaluated array comparison failed at event 31,
+pruning iteration 3. Both solved the identical projected LP; all numerical
+acceptance checks and all discrete trajectory comparisons passed. The maximum
+scale difference was 3.374e-6, above the frozen combined tolerance. Original and
+evaluated canonical solver problems differ in representation and returned
+different numerical approximations. Final affinities agreed exactly. Five trace
+events exceeded array limits; none changed a discrete choice.
+
+The original driver stopped before any selected native execution. Retain it as
+`selected-v1` and preserve the failed comparisons, state and diagnostic. Do not
+change a tolerance, fixture, engine or reference. After a committed no-solve
+diagnosis verifies identical projected LPs, valid primal/dual solutions and
+identical discrete events, continue the remaining frozen work in
+`selected-continuation-v1`. Reuse the existing original and evaluated traces for
+Hellinger 256, adding only its native run and the two remaining conditions for
+Hellinger 300. No extra optimization is added to the original bounded workload.
+
+If the second representation comparison shows the same numerical pattern,
+save its first-event diagnosis and retain its failed status before proceeding
+to the independent implementation comparison. A discrete or LP-data difference
+requires separate diagnosis; a native discrepancy stops continuation. The final
+report must distinguish failed strict original-expression array compatibility
+from any passing evaluated-Python/native agreement. Equal final outputs do not
+override a failed intermediate comparison. Exact LP nonuniqueness is not claimed.

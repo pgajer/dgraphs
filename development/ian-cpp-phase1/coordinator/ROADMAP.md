@@ -40,6 +40,7 @@ Proposed end products:
 | 02: historical discrepancy and persistent sequences | Independently accepted | Representation/backend settings explain the large historical timing discrepancy; persistent Python/native timings were near equal; native benchmark-client peak memory was 52–61% lower. These are not complete-engine claims. |
 | 03: small complete engine | Independently accepted | Three-condition agreement on four small fixtures and tested checkpoint failures; only four pruning iterations on one ordinary input. |
 | 04: longer trajectories and readable native stages | Independently accepted as a bounded deliverable; no corrective patch required | Audit reproduced native/evaluated-Python agreement through 182 and 176 pruning iterations, retuning and isolate creation. Original-expression/evaluated-Python intermediate-array limits remain failed on both selected inputs despite equal discrete decisions. |
+| 05: numerical contract and decision sensitivity | Implementer-complete; submitted for independent audit | Working reference is IAN evaluated-LP 1.0. All 1,330 saved optimization payloads pass numerical checks; twelve fixed-state native/evaluated comparisons and four complete trajectories pass. Historical intermediate-array comparisons fail in eight fixed-state cases and three complete examples, with unchanged discrete decisions within each case. |
 
 The accepted phase 03 baseline is `7d030ff669be9e4a090ec75829c6477c25a7091c`.
 The submitted phase 04 candidate is `df4dcb271369d65302fdf62ce6b7e6c4a13fbb32`.
@@ -53,28 +54,32 @@ compatibility results. See the
 ## Phase 05 — Audit closure and numerical contract
 
 The phase 04 audit is accepted as a bounded deliverable and requires no corrective
-patch. Next write a short, versioned compatibility specification distinguishing:
+patch. The user subsequently authorized Phase 05 and its proposed numerical
+reference. The [contract](../phase05/CONTRACT.md) now distinguishes:
 
 - The mathematical LP and algorithm policy.
 - The chosen numerical execution baseline.
 - Observed agreement of intermediate arrays and discrete decisions.
 - Historical-expression comparisons that remain failed or untested.
 
-Recommendation: use explicitly evaluated LP coefficients as the candidate native
-baseline, with the evaluated Python engine as its implementation reference. Keep
+Working decision for this authorized phase: use explicitly evaluated LP coefficients
+as the native baseline, with the evaluated Python engine as its implementation reference. Keep
 the original-expression control as a historical compatibility diagnostic. This
-requires an explicit owner decision after audit; it does not retroactively make
+was authorized with Phase 05; it does not retroactively make
 the failed phase 04 array tests pass or prove that future decisions cannot differ.
 Keep the frozen baseline tolerances. Any future revised criterion needs its own
 justification and prospective tests.
 
-A bounded follow-up should concentrate on recorded near-boundary decisions and
-the differing LP states, plus a small independent holdout fixture set. More
-accuracy in separately labeled diagnostic solves may help distinguish residual
-solver error from ill-conditioning or alternate optima; changing all baseline
-settings is not a substitute for that diagnosis. Do not require reproducing every
-incidental legacy conic solver vector unless that becomes an explicit project
-requirement.
+The bounded study is complete and described in the [Phase 05 report](../phase05/REPORT.md).
+Near-boundary retuning probes change from one solve and three edge deletions to
+three solves and two deletions across a tiny change in the supplied multiplier;
+all implementations agree within each case. The pruning endpoint calibration did
+not bracket a boundary, and its three frozen probes show a nonmonotone margin.
+Those limitations remain explicit. The complete holdout helix prunes fifteen
+times; the saddle does not prune. No solver settings or tolerances changed.
+Python diagnostic dot-product warnings remain unexplained at the library level,
+although saved finite values and independent summations agree. This submission
+does not claim warning-free execution or arbitrary-input robustness.
 
 Deliverable: audited disposition, numerical contract and named reference version.
 Exit: no unexplained implementation discrepancy; every remaining historical
@@ -258,19 +263,16 @@ operational and interface gates. A build feasibility check or synthetic research
 design can run earlier as a bounded subtask; changing the numerical baseline and
 algorithm at the same time should be avoided.
 
-Immediate recommendation following review 4: settle the numerical contract in
-phase 05, then perform the auditor's bounded decision-sensitivity study before
-advancing to the reusable/interruptible core or escalating input size. The study
-should include frozen pruning and retuning boundary cases and an unrelated
-geometry, use fixed-state comparisons to identify the first numerical effect,
-and complete trajectories to measure its propagation. Keep the native/evaluated
-implementation check separate from the original/evaluated representation check.
-Any discrete representation divergence is a documented behavioral difference,
-not automatically a native defect or an acceptable change. This remains a
-proposal: the numerical-reference decision and new experiments have not been
-authorized by the audit itself. Do not reopen an unrestricted solver competition,
-port the legacy conic expression solely to chase matching vectors, or start a
-full cohort run merely because the small native timings look favorable.
+Immediate status after authorized Phase 05: the numerical contract and bounded
+sensitivity evidence are submitted for independent audit. Native/evaluated
+implementation checks remain separate from original/evaluated representation
+checks; failed historical arrays remain failed. The study found no discrete
+representation divergence, without proving it impossible. No phase06 work has
+started. After independent review and separate authorization, the next milestone
+is the reusable core and reliable execution work above, carrying these boundary
+cases and unresolved diagnostic warnings forward. Do not reopen an unrestricted
+solver competition, port the legacy conic expression solely to chase matching
+vectors, or start a full cohort run based on small-example agreement.
 
 Calendar estimates and a target speedup would be speculative at this point. Each
 next phase should have a bounded run plan, resource estimate and explicit exit

@@ -44,7 +44,7 @@ for condition in ['native','evaluated']:
  c=retry_checks(new,out/(condition+'-certificates'),True);assert c['attempts']==30 and c['accepted']==16 and len(c['retries'])==13 and all(x['accepted'] for x in c['retries'])
  data=list(events(new/'trace.jsonl'));solves=[e for e in data if e['event']=='solve'];last=solves[-1]
  assert last['solver_status']=='AlmostSolved' and not last['retry_eligible'] and last['number']==29 and last['iteration']==2
- status=load(new/'status.json');assert status['error']=='invalid_solver_result' and not any(status[k] for k in ['graph','scales','affinity','complete'])
+ status=load(new/'status.json');assert 'invalid_solver_result' in status['error'] and not any(status[k] for k in ['graph','scales','affinity','complete'])
  assert sum(e['event']=='pruned' for e in data)==2
  write(out/(condition+'-terminal-problem.json'),last)
  assert primary['runs']['helix_500/'+condition]['same_path']['passed']

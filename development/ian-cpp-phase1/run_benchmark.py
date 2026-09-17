@@ -33,28 +33,32 @@ for seq,(rep,case,backend) in enumerate(order):
     assert sha(fixture)==expected
     cmd=([sys.executable,str(Path(__file__).with_name('python_replay.py'))] if backend=='python' else [str(args.native)])+[str(fixture),str(prefix)]
     load_before=os.getloadavg();psutil.cpu_percent(interval=None)
-    started=time.perf_counter();peak=0;max_threads=0;samples=[]
+    started=time.perf_counter();peak=0;max_threads=0;max_processes=0;samples=[]
     with (run/'stdout.log').open('w') as stdout,(run/'stderr.log').open('w') as stderr:
         child=subprocess.Popen(cmd,env=env,stdout=stdout,stderr=stderr);proc=psutil.Process(child.pid)
         stop=threading.Event()
         def sample():
-          global peak,max_threads
+          global peak,max_threads,max_processes
           while not stop.is_set():
             rss=0;threads=0
             try: tree=[proc]+proc.children(recursive=True)
             except psutil.Error: tree=[]
+            max_processes=max(max_processes,len(tree))
             for item in tree:
                 try: rss+=item.memory_info().rss;threads+=item.num_threads()
                 except psutil.Error: pass
             peak=max(peak,rss);max_threads=max(max_threads,threads)
             samples.append([time.perf_counter()-started,rss,threads]);stop.wait(.01)
         sampler=threading.Thread(target=sample);sampler.start()
-        code=child.wait();wall=time.perf_counter()-started
+        _,wait_status,usage=os.wait4(child.pid,0)
+        code=os.waitstatus_to_exitcode(wait_status);child.returncode=code
+        wall=time.perf_counter()-started
         stop.set();sampler.join()
     cpu=psutil.cpu_percent(interval=None)
     measurement=dict(sequence=seq,case=case,backend=backend,repetition=rep+1,source_revision=revision,
         command=cmd,cwd=os.getcwd(),exit_code=code,end_to_end_seconds=wall,peak_tree_rss_bytes=peak,
-        peak_tree_threads=max_threads,load_before=load_before,load_after=os.getloadavg(),system_cpu_percent=cpu,
+        root_peak_rss_bytes=int(usage.ru_maxrss*(1 if sys.platform=="darwin" else 1024)),
+        max_observed_tree_processes=max_processes,peak_tree_threads=max_threads,load_before=load_before,load_after=os.getloadavg(),system_cpu_percent=cpu,
         sample_count=len(samples),fixture_sha256=expected,smoke=args.smoke)
     np.savetxt(run/'resource-samples.tsv',samples,delimiter='\t',header='seconds\trss_bytes\tthreads')
     validation_start=time.perf_counter()

@@ -80,7 +80,7 @@ folder = a.output / 'pruning-cap'
 process = run(a.baseline / 'fixtures-v1/pressmat_hellinger_subset.json', folder,
               'native', a.native, 'pruning_cap')
 cap = inspect_run(folder / 'child')
-comparison = checked_comparison(a.baseline / 'native-verification-v1/cap-native/child',
+comparison = checked_comparison(a.baseline / 'native-verification-v1/cap/native/child',
                                folder / 'child', folder / 'comparison')
 assert process['exit_code'] != 0 and not any(cap['status'][s] for s in ['graph', 'scales', 'affinity', 'complete'])
 assert comparison['passed']

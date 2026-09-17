@@ -9,7 +9,16 @@ def tokens(text):
     # Match quoted literals before comments; preserve all non-whitespace tokens.
     parts = re.findall(r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'|//[^\n]*|/\*.*?\*/|\S',
                        text, re.DOTALL)
-    return [p for p in parts if not p.startswith(('//', '/*'))]
+    result = []
+    for part in parts:
+        if part.startswith(('//', '/*')):
+            continue
+        # clang-format splits the long CLI help literal; C++ concatenates it.
+        if result and part.startswith('"') and result[-1].startswith('"'):
+            result[-1] = result[-1][:-1] + part[1:]
+        else:
+            result.append(part)
+    return result
 
 
 parser = argparse.ArgumentParser()

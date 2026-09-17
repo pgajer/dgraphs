@@ -27,6 +27,10 @@ for row in continuation['selected']:
     for label, left, right in [('representation', row['original'], row['evaluated']),
                                 ('implementation', row['evaluated'], row['native'])]:
         comparison[label] = checked_comparison(Path(left), Path(right), a.output / (row['name'] + '-' + label))
+        final_a = np.asarray(load(Path(left) / 'affinity.json')['affinity'])
+        final_b = np.asarray(load(Path(right) / 'affinity.json')['affinity'])
+        comparison[label]['final_affinity_max_difference'] = float(abs(final_a - final_b).max())
+        comparison[label]['final_affinity_support_exact'] = bool(np.array_equal(final_a == 0, final_b == 0))
     comparison['conditions'] = []
     for condition in ['original', 'evaluated', 'native']:
         folder = Path(row[condition])
@@ -116,7 +120,7 @@ lines += ['', 'An extra retuning solve is a solve beyond the first in a post-pru
 for row in comparisons:
     for label in ['representation', 'implementation']:
         c = row[label]
-        lines.append(f"| {row['name']} | {label} | {c['events_a']} | {c['maxima'].get('scales',0):.9g} | {c['maxima'].get('ratios',0):.9g} | {c['maxima'].get('affinity',0):.9g} | {c['passed']} |")
+        lines.append(f"| {row['name']} | {label} | {c['events_a']} | {c['maxima'].get('scales',0):.9g} | {c['maxima'].get('ratios',0):.9g} | {c['final_affinity_max_difference']:.9g} | {c['passed']} |")
 lines += ['', 'Representation = original-expression/evaluated Python. Implementation = evaluated Python/native. Failed intermediate limits remain failed despite matching final outputs.', '',
           '| Input | Condition | Solves | Process seconds | OS peak resident MiB |', '|---|---|---:|---:|---:|']
 for row in comparisons:

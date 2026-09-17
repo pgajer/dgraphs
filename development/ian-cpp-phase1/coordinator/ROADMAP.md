@@ -6,8 +6,9 @@ Phase06B is independently accepted for bounded single-host restart/recovery.
 Its nonblocking documentation comment N1 is corrected in this roadmap. The user
 has authorized Phase07; its bounded study is independently accepted after review-7. The [report](../phase07/REPORT.md) records a shared numerical
 refusal and the closed 1,000-profile expansion gate.
-Phase07B numerical diagnosis is complete with independent acceptance pending.
-Milestones after Phase07B remain proposals requiring their own authorization. Updated 17 September 2026
+Phase07B numerical diagnosis is independently accepted without findings.
+Phase07C, a limited retry experiment and full-trajectory validation, is authorized
+and in progress; later milestones remain proposals requiring authorization. Updated 17 September 2026
 following the [auditor's roadmap review](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/roadmap-review-20260917/review.md)
 and [Phase 05 independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-5/audit.md).
 Scientific owner: Pawel Gajer. Coordinator and implementer: this task.
@@ -57,7 +58,7 @@ Proposed end products:
 | 06A: reusable core and early interface feasibility | Independently accepted; F1 closed | Typed in-memory core, optional observation and file/R adapters. Eight complete native traces and twelve boundary probes reproduce accepted traces apart from timing. A fresh dependency build, installed-header C++ client and minimal R call pass. No resume or cross-platform claim. |
 | 06B: durable checkpoints and resumability | Independently accepted for bounded single-host scope | Reviewed restart continuations, signal/storage failures, schema refusals, owned state, and preserved numerical behavior. No cross-platform or power-loss claim. |
 | 07: bounded scale and coverage | Independently accepted; 1,000-profile expansion gated | Native/evaluated comparisons pass for four 500-profile attempts: three complete and one shared numerical refusal. PreSSMat reaches 396 pruning iterations; separated disks produce two components containing edges. |
-| 07B: shared numerical-refusal diagnosis | Study complete; independent acceptance pending | Five exact baseline reproductions and 33 fixed-problem diagnostic solves explain differing stopping criteria and historical auxiliary amplification. No changed policy or full-engine repair has been adopted. |
+| 07B: shared numerical-refusal diagnosis | Independently accepted for bounded diagnosis | Five exact baseline reproductions and 33 fixed-problem diagnostic solves explain differing stopping criteria and historical auxiliary amplification. No changed policy or full-engine repair has been adopted. |
 
 The accepted phase 03 baseline is `7d030ff669be9e4a090ec75829c6477c25a7091c`.
 The submitted phase 04 candidate is `df4dcb271369d65302fdf62ce6b7e6c4a13fbb32`.
@@ -445,3 +446,6 @@ next phase should have a bounded run plan, resource estimate and explicit exit
 condition before authorization; early results determine whether the subsequent
 work is needed. The research programme succeeds by resolving its hypotheses,
 including a well-supported decision to retain reference IAN.
+
+Phase07C follows the [frozen retry plan](../phase07c/PLAN.md). The experimental
+policy is separate from IAN evaluated-LP 1.0; the 1,000-profile gate remains closed.

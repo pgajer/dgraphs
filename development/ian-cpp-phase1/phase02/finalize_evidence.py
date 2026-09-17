@@ -1,6 +1,8 @@
 """Freeze evidence and check provenance/coverage. Raw solutions: summarize.py."""
 import argparse,json,subprocess,sys,hashlib
 from pathlib import Path
+import numpy as np
+from validate_outputs import check_solution
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from common import sha,write_json
 from prepare import HISTORY,SOURCE
@@ -34,6 +36,14 @@ assert all(j['process']['sampled_max_processes']==1 for j in analysis['jobs'])
 smoke=json.loads((a.root/'smoke-v1/checks.json').read_text());assert len(smoke)==14
 assert sum('check' in s for s in smoke)==8 and sum('changed_shape_refused' in s for s in smoke)==2 and sum('adversary' in s for s in smoke)==4
 assert len(list((a.root/'smoke-v1').glob('*/child/*.x.bin')))==10
+smoke_raw=[]
+for path in sorted((a.root/'smoke-v1').glob('*/child/*.x.bin')):
+    step=int(path.name.split('.')[0]);prefix=path.name.split('.')[0]
+    raw=json.loads((path.parent/(prefix+'.json')).read_text())
+    check_result=check_solution(a.root/'smoke-v1'/f'{step}.npz',np.fromfile(path,dtype='<f8'),
+        np.fromfile(path.parent/(prefix+'.z.bin'),dtype='<f8'),raw['objective'],raw['status'])
+    assert check_result['accepted'] and check_result['dual_valid']
+    smoke_raw.append(dict(path=str(path),check=check_result))
 reference_paths=[SOURCE,HISTORY/'trace.jsonl',HISTORY/'last_valid_graph.npz',HISTORY/'settings.json',HISTORY/'attempt-status.json',HISTORY/'phase-status.json',HISTORY/'resource-summary.json',HISTORY.parent/'combined_full_input.npz']
 core=w/'deps/Clarabel.cpp/Clarabel.rs'
 reference_paths += [core/'src/solver'/name for name in ['core/solver.rs','implementations/default/info.rs','implementations/default/data_updating.rs','core/kktsolvers/direct/quasidef/ldlsolvers/auto.rs','implementations/default/settings.rs','implementations/default/solver.rs']]
@@ -45,7 +55,8 @@ check=dict(final_revision=revision,git_status='',cwd=str(repo),branch='codex/ian
    measured_revision=measured['revision'],phase1_artifact_hashes_unchanged=len(prior['files']),phase1_source_differences=source_differences,
    execution_source_checks=frozen_sources,analysis_results_sha256=sha(a.analysis/'results.json'),
    coverage_checked=dict(measured_jobs=18,measured_solutions=96,diagnostics=6,smoke_optimizations=10,unsupported_update_refusals=2,adversarial_rejections=4),
-   note='Coverage/summary and provenance checks here. Raw-vector revalidation is performed by phase02/summarize.py; its output is hashed above.',references=references)
+   smoke_raw_vectors_checked=smoke_raw,
+   note='Measured/diagnostic coverage and provenance checks here. Their raw-vector revalidation is performed by phase02/summarize.py; its output is hashed above. The ten smoke vectors are rechecked here, including the two valid prefixes before rejected updates.',references=references)
 write_json(a.root/f'final-checks-{a.label}.json',check)
 files={str(path.relative_to(a.root)):dict(sha256=sha(path),bytes=path.stat().st_size) for path in sorted(a.root.rglob('*')) if path.is_file() and not path.name.startswith('evidence-manifest-')}
 source_files={path:dict(sha256=sha(repo/path),bytes=(repo/path).stat().st_size) for path in subprocess.check_output(['git','ls-files','development/ian-cpp-phase1'],text=True).splitlines()}

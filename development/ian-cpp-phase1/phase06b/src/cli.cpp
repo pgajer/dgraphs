@@ -33,7 +33,7 @@ int main(int argc,char** argv) {
         if(!resume_path.empty()) { resume_path=discover(resume_path); saved=parse_state(load_envelope(resume_path,hash).at("payload")); }
         double loading=std::chrono::duration<double>(std::chrono::steady_clock::now()-began).count();
         files=std::make_unique<RestartFiles>(out,hash,interval,cancel_after,fault,fault_at);
-        if(!resume_path.empty()) files->pending_resume=resume_path.string();
+        if(!resume_path.empty()) { files->pending_resume=resume_path.string(); files->origin_checkpoint=resume_path.string(); }
         std::signal(SIGINT,request_cancel); std::signal(SIGTERM,request_cancel);
         files->progress("running");
         auto result=resume_path.empty() ?

@@ -34,11 +34,15 @@ inline Json load_envelope(const fs::path& path, const std::string& input_hash) {
     std::string prefix(bytes,'\0'); trace.read(prefix.data(),bytes);
     require(trace.gcount() == bytes && ian::digest(prefix) == j.at("trace_prefix_sha256"),"checkpoint_trace_mismatch");
     require(std::count(prefix.begin(),prefix.end(),'\n') == count,"checkpoint_trace_count");
+    auto parent = j.at("parent_checkpoint").get<std::string>();
+    if (!parent.empty()) require(fs::absolute(parent) != fs::absolute(path) &&
+        file_hash(parent) == j.at("parent_checkpoint_sha256"),"checkpoint_parent_mismatch");
+    else require(j.at("parent_checkpoint_sha256") == "","checkpoint_parent_mismatch");
     return j;
 }
 struct RestartFiles : Files {
     int interval, cancel_after, fault_at, commits=0, events=0;
-    std::string fault, confirmed, pending_resume, input_hash, current_phase="initialization";
+    std::string fault, confirmed, pending_resume, origin_checkpoint, input_hash, current_phase="initialization";
     Json times=Json::object();
     bool commit_uncertain=false;
     using Clock=std::chrono::steady_clock;
@@ -113,6 +117,8 @@ struct RestartFiles : Files {
             auto prefix=read_text(out/"trace.jsonl"); auto payload=state_json(s);
             commit(Json{{"checkpoint_schema",1},{"input_file_sha256",input_hash},
                 {"payload",payload},{"payload_sha256",ian::digest(payload.dump())},
+                {"parent_checkpoint",origin_checkpoint},
+                {"parent_checkpoint_sha256",origin_checkpoint.empty()?"":file_hash(origin_checkpoint)},
                 {"trace_file",fs::absolute(out/"trace.jsonl").string()},
                 {"trace_prefix_bytes",prefix.size()},{"trace_prefix_events",events},
                 {"trace_prefix_sha256",ian::digest(prefix)}});

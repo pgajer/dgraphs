@@ -12,8 +12,16 @@ from scipy.sparse.csgraph import connected_components
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent/'phase03'))
 from compare import DISCRETE, FLOATS, arrays, check_lp, kernel_checks
 
+def diagnostic_json(value):
+    # Keep diagnostics serializable when a falsification test supplies NaN/Inf.
+    # The raw offending trace remains unchanged; these strings are not data values.
+    if isinstance(value,float) and not math.isfinite(value): return 'nonfinite:'+repr(value)
+    if isinstance(value,dict): return {k:diagnostic_json(v) for k,v in value.items()}
+    if isinstance(value,(list,tuple)): return [diagnostic_json(v) for v in value]
+    return value
+
 def write(path,value):
-    Path(path).write_text(json.dumps(value,allow_nan=False)+'\n')
+    Path(path).write_text(json.dumps(diagnostic_json(value),allow_nan=False)+'\n')
 
 def load(path): return json.loads(Path(path).read_text())
 
@@ -53,7 +61,7 @@ def compare(left,right,out):
                 if first is None:
                     first=i
                     write(out/'first-divergence.json',dict(index=i,fields=bad,event_a=x,event_b=y,preceding_states=states))
-            rows.write(json.dumps(dict(index=i,event=(x or y)['event'],bad=bad,numeric=numeric))+'\n')
+            rows.write(json.dumps(diagnostic_json(dict(index=i,event=(x or y)['event'],bad=bad,numeric=numeric)),allow_nan=False)+'\n')
             if discrete:
                 first_discrete=i
                 break

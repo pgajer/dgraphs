@@ -6,7 +6,8 @@ Phase06B is independently accepted for bounded single-host restart/recovery.
 Its nonblocking documentation comment N1 is corrected in this roadmap. The user
 has authorized Phase07; its bounded study is independently accepted after review-7. The [report](../phase07/REPORT.md) records a shared numerical
 refusal and the closed 1,000-profile expansion gate.
-Milestones after Phase07 remain proposals requiring their own authorization. Updated 17 September 2026
+Phase07B numerical diagnosis is complete with independent acceptance pending.
+Milestones after Phase07B remain proposals requiring their own authorization. Updated 17 September 2026
 following the [auditor's roadmap review](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/roadmap-review-20260917/review.md)
 and [Phase 05 independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-5/audit.md).
 Scientific owner: Pawel Gajer. Coordinator and implementer: this task.
@@ -56,6 +57,7 @@ Proposed end products:
 | 06A: reusable core and early interface feasibility | Independently accepted; F1 closed | Typed in-memory core, optional observation and file/R adapters. Eight complete native traces and twelve boundary probes reproduce accepted traces apart from timing. A fresh dependency build, installed-header C++ client and minimal R call pass. No resume or cross-platform claim. |
 | 06B: durable checkpoints and resumability | Independently accepted for bounded single-host scope | Reviewed restart continuations, signal/storage failures, schema refusals, owned state, and preserved numerical behavior. No cross-platform or power-loss claim. |
 | 07: bounded scale and coverage | Independently accepted; 1,000-profile expansion gated | Native/evaluated comparisons pass for four 500-profile attempts: three complete and one shared numerical refusal. PreSSMat reaches 396 pruning iterations; separated disks produce two components containing edges. |
+| 07B: shared numerical-refusal diagnosis | Study complete; independent acceptance pending | Five exact baseline reproductions and 33 fixed-problem diagnostic solves explain differing stopping criteria and historical auxiliary amplification. No changed policy or full-engine repair has been adopted. |
 
 The accepted phase 03 baseline is `7d030ff669be9e4a090ec75829c6477c25a7091c`.
 The submitted phase 04 candidate is `df4dcb271369d65302fdf62ce6b7e6c4a13fbb32`.
@@ -233,7 +235,14 @@ change.
 
 ## Phase 07B — Diagnose the shared numerical refusal
 
-Authorized after Phase07 acceptance. The [plan](../phase07b/PLAN.md) isolates
+Authorized after Phase07 acceptance; the bounded diagnosis is now complete.
+The [report](../phase07b/REPORT.md) documents the global-versus-row stopping-test
+mismatch, historical auxiliary error amplification, and 33 fixed-problem replays.
+Five baseline replays exactly reproduce saved vectors, objectives and iterations.
+Tighter conditions pass the rejected problems but can move previously accepted
+scales beyond old comparison limits. A limited retry policy is proposed for a
+separate Phase07C; no policy adoption or expansion has been authorized.
+Independent acceptance of this diagnosis remains pending. The [plan](../phase07b/PLAN.md) isolates
 solver stopping criteria, external row validation and a small set of experimental
 settings on saved fixed problems. It does not reopen the 1,000-profile gate or
 adopt a solver-policy change.

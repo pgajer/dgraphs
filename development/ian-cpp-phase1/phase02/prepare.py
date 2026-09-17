@@ -65,18 +65,21 @@ def main():
       original_trace=str(HISTORY/'trace.jsonl'),trace_sha256=sha(HISTORY/'trace.jsonl'),full_final_phase=wholefinal,
       settings_sha256=sha(HISTORY/'settings.json'),source_sha256=sha(SOURCE)))
     prob,info,x=reconstruct();canon,chain,inverse=prob.get_problem_data(cp.CLARABEL)
-    saved=load_lp(out/'001872/problem.bin');A=canon['A'].tocsr();diff=A-saved['A']
+    saved=load_lp(out/'001872/problem.bin');A=canon['A'].tocsr()
     same_shape=A.shape==saved['A'].shape
+    diff=A-saved['A'] if same_shape else None
     sparse.save_npz(out/'reconstructed-canonical-A.npz',canon['A'])
     np.savez(out/'reconstructed-canonical-vectors.npz',b=canon['b'],c=canon['c'])
     info.update(canonical_shape=list(A.shape),canonical_nnz=A.nnz,saved_nnz=saved['A'].nnz,
        shape_equal=same_shape,canonical_stored_zeros=int((A.data==0).sum()),
-       coefficient_differences=diff.nnz,max_coefficient_difference=float(abs(diff.data).max(initial=0)),
-       b_equal=np.array_equal(canon['b'],saved['b']),max_b_difference=float(abs(canon['b']-saved['b']).max()),
+       coefficient_differences=diff.nnz if same_shape else None,max_coefficient_difference=float(abs(diff.data).max(initial=0)) if same_shape else None,
+       b_equal=np.array_equal(canon['b'],saved['b']),max_b_difference=float(abs(canon['b']-saved['b']).max()) if same_shape else None,
        c_equal=np.array_equal(canon['c'],saved['c']),cone_dimensions=str(canon['dims']),
        variable_count=len(canon['c']),fresh_problem_solver_cache_empty=not bool(prob._solver_cache),
        canonical_A_sha256=sha(out/'reconstructed-canonical-A.npz'),canonical_vectors_sha256=sha(out/'reconstructed-canonical-vectors.npz'))
-    assert same_shape and info['c_equal']
+    info['canonical_nonzero_objective_indices']=np.flatnonzero(canon['c']).tolist()[:10]
+    info['canonical_nonzero_objective_count']=int(np.count_nonzero(canon['c']))
+    info['inverse_variable_maps']=[str(getattr(i,'id_map',None)) for i in inverse]
     write_json(out/'reconstruction.json',info)
     print(json.dumps({k:v for k,v in info.items() if k not in ['historical_event','final_retune_stop']},indent=2))
 if __name__=='__main__':main()

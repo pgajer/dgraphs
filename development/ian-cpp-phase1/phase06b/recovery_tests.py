@@ -45,7 +45,9 @@ def run(name,source,options=(),expected=0,action=None):
                 assert psutil.Process(pid).cmdline()[0]==str(engine)
                 while psutil.Process(pid).status()!=psutil.STATUS_STOPPED:
                     time.sleep(.001)
-                os.kill(pid,signal.SIGKILL if action=='kill' else signal.SIGINT)
+                if action=='diagnostic_storage':
+                    (child/'diagnostics.json.tmp').write_text('exclusive-open failure fixture')
+                else:os.kill(pid,signal.SIGKILL if action=='kill' else signal.SIGINT)
                 if action!='kill':os.kill(pid,signal.SIGCONT)
                 actions.append(dict(**ready,action=action));return
             except Exception as e: errors.append(repr(e)); return
@@ -169,6 +171,24 @@ assert load(child/'status.json')['complete'] and load(child/'progress.json')['st
 assert not load(child/'diagnostics.json')['complete']
 assert normalized(events(child))==normalized(events(reference('nonuniform_curve')))
 assert load(child/'result.json')==load(reference('nonuniform_curve')/'result.json')
+
+child=run('diagnostic-status-write-failure',curve,
+    ['--diagnostic-fail','--fault','kill_after_directory_sync','--fault-at',1],0,'diagnostic_storage')
+assert load(child/'status.json')['complete'] and load(child/'progress.json')['state']=='complete'
+assert (child/'diagnostics.json.tmp').read_text()=='exclusive-open failure fixture'
+assert not (child/'diagnostics.json').exists()
+assert 'diagnostic_status_write_failed' in (child.parent/'stderr.log').read_text()
+assert load(child/'result.json')==load(reference('nonuniform_curve')/'result.json')
+
+owned=a.output/'existing-output';owned.mkdir();(owned/'status.json').write_text('existing-owner')
+record['output_ownership']=[]
+for i,(options,code) in enumerate([(['--interval','0'],1),(['--interval','x'],1),
+    (['--unknown','x'],1),(['--resume'],1),(['--fault-at','0'],1),([],2)]):
+    proc=supervise([str(engine),str(curve),str(owned),*options],a.output/('ownership-'+str(i)),one_thread_environment())
+    assert proc['exit_code']==code and sorted(p.name for p in owned.iterdir())==['status.json']
+    assert (owned/'status.json').read_text()=='existing-owner'
+    record['output_ownership'].append(dict(options=options,process=proc,unchanged=True))
+    save()
 
 record['total_solver_calls']=sum(r['solves'] for r in record['runs'])
 record['complete']=True;save();print('Recovery workload complete:',record['total_solver_calls'],'solves',flush=True)

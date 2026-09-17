@@ -20,5 +20,6 @@ Two CLI lifecycle issues identified by source inspection are corrected in the
 same pre-operational revision: option-validation failures must not write into an
 already existing output directory, and an optional diagnostic exception (including
 failure to write its status) must not revise native completion. Add zero-solve
-checks of output ownership and diagnostic-status write failure. No published or
+checks of output ownership and a separate completed-run diagnostic-status write
+failure check. No published or
 accepted earlier phase source is changed.

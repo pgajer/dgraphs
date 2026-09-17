@@ -1,7 +1,8 @@
 # IAN implementation and improvement: project roadmap
 
-Status: phases 01–05 independently accepted for their bounded scopes. Phase 05
-requires no corrective patch. Later milestones
+Status: phases 01–05 independently accepted for their bounded scopes. Authorized
+Phase06A is implementer-complete and submitted for independent audit. Phase 05
+requires no corrective patch. Milestones after 06A
 remain proposals requiring their own authorization. Updated 17 September 2026
 following the [auditor's roadmap review](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/roadmap-review-20260917/review.md)
 and [Phase 05 independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-5/audit.md).
@@ -49,6 +50,7 @@ Proposed end products:
 | 03: small complete engine | Independently accepted | Three-condition agreement on four small fixtures and tested checkpoint failures; only four pruning iterations on one ordinary input. |
 | 04: longer trajectories and readable native stages | Independently accepted as a bounded deliverable; no corrective patch required | Audit reproduced native/evaluated-Python agreement through 182 and 176 pruning iterations, retuning and isolate creation. Original-expression/evaluated-Python intermediate-array limits remain failed on both selected inputs despite equal discrete decisions. |
 | 05: numerical contract and decision sensitivity | Independently accepted as a bounded deliverable; no corrective patch required | Audit verified all 1,330 submitted payloads and reproduced 51 executions containing 1,302 fresh solves exactly apart from timing. Native/evaluated agreement passes under IAN evaluated-LP 1.0. Historical intermediate-array failures, incomplete pruning calibration and unresolved diagnostic warnings remain limitations. |
+| 06A: reusable core and early interface feasibility | Implementer-complete; independent acceptance pending | Typed in-memory core, optional observation and file/R adapters. Eight complete native traces and twelve boundary probes reproduce accepted traces apart from timing. A fresh dependency build, installed-header C++ client and minimal R call pass. No resume or cross-platform claim. |
 
 The accepted phase 03 baseline is `7d030ff669be9e4a090ec75829c6477c25a7091c`.
 The submitted phase 04 candidate is `df4dcb271369d65302fdf62ce6b7e6c4a13fbb32`.
@@ -105,6 +107,16 @@ named numerical/fidelity criteria to pass within the stated scope. Advancement
 requires an owner decision accepting remaining limitations for the next use.
 
 ## Phase 06A — Reusable core with unchanged numerical behavior
+
+The user authorized this milestone after Phase05 acceptance. The bounded work is
+complete; see the [Phase06A report](../phase06a/REPORT.md),
+[consumer contract](../phase06a/SCHEMAS.md), and
+[factual handoff](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase06a-implementer-handoff.md).
+All 560 solver calls are accounted for: 491 saved payloads, including one
+intentional invalid-vector rejection, and 69 solver calls in observer-free interface executions checked
+through outputs/invariants. The build/R evidence is one-host feasibility only.
+Independent acceptance is pending; the following requirements describe the
+submitted milestone, not authorization for additional experiments.
 
 Turn the current prototype into a library with a thin CLI and typed boundaries
 for input, graph state, LP/backend, retuning, pruning, affinity and diagnostics.
@@ -374,15 +386,15 @@ operational and interface gates. A build feasibility check or synthetic research
 design can run earlier as a bounded subtask; changing the numerical baseline and
 algorithm at the same time should be avoided.
 
-Immediate status after the Phase 05 audit: the numerical contract and bounded
-sensitivity deliverable are independently accepted without a corrective patch. Native/evaluated
+Immediate status: Phase05's numerical contract and bounded sensitivity deliverable
+are independently accepted without a corrective patch; authorized Phase06A is
+complete and awaiting independent audit. Native/evaluated
 implementation checks remain separate from original/evaluated representation
 checks; failed historical arrays remain failed. The study found no discrete
-representation divergence, without proving it impossible. No phase06 work has
-started. The recommended next milestone is Phase 06A, reusable-core extraction
-with unchanged numerical policy, followed separately by Phase 06B checkpoint and
-resume work. Execution of those proposed milestones still requires their own
-authorization. Carry the accepted boundary cases and unresolved diagnostic warnings
+representation divergence, without proving it impossible. Phase06A's extracted
+core preserves the tested reference behavior and includes the early clean-build/R
+checks. Phase06B checkpoint and resume work has not started; it follows separate
+review and authorization. Carry the accepted boundary cases and unresolved diagnostic warnings
 forward. Do not reopen an unrestricted
 solver competition, port the legacy conic expression solely to chase matching
 vectors, or start a full cohort run based on small-example agreement.

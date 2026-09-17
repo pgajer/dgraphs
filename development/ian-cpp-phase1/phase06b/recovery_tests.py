@@ -13,17 +13,17 @@ HERE=Path(__file__).resolve().parent
 sys.path.insert(0,str(HERE.parent/'phase04'))
 from support import revision,load,write,sha,supervise,one_thread_environment,traces,check_lp
 p=argparse.ArgumentParser();p.add_argument('worker',type=Path);p.add_argument('output',type=Path)
-p.add_argument('--build',type=Path,required=True);a=p.parse_args()
+p.add_argument('--build',type=Path,required=True);p.add_argument('--baseline',type=Path,required=True);a=p.parse_args()
 rev=revision();a.output.mkdir(parents=True,exist_ok=False)
 engine=a.build/'ian_engine';tool=a.build/'ian_checkpoint_tool'
-record=dict(revision=rev,engine_sha256=sha(engine),complete=False,runs=[],comparisons=[],mutations=[])
+record=dict(revision=rev,engine_sha256=sha(engine),baseline=str(a.baseline),complete=False,runs=[],comparisons=[],mutations=[])
 def save():write(a.output/'checks.json',record)
 def events(path):return traces(path) if (path/'trace.jsonl').exists() else []
 def normalized(values):return [{k:v for k,v in e.items() if k!='seconds'} for e in values]
 def fixture(name):
     phase='phase05' if name in ['helix_120','hellinger_256_perturbed','hellinger_300_perturbed'] else 'phase03'
     return a.worker/phase/'fixtures-v1'/(name+'.json')
-def reference(name):return a.worker/'phase06b/regressions-v1/full'/name/'child'
+def reference(name):return a.baseline/'full'/name/'child'
 def snapshots(folder):return sorted((folder/'checkpoints').glob('checkpoint-*.json'))
 def prefix(checkpoint,seen=None):
     seen=set() if seen is None else seen
@@ -62,7 +62,7 @@ def run(name,source,options=(),expected=0,action=None):
     assert proc['exit_code']==expected,(name,proc)
     assert not errors and (not action or len(actions)==1),(errors,actions)
     assert all(c['accepted'] and c['dual_valid'] for c in raw),name
-    assert 460+sum(r['solves'] for r in record['runs'])<=1000
+    assert 920+sum(r['solves'] for r in record['runs'])<=1500
     print(name,'exit',expected,'solves',len(raw),flush=True)
     return child
 def compare(checkpoint,child,name):

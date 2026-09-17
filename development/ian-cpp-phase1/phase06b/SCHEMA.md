@@ -65,8 +65,8 @@ A failure after rename but before directory fsync has uncertain durability.
 Progress retains the prior confirmed checkpoint and marks this uncertainty.
 After process death the loader may recover a visible, valid renamed file. This
 establishes observed process-death recovery, not survival of a power outage or
-kernel/filesystem failure. Checkpoint copies and prefix hashing are intentionally
-simple and may be expensive; no performance or memory improvement is claimed.
+kernel/filesystem failure. Payload snapshots still copy state, while trace hashes are incremental and
+loader prefix verification uses a 64 KiB buffer; no performance or memory improvement is claimed.
 
 ## CLI, progress and resources
 

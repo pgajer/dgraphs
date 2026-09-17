@@ -31,9 +31,16 @@ inline Json load_envelope(const fs::path& path, const std::string& input_hash) {
     std::ifstream trace(j.at("trace_file").get<std::string>(),std::ios::binary);
     require(bool(trace),"checkpoint_trace_read");
     require(fs::file_size(j.at("trace_file").get<std::string>()) >= size_t(bytes),"checkpoint_trace_short");
-    std::string prefix(bytes,'\0'); trace.read(prefix.data(),bytes);
-    require(trace.gcount() == bytes && ian::digest(prefix) == j.at("trace_prefix_sha256"),"checkpoint_trace_mismatch");
-    require(std::count(prefix.begin(),prefix.end(),'\n') == count,"checkpoint_trace_count");
+    CC_SHA256_CTX context; CC_SHA256_Init(&context);
+    int remaining=bytes, lines=0; char buffer[65536];
+    while(remaining>0) {
+        int wanted=std::min(remaining,int(sizeof(buffer))); trace.read(buffer,wanted);
+        require(trace.gcount()==wanted,"checkpoint_trace_short");
+        CC_SHA256_Update(&context,buffer,CC_LONG(wanted));
+        lines+=std::count(buffer,buffer+wanted,'\n'); remaining-=wanted;
+    }
+    require(ian::finish_digest(context)==j.at("trace_prefix_sha256"),"checkpoint_trace_mismatch");
+    require(lines==count,"checkpoint_trace_count");
     auto parent = j.at("parent_checkpoint").get<std::string>();
     if (!parent.empty()) require(fs::absolute(parent) != fs::absolute(path) &&
         file_hash(parent) == j.at("parent_checkpoint_sha256"),"checkpoint_parent_mismatch");
@@ -45,11 +52,13 @@ struct RestartFiles : Files {
     std::string fault, confirmed, pending_resume, origin_checkpoint, input_hash, current_phase="initialization";
     Json times=Json::object();
     bool commit_uncertain=false;
+    CC_SHA256_CTX trace_digest; size_t trace_bytes=0;
     using Clock=std::chrono::steady_clock;
     Clock::time_point start=Clock::now(), tick=start;
     RestartFiles(const fs::path& path,const std::string& hash,int every,int stop,std::string injected,int at)
         : Files(path,hash),interval(every),cancel_after(stop),fault_at(at),fault(std::move(injected)),input_hash(hash) {
         fs::create_directory(out/"checkpoints");
+        CC_SHA256_Init(&trace_digest);
     }
     void account(const std::string& phase) {
         auto now=Clock::now(); double elapsed=std::chrono::duration<double>(now-tick).count();
@@ -72,6 +81,12 @@ struct RestartFiles : Files {
             (e.name=="mapping" || e.name=="processed" ? "initialization" : "pruning"));
         if (!pending_resume.empty()) { confirmed=pending_resume; pending_resume.clear(); }
         Files::on_event(e); ++events;
+        size_t offset=0;
+        while(offset<e.json.size()) {
+            size_t count=std::min(size_t(65536),e.json.size()-offset);
+            CC_SHA256_Update(&trace_digest,e.json.data()+offset,CC_LONG(count)); offset+=count;
+        }
+        CC_SHA256_Update(&trace_digest,"\n",1); trace_bytes+=e.json.size()+1;
     }
     void on_stage(ian::Stage stage,const ian::Result& result) override {
         if (!pending_resume.empty()) { confirmed=pending_resume; pending_resume.clear(); }
@@ -114,14 +129,15 @@ struct RestartFiles : Files {
             trace.flush(); require(bool(trace),"trace_write");
             int fd=::open((out/"trace.jsonl").c_str(),O_RDONLY); require(fd>=0,"trace_open");
             int synced=::fsync(fd); int closed=::close(fd); require(synced==0 && closed==0,"trace_flush");
-            auto prefix=read_text(out/"trace.jsonl"); auto payload=state_json(s);
+            require(fs::file_size(out/"trace.jsonl")==trace_bytes,"trace_byte_count");
+            auto payload=state_json(s);
             commit(Json{{"checkpoint_schema",1},{"input_file_sha256",input_hash},
                 {"payload",payload},{"payload_sha256",ian::digest(payload.dump())},
                 {"parent_checkpoint",origin_checkpoint},
                 {"parent_checkpoint_sha256",origin_checkpoint.empty()?"":file_hash(origin_checkpoint)},
                 {"trace_file",fs::absolute(out/"trace.jsonl").string()},
-                {"trace_prefix_bytes",prefix.size()},{"trace_prefix_events",events},
-                {"trace_prefix_sha256",ian::digest(prefix)}});
+                {"trace_prefix_bytes",trace_bytes},{"trace_prefix_events",events},
+                {"trace_prefix_sha256",ian::finish_digest(trace_digest)}});
             stop = stop || cancel_requested;
             progress(stop?"cancelled":"running");
         } catch (...) { account(previous); throw; }

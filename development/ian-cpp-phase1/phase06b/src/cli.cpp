@@ -5,7 +5,7 @@ int main(int argc,char** argv) {
     fs::path out=argv[2], resume_path;
     int interval=1, cancel_after=-1, fault_at=2;
     std::string fault="none", old_fault="none";
-    bool diagnostic_fail=false;
+    bool diagnostic_fail=false, owns_output=false;
     std::unique_ptr<RestartFiles> files;
     try {
         for(int i=3;i<argc;++i) {
@@ -23,6 +23,7 @@ int main(int argc,char** argv) {
         }
         require(interval>0 && fault_at>0 && cancel_after>=-1,"invalid_option_integer");
         if(!fs::create_directories(out)) { std::cerr << "output_exists\n"; return 2; }
+        owns_output=true;
         auto began=std::chrono::steady_clock::now();
         auto input_json=Json::parse(read_text(argv[1]));
         if(input_json.value("kind","")=="stages") {
@@ -50,11 +51,16 @@ int main(int argc,char** argv) {
         auto resources=files->resources(); resources["input_and_checkpoint_load_seconds"]=loading;
         resources["load_time_is_separate_from_phase_wall"]=true;
         atomic_json(out/"resources.json",resources);
-        if(result.complete && diagnostic_fail)
-            atomic_json(out/"diagnostics.json",Json{{"complete",false},{"error","injected_optional_diagnostic_failure"}});
+        if(result.complete && diagnostic_fail) {
+            try { throw std::runtime_error("injected_optional_diagnostic_failure"); }
+            catch(const std::exception& diagnostic) {
+                try { atomic_json(out/"diagnostics.json",Json{{"complete",false},{"error",diagnostic.what()}}); }
+                catch(...) { std::cerr << "diagnostic_status_write_failed\n"; }
+            }
+        }
         return result.complete ? 0 : (result.error.kind==ian::ErrorKind::cancelled ? 3 : 1);
     } catch(const std::exception& e) {
-        if(!fs::is_directory(out)) { std::cerr << e.what() << '\n'; return 1; }
+        if(!owns_output) { std::cerr << e.what() << '\n'; return 1; }
         Json status=files ? files->status : Json{{"graph",false},{"scales",false},{"affinity",false},{"complete",false},{"solves",0}};
         status["error"]=e.what(); status["error_kind"]="adapter";
         try { atomic_json(out/"status.json",status); if(files) files->progress("failed",e.what()); }

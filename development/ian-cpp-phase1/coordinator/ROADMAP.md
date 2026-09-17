@@ -2,9 +2,10 @@
 
 Status: phases 01–05 independently accepted for their bounded scopes. Authorized
 Phase06A is independently accepted for its bounded scope; F1 is closed.
-Phase06B is implementer-complete and submitted for independent audit. Phase 05
-requires no corrective patch. Milestones after 06B
-remain proposals requiring their own authorization. Updated 17 September 2026
+Phase06B is independently accepted for bounded single-host restart/recovery.
+Its nonblocking documentation comment N1 is corrected in this roadmap. The user
+has authorized Phase07; its bounded plan is [here](../phase07/PLAN.md).
+Milestones after Phase07 remain proposals requiring their own authorization. Updated 17 September 2026
 following the [auditor's roadmap review](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/roadmap-review-20260917/review.md)
 and [Phase 05 independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-5/audit.md).
 Scientific owner: Pawel Gajer. Coordinator and implementer: this task.
@@ -51,7 +52,8 @@ Proposed end products:
 | 03: small complete engine | Independently accepted | Three-condition agreement on four small fixtures and tested checkpoint failures; only four pruning iterations on one ordinary input. |
 | 04: longer trajectories and readable native stages | Independently accepted as a bounded deliverable; no corrective patch required | Audit reproduced native/evaluated-Python agreement through 182 and 176 pruning iterations, retuning and isolate creation. Original-expression/evaluated-Python intermediate-array limits remain failed on both selected inputs despite equal discrete decisions. |
 | 05: numerical contract and decision sensitivity | Independently accepted as a bounded deliverable; no corrective patch required | Audit verified all 1,330 submitted payloads and reproduced 51 executions containing 1,302 fresh solves exactly apart from timing. Native/evaluated agreement passes under IAN evaluated-LP 1.0. Historical intermediate-array failures, incomplete pruning calibration and unresolved diagnostic warnings remain limitations. |
-| 06A: reusable core and early interface feasibility | Implementer-complete; independent acceptance pending | Typed in-memory core, optional observation and file/R adapters. Eight complete native traces and twelve boundary probes reproduce accepted traces apart from timing. A fresh dependency build, installed-header C++ client and minimal R call pass. No resume or cross-platform claim. |
+| 06A: reusable core and early interface feasibility | Independently accepted; F1 closed | Typed in-memory core, optional observation and file/R adapters. Eight complete native traces and twelve boundary probes reproduce accepted traces apart from timing. A fresh dependency build, installed-header C++ client and minimal R call pass. No resume or cross-platform claim. |
+| 06B: durable checkpoints and resumability | Independently accepted for bounded single-host scope | Reviewed restart continuations, signal/storage failures, schema refusals, owned state, and preserved numerical behavior. No cross-platform or power-loss claim. |
 
 The accepted phase 03 baseline is `7d030ff669be9e4a090ec75829c6477c25a7091c`.
 The submitted phase 04 candidate is `df4dcb271369d65302fdf62ce6b7e6c4a13fbb32`.
@@ -160,7 +162,10 @@ No resumability claim follows from this refactor.
 
 Authorized bounded implementation is complete; see the [report](../phase06b/REPORT.md),
 [frozen plan](../phase06b/PLAN.md), and [resource correction amendment](../phase06b/AMENDMENT-1.md).
-Independent acceptance remains pending. No Phase07 work has begun.
+The [independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-6b/audit.md)
+accepts the bounded deliverable. N1 concerns only the stale Phase06A table row;
+that row is corrected above. Frozen Phase06B evidence and reports remain unchanged.
+The user subsequently authorized Phase07.
 
 Build on the reviewed core. Add versioned checkpoint schemas, cancellation at
 safe boundaries, progress records and resource accounting. Add periodic accepted
@@ -191,6 +196,9 @@ independently reviewed checkpoints. A completed negative test study can require
 a correction phase without becoming an unfinished study.
 
 ## Phase 07 — Bounded scale and generalization validation
+
+Authorized by the user after the Phase06B audit. The [frozen plan](../phase07/PLAN.md)
+defines the workload, conditional expansion and measurement limitations.
 
 Use a small predeclared size ladder, initially around 500 then 1,000 unique
 profiles, rather than jumping to full cohorts. Exact sizes, candidate counts,
@@ -402,8 +410,8 @@ implementation checks remain separate from original/evaluated representation
 checks; failed historical arrays remain failed. The study found no discrete
 representation divergence, without proving it impossible. Phase06A's extracted
 core preserves the tested reference behavior and includes the early clean-build/R
-checks. Phase06B checkpoint and resume work is implementer-complete, with exact bounded
-continuations and operational tests; its acceptance requires separate review. Carry the accepted boundary cases and unresolved diagnostic warnings
+checks. Phase06B checkpoint and resume work is independently accepted for its bounded
+single-host scope. Phase07 is authorized and underway. Carry the accepted boundary cases and unresolved diagnostic warnings
 forward. Do not reopen an unrestricted
 solver competition, port the legacy conic expression solely to chase matching
 vectors, or start a full cohort run based on small-example agreement.

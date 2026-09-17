@@ -46,3 +46,21 @@ edit('reference.py',"canonical_soc=data['dims'].soc))","canonical_soc=data['dims
 edit('reference.py','    return float(raw.obj_val)','    return objective')
 c=json.loads((out/'config.json').read_text());c['numerical_policy']=policy;c['retry']['variable_units']='alpha=max(upper); min c^T y, A y <= b/alpha; x=alpha*y, z unchanged, objective*=alpha';(out/'config.json').write_text(json.dumps(c)+'\n')
 print('Derived units11 candidate; no accepted source modified.')
+edit('src/solver.hpp','    record.update(backend);','''    const char *raw_status = "Unknown";
+    switch (sol.status) {
+    case ClarabelUnsolved: raw_status="Unsolved"; break;
+    case ClarabelSolved: raw_status="Solved"; break;
+    case ClarabelPrimalInfeasible: raw_status="PrimalInfeasible"; break;
+    case ClarabelDualInfeasible: raw_status="DualInfeasible"; break;
+    case ClarabelAlmostSolved: raw_status="AlmostSolved"; break;
+    case ClarabelAlmostPrimalInfeasible: raw_status="AlmostPrimalInfeasible"; break;
+    case ClarabelAlmostDualInfeasible: raw_status="AlmostDualInfeasible"; break;
+    case ClarabelMaxIterations: raw_status="MaxIterations"; break;
+    case ClarabelMaxTime: raw_status="MaxTime"; break;
+    case ClarabelNumericalError: raw_status="NumericalError"; break;
+    case ClarabelInsufficientProgress: raw_status="InsufficientProgress"; break;
+    case ClarabelCallbackTerminated: raw_status="CallbackTerminated"; break;
+    }
+    record["solver_status"] = raw_status;
+    record.update(backend);''')
+edit('reference.py',"status=status,objective=objective,", "status=status,solver_status=str(raw.status),objective=objective,")

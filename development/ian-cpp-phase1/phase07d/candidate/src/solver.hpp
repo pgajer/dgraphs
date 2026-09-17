@@ -159,6 +159,22 @@ inline LPResult solve_lp(const Mat &D, const Edges &edges, const Vec &u, double 
         {"canonical_soc", Json::array()},
         {"seconds",
          std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count()}};
+    const char *raw_status = "Unknown";
+    switch (sol.status) {
+    case ClarabelUnsolved: raw_status="Unsolved"; break;
+    case ClarabelSolved: raw_status="Solved"; break;
+    case ClarabelPrimalInfeasible: raw_status="PrimalInfeasible"; break;
+    case ClarabelDualInfeasible: raw_status="DualInfeasible"; break;
+    case ClarabelAlmostSolved: raw_status="AlmostSolved"; break;
+    case ClarabelAlmostPrimalInfeasible: raw_status="AlmostPrimalInfeasible"; break;
+    case ClarabelAlmostDualInfeasible: raw_status="AlmostDualInfeasible"; break;
+    case ClarabelMaxIterations: raw_status="MaxIterations"; break;
+    case ClarabelMaxTime: raw_status="MaxTime"; break;
+    case ClarabelNumericalError: raw_status="NumericalError"; break;
+    case ClarabelInsufficientProgress: raw_status="InsufficientProgress"; break;
+    case ClarabelCallbackTerminated: raw_status="CallbackTerminated"; break;
+    }
+    record["solver_status"] = raw_status;
     record.update(backend);
     record["retry_eligible"] = eligible;
     if (damage) { record["test_fault"]="halved_primal_and_objective"; record["before_test_fault"]=original; }

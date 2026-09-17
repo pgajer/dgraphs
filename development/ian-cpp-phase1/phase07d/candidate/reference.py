@@ -109,7 +109,7 @@ def make_reference(folder,condition,metadata):
      and bool(np.all(scales[active]>0)) and report['objective_relative_error']<=1e-7
      and all(np.isfinite(report[k]) for k in ['objective_relative_error','max_normalized_violation','max_absolute_violation'])
      and all(np.isfinite(v) for v in dual.values()))
-   state.C=C;state.emit(dict(event='solve',number=state.solves,logical_solve=logical,attempt=attempt,numerical_policy=POLICY,solver_tolerance=tolerance,retry_eligible=bool(eligible),site=site,C=C,A_data=A.data,A_indices=A.indices,A_indptr=A.indptr,A_shape=A.shape,b=b,c=c,upper=u,active=active.astype(int),scales=scales,dual=z,status=status,objective=objective,iterations=raw.iterations,seconds=time.perf_counter()-t,accepted=bool(accepted),validation=report,dual_check=dual,canonical_shape=data['A'].shape,canonical_soc=data['dims'].soc,**backend))
+   state.C=C;state.emit(dict(event='solve',number=state.solves,logical_solve=logical,attempt=attempt,numerical_policy=POLICY,solver_tolerance=tolerance,retry_eligible=bool(eligible),site=site,C=C,A_data=A.data,A_indices=A.indices,A_indptr=A.indptr,A_shape=A.shape,b=b,c=c,upper=u,active=active.astype(int),scales=scales,dual=z,status=status,solver_status=str(raw.status),objective=objective,iterations=raw.iterations,seconds=time.perf_counter()-t,accepted=bool(accepted),validation=report,dual_check=dual,canonical_shape=data['A'].shape,canonical_soc=data['dims'].soc,**backend))
    state.solves+=1
    if accepted:
     x.value=scales

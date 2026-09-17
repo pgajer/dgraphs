@@ -2,13 +2,17 @@
 import shutil,subprocess,sys,hashlib
 from pathlib import Path
 from support import *
-H=HERE;w=Path(sys.argv[1]);root=Path(sys.argv[2]);root.mkdir(parents=True,exist_ok=False);build=w/'phase07d/build-v1';candidate=H/'candidate'
+H=HERE;w=Path(sys.argv[1]);root=Path(sys.argv[2]);root.mkdir(parents=True,exist_ok=False);build=w/'phase07d/build-v2';candidate=H/'candidate'
 prior=load(w/'phase07d/diagnostic-v1/ledger.json');assert prior['complete'] and prior['qualified']==['units11']
 # Independent reconstruction of the configured compiled identity.
 names=sorted(str(p.relative_to(candidate)) for d in ['include','src','tests'] for p in (candidate/d).rglob('*') if p.suffix in ['.hpp','.cpp','.inc'])
 identity=hashlib.sha256((''.join(sha(candidate/n) for n in names)+sha(candidate/'CMakeLists.txt')).encode()).hexdigest()
 flags=(build/'CMakeFiles/ian_core.dir/flags.make').read_text();assert identity in flags and sha(candidate/'config.json') in flags
 ledger=dict(complete=False,runs={},comparisons={},processes=[],prior_processes=prior['processes'],gated=[],revision=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),source_identity=identity,configuration_identity=sha(candidate/'config.json'),engine_sha256=sha(build/'ian_engine'),policy=POLICIES['units11'])
+if len(sys.argv)>3:
+ prior_trajectory=load(Path(sys.argv[3])/'ledger.json')
+ ledger['prior_processes']+=prior_trajectory['processes']
+ ledger['prior_trajectory']=sys.argv[3]
 def save():write(root/'ledger.json',ledger)
 def execute(cmd,folder):
  used=ledger['prior_processes']+ledger['processes'];wall=3600-sum(x['wall_seconds'] for x in used);solves=8000-sum(x['observed_solves'] for x in used)

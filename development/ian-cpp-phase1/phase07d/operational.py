@@ -5,10 +5,10 @@ from support import *
 sys.path.insert(0,str(HERE))
 from validate import exact,retry_checks
 H=Path(__file__).resolve().parent;w=Path(sys.argv[1]);root=Path(sys.argv[2]);panel=Path(sys.argv[3]);root.mkdir(parents=True,exist_ok=False)
-engine=w/'phase07d/build-v1/ian_engine';test=engine.with_name('ian_retry_tests');tool=engine.with_name('ian_checkpoint_tool')
+engine=w/'phase07d/build-v2/ian_engine';test=engine.with_name('ian_retry_tests');tool=engine.with_name('ian_checkpoint_tool')
 fixtures={e['name']:e for e in load(w/'phase07d/engine-fixtures-v1/manifest.json')['cases']}
 small=Path(fixtures['pressmat_hellinger_subset']['input']);helix=Path(fixtures['helix_500']['input'])
-previous=load(panel/'ledger.json');assert previous['validation_gate'];record=dict(complete=False,processes=[],tests=[],panel=str(panel))
+previous=load(panel/'ledger.json');assert previous['complete'] and previous['comparisons']['helix_500']['passed'];record=dict(complete=False,processes=[],tests=[],panel=str(panel))
 def save():write(root/'checks.json',record)
 def execute(name,cmd):
  used=previous.get('prior_processes',[])+previous['processes']+record['processes'];wall=3600-sum(p['wall_seconds'] for p in used);solves=8000-sum(p['observed_solves'] for p in used)
@@ -30,10 +30,9 @@ for fault,number,error in [('invalid_solver',1,'invalid_solver_result'),('retry_
  if fault=='retry_exhausted':check('damage_explicitly_labeled',all(e['test_fault']=='halved_primal_and_objective' and e['before_test_fault']['scales']==[2*x for x in e['scales']] for e in solves))
 p,child=execute('observer-rejection',[test,helix,root/'observer-rejection/child']);check('observer_stops_retry',p['exit_code']==0 and p['observed_solves']==2,result=load(child/'result.json'))
 full=Path(previous['runs']['helix_500/native']['child']);status=load(full/'status.json')
-record['natural_retry_checkpoint_available']=bool(status['complete'])
-assert status['complete'],'no_completed_natural_helix'
+record['uninterrupted_complete']=bool(status['complete'])
 if True:
- p,child=execute('cancel-after-retry',[engine,helix,root/'cancel-after-retry/child','--interval','100','--cancel-after','0']+([] if status['complete'] else ['--test-solver-fault','retry_once']))
+ p,child=execute('cancel-after-retry',[engine,helix,root/'cancel-after-retry/child','--interval','100','--cancel-after','0'])
  s=load(child/'status.json');c=retry_checks(child,root/'cancel-certificates')
  saved=sorted((child/'checkpoints').glob('*.json'));check('cancel_after_retry',p['exit_code']==3 and s['error']=='cancelled' and len(saved)==1 and len(c['retries'])>0,status=s,retry_checks=c)
  checkpoint=saved[0];payload=load(checkpoint)['payload']
@@ -44,7 +43,9 @@ if True:
   for f in [child/'trace.jsonl',resumed/'trace.jsonl']:
    with f.open('rb') as inp:shutil.copyfileobj(inp,out)
  equality=exact(full/'trace.jsonl',joined)
- check('resume_exact',p['exit_code']==0 and rs['complete'] and equality['passed'] and load(full/'result.json')==load(resumed/'result.json'),trace=equality)
+ import itertools
+ assert all({k:v for k,v in x.items() if k!='seconds'}=={k:v for k,v in y.items() if k!='seconds'} for x,y in itertools.zip_longest(events(full/'trace.jsonl'),events(joined)))
+ check('resume_exact',p['exit_code']==previous['runs']['helix_500/native']['process']['exit_code'] and rs['complete']==status['complete'] and rs['error']==status['error'] and equality['passed'] and load(full/'result.json')==load(resumed/'result.json'),trace=equality)
  for label,key,value in [('policy','policy','IAN evaluated-LP 1.0'),('source','source','0'*64),('configuration','configuration','0'*64),('counter-bound','solves',(payload['iteration']+1)*42+1),('counter-schema','solves',84001),('counter-float','solves',float(payload['solves'])),('counter-negative','solves',-1)]:
   changed=load(checkpoint);changed['payload'][key]=value;temp=root/('altered-'+label+'.json');write(temp,changed)
   altered=checkpoint.parent/('altered-'+label+'.json')

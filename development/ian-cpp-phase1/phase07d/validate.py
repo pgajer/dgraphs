@@ -6,7 +6,7 @@ from checks import load,write,sha,events,compare,inspect
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent/'phase07b'))
 from common import scalar_check
 POLICY='IAN evaluated-LP retry units11 0.1'
-ADDED={'attempt','logical_solve','numerical_policy','solver_tolerance','retry_eligible'}
+ADDED={'attempt','logical_solve','numerical_policy','solver_tolerance','retry_eligible','solver_status'}
 COEFFICIENTS=['A_data','A_indices','A_indptr','A_shape','b','c','upper','active','C','site','phase','iteration']
 def check_units(e):
  if e['attempt']==0:
@@ -45,6 +45,7 @@ def retry_checks(child,out,allow_terminal_rejection=False):
    assert bool(e['accepted'])==c['accepted'],(index,'certificate_acceptance')
    assert e['retry_eligible']==eligible,(index,'eligibility')
    assert e['numerical_policy']==POLICY
+   assert (e['solver_status']=='Solved') == (e['status']=='optimal')
    if first_number is None:first_number=e['number']
    assert e['number']==first_number+count
    if pending is None:

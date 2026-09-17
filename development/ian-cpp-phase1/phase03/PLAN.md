@@ -179,3 +179,18 @@ After all initial solves, comparison instrumentation is enriched with full lates
 preceding state, neighbor tie gaps and direct affinity-validity checks. Regenerate
 comparisons from retained traces without new complete runs. No branch or engine
 source changes are involved.
+
+### Inspection correction and bounded cap verification
+
+After the four operational injections passed, code review found that native
+pruning-cap telemetry would label the exit with the incremented loop counter,
+whereas the adapter records its last visited iteration. This branch was not reached
+by any ordinary fixture. Correct that event label. Add an explicitly labeled
+`pruning_cap` diagnostic setting max_iters=1 (all solver/numerical settings stay
+fixed), on the existing Hellinger fixture, for all three conditions. Expected
+outcome: one visited iteration, one rejected cap exit, no accepted graph/scales/
+affinity checkpoint, matching preceding decisions and removals. The diagnostic
+flag is not a new scientific default. Also verify the empty-input refusal in both
+languages. Rebuild in a new namespace and run each ordinary fixture natively once
+against the retained evaluated-Python traces, to validate the final binary without
+rerunning unchanged Python numerical conditions. Preserve initial native results.

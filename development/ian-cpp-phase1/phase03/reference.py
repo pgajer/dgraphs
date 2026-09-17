@@ -148,14 +148,14 @@ def make_reference(folder,condition,metadata):
  return module,audit,state
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('input',type=Path);p.add_argument('output',type=Path);p.add_argument('condition',choices=['original','evaluated']);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
+ p=argparse.ArgumentParser();p.add_argument('input',type=Path);p.add_argument('output',type=Path);p.add_argument('condition',choices=['original','evaluated']);p.add_argument('--pruning-cap',action='store_true');a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
  started=time.perf_counter();state=None
  try:
   d=json.loads(a.input.read_text());D,mapping=preprocess(d)
   meta=dict(input_sha256=sha(a.input),source_sha256=sha(__file__),configuration_sha256=sha(Path(__file__).with_name('config.json')),mapping=mapping)
   module,audit,state=make_reference(a.output,a.condition,meta)
   state.emit(dict(event='mapping',**mapping))
-  G,K,scales,isolates,pruning,sigma_history,stats,wstats=module.IAN('exact-precomputed',D.copy(),obj='l1',n_stds=4.5,stdev_method='C3',max_prune=.1,plot_final_stats=False,interactive=False,solver='CLARABEL',max_iters=2000,allowMSconvergence=False,tune_wG_method='median',return_stats=True,verbose=0)
+  G,K,scales,isolates,pruning,sigma_history,stats,wstats=module.IAN('exact-precomputed',D.copy(),obj='l1',n_stds=4.5,stdev_method='C3',max_prune=.1,plot_final_stats=False,interactive=False,solver='CLARABEL',max_iters=1 if a.pruning_cap else 2000,allowMSconvergence=False,tune_wG_method='median',return_stats=True,verbose=0)
   dense=K.toarray();assert np.isfinite(dense).all() and np.all(dense>=0) and np.array_equal(dense,dense.T)
   state.checkpoint('scales',dict(scales=scales,internal_scales=scales*state.scl,scl=state.scl,C=state.C))
   state.checkpoint('affinity',dict(affinity=dense,scales=scales,C=state.C))

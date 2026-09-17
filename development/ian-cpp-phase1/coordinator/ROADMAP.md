@@ -1,9 +1,9 @@
 # IAN implementation and improvement: project roadmap
 
 Status: phases 01–05 independently accepted for their bounded scopes. Authorized
-Phase06A's numerical extraction is supported by audit; its requested CLI schema
-correction is implemented and awaiting re-audit. Phase 05
-requires no corrective patch. Milestones after 06A
+Phase06A is independently accepted for its bounded scope; F1 is closed.
+Phase06B is now authorized and its restart/recovery plan is frozen. Phase 05
+requires no corrective patch. Milestones after 06B
 remain proposals requiring their own authorization. Updated 17 September 2026
 following the [auditor's roadmap review](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/roadmap-review-20260917/review.md)
 and [Phase 05 independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-5/audit.md).
@@ -119,8 +119,8 @@ through outputs/invariants. The build/R evidence is one-host feasibility only.
 The [Phase06A audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-6a/audit.md)
 requested one parser correction. The [F1 addendum](../phase06a/AUDIT-F1.md)
 records 18 passing CLI cases and four additional valid solves with exact
-reference traces apart from timing. Independent acceptance is pending re-audit;
-the following requirements describe the
+reference traces apart from timing. The [F1 re-audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-6a-f1/audit.md)
+accepts Phase06A and closes F1. The following requirements describe the
 submitted milestone, not authorization for additional experiments.
 
 Turn the current prototype into a library with a thin CLI and typed boundaries
@@ -157,6 +157,8 @@ interface/build limitations are recorded and adjudicated for the next milestone.
 No resumability claim follows from this refactor.
 
 ## Phase 06B — Durable checkpoints and resumability
+
+Authorized and in progress; see the [frozen plan](../phase06b/PLAN.md).
 
 Build on the reviewed core. Add versioned checkpoint schemas, cancellation at
 safe boundaries, progress records and resource accounting. Add periodic accepted
@@ -393,13 +395,13 @@ algorithm at the same time should be avoided.
 
 Immediate status: Phase05's numerical contract and bounded sensitivity deliverable
 are independently accepted without a corrective patch; authorized Phase06A is
-complete with the requested schema-parser correction awaiting re-audit. Native/evaluated
+independently accepted after closure of the schema-parser finding F1. Native/evaluated
 implementation checks remain separate from original/evaluated representation
 checks; failed historical arrays remain failed. The study found no discrete
 representation divergence, without proving it impossible. Phase06A's extracted
 core preserves the tested reference behavior and includes the early clean-build/R
-checks. Phase06B checkpoint and resume work has not started; it follows separate
-review and authorization. Carry the accepted boundary cases and unresolved diagnostic warnings
+checks. Phase06B checkpoint and resume work is now authorized and in progress;
+its acceptance will require separate review. Carry the accepted boundary cases and unresolved diagnostic warnings
 forward. Do not reopen an unrestricted
 solver competition, port the legacy conic expression solely to chase matching
 vectors, or start a full cohort run based on small-example agreement.

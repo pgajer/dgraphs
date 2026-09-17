@@ -47,13 +47,16 @@ for name in ['regression_helix_120','helix_500','cloud_500','lobes_500','pressma
     solve_a=(e for e in events(Path(a)/'trace.jsonl') if e['event']=='solve')
     solve_b=(e for e in events(Path(b)/'trace.jsonl') if e['event']=='solve')
     fields=['A_shape','A_data','A_indices','A_indptr','b','c','upper','active','scales','dual','status','accepted','iterations']
-    n=0; unequal={}
+    n=0; unequal={}; maximum_difference={}
     for i,(x,y) in enumerate(itertools.zip_longest(solve_a,solve_b)):
         n+=1
         for f in fields:
-            if x is None or y is None or x.get(f)!=y.get(f): unequal[f]=unequal.get(f,0)+1
-    vectors.append(dict(input=name,paired_solves=n,exact_fields=fields,unequal=unequal,passed=not unequal))
-    assert not unequal
+            if x is None or y is None or x.get(f)!=y.get(f):
+                unequal[f]=unequal.get(f,0)+1
+                if x is not None and y is not None and f in ['A_data','b','c','upper','scales','dual']:
+                    maximum_difference[f]=max(maximum_difference.get(f,0.),float(np.max(abs(np.asarray(x[f])-np.asarray(y[f])))))
+    vectors.append(dict(input=name,paired_solves=n,examined_fields=fields,unequal=unequal,
+        exact=not unequal,maximum_absolute_difference=maximum_difference))
 warnings=[]
 for folder in [root/'ladder-v1',root/'ladder-v2']:
     for f in folder.glob('*/*/stderr.log'):

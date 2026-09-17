@@ -72,3 +72,15 @@ Commit source before all solve runs. Keep raw artifacts under worker/phase02 in
 new namespaces; phase 1 and auditor evidence remain immutable. Label summary-only
 checks accurately, carrying audit N1. Final handoff includes limitations, exact
 commands, hashes, source revisions and any unresolved discrepancy.
+
+### Pre-solve amendment: parameter evaluation control
+
+Read-only canonicalization on 17 September revealed that the original expression
+has 4,842 variables, 262,911 rows and one 3D second-order cone, whereas the stored
+LP has 4,841 variables and 262,908 inequalities. CVXPY introduces an auxiliary for
+C**2. No diagnostic timing solve had run at this point. Add exactly one sixth
+condition: original expression with `ignore_dpp=True`, auto backend, one thread.
+This changes only parameter evaluation/canonicalization, keeping the source
+expression. Compare its projected matrices and selected backend to isolate the
+extra cone from generic language/interface differences. The original five
+conditions remain unchanged; maximum diagnostic workload is six solves.

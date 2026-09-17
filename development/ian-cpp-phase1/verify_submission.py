@@ -32,10 +32,10 @@ for file,revision in [('replay.cpp','7ab4268'),('CMakeLists.txt','7ab4268'),('co
     checks.append(dict(path=str(path),revision=revision,identical=same,sha256=sha(path)))
 write_json(output,dict(revision=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
     final_status=subprocess.check_output(['git','status','--short'],text=True),
-    historic_failure_hashes=hashes,fixtures_preserved=6,measured_solutions_revalidated=36,
+    historic_failure_hashes=hashes,fixtures_preserved=6,measured_summary_rows_checked=36,
     specimens=specimens,unique_composition_profiles=unique_profiles,
     executable_source_unchanged=checks,
     historical_objective_max_relative_difference=max(r['historical_objective_relative_difference'] for r in rows),
     native_executable_sha256=sha(w/'build-v2/ian_lp_replay'),
     native_library_sha256=sha(w/'build-v2/rust-target/release/libclarabel_c.dylib')))
-print('Verified all 36 measurements, six fixtures, historical evidence hashes and frozen executable source.')
+print('Checked 36 summary rows, six fixtures, historical evidence hashes and frozen executable source; raw-vector checks are performed by summarize.py.')

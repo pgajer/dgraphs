@@ -24,6 +24,11 @@ for rev,files in [('8a106da',['numeric.hpp','solver.hpp','CMakeLists.txt','confi
   path=phase/name;assert path.read_bytes()==subprocess.check_output(['git','show',f'{rev}:{path}']);frozen.append(dict(path=str(path),revision=rev,sha256=sha(path)))
 manifest=json.loads((a.root/'fixtures-v1/manifest.json').read_text())
 for name,digest in manifest['files'].items():assert sha(a.root/'fixtures-v1'/name)==digest
+composition_source=json.loads((a.root/'fixtures-v1/pressmat_hellinger_subset.json').read_text())['provenance']
+assert sha(composition_source['source'])==composition_source['sha256']
+adversaries=json.loads((a.root/'comparator-tests-v1/checks.json').read_text())
+assert adversaries['optimizations']==0 and len(adversaries['checks'])==2
+assert all(c['detected'] and c['complete_context_saved'] for c in adversaries['checks'])
 source_provenance=[json.loads(p.read_text()) for p in a.root.rglob('source/provenance.json')]
 assert source_provenance and all(p==source_provenance[0] for p in source_provenance)
 assert source_provenance[0]['cython']==sha(CYTHON)

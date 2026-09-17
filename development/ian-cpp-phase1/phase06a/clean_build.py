@@ -47,7 +47,7 @@ record['source_files']={str(f.relative_to(source)):sha(f) for f in source.rglob(
 record['dependency_sources']={str(f.relative_to(deps)):sha(f) for f in deps.rglob('*') if f.is_file()}
 save()
 call('toolchain',[rust/'rustc','--version','--verbose'],env)
-call('vendor',[rust/'cargo','vendor','--locked','--versioned-dirs','--manifest-path',
+call('vendor-command',[rust/'cargo','vendor','--locked','--versioned-dirs','--manifest-path',
     deps/'Clarabel.cpp/rust_wrapper/Cargo.toml',a.output/'vendor'],env)
 (a.output/'cargo-home/config.toml').write_text('[source.crates-io]\nreplace-with = "vendored-sources"\n[source.vendored-sources]\ndirectory = "'+str(a.output/'vendor')+'"\n')
 call('solver',[rust/'cargo','build','--frozen','--offline','--release','--manifest-path',

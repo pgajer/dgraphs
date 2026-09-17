@@ -7,8 +7,14 @@ output_dir <- args[[3L]]
 stopifnot(!dir.exists(output_dir), dir.create(output_dir, recursive = TRUE))
 dll <- dyn.load(bridge)
 symbol <- getNativeSymbolInfo("ian_run", dll)
-mat <- function(name) as.matrix(read.table(file.path(input_dir, paste0(name, ".txt")), header = FALSE))
-vec <- function(name) scan(file.path(input_dir, paste0(name, ".txt")), quiet = TRUE)
+vec <- function(name) {
+    path <- file.path(input_dir, paste0(name, ".bin"))
+    readBin(path, "double", n = file.info(path)$size / 8, size = 8L, endian = "little")
+}
+mat <- function(name) {
+    shape <- scan(file.path(input_dir, paste0(name, ".shape")), quiet = TRUE)
+    matrix(vec(name), nrow = shape[[1L]], ncol = shape[[2L]], byrow = TRUE)
+}
 features <- mat("features"); storage.mode(features) <- "double"
 distances <- mat("distances"); storage.mode(distances) <- "double"
 ids <- readLines(file.path(input_dir, "ids.txt"))

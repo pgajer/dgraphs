@@ -1,5 +1,6 @@
 """Run the 33 frozen diagnostic conditions serially with explicit resource bounds."""
 import os
+import json
 import signal
 import subprocess
 import sys
@@ -40,7 +41,7 @@ for case in load(fixtures/'manifest.json')['cases']:
                     try:rss+=child.memory_info().rss;nthreads+=child.num_threads()
                     except psutil.NoSuchProcess:pass
                 peak=max(peak,rss);threads=max(threads,nthreads)
-                samples.write(str(dict(seconds=now-begin,tree_rss_bytes=rss,threads=nthreads))+'\n')
+                samples.write(json.dumps(dict(seconds=now-begin,tree_rss_bytes=rss,threads=nthreads))+'\n')
                 if rss>2**30:reason=reason or 'rss_limit'
                 if now-begin>120 or now-start>1200:reason=reason or 'time_limit'
                 if sum(f.stat().st_size for f in root.parent.rglob('*') if f.is_file())>4*2**30:reason=reason or 'study_output_limit'

@@ -39,6 +39,8 @@ before=solver.get_info();write(out/'before-solve.json',dict(linear_solver=before
     settings=str(solver.get_settings()),clarabel_version=clarabel.__version__))
 assert before.linsolver.name=='qdldl' and before.linsolver.threads==1
 started=time.perf_counter();raw=solver.solve();elapsed=time.perf_counter()-started;info=solver.get_info()
+write(out/'raw-solution.json',dict(x=raw.x,z=raw.z,s=raw.s,status=str(raw.status),iterations=raw.iterations,
+    objective=raw.obj_val,dual_objective=raw.obj_val_dual,primal_residual=raw.r_prim,dual_residual=raw.r_dual,wall_seconds=elapsed))
 x=np.array(raw.x);z=np.array(raw.z);s=np.array(raw.s);n=len(saved['c']);m=len(saved['b'])
 original_x=x[:n];original_z=(z*row_factor)[:m]
 check=scalar_check(saved,original_x,original_z,raw.obj_val,str(raw.status))

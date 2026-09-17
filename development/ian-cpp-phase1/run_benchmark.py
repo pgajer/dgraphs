@@ -1,5 +1,5 @@
 """Serial fresh-process repetitions with common memory accounting and validation."""
-import argparse,json,os,platform,subprocess,sys,time
+import argparse,json,os,platform,subprocess,sys,time,threading
 from pathlib import Path
 import numpy as np
 import psutil
@@ -36,7 +36,10 @@ for seq,(rep,case,backend) in enumerate(order):
     started=time.perf_counter();peak=0;max_threads=0;samples=[]
     with (run/'stdout.log').open('w') as stdout,(run/'stderr.log').open('w') as stderr:
         child=subprocess.Popen(cmd,env=env,stdout=stdout,stderr=stderr);proc=psutil.Process(child.pid)
-        while child.poll() is None:
+        stop=threading.Event()
+        def sample():
+          global peak,max_threads
+          while not stop.is_set():
             rss=0;threads=0
             try: tree=[proc]+proc.children(recursive=True)
             except psutil.Error: tree=[]
@@ -44,9 +47,11 @@ for seq,(rep,case,backend) in enumerate(order):
                 try: rss+=item.memory_info().rss;threads+=item.num_threads()
                 except psutil.Error: pass
             peak=max(peak,rss);max_threads=max(max_threads,threads)
-            samples.append([time.perf_counter()-started,rss,threads]);time.sleep(.01)
-        code=child.wait()
-    wall=time.perf_counter()-started;cpu=psutil.cpu_percent(interval=None)
+            samples.append([time.perf_counter()-started,rss,threads]);stop.wait(.01)
+        sampler=threading.Thread(target=sample);sampler.start()
+        code=child.wait();wall=time.perf_counter()-started
+        stop.set();sampler.join()
+    cpu=psutil.cpu_percent(interval=None)
     measurement=dict(sequence=seq,case=case,backend=backend,repetition=rep+1,source_revision=revision,
         command=cmd,cwd=os.getcwd(),exit_code=code,end_to_end_seconds=wall,peak_tree_rss_bytes=peak,
         peak_tree_threads=max_threads,load_before=load_before,load_after=os.getloadavg(),system_cpu_percent=cpu,

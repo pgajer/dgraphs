@@ -14,6 +14,8 @@ for seq,(rep,case,backend) in enumerate(schedule):
         d=load_lp(fixtures/case/'problem.bin');x=np.fromfile(folder/'result.x.bin',dtype='<f8')
         assert validate(d,x,r['objective'],r['status'])==v
         vectors[case,backend,rep]=x
+    event=json.loads((fixtures/case/'event.json').read_text())
+    historical_objective_error=abs(r['objective']-event['objective'])/max(1,abs(r['objective']),abs(event['objective'])) if r else None
     rows.append(dict(sequence=seq,case=case,path=backend,repetition=rep+1,accepted=m['accepted'],exit_code=m['exit_code'],
       end_to_end_seconds=m['end_to_end_seconds'],root_peak_rss_MiB=m['root_peak_rss_bytes']/2**20,
       sampled_tree_peak_rss_MiB=m['peak_tree_rss_bytes']/2**20,threads=m['peak_tree_threads'],
@@ -24,6 +26,7 @@ for seq,(rep,case,backend) in enumerate(schedule):
       objective=v.get('recomputed_objective'),constraint_residual=v.get('max_normalized_violation'),
       absolute_violation=v.get('max_absolute_violation'),objective_error=v.get('objective_relative_error'),
       lower_bound_violation=v.get('lower_bound_violation'),upper_bound_violation=v.get('upper_bound_violation'),
+      historical_objective_relative_difference=historical_objective_error,
       historical_scale_max_abs=r.get('scale_historical_max_abs'),historical_scale_relative_l2=r.get('scale_historical_relative_l2'),
       dual_relative_gap=dual.get('relative_gap'),dual_stationarity=dual.get('stationarity_max'),dual_negative_max=dual.get('dual_negative_max'),
       error=m.get('result_error')))

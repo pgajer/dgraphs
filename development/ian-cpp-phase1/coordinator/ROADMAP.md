@@ -1,7 +1,8 @@
 # IAN implementation and improvement: project roadmap
 
 Status: phases 01–05 independently accepted for their bounded scopes. Authorized
-Phase06A is implementer-complete and submitted for independent audit. Phase 05
+Phase06A's numerical extraction is supported by audit; its requested CLI schema
+correction is implemented and awaiting re-audit. Phase 05
 requires no corrective patch. Milestones after 06A
 remain proposals requiring their own authorization. Updated 17 September 2026
 following the [auditor's roadmap review](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/roadmap-review-20260917/review.md)
@@ -115,7 +116,11 @@ complete; see the [Phase06A report](../phase06a/REPORT.md),
 All 560 solver calls are accounted for: 491 saved payloads, including one
 intentional invalid-vector rejection, and 69 solver calls in observer-free interface executions checked
 through outputs/invariants. The build/R evidence is one-host feasibility only.
-Independent acceptance is pending; the following requirements describe the
+The [Phase06A audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-6a/audit.md)
+requested one parser correction. The [F1 addendum](../phase06a/AUDIT-F1.md)
+records 18 passing CLI cases and four additional valid solves with exact
+reference traces apart from timing. Independent acceptance is pending re-audit;
+the following requirements describe the
 submitted milestone, not authorization for additional experiments.
 
 Turn the current prototype into a library with a thin CLI and typed boundaries
@@ -388,7 +393,7 @@ algorithm at the same time should be avoided.
 
 Immediate status: Phase05's numerical contract and bounded sensitivity deliverable
 are independently accepted without a corrective patch; authorized Phase06A is
-complete and awaiting independent audit. Native/evaluated
+complete with the requested schema-parser correction awaiting re-audit. Native/evaluated
 implementation checks remain separate from original/evaluated representation
 checks; failed historical arrays remain failed. The study found no discrete
 representation divergence, without proving it impossible. Phase06A's extracted

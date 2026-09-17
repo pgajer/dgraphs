@@ -13,7 +13,8 @@ p=argparse.ArgumentParser();p.add_argument('root',type=Path);p.add_argument('out
 rev=revision();a.output.mkdir(parents=True,exist_ok=False)
 reg1=load(a.root/'regressions-v1/checks.json');reg2=load(a.root/'regressions-v2/checks.json')
 recovery=load(a.root/'recovery-v1/checks.json');schema=load(a.root/'schema-v2/checks.json')
-assert all(x['complete'] for x in [reg1,reg2,recovery,schema])
+periodic=load(a.root/'periodic-v1/checks.json')
+assert all(x['complete'] for x in [reg1,reg2,recovery,schema,periodic])
 raw=[];snapshots=[];stages=[];resource_records=[]
 tool=a.root/'build-v3/ian_checkpoint_tool'
 # Re-dumping a snapshot with the native helper checks the stored canonical payload
@@ -68,7 +69,7 @@ for trace in sorted(a.root.rglob('child/trace.jsonl')):
 for label in ['regressions-v1','regressions-v2']:
     path=a.root/label/'stages/legacy/child/stages.json'
     raw.append(dict(path=str(path),number=0,intentional_invalid=False,**check_lp(load(path)['disconnected']['solve'])))
-assert len(raw)==460*2+recovery['total_solver_calls']+schema['total_solver_calls']==1300
+assert len(raw)==460*2+recovery['total_solver_calls']+schema['total_solver_calls']+periodic['total_solver_calls']==1318
 assert sum(c['intentional_invalid'] for c in raw)==2
 assert all(c['accepted']!=c['intentional_invalid'] for c in raw)
 assert all(c['dual_valid'] for c in raw if not c['intentional_invalid'])
@@ -88,7 +89,7 @@ result=dict(revision=rev,total_solver_calls=len(raw),accepted_payloads=sum(c['ac
     stage_artifacts=stages,resources=resource_records,resource_comparison=resources,
     regression_workloads=2,recovery_executions=len(recovery['runs']),continuation_comparisons=len(recovery['comparisons']),
     corruption_mutations=len(recovery['mutations']),output_ownership_checks=len(recovery['output_ownership']),
-    schema_cases=len(schema['cases']),complete=True)
+    schema_cases=len(schema['cases']),periodic_executions=len(periodic['runs']),complete=True)
 write(a.output/'results.json',result)
 print({key:result[key] for key in ['total_solver_calls','accepted_payloads','intentional_invalid_payloads','maxima',
       'recovery_executions','continuation_comparisons','corruption_mutations','output_ownership_checks','schema_cases']})

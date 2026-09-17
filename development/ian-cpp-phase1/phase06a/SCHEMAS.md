@@ -105,6 +105,16 @@ zero-based indices. Legacy status records durable stage completion, distinct fro
 the new result's in-memory stage validity. File-adapter errors are reported as
 adapter failures and can prevent a new result file from being written.
 
+The CLI defaults an omitted `schema_version` to 1. An explicit declaration must
+be a JSON integer equal to 1. Floating representations, including `1.0` and `1e0`,
+are rejected even when mathematically integral; fractions, unsupported integers,
+out-of-range integers, strings, booleans, null, arrays and objects are rejected.
+The adapter checks the JSON type and value before assigning the C++ integer.
+These refusals occur before core execution and produce exit status 1 and
+`status.json` with `complete: false`, `error_kind: "adapter"` and
+`error: "unsupported_schema"`; no trace, result or validated stage is created.
+This parser boundary is separate from typed C++ `unsupported` errors.
+
 The feasibility R bridge copies double matrices into C++ row vectors and copies
 results back into R-owned vectors/matrices. It converts edges, representative/
 member indices, component labels and isolate indices to one-based values; degrees

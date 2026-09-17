@@ -1,11 +1,18 @@
 #pragma once
 #include <ian/core.hpp>
 #include <json.hpp>
+#include <stdexcept>
 namespace ian::io {
 using Json = nlohmann::json;
 inline Input parse_input(const Json& j) {
     Input in;
-    in.version = j.value("schema_version", schema_version);
+    // Validate the JSON representation before any conversion can truncate or narrow it.
+    if (j.contains("schema_version")) {
+        const auto& version = j.at("schema_version");
+        if (!version.is_number_integer() || version != schema_version)
+            throw std::invalid_argument("unsupported_schema");
+    }
+    in.version = schema_version;
     in.policy = j.value("numerical_policy", std::string(numerical_policy));
     in.features = j.at("features").get<Matrix>();
     in.distances = j.at("distances").get<Matrix>();

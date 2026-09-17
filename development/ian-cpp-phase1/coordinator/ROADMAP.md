@@ -2,7 +2,7 @@
 
 Status: phases 01–05 independently accepted for their bounded scopes. Authorized
 Phase06A is independently accepted for its bounded scope; F1 is closed.
-Phase06B is now authorized and its restart/recovery plan is frozen. Phase 05
+Phase06B is implementer-complete and submitted for independent audit. Phase 05
 requires no corrective patch. Milestones after 06B
 remain proposals requiring their own authorization. Updated 17 September 2026
 following the [auditor's roadmap review](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/roadmap-review-20260917/review.md)
@@ -158,7 +158,9 @@ No resumability claim follows from this refactor.
 
 ## Phase 06B — Durable checkpoints and resumability
 
-Authorized and in progress; see the [frozen plan](../phase06b/PLAN.md).
+Authorized bounded implementation is complete; see the [report](../phase06b/REPORT.md),
+[frozen plan](../phase06b/PLAN.md), and [resource correction amendment](../phase06b/AMENDMENT-1.md).
+Independent acceptance remains pending. No Phase07 work has begun.
 
 Build on the reviewed core. Add versioned checkpoint schemas, cancellation at
 safe boundaries, progress records and resource accounting. Add periodic accepted
@@ -400,8 +402,8 @@ implementation checks remain separate from original/evaluated representation
 checks; failed historical arrays remain failed. The study found no discrete
 representation divergence, without proving it impossible. Phase06A's extracted
 core preserves the tested reference behavior and includes the early clean-build/R
-checks. Phase06B checkpoint and resume work is now authorized and in progress;
-its acceptance will require separate review. Carry the accepted boundary cases and unresolved diagnostic warnings
+checks. Phase06B checkpoint and resume work is implementer-complete, with exact bounded
+continuations and operational tests; its acceptance requires separate review. Carry the accepted boundary cases and unresolved diagnostic warnings
 forward. Do not reopen an unrestricted
 solver competition, port the legacy conic expression solely to chase matching
 vectors, or start a full cohort run based on small-example agreement.

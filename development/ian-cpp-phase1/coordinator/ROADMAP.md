@@ -8,8 +8,9 @@ has authorized Phase07; its bounded study is independently accepted after review
 refusal and the closed 1,000-profile expansion gate.
 Phase07B numerical diagnosis is independently accepted without findings.
 Phase07C is independently accepted as a bounded experimental study without
-findings; natural helix recovery remains unsuccessful. Phase07D is authorized
-and in progress under its [frozen plan](../phase07d/PLAN.md). Later milestones
+findings; natural helix recovery remains unsuccessful. The authorized Phase07D study is complete with a partial numerical repair;
+independent acceptance is pending. Its [report](../phase07d/REPORT.md) records a
+later shared AlmostSolved refusal and the still-closed complete-helix gate. Later milestones
 remain proposals requiring authorization. Updated 17 September 2026
 following the [auditor's roadmap review](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/roadmap-review-20260917/review.md)
 and [Phase 05 independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-5/audit.md).
@@ -62,6 +63,7 @@ Proposed end products:
 | 07: bounded scale and coverage | Independently accepted; 1,000-profile expansion gated | Native/evaluated comparisons pass for four 500-profile attempts: three complete and one shared numerical refusal. PreSSMat reaches 396 pruning iterations; separated disks produce two components containing edges. |
 | 07B: shared numerical-refusal diagnosis | Independently accepted for bounded diagnosis | Five exact baseline reproductions and 33 fixed-problem diagnostic solves explain differing stopping criteria and historical auxiliary amplification. No changed policy or full-engine repair has been adopted. |
 | 07C: limited retry and complete-trajectory test | Independently accepted; recovery remains unsuccessful | Eight accepted complete controls and the boundary suite are preserved. Three 500-profile examples complete unchanged. The helix repairs seven rejections but exhausts the eighth retry during initial tuning because its dual-stationarity check still fails. No policy adoption or 1,000-profile expansion. |
+| 07D: dual-certificate diagnosis and targeted remedy | Study complete; independent acceptance pending | Variable-unit normalization repairs the prior fixed failure and all 13 eligible retries in the helix attempt. Both implementations reach two pruning steps, then refuse an ineligible AlmostSolved return. Natural checkpoint continuation reproduces that refusal. The remaining regression panel and larger runs are gated. |
 
 The accepted phase 03 baseline is `7d030ff669be9e4a090ec75829c6477c25a7091c`.
 The submitted phase 04 candidate is `df4dcb271369d65302fdf62ce6b7e6c4a13fbb32`.
@@ -459,3 +461,10 @@ A synthetic retry/checkpoint continuation passes; the natural helix reaches no
 pruning checkpoint. The next proposed numerical study starts from its saved
 failed dual certificate. Pawel has now authorized this bounded Phase07D study. Phase08 and larger runs remain
 pending resolution of the numerical gate.
+
+Phase07D uses the named experimental policy `IAN evaluated-LP retry units11 0.1`;
+it is not adopted. The next proposed question is whether a fresh normalized retry
+of a finite AlmostSolved return can pass unchanged external certificates, followed
+by complete-trajectory and regression checks. Changing that eligibility rule is
+not yet authorized. Full-engine compatibility for the new units policy remains
+untested because its complete-helix gate failed.

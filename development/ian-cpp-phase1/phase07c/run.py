@@ -4,10 +4,15 @@ from pathlib import Path
 from checks import load,write,sha
 from guard import run,tree_bytes
 H=Path(__file__).resolve().parent;w=Path(sys.argv[1]);root=Path(sys.argv[2]);root.mkdir(parents=True,exist_ok=False)
-ledger=dict(complete=False,runs={},comparisons={},processes=[],gated=[],revision=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),engine_sha256=sha(w/'phase07c/build-v1/ian_engine'),plan_sha256=sha(H/'PLAN.md'))
+ledger=dict(complete=False,runs={},comparisons={},processes=[],gated=[],revision=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),engine_sha256=sha(w/'phase07c/build-v2/ian_engine'),plan_sha256=sha(H/'PLAN.md'))
+prior=load(Path(sys.argv[3])/'ledger.json') if len(sys.argv)>3 else None
+ledger['prior_processes']=prior['processes'] if prior else []
+ledger['prior_panel']=sys.argv[3] if prior else None
+from provenance import build_identity
+ledger['build_identity']=build_identity(w/'phase07c/build-v2')
 def save():write(root/'ledger.json',ledger)
 def execute(cmd,folder):
- wall=3600-sum(p['wall_seconds'] for p in ledger['processes']);solves=8000-sum(p['observed_solves'] for p in ledger['processes'])
+ wall=3600-sum(p['wall_seconds'] for p in ledger['prior_processes']+ledger['processes']);solves=8000-sum(p['observed_solves'] for p in ledger['prior_processes']+ledger['processes'])
  assert wall>0 and solves>0 and tree_bytes(root.parent)<16*2**30 and shutil.disk_usage(root).free>20*2**30,'study_budget_exhausted'
  p=run(cmd,folder,root.parent,wall,solves);ledger['processes'].append(p);save();assert p['reason'] is None,p['reason'];return p
 save()
@@ -19,9 +24,10 @@ try:
   for condition in ['native','evaluated']:
    folder=root/n/condition;child=folder/'child';paths[condition]=child
    probe=kind in ['probe','stage']
-   cmd=([w/('phase07c/build-v1/ian_probe' if probe else 'phase07c/build-v1/ian_engine'),fixture,child]+([] if probe else ['--interval','100']) if condition=='native' else [sys.executable,'-B',H/('reference_probe.py' if probe else 'reference.py'),fixture,child,'evaluated'])
+   cmd=([w/('phase07c/build-v2/ian_probe' if probe else 'phase07c/build-v2/ian_engine'),fixture,child]+([] if probe else ['--interval','100']) if condition=='native' else [sys.executable,'-B',H/('reference_probe.py' if probe else 'reference.py'),fixture,child,'evaluated'])
    proc=execute(cmd,folder)
    item=dict(input=str(fixture),process=proc,child=str(child),complete=load(child/'status.json').get('complete',False) if (child/'status.json').exists() else False)
+   if kind=='stage':item['complete']=proc['exit_code']==0 and (child/'stages.json').exists()
    if kind!='stage':
     args=['probe',child,folder/'checks'] if kind=='probe' else ['inspect',child,fixture,folder/'checks']
     diagnostic=execute([sys.executable,'-B',H/'validate.py',*args],folder/'diagnostic')

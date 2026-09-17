@@ -14,7 +14,7 @@ edit('src/json_adapter.hpp','    in.policy = j.value("numerical_policy", std::st
 edit('src/cli.cpp','        if(input_json.value("kind","")=="stages") {','        require(input_json.contains("numerical_policy") && input_json.at("numerical_policy")==ian::numerical_policy,"unsupported_policy");\n        if(input_json.value("kind","")=="stages") {')
 edit('src/core.cpp','    if (input.contains("cases")) {','    require(input.contains("numerical_policy") && input.at("numerical_policy")==numerical_policy,"unsupported_policy");\n    if (input.contains("cases")) {')
 edit('src/core.cpp','code == "invalid_solver_result" ||','code == "retry_exhausted" || code == "invalid_solver_result" ||')
-edit('src/core.cpp','"none", "invalid_solver",','"none", "retry_exhausted", "invalid_solver",')
+edit('src/core.cpp','"none", "invalid_solver",','"none", "retry_once", "retry_exhausted", "invalid_solver",')
 edit('src/restart_methods.inc','(s.iteration + 1) * 21','(s.iteration + 1) * 42')
 edit('src/state_json.hpp','42000','84000')
 edit('src/files.hpp','{"input_sha256",input_hash}', '{"numerical_policy",ian::numerical_policy},{"input_sha256",input_hash}')
@@ -30,7 +30,7 @@ s=s[:start]+'''    Vec solve(bool parameterized) {
         for (int attempt = 0; attempt < 2; ++attempt) {
             double tolerance = attempt == 0 ? 1e-9 : 1e-11;
             auto r = solve_lp(D, edges, upper, C, parameterized,
-                inject == "invalid_solver" && solves == 0, tolerance, inject == "retry_exhausted");
+                inject == "invalid_solver" && solves == 0, tolerance, inject == "retry_exhausted" || (inject == "retry_once" && solves == 0));
             r.record["number"] = solves++;
             r.record["logical_solve"] = logical;
             r.record["attempt"] = attempt;
@@ -85,3 +85,8 @@ edit('reference_probe.py',"    output.mkdir(parents=True, exist_ok=False)", "   
 print('Derived candidate; retry.hpp and test clients are separately authored.')
 edit('CMakeLists.txt','add_executable(ian_checkpoint_tool tests/checkpoint_tool.cpp)', 'add_executable(ian_checkpoint_tool tests/checkpoint_tool.cpp)\nadd_executable(ian_retry_tests tests/retry_tests.cpp)')
 edit('CMakeLists.txt','foreach(TARGET ian_engine ian_probe ian_checkpoint_tool)', 'foreach(TARGET ian_engine ian_probe ian_checkpoint_tool ian_retry_tests)')
+
+edit("CMakeLists.txt",'  file(SHA256 ${CMAKE_CURRENT_SOURCE_DIR}/${FILE} HASH)','  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${FILE}")\n  file(SHA256 ${CMAKE_CURRENT_SOURCE_DIR}/${FILE} HASH)')
+edit("CMakeLists.txt",'file(SHA256 ${CMAKE_CURRENT_SOURCE_DIR}/config.json CONFIG_HASH)','set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/config.json")\nfile(SHA256 ${CMAKE_CURRENT_SOURCE_DIR}/config.json CONFIG_HASH)')
+
+edit('src/cli.cpp', '            else if(option=="--fault") fault=arg();', '            else if(option=="--test-solver-fault") old_fault=arg();\n            else if(option=="--fault") fault=arg();')

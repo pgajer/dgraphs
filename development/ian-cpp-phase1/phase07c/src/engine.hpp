@@ -77,7 +77,7 @@ struct Engine {
         for (int attempt = 0; attempt < 2; ++attempt) {
             double tolerance = attempt == 0 ? 1e-9 : 1e-11;
             auto r = solve_lp(D, edges, upper, C, parameterized,
-                inject == "invalid_solver" && solves == 0, tolerance, inject == "retry_exhausted");
+                inject == "invalid_solver" && solves == 0, tolerance, inject == "retry_exhausted" || (inject == "retry_once" && solves == 0));
             r.record["number"] = solves++;
             r.record["logical_solve"] = logical;
             r.record["attempt"] = attempt;

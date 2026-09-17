@@ -15,6 +15,7 @@ int main(int argc,char** argv) {
             if(option=="--resume") resume_path=arg();
             else if(option=="--interval") interval=number();
             else if(option=="--cancel-after") cancel_after=number();
+            else if(option=="--test-solver-fault") old_fault=arg();
             else if(option=="--fault") fault=arg();
             else if(option=="--fault-at") fault_at=number();
             else if(option=="--diagnostic-fail") diagnostic_fail=true;

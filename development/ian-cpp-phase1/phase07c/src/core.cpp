@@ -66,7 +66,7 @@ Result resume(const Input& input, const RestartState& state, Observer* observer)
 }
 namespace testing {
 Result run_with_fault(const Input& input, Observer* observer, const std::string& fault) {
-    const std::vector<std::string> supported{"none", "retry_exhausted", "invalid_solver", "after_graph", "after_scales", "after_affinity", "pruning_cap"};
+    const std::vector<std::string> supported{"none", "retry_once", "retry_exhausted", "invalid_solver", "after_graph", "after_scales", "after_affinity", "pruning_cap"};
     if (std::find(supported.begin(), supported.end(), fault) == supported.end())
         throw std::invalid_argument("unknown_test_fault");
     return execute(input, observer, fault);

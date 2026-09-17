@@ -5,13 +5,13 @@ from checks import load,write,events,sha
 from guard import run,tree_bytes
 from validate import exact,retry_checks
 H=Path(__file__).resolve().parent;w=Path(sys.argv[1]);root=Path(sys.argv[2]);panel=Path(sys.argv[3]);root.mkdir(parents=True,exist_ok=False)
-engine=w/'phase07c/build-v1/ian_engine';test=engine.with_name('ian_retry_tests');tool=engine.with_name('ian_checkpoint_tool')
+engine=w/'phase07c/build-v2/ian_engine';test=engine.with_name('ian_retry_tests');tool=engine.with_name('ian_checkpoint_tool')
 fixtures={e['name']:e for e in load(w/'phase07c/fixtures-v1/manifest.json')['cases']}
 small=Path(fixtures['pressmat_hellinger_subset']['input']);helix=Path(fixtures['helix_500']['input'])
 previous=load(panel/'ledger.json');record=dict(complete=False,processes=[],tests=[],panel=str(panel))
 def save():write(root/'checks.json',record)
 def execute(name,cmd):
- used=previous['processes']+record['processes'];wall=3600-sum(p['wall_seconds'] for p in used);solves=8000-sum(p['observed_solves'] for p in used)
+ used=previous.get('prior_processes',[])+previous['processes']+record['processes'];wall=3600-sum(p['wall_seconds'] for p in used);solves=8000-sum(p['observed_solves'] for p in used)
  assert wall>0 and solves>0 and tree_bytes(root.parent)<16*2**30 and shutil.disk_usage(root).free>20*2**30
  p=run(cmd,root/name,root.parent,wall,solves);record['processes'].append(p);save();assert p['reason'] is None;return p,root/name/'child'
 def check(name,ok,**details):
@@ -30,8 +30,15 @@ for fault,number,error in [('invalid_solver',1,'invalid_solver_result'),('retry_
  if fault=='retry_exhausted':check('damage_explicitly_labeled',all(e['test_fault']=='halved_primal_and_objective' and e['before_test_fault']['scales']==[2*x for x in e['scales']] for e in solves))
 p,child=execute('observer-rejection',[test,helix,root/'observer-rejection/child']);check('observer_stops_retry',p['exit_code']==0 and p['observed_solves']==2,result=load(child/'result.json'))
 full=Path(previous['runs']['helix_500/native']['child']);status=load(full/'status.json')
-if status['complete']:
- p,child=execute('cancel-after-retry',[engine,helix,root/'cancel-after-retry/child','--interval','100','--cancel-after','0'])
+record['natural_retry_checkpoint_available']=bool(status['complete'])
+if not status['complete']:
+ record['natural_resume_not_executed']='Helix stopped during initial tuning; no accepted pruning checkpoint exists.'
+ p,full=execute('synthetic-retry-full',[engine,small,root/'synthetic-retry-full/child','retry_once'])
+ check('synthetic_retry_full',p['exit_code']==0 and load(full/'status.json')['complete'])
+ retry_checks(full,root/'synthetic-full-certificates')
+ helix=small
+if True:
+ p,child=execute('cancel-after-retry',[engine,helix,root/'cancel-after-retry/child','--interval','100','--cancel-after','0']+([] if status['complete'] else ['--test-solver-fault','retry_once']))
  s=load(child/'status.json');c=retry_checks(child,root/'cancel-certificates')
  saved=sorted((child/'checkpoints').glob('*.json'));check('cancel_after_retry',p['exit_code']==3 and s['error']=='cancelled' and len(saved)==1 and len(c['retries'])>0,status=s,retry_checks=c)
  checkpoint=saved[0];payload=load(checkpoint)['payload']
@@ -51,5 +58,5 @@ if status['complete']:
   result=subprocess.run([str(tool),str(temp),str(altered)],capture_output=True,text=True);assert result.returncode==0
   name='resume-wrong-'+label;p,fail=execute(name,[engine,helix,root/name/'child','--resume',altered]);s=load(fail/'status.json')
   check(name,p['exit_code']==1 and p['observed_solves']==0 and s['error']=='incompatible_restart',status=s)
-else:record['resume_not_executed']='Helix did not complete; no claim of successful continuation.'
+
 record['complete']=True;record['passed']=all(e['passed'] for e in record['tests']);save();print('Operational checks complete.',flush=True)

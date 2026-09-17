@@ -17,7 +17,7 @@ for four states, selected before new native/evaluated execution:
    positive absolute active ratio-to-effective-threshold margin. Break ties by
    frozen candidate order, event index, vertex index. Use the immediately
    preceding solve and graph; retain the chosen vertex.
-4. Across all six original traces, the retuning evaluation with the smallest
+4. Across all six original traces, the non-weighted retuning evaluation with the smallest
    strictly positive abs(abs(median-1)-0.1), breaking ties by candidate order and
    event index. Use its preceding solve and graph.
 

@@ -160,3 +160,22 @@ and be disclosed. No timed-repeat claim. Record phase times, RSS and workload as
 diagnostics, not a speed/memory superiority benchmark. Deliver committed sources,
 all raw outcomes, automated comparison tables, report and factual handoff; stop
 for independent audit.
+
+### Coverage amendment after the initial twelve complete runs
+
+All initial comparisons agreed; three geometric fixtures converged without
+pruning, while the Hellinger subset exercised four pruning iterations. Preserve
+those results and do not replace the geometric fixtures. Inspection also showed
+that the initial `cap_not_unconditional` case does not have a cap smaller than its
+uncapped threshold. Add one targeted decision case with statistics fifteen 1s,
+ten 2s and six 9s, and supplied median 1: its cap is 5, below the uncapped C3
+threshold, while its maximum exceeds that threshold. Expected result is to retain
+the uncapped threshold. This tests the conditional guard, without selecting for
+language agreement or changing a tolerance. Run the unchanged stage harness on a
+new supplemental fixture namespace; its three small disconnected LPs are labeled
+rechecks, not additional ordinary fixtures or timing repetitions.
+
+After all initial solves, comparison instrumentation is enriched with full latest
+preceding state, neighbor tie gaps and direct affinity-validity checks. Regenerate
+comparisons from retained traces without new complete runs. No branch or engine
+source changes are involved.

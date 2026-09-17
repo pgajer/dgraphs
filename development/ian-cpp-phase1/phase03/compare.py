@@ -22,6 +22,34 @@ def check_lp(e):
 DISCRETE=['event','phase','iteration','representatives','member_to_profile','specimen_ids','profile_ids','initial_edges','edges','degrees','isolates','components','site','number','active','A_shape','A_indices','A_indptr','C','minC','maxC','recycled','bisection_index','bisection_updates','median_target_met','boundary_stop','cap_reached','converged','reason','status','accepted','multiscale','candidates','selected','removed']
 FLOATS={'D1':(1e-12,2e-14),'D2':(1e-12,2e-14),'scl':(1e-12,2e-14),'upper':(1e-12,2e-14),'A_data':(1e-12,2e-14),'b':(1e-12,2e-14),'c':(1e-12,2e-14),'scales':(1e-7,1e-7),'ratios':(1e-7,1e-7),'stats':(1e-7,1e-7),'wstats':(1e-7,1e-7),'location':(1e-7,1e-7),'dispersion':(1e-7,1e-7),'threshold':(1e-7,1e-7),'raw_threshold':(1e-7,1e-7),'floored_threshold':(1e-7,1e-7),'cap':(1e-7,1e-7),'median':(1e-7,1e-7),'median_residual':(1e-7,1e-7),'threshold_margins':(1e-7,1e-7),'median_margin':(1e-7,1e-7),'lower_margin':(1e-7,1e-7),'upper_margin':(1e-7,1e-7),'affinity':(1e-7,1e-7)}
 
+def state_before(events,index):
+ state={}
+ for event in events[:index]:state[event['event']]=event
+ # Retain complete latest state, including distance matrices and all decision inputs.
+ D=state.get('processed',{}).get('D1');edges=[]
+ for event in reversed(events[:index]):
+  if 'edges' in event:edges=event['edges'];break
+ if D is not None:
+  D=np.asarray(D);adj=[[] for _ in range(len(D))]
+  for i,j in edges:adj[i].append(j);adj[j].append(i)
+  gaps=[]
+  for i,nbr in enumerate(adj):
+   distances=sorted([D[i,j] for j in nbr],reverse=True)
+   gaps.append(None if len(distances)<2 else float(distances[0]-distances[1]))
+  state['furthest_neighbor_tie_gaps']=gaps
+ return state
+
+def kernel_checks(events):
+ deg=None;checks=[]
+ for e in events:
+  if 'degrees' in e:deg=np.asarray(e['degrees'])
+  if 'affinity' in e:
+   K=np.asarray(e['affinity']);n=len(K)
+   valid=K.shape==(n,n) and np.isfinite(K).all() and np.all((K>=0)&(K<=1)) and np.array_equal(K,K.T)
+   if deg is not None:valid=valid and np.array_equal(np.diag(K),(deg>0).astype(float)) and not np.any(K[deg==0,:]) and not np.any(K[:,deg==0])
+   checks.append(dict(event=e['event'],iteration=e['iteration'],valid=bool(valid),nonzeros=int(np.count_nonzero(K)),zeros=int(np.count_nonzero(K==0))))
+ return checks
+
 def compare(a,b,out):
  A=traces(a);B=traces(b);out=Path(out);out.mkdir(parents=True,exist_ok=False);checks=[];first=None;scl=1
  for i in range(max(len(A),len(B))):
@@ -44,10 +72,10 @@ def compare(a,b,out):
    r=dict(index=i,event=x['event'],bad=bad,numeric=numeric)
   checks.append(r)
   if bad and first is None:
-   first=i;context=dict(index=i,fields=bad,preceding_a=A[max(0,i-3):i],preceding_b=B[max(0,i-3):i],event_a=A[i] if i<len(A) else None,event_b=B[i] if i<len(B) else None,input_a=str(a),input_b=str(b))
+   first=i;context=dict(index=i,fields=bad,preceding_a=A[max(0,i-3):i],preceding_b=B[max(0,i-3):i],event_a=A[i] if i<len(A) else None,event_b=B[i] if i<len(B) else None,input_a=str(a),input_b=str(b),complete_preceding_state_a=state_before(A,i),complete_preceding_state_b=state_before(B,i))
    write(out/'first-divergence.json',context)
  # Only evaluate endpoint checkpoints as an additional check, never a replacement.
- summary=dict(a=str(a),b=str(b),events_a=len(A),events_b=len(B),passed=first is None,first_divergence=first,checks=checks,
+ summary=dict(kernel_checks_a=kernel_checks(A),kernel_checks_b=kernel_checks(B),a=str(a),b=str(b),events_a=len(A),events_b=len(B),passed=first is None,first_divergence=first,checks=checks,
   raw_checks_a=[dict(number=e['number'],**check_lp(e)) for e in A if e['event']=='solve'],raw_checks_b=[dict(number=e['number'],**check_lp(e)) for e in B if e['event']=='solve'])
  write(out/'comparison.json',summary);return summary
 

@@ -20,6 +20,13 @@ fixtures=load(root.parent/'fixtures-v1/manifest.json')['files']
 ledger=dict(revision=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),complete=False,runs={},comparisons={},gated=[],
     environment=dict(python=sys.version,numpy=np.__version__,scipy=scipy.__version__,cvxpy=cvxpy.__version__,clarabel=clarabel.__version__,psutil=psutil.__version__,platform=platform.platform(),machine=platform.machine(),cpu_count=os.cpu_count()),
     engine=str(engine),engine_sha256=sha(engine),plan_sha256=sha(HERE/'PLAN.md'),native_checkpoint_interval=100)
+previous=None
+if len(sys.argv)>3:
+    previous=load(Path(sys.argv[3])/'ledger.json')
+    assert previous['complete'] and not previous['expansion_gate']
+    ledger.update(runs=dict(previous['runs']),comparisons=dict(previous['comparisons']),processes=list(previous['processes']),
+        previous_ledger=str(Path(sys.argv[3])/'ledger.json'),previous_sha256=sha(Path(sys.argv[3])/'ledger.json'),
+        amendment_sha256=sha(HERE/'AMENDMENT-1.md'))
 def save(): write(root/'ledger.json',ledger)
 def remaining():
     procs=[v for v in ledger.get('processes',[])]
@@ -54,20 +61,29 @@ def pair(name,fixture):
 save()
 try:
     fixture=worker/'phase05/fixtures-v1/helix_120.json'
-    gate=pair('regression_helix_120',fixture)
-    for condition in ['native','evaluated']:
-        gate &= comparison('regression_helix_120',worker/'phase05/full-v1/helix_120'/condition/'child',
-            root/'regression_helix_120'/condition/'child','saved-'+condition)
+    gate=previous['regression_gate'] if previous else pair('regression_helix_120',fixture)
+    if previous is None:
+        for condition in ['native','evaluated']:
+            gate &= comparison('regression_helix_120',worker/'phase05/full-v1/helix_120'/condition/'child',
+                root/'regression_helix_120'/condition/'child','saved-'+condition)
     ledger['regression_gate']=gate; save()
     small=['helix_500','cloud_500','lobes_500','pressmat_500']
     large=['helix_1000','cloud_1000','lobes_1000']
     for name in small:
+        if name+'/native' in ledger['runs']: continue
         if not gate:
             ledger['gated'].append(dict(name=name,conditions=['native','evaluated'],reason='earlier_gate_failure')); save(); continue
-        gate=pair(name,Path(fixtures[name]['path']))
+        success=pair(name,Path(fixtures[name]['path']))
+        if previous:
+            # Amendment allows the remaining fixed panel after shared refusals.
+            gate=ledger['comparisons'][name+'/native-evaluated']['passed'] and all(
+                ledger['runs'][name+'/'+c]['process']['reason'] is None for c in ['native','evaluated'])
+        else: gate=success
+    gate=gate and previous is None
     ledger['expansion_gate']=gate; save()
     # Historical controls do not change the evaluated-reference gate.
     for name in ['helix_500','lobes_500']:
+        if name+'/original' in ledger['runs']: continue
         if name+'/evaluated' not in ledger['runs']:
             ledger['gated'].append(dict(name=name,conditions=['original'],reason='principal_input_not_executed'));save();continue
         one(name,Path(fixtures[name]['path']),'original')

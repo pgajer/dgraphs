@@ -53,6 +53,12 @@ identity, and original submission plus audit manifest preservation. Reproduction
 commands and exact candidate/hash provenance are in the
 [correction handoff](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase06a-correction-f1-handoff.md).
 
+The first finalization attempt stopped while reading an older manifest that uses
+`final_revision` instead of `revision`. No final manifest was written. The
+preservation script was corrected to read both recorded formats, and the error
+record is retained separately. This was a provenance-harness failure after the
+successful CLI tests; no runtime source changed and no numerical tests were rerun.
+
 ## Limits and status
 
 This parser-only change was tested on the existing macOS ARM64 host. The earlier

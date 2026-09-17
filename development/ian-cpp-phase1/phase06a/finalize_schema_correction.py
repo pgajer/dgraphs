@@ -50,7 +50,7 @@ for root, path, source_commit in prior:
     source_count = 0
     for name, entry in data.get('source_files', {}).items():
         expected = entry['sha256'] if isinstance(entry, dict) else entry
-        content = gitbytes(source_commit or data['revision'], name)
+        content = gitbytes(source_commit or data.get('revision') or data['final_revision'], name)
         assert hashlib.sha256(content).hexdigest() == expected, name
         source_count += 1
     preserved.append(dict(manifest=str(path), sha256=sha(path), files=len(files),

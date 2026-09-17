@@ -187,10 +187,10 @@ running Python IAN process. For the cohort cases, Python startup was approximate
 0.64–0.71 s, canonicalization/setup about 0.10–0.13 s, while solving took 5–10 s.
 No statistical significance or population inference is claimed from three repeats.
 
-[All 36 attempts](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/results-v1/all-attempts.md)
-and the [full measurement table](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/results-v1/attempts.tsv)
+[All 36 attempts](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/results-v2/all-attempts.md)
+and the [full measurement table](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/results-v2/attempts.tsv)
 include separate phases, load, iterations, memory, numerical results and failures.
-The generated [case summary](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/results-v1/case-summary.json)
+The generated [case summary](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/results-v2/case-summary.json)
 retains unrounded values and ranges.
 
 ## Numerical behavior
@@ -220,6 +220,7 @@ not a demanded bitwise acceptance rule.
 | Combined cohort, late pruning | 946,772.839941 | 4.70e-9 | 2.73e-12 |
 | Combined cohort, final retuning | 999,828.532111 | 2.03e-9 | 5.77e-6 |
 
+The largest relative objective difference from the historical solve was 9.70e-11.
 Differences from the historical vector were not clipped or dismissed; values use
 the saved preconditioned units. The largest scale relative L2 difference across
 all cases was 2.52e-9. Historical execution/model assembly and the new direct

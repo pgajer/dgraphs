@@ -14,6 +14,11 @@ for c in manifest['cases']:
     assert sha(c['source'])==c['source_sha256']
     assert sha(c['trace'])==c['trace_sha256']
     assert sha(w/'fixtures-v1'/c['label']/'problem.bin')==c['binary_sha256']
+with np.load(history.parent/'combined_full_input.npz') as data:
+    unique_profiles=len(np.unique(data['composition'],axis=0))
+    specimens=len(data['member_ids'])
+    assert specimens==4849 and unique_profiles==4841
+    assert np.array_equal(np.unique(data['profile_index']),np.arange(unique_profiles))
 rows=json.loads((w/'results-v2/attempts.json').read_text())
 assert len(rows)==36 and all(r['accepted'] and r['exit_code']==0 for r in rows)
 assert all(r['tree_processes']==1 for r in rows)
@@ -28,6 +33,7 @@ for file,revision in [('replay.cpp','7ab4268'),('CMakeLists.txt','7ab4268'),('co
 write_json(output,dict(revision=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
     final_status=subprocess.check_output(['git','status','--short'],text=True),
     historic_failure_hashes=hashes,fixtures_preserved=6,measured_solutions_revalidated=36,
+    specimens=specimens,unique_composition_profiles=unique_profiles,
     executable_source_unchanged=checks,
     historical_objective_max_relative_difference=max(r['historical_objective_relative_difference'] for r in rows),
     native_executable_sha256=sha(w/'build-v2/ian_lp_replay'),

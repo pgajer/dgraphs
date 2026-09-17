@@ -1,9 +1,10 @@
 # IAN implementation and improvement: project roadmap
 
-Status: phases 01–04 independently accepted for their bounded scopes; authorized
-Phase 05 complete and submitted, independent acceptance pending. Later milestones
+Status: phases 01–05 independently accepted for their bounded scopes. Phase 05
+requires no corrective patch. Later milestones
 remain proposals requiring their own authorization. Updated 17 September 2026
-following the [auditor's roadmap review](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/roadmap-review-20260917/review.md).
+following the [auditor's roadmap review](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/roadmap-review-20260917/review.md)
+and [Phase 05 independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-5/audit.md).
 Scientific owner: Pawel Gajer. Coordinator and implementer: this task.
 Independent audit remains a separate role.
 
@@ -47,7 +48,7 @@ Proposed end products:
 | 02: historical discrepancy and persistent sequences | Independently accepted | Representation/backend settings explain the large historical timing discrepancy; persistent Python/native timings were near equal; native benchmark-client peak memory was 52–61% lower. These are not complete-engine claims. |
 | 03: small complete engine | Independently accepted | Three-condition agreement on four small fixtures and tested checkpoint failures; only four pruning iterations on one ordinary input. |
 | 04: longer trajectories and readable native stages | Independently accepted as a bounded deliverable; no corrective patch required | Audit reproduced native/evaluated-Python agreement through 182 and 176 pruning iterations, retuning and isolate creation. Original-expression/evaluated-Python intermediate-array limits remain failed on both selected inputs despite equal discrete decisions. |
-| 05: numerical contract and decision sensitivity | Implementer-complete; submitted for independent audit | Working reference is IAN evaluated-LP 1.0. All 1,330 saved optimization payloads pass numerical checks; twelve fixed-state native/evaluated comparisons and four complete trajectories pass. Historical intermediate-array comparisons fail in eight fixed-state cases and three complete examples, with unchanged discrete decisions within each case. |
+| 05: numerical contract and decision sensitivity | Independently accepted as a bounded deliverable; no corrective patch required | Audit verified all 1,330 submitted payloads and reproduced 51 executions containing 1,302 fresh solves exactly apart from timing. Native/evaluated agreement passes under IAN evaluated-LP 1.0. Historical intermediate-array failures, incomplete pruning calibration and unresolved diagnostic warnings remain limitations. |
 
 The accepted phase 03 baseline is `7d030ff669be9e4a090ec75829c6477c25a7091c`.
 The submitted phase 04 candidate is `df4dcb271369d65302fdf62ce6b7e6c4a13fbb32`.
@@ -78,6 +79,15 @@ Keep the frozen baseline tolerances. Any future revised criterion needs its own
 justification and prospective tests.
 
 The bounded study is complete and described in the [Phase 05 report](../phase05/REPORT.md).
+The [independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-5/audit.md)
+accepts candidate `b2e132562ae61a8849d2c1b8bca317fb805f76b1` for the bounded
+numerical-contract and decision-sensitivity scope. It independently verified all
+1,330 submitted optimization payloads and reproduced 51 executions with another
+1,302 solves, matching submitted traces apart from timing. Calibration results
+were reconstructed from saved evidence, not rerun. No corrective patch is needed.
+This disposition does not establish general historical equivalence or production
+readiness; the frozen submission retains its original pre-audit status wording.
+
 Near-boundary retuning probes change from one solve and three edge deletions to
 three solves and two deletions across a tiny change in the supplied multiplier;
 all implementations agree within each case. The pruning endpoint calibration did
@@ -100,6 +110,13 @@ Turn the current prototype into a library with a thin CLI and typed boundaries
 for input, graph state, LP/backend, retuning, pruning, affinity and diagnostics.
 Separate algorithm policy from file formats and language interfaces. Preserve
 numeric operation ordering where it affects the accepted reference contract.
+
+Retain the accepted Phase 05 fixed-state retuning boundary, strict-threshold and
+tie cases as regression tests, alongside complete trajectories. The extraction
+must meet the existing discrete and numerical comparison rules. Preserve the
+warning diagnostic fixtures and track their underlying library cause as a
+separate unresolved investigation before qualifying unattended broader use;
+suppressing warnings is not a resolution.
 
 Add versioned input/result schemas and structured errors. Collect a named
 scientific consumer contract for EXP-038 and EXP-039: discrete adjacency, metric
@@ -357,14 +374,16 @@ operational and interface gates. A build feasibility check or synthetic research
 design can run earlier as a bounded subtask; changing the numerical baseline and
 algorithm at the same time should be avoided.
 
-Immediate status after authorized Phase 05: the numerical contract and bounded
-sensitivity evidence are submitted for independent audit. Native/evaluated
+Immediate status after the Phase 05 audit: the numerical contract and bounded
+sensitivity deliverable are independently accepted without a corrective patch. Native/evaluated
 implementation checks remain separate from original/evaluated representation
 checks; failed historical arrays remain failed. The study found no discrete
 representation divergence, without proving it impossible. No phase06 work has
-started. After independent review and separate authorization, the next milestone
-is the reusable core and reliable execution work above, carrying these boundary
-cases and unresolved diagnostic warnings forward. Do not reopen an unrestricted
+started. The recommended next milestone is Phase 06A, reusable-core extraction
+with unchanged numerical policy, followed separately by Phase 06B checkpoint and
+resume work. Execution of those proposed milestones still requires their own
+authorization. Carry the accepted boundary cases and unresolved diagnostic warnings
+forward. Do not reopen an unrestricted
 solver competition, port the legacy conic expression solely to chase matching
 vectors, or start a full cohort run based on small-example agreement.
 

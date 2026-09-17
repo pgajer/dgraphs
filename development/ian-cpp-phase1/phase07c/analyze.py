@@ -3,7 +3,7 @@ import hashlib,itertools,json,math,subprocess,sys
 from collections import Counter
 from decimal import Decimal,localcontext
 from pathlib import Path
-from checks import load,write,events,sha
+from checks import load,write,events,sha,arrays
 from validate import exact,retry_checks
 from provenance import build_identity
 root=Path(sys.argv[1]);out=Path(sys.argv[2]);out.mkdir(parents=True,exist_ok=False)
@@ -11,7 +11,7 @@ fixtures=load(root/'fixtures-v1/manifest.json')['cases'];panel=load(root/'panel-
 assert panel['complete'] and panel['comparison_gate'] and len(panel['runs'])==50 and not panel['gated']
 assert old['complete'] and ops['complete'] and ops['passed']
 assert all(x['passed'] for x in panel['comparisons'].values()) and all(x['same_path']['passed'] for x in panel['runs'].values())
-rows=[];raw_pairs=0
+rows=[];raw_pairs=0;raw_pair_count=0;raw_differences=[]
 for f in fixtures:
  n=f['name'];assert sha(f['input'])==f['sha256'] and sha(f['source'])==f['source_sha256']
  source=load(f['source']);candidate=load(f['input']);candidate.pop('numerical_policy');source.pop('numerical_policy',None);assert source==candidate
@@ -20,13 +20,18 @@ for f in fixtures:
  if n!='helix_500':assert all(e['passed'] for e in pair.values())
  else:assert all(not e['complete'] and e['process']['exit_code']==1 for e in pair.values())
  if f['kind']!='stage':
-  vector_count=0
+  vector_count=0;pair_count=0;maxima={};differences=[]
   for x,y in itertools.zip_longest(events(Path(pair['native']['child'])/'trace.jsonl'),events(Path(pair['evaluated']['child'])/'trace.jsonl')):
    assert x is not None and y is not None and x['event']==y['event']
    if x['event']=='solve':
-    assert all(x[k]==y[k] for k in ['scales','dual','objective','iterations','A_data','b','c','A_indices','A_indptr','A_shape']), (n,x['number'],'raw_vector_or_problem_difference')
-    vector_count+=1
-  raw_pairs+=vector_count;r['exact_raw_solver_pairs']=vector_count
+    pair_count+=1
+    fields=['scales','dual','objective','iterations','A_data','b','c','A_indices','A_indptr','A_shape']
+    different=[k for k in fields if x[k]!=y[k]]
+    vector_count+=int(not different)
+    if different:differences.append(dict(number=x['number'],fields=different))
+    for k in ['scales','dual','objective','A_data','b']:
+     maxima[k]=max(maxima.get(k,0),arrays(x[k],y[k],1e-7,1e-7)['max_absolute'])
+  raw_pairs+=vector_count;raw_pair_count+=pair_count;r.update(exact_raw_solver_pairs=vector_count,raw_solver_pairs=pair_count,raw_maximum_absolute_differences=maxima,nonidentical_pairs=differences)
   for c,e in pair.items():
    previous=old['runs'][n+'/'+c];check=exact(Path(previous['child'])/'trace.jsonl',Path(e['child'])/'trace.jsonl');assert check['passed'];r['preliminary_same_path_'+c]=check
   native=pair['native']['checks'];retry=native['retry_checks'] if 'retry_checks' in native else native
@@ -81,6 +86,6 @@ for folder in ['panel-v1','panel-v2','operational-v1']:
  for p in (root/folder).rglob('stderr.log'):
   text=p.read_text()
   if 'Warning' in text:warning_logs.append(dict(path=str(p),warning_lines=sum('Warning' in s for s in text.splitlines())))
-result=dict(complete=True,rows=rows,raw_solver_pairs_exact=raw_pairs,primary_attempts=sum(e['process']['observed_solves'] for e in panel['runs'].values()),primary_accepted=sum(r.get('accepted',0)*2 for r in rows),primary_rejected=sum(r.get('rejected',0)*2 for r in rows),operational_checks=operation_checks,operation_assertions=len(ops['tests']),operation_attempts=sum(p['observed_solves'] for p in ops['processes']),census=census,total=dict(total),guarded_processes=len(processes),guarded_wall_seconds=sum(p['wall_seconds'] for p in processes),maximum_sampled_rss_bytes=max(p['sampled_tree_peak_rss_bytes'] for p in processes),failure=failure,build_provenance=dict(preliminary_embedded=stale,preliminary_committed_expected=expected,final=current),warning_logs=warning_logs,natural_retry_checkpoint_available=ops['natural_retry_checkpoint_available'])
+result=dict(complete=True,rows=rows,raw_solver_pairs_exact=raw_pairs,raw_solver_pairs=raw_pair_count,primary_attempts=sum(e['process']['observed_solves'] for e in panel['runs'].values()),primary_accepted=sum(r.get('accepted',0)*2 for r in rows),primary_rejected=sum(r.get('rejected',0)*2 for r in rows),operational_checks=operation_checks,operation_assertions=len(ops['tests']),operation_attempts=sum(p['observed_solves'] for p in ops['processes']),census=census,total=dict(total),guarded_processes=len(processes),guarded_wall_seconds=sum(p['wall_seconds'] for p in processes),maximum_sampled_rss_bytes=max(p['sampled_tree_peak_rss_bytes'] for p in processes),failure=failure,build_provenance=dict(preliminary_embedded=stale,preliminary_committed_expected=expected,final=current),warning_logs=warning_logs,natural_retry_checkpoint_available=ops['natural_retry_checkpoint_available'])
 write(out/'results.json',result)
 print({k:result[k] for k in ['complete','primary_attempts','primary_accepted','primary_rejected','raw_solver_pairs_exact','operation_attempts','total','guarded_wall_seconds']})

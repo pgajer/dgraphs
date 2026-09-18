@@ -11,9 +11,11 @@ for e in m['cases']:assert sha(e['input'])==e['sha256']
 source=w/'phase07e/trajectory-v1/helix_500/native/child/trace.jsonl';small=out/'saved-solve-prefix.jsonl';count=0
 with small.open('w') as f:
  for e in events(source):
+  if count==3:
+   assert e['event']!='solve';f.write(__import__('json').dumps(e)+'\n');break
   if e['event']=='solve':
    f.write(__import__('json').dumps(e)+'\n');count+=1
-   if e['attempt']==1:break
+   if e['attempt']==1:assert count==3
 assert count==3
 cmd=[sys.executable,'-B',E/'test_trace.py',out/'trace-controls',small]
 p=subprocess.run(list(map(str,cmd)),capture_output=True,text=True);(out/'stdout.log').write_text(p.stdout);(out/'stderr.log').write_text(p.stderr);assert p.returncode==0,p.stderr

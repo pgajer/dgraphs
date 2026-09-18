@@ -3,7 +3,7 @@ import hashlib,itertools,shutil,subprocess,sys
 from pathlib import Path
 from support import *
 w=Path(sys.argv[1]);root=Path(sys.argv[2]);root.mkdir(parents=True,exist_ok=False);study=root.parent
-m=load(study/'fixtures-v1/manifest.json');assert load(study/'preflight-v1/results.json')['passed']
+m=load(study/'fixtures-v1/manifest.json');assert load(study/'preflight-v2/results.json')['passed']
 engine=w/'phase07e/build-v1/ian_engine';tool=engine.with_name('ian_checkpoint_tool')
 assert sha(engine)==m['runtime']['engine_sha256']
 ledger=dict(complete=False,runs={},comparisons={},processes=[],gated=[],restart={},policy=POLICY,runtime=m['runtime'],revision=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip())

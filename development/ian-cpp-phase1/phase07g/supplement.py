@@ -1,9 +1,9 @@
 """No-solve settings reconstruction and precise build receipts after replay."""
 import subprocess
 from support import *
-root=Path(sys.argv[1]).resolve();folder=root/'settings-supplement';folder.mkdir(exist_ok=False)
+root=Path(sys.argv[1]).resolve();folder=root/'settings-supplement-v2';folder.mkdir(exist_ok=False)
 deps=WORKER/'phase06a/clean-v2';lib=deps/'prefix/lib/libclarabel_c.dylib'
-command=['/usr/bin/clang++','-std=c++17','-O3','-DNDEBUG','-ffp-contract=off','-I'+str(deps/'dependencies/Clarabel.cpp/include'),'-I'+str(WORKER/'phase03/deps'),str(HERE/'settings_probe.cpp'),str(lib),'-o',str(folder/'settings_probe')]
+command=['/usr/bin/clang++','-std=c++17','-O3','-DNDEBUG','-ffp-contract=off','-I'+str(deps/'dependencies/Clarabel.cpp/include'),'-I'+str(WORKER/'phase03/deps'),str(HERE/'settings_probe.cpp'),str(lib),'-Wl,-rpath,'+str(lib.parent),'-o',str(folder/'settings_probe')]
 with (folder/'build.log').open('w') as f:subprocess.run(command,stdout=f,stderr=subprocess.STDOUT,check=True)
 with (folder/'settings.json').open('w') as f:subprocess.run([str(folder/'settings_probe')],stdout=f,check=True)
 settings=load(folder/'settings.json');ps=load(root/'runs/1/child/settings.json');assert len(settings)==38;assert all(settings[k]==ps[k] for k in settings)

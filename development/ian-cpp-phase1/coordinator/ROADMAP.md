@@ -10,10 +10,13 @@ Phase07B numerical diagnosis is independently accepted without findings.
 Phase07C is independently accepted as a bounded experimental study without
 findings; its natural helix recovery remained unsuccessful. Phase07D is independently
 accepted as a bounded study without corrective findings. Authorized Phase07E is
-complete and awaiting independent review: its [report](../phase07e/REPORT.md)
+independently accepted without corrective findings: its [report](../phase07e/REPORT.md)
 records complete helix recovery, all 25 paired comparisons passing, and exact
 natural checkpoint continuation to completion. Policy adoption and the
-1,000-profile expansion remain gated. Later milestones remain proposals requiring
+production use remain gated. Authorized Phase07F is complete with a negative
+1,000-profile result: native helix tuning exhausts its retry while evaluated Python
+completes. Six other frozen inputs, including four quadforms, remain unexecuted;
+further scale execution is gated pending diagnosis. Later milestones require
 authorization. Updated 17 September 2026
 following the [auditor's roadmap review](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/roadmap-review-20260917/review.md)
 and [Phase 05 independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-5/audit.md).
@@ -67,7 +70,8 @@ Proposed end products:
 | 07B: shared numerical-refusal diagnosis | Independently accepted for bounded diagnosis | Five exact baseline reproductions and 33 fixed-problem diagnostic solves explain differing stopping criteria and historical auxiliary amplification. No changed policy or full-engine repair has been adopted. |
 | 07C: limited retry and complete-trajectory test | Independently accepted; recovery remains unsuccessful | Eight accepted complete controls and the boundary suite are preserved. Three 500-profile examples complete unchanged. The helix repairs seven rejections but exhausts the eighth retry during initial tuning because its dual-stationarity check still fails. No policy adoption or 1,000-profile expansion. |
 | 07D: dual-certificate diagnosis and targeted remedy | Independently accepted as a bounded study; no corrective findings | Variable-unit normalization repairs the prior fixed failure and all 13 eligible retries in the helix attempt. Both implementations reach two pruning steps, then refuse an ineligible AlmostSolved return. Natural checkpoint continuation reproduces that refusal. The remaining regression panel and larger runs were gated at that phase. |
-| 07E: AlmostSolved retry eligibility | Study complete; independent review pending | Both helix implementations complete 42 pruning steps with 20 successful retries. All 50 scheduled executions and 25 paired comparisons pass; previously successful traces remain unchanged under frozen metadata exclusions. Natural cancellation/resume completes identically. No policy adoption or larger runs. |
+| 07E: AlmostSolved retry eligibility | Independently accepted for bounded scope; no corrective findings | Both helix implementations complete 42 pruning steps with 20 successful retries. All 50 scheduled executions and 25 paired comparisons pass; previously successful traces remain unchanged under frozen metadata exclusions. Natural cancellation/resume completes identically. No policy adoption or larger runs. |
+| 07F: 1,000-profile scale and quadforms | Study complete with negative compatibility result; independent review pending | Native helix stops after 26 attempts before pruning; Python completes 112 attempts and 47 pruning steps. Terminal LPs differ by one right-hand-side floating-point step and produce different solver statuses/scales. Six remaining inputs, including intrinsic 2D–5D quadforms, are generated but gated. |
 
 The accepted phase 03 baseline is `7d030ff669be9e4a090ec75829c6477c25a7091c`.
 The submitted phase 04 candidate is `df4dcb271369d65302fdf62ce6b7e6c4a13fbb32`.
@@ -446,8 +450,8 @@ core preserves the tested reference behavior and includes the early clean-build/
 checks. Phase06B checkpoint and resume work is independently accepted for its bounded
 single-host scope. Phase07 is independently accepted for its bounded study;
 the original shared helix refusal is repaired in the experimental Phase07E candidate,
-whose independent review and adoption remain pending before any 1,000-profile
-expansion. Carry the accepted boundary cases and unresolved diagnostic warnings
+which is independently accepted for its bounded scope. The subsequent Phase07F
+1,000-profile test finds a new native/Python discrepancy; further expansion is gated. Carry the accepted boundary cases and unresolved diagnostic warnings
 forward. Do not reopen an unrestricted
 solver competition, port the legacy conic expression solely to chase matching
 vectors, or start a full cohort run based on small-example agreement.
@@ -482,10 +486,10 @@ Pawel has authorized [Phase07E](../phase07e/PLAN.md): precisely extend retry
 eligibility to otherwise usable AlmostSolved returns, retain unchanged acceptance,
 and test complete trajectories and the gated regression panel. The separate audit
 terminal solve is reused diagnostic evidence, separate from the fresh complete
-Phase07E trajectories. Phase07E is complete with 2,104 accounted solver attempts,
+Phase07E trajectories. Phase07E is independently accepted with 2,104 accounted solver attempts,
 all 25 paired comparisons passing and natural checkpoint/resume reaching the same
-completed helix. Independent review is pending; adoption, 1,000-profile runs and
-later expansion remain gated. The six difficult fixed LPs are a versioned
+completed helix. The user subsequently authorized bounded Phase07F 1,000-profile
+execution; adoption and later expansion remain separate decisions. The six difficult fixed LPs are a versioned
 regression collection. A different LP algorithm is reserved for future failure
 diagnosis; always-normalized first attempts require a separate compatibility study.
 
@@ -495,7 +499,14 @@ Phase07E is independently accepted without corrective findings
 ([audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7e/audit.md)).
 Pawel authorized [Phase07F](../phase07f/PLAN.md), returning to the original
 1,000-profile synthetic ladder and considering dgraphs quadforms. The bounded
-plan adds one prescribed quadform at each intrinsic dimension 2–5, retains the
-accepted experimental runtime unchanged, and stops expansion on failed numerical,
-comparison or resource gates. The phase is in progress; production adoption and
-any size beyond 1,000 remain outside its scope.
+plan adds one prescribed quadform at each confirmed intrinsic dimension 2–5 and
+retains the accepted experimental runtime unchanged. All seven inputs are frozen.
+The study is complete after a native/Python discrepancy on the first helix input:
+native exhausts its retry before pruning, while Python completes. Both terminal
+returns satisfy numeric certificate inequalities, but native reports AlmostSolved
+and correctly refuses acceptance. One original RHS entry differs by one binary64
+step; causality is unproven. Six remaining inputs and the larger native restart
+test are unexecuted. See [report](../phase07f/REPORT.md). Independent review is
+pending. The next proposed diagnostic cross-replays each of the two saved LPs
+through both interfaces using identical data; it has not been authorized or run.
+Production adoption and any size beyond 1,000 remain outside this scope.

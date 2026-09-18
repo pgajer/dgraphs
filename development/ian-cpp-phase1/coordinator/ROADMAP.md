@@ -506,7 +506,7 @@ native exhausts its retry before pruning, while Python completes. Both terminal
 returns satisfy numeric certificate inequalities, but native reports AlmostSolved
 and correctly refuses acceptance. One original RHS entry differs by one binary64
 step; causality is unproven. Six remaining inputs and the larger native restart
-test are unexecuted. See [report](../phase07f/REPORT.md). Independent review is
-pending. The next proposed diagnostic cross-replays each of the two saved LPs
-through both interfaces using identical data; it has not been authorized or run.
+test are unexecuted. See [report](../phase07f/REPORT.md). Independent review accepted this bounded negative study without corrective findings.
+Pawel has authorized [Phase07G](../phase07g/PLAN.md), an eight-solve exact-data
+cross-interface diagnostic. Its implementation and execution are in progress.
 Production adoption and any size beyond 1,000 remain outside this scope.

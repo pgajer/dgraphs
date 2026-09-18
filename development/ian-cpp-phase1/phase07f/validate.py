@@ -6,6 +6,8 @@ sys.path.insert(0,str(E))
 from validate import inspect,retry_checks
 child,fixture,out,tool=map(Path,sys.argv[1:5])
 r=inspect(child,fixture,out);r['retry_checks']=retry_checks(child,out/'retry',not r['complete'])
+names=sorted(str(p.relative_to(CANDIDATE)) for d in ['include','src','tests'] for p in (CANDIDATE/d).rglob('*') if p.suffix in ['.hpp','.cpp','.inc'])
+identity=hashlib.sha256((''.join(sha(CANDIDATE/n) for n in names)+sha(CANDIDATE/'CMakeLists.txt')).encode()).hexdigest()
 checkpoints=[]
 for cp in sorted((child/'checkpoints').glob('checkpoint-*.json')):
  j=load(cp);roundtrip=out/(cp.stem+'-roundtrip.json')
@@ -20,7 +22,7 @@ for cp in sorted((child/'checkpoints').glob('checkpoint-*.json')):
  prefix_ok=count==j['trace_prefix_events'] and size==j['trace_prefix_bytes'] and running.hexdigest()==j['trace_prefix_sha256']
  identity_ok=j['input_file_sha256']==sha(fixture) and j['payload']['policy']==POLICY
  if j['parent_checkpoint']:identity_ok &= sha(j['parent_checkpoint'])==j['parent_checkpoint_sha256']
- prior=load(child.parents[3]/'fixtures-v1/manifest.json') if False else None
+ identity_ok &= j['payload']['source']==identity and j['payload']['configuration']==sha(CANDIDATE/'config.json')
  ok=digest_ok and prefix_ok and identity_ok
  checkpoints.append(dict(path=str(cp),valid=ok,payload_digest=digest_ok,trace_prefix=prefix_ok,input_parent=identity_ok,payload_source=j['payload']['source'],payload_configuration=j['payload']['configuration']))
  r['valid'] &= ok

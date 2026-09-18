@@ -40,8 +40,8 @@ This fixes the form's Frobenius norm at 0.5 across dimensions; it does not hold
 all geometric or sampling characteristics constant. Sampling is uniform in
 latent coordinates, not in surface area. No added observation noise, selection
 by observed pruning, seed search, curvature sweep or random rotation is included.
-The user is asked to clarify intrinsic versus ambient dimension before generation;
-in absence of a correction, the stated intrinsic interpretation is used.
+Pawel confirmed intrinsic dimensions 2–5 with embeddings in dimensions 3–6
+before fixture generation.
 
 Preserve R source hashes, full sample/specification/RNG RDS, session information,
 and lossless binary64 latent/embedded coordinates. Independently reconstruct the

@@ -1,0 +1,29 @@
+{
+  "id": "IAN-EXP-021",
+  "title": "Can accepted IAN outputs support a bounded scientific application?",
+  "phase_aliases": [
+    "10"
+  ],
+  "programme_group": "E",
+  "aims": [
+    "IA5"
+  ],
+  "execution_status": "proposal; unexecuted",
+  "outcome": "not tested",
+  "documentation_worker": "IAN implementer/coordinator",
+  "dependencies": [
+    {
+      "id": "IAN-EXP-020",
+      "type": "shared infrastructure"
+    }
+  ],
+  "source_paths": [
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/coordinator/ROADMAP.md"
+  ],
+  "figure_paths": [],
+  "missing_figure_reason": "No experiment has been executed; no measured figure exists.",
+  "audit_status_source": "audit-summary.json",
+  "numerical_check_source": "audit-summary.json",
+  "issues_source": "../correction-dispositions.json",
+  "evidence_source": "evidence-manifest.json"
+}

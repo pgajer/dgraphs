@@ -1,0 +1,140 @@
+{
+  "id": "IAN-EXP-010",
+  "discovered_on": "2026-09-18",
+  "historical_candidate": "61da3139e1cbecfa995ec061f2d926b6cc04bb4f",
+  "files": [
+    {
+      "role": "historical report",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/REPORT.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/REPORT.md",
+      "available": true,
+      "sha256": "ec214f22a6e5e04b211bb4ef532beb94ed1ae12ecf01c2590d5060ac0dc6290e",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "frozen plan",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/PLAN.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/PLAN.md",
+      "available": true,
+      "sha256": "238ed2e1b0e63be214340ece22703da9e9329171460c681cca5457f944708a6c",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "historical evidence manifest",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase07b/manifest-v1.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase07b/manifest-v1.json",
+      "available": true,
+      "sha256": "e2ae47375b6f7d884dfe5020c5f9eb65d1ff682df824d07a75019e04605a7e88",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7b/audit.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7b/audit.md",
+      "available": true,
+      "sha256": "8b629c231a86db5dd67e2877506dd006b98727aa74ffc17464832c4faccd44a4",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "private operational handoff",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase07b-implementer-handoff.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase07b-implementer-handoff.md",
+      "available": true,
+      "sha256": "e095160b0ecd158dcd526dd9a30fbb88ac75691c97d19481016923e337c2dd57",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    }
+  ],
+  "source_boundary": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b",
+  "source_listing": [
+    {
+      "role": "legacy source; directory-level scope",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/PLAN.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/PLAN.md",
+      "available": true,
+      "sha256": "238ed2e1b0e63be214340ece22703da9e9329171460c681cca5457f944708a6c",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "legacy source; directory-level scope",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/README.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/README.md",
+      "available": true,
+      "sha256": "68497cef07c9fa34216f6c0133fd50324961db7ebabc1fedb98495e1cedba8dd",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "legacy source; directory-level scope",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/REPORT.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/REPORT.md",
+      "available": true,
+      "sha256": "ec214f22a6e5e04b211bb4ef532beb94ed1ae12ecf01c2590d5060ac0dc6290e",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "legacy source; directory-level scope",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/analyze.py",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/analyze.py",
+      "available": true,
+      "sha256": "9c524f8b1eda12f47b37dcf534a24371d43303f635e7b6317db2b77f3cd11cf7",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "legacy source; directory-level scope",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/common.py",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/common.py",
+      "available": true,
+      "sha256": "4180f47a0925be25a0244e0220b09a5ed46f706dc9e0439993f6bd7b19d5276c",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "legacy source; directory-level scope",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/feasible_witness.py",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/feasible_witness.py",
+      "available": true,
+      "sha256": "2310c79746713b4c2e27890de97e7ce273af74356c7061b5a5a4141edb608251",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "legacy source; directory-level scope",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/finalize.py",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/finalize.py",
+      "available": true,
+      "sha256": "9752772717c579faac8a10a0532b79f6f645041b5b72152adcefef334414ea4c",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "legacy source; directory-level scope",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/prepare.py",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/prepare.py",
+      "available": true,
+      "sha256": "2de57bb4cc69dfe570c593e0d1e0a19c07eb6be46b0b505c2d3e2a7cf04448be",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "legacy source; directory-level scope",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/replay.py",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/replay.py",
+      "available": true,
+      "sha256": "6af9ab2a18a6996895fc40c450c2cd12916969949aa4731a5df042523a646370",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "legacy source; directory-level scope",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/run.py",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/run.py",
+      "available": true,
+      "sha256": "286170f0afc90e50cb624648b7f1818db6552dd4ae259e0810fd9f1b351c43c1",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "legacy source; directory-level scope",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/test_checks.py",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/test_checks.py",
+      "available": true,
+      "sha256": "b108950a5781106b2d76b615b6134db52b116eb81f78a42702f2c6fa62f1dc6f",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    }
+  ],
+  "execution_time": "Use original ledger/manifest; not inferred from modification times",
+  "backup": "No independently verified backup location; existing local files are not a backup guarantee"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "IAN-EXP-018",
+  "files": [
+    {
+      "role": "historical proposal source",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/coordinator/ROADMAP.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/coordinator/ROADMAP.md",
+      "available": true,
+      "sha256": "6bd84903b0ea85bdc53280738e9d924c0a4e87b32482e7d0e56296d6e988662e",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    }
+  ],
+  "execution_time": null,
+  "backup": "No new outputs; backup coverage of referenced sources unverified"
+}

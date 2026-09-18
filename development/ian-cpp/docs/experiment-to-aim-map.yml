@@ -1,0 +1,239 @@
+[
+  {
+    "id": "IAN-EXP-001",
+    "aims": [
+      "IA1",
+      "IA3"
+    ],
+    "phase_aliases": [
+      "01"
+    ],
+    "programme_group": "A"
+  },
+  {
+    "id": "IAN-EXP-002",
+    "aims": [
+      "IA1",
+      "IA3"
+    ],
+    "phase_aliases": [
+      "02"
+    ],
+    "programme_group": "A"
+  },
+  {
+    "id": "IAN-EXP-003",
+    "aims": [
+      "IA3"
+    ],
+    "phase_aliases": [
+      "02"
+    ],
+    "programme_group": "A"
+  },
+  {
+    "id": "IAN-EXP-004",
+    "aims": [
+      "IA1",
+      "IA2"
+    ],
+    "phase_aliases": [
+      "03"
+    ],
+    "programme_group": "B"
+  },
+  {
+    "id": "IAN-EXP-005",
+    "aims": [
+      "IA1"
+    ],
+    "phase_aliases": [
+      "04"
+    ],
+    "programme_group": "B"
+  },
+  {
+    "id": "IAN-EXP-006",
+    "aims": [
+      "IA1",
+      "IA4"
+    ],
+    "phase_aliases": [
+      "05"
+    ],
+    "programme_group": "B"
+  },
+  {
+    "id": "IAN-EXP-007",
+    "aims": [
+      "IA1",
+      "IA2"
+    ],
+    "phase_aliases": [
+      "06A"
+    ],
+    "programme_group": "B"
+  },
+  {
+    "id": "IAN-EXP-008",
+    "aims": [
+      "IA2"
+    ],
+    "phase_aliases": [
+      "06B"
+    ],
+    "programme_group": "B"
+  },
+  {
+    "id": "IAN-EXP-009",
+    "aims": [
+      "IA1",
+      "IA2"
+    ],
+    "phase_aliases": [
+      "07"
+    ],
+    "programme_group": "C"
+  },
+  {
+    "id": "IAN-EXP-010",
+    "aims": [
+      "IA1",
+      "IA4"
+    ],
+    "phase_aliases": [
+      "07B"
+    ],
+    "programme_group": "C"
+  },
+  {
+    "id": "IAN-EXP-011",
+    "aims": [
+      "IA1",
+      "IA4"
+    ],
+    "phase_aliases": [
+      "07C"
+    ],
+    "programme_group": "C"
+  },
+  {
+    "id": "IAN-EXP-012",
+    "aims": [
+      "IA1",
+      "IA4"
+    ],
+    "phase_aliases": [
+      "07D"
+    ],
+    "programme_group": "C"
+  },
+  {
+    "id": "IAN-EXP-013",
+    "aims": [
+      "IA1",
+      "IA2",
+      "IA4"
+    ],
+    "phase_aliases": [
+      "07E"
+    ],
+    "programme_group": "C"
+  },
+  {
+    "id": "IAN-EXP-014",
+    "aims": [
+      "IA1",
+      "IA4"
+    ],
+    "phase_aliases": [
+      "07F"
+    ],
+    "programme_group": "C"
+  },
+  {
+    "id": "IAN-EXP-015",
+    "aims": [
+      "IA1",
+      "IA4"
+    ],
+    "phase_aliases": [
+      "07G"
+    ],
+    "programme_group": "C"
+  },
+  {
+    "id": "IAN-EXP-016",
+    "aims": [
+      "IA1",
+      "IA4"
+    ],
+    "phase_aliases": [
+      "07H"
+    ],
+    "programme_group": "C"
+  },
+  {
+    "id": "IAN-EXP-017",
+    "aims": [
+      "IA1",
+      "IA4"
+    ],
+    "phase_aliases": [
+      "07I"
+    ],
+    "programme_group": "C"
+  },
+  {
+    "id": "IAN-EXP-018",
+    "aims": [
+      "IA4"
+    ],
+    "phase_aliases": [
+      "07 next"
+    ],
+    "programme_group": "C"
+  },
+  {
+    "id": "IAN-EXP-019",
+    "aims": [
+      "IA2",
+      "IA3"
+    ],
+    "phase_aliases": [
+      "08"
+    ],
+    "programme_group": "D"
+  },
+  {
+    "id": "IAN-EXP-020",
+    "aims": [
+      "IA2"
+    ],
+    "phase_aliases": [
+      "09"
+    ],
+    "programme_group": "D"
+  },
+  {
+    "id": "IAN-EXP-021",
+    "aims": [
+      "IA5"
+    ],
+    "phase_aliases": [
+      "10"
+    ],
+    "programme_group": "E"
+  },
+  {
+    "id": "IAN-EXP-022",
+    "aims": [
+      "IA4",
+      "IA5"
+    ],
+    "phase_aliases": [
+      "11"
+    ],
+    "programme_group": "F"
+  }
+]

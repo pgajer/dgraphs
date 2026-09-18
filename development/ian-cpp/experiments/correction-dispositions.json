@@ -1,0 +1,191 @@
+{
+  "issues": [
+    {
+      "id": "DOC-01",
+      "description": "Verification helper called summary checks solution revalidation",
+      "disposition": "Corrected and independently verified",
+      "affected": [
+        "IAN-EXP-001"
+      ],
+      "evidence": [
+        {
+          "role": "independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-1/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-1/audit.md",
+          "available": true,
+          "sha256": "397f4a31452eeb1e1fd93428b96be69bad39e024d632c1c9fd69692c3b9e560b",
+          "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        },
+        {
+          "role": "independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-2/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-2/audit.md",
+          "available": true,
+          "sha256": "88fcb48b4f46f9c9fd5e4a832a722aeb322b674fc4eeb246526f411ab14e2a28",
+          "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        }
+      ],
+      "consequence": "Closure applies to corrected versions; old failed records remain unchanged."
+    },
+    {
+      "id": "PARSER-F1",
+      "description": "Schema declaration converted before validation",
+      "disposition": "Corrected and independently verified",
+      "affected": [
+        "IAN-EXP-007"
+      ],
+      "evidence": [
+        {
+          "role": "independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-6a/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-6a/audit.md",
+          "available": true,
+          "sha256": "46bf2b8d669cd66058d94d2d20b2fd70b767a22634d151b76175490296de0b00",
+          "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        },
+        {
+          "role": "independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-6a-f1/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-6a-f1/audit.md",
+          "available": true,
+          "sha256": "43b8e58b794fee4a5427453a5230564100f543a3f172299adc791c1a537bbcd5",
+          "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        }
+      ],
+      "consequence": "Closure applies to corrected versions; old failed records remain unchanged."
+    },
+    {
+      "id": "DOC-06B",
+      "description": "Roadmap acceptance status inconsistent",
+      "disposition": "Corrected and independently verified",
+      "affected": [
+        "IAN-EXP-008"
+      ],
+      "evidence": [
+        {
+          "role": "independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-6b/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-6b/audit.md",
+          "available": true,
+          "sha256": "ca96f7bf1efedc01c607b703bee7c8685014f8e597276c52322ffd91976e2e26",
+          "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        },
+        {
+          "role": "independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7/audit.md",
+          "available": true,
+          "sha256": "a6addcc7b49923ceb6f2552415aadd9c9d9b512ec4cadc337741d3c98a18c3d2",
+          "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        }
+      ],
+      "consequence": "Closure applies to corrected versions; old failed records remain unchanged."
+    },
+    {
+      "id": "GUARD-N1",
+      "description": "Last permitted process could be signaled and lose accounting",
+      "disposition": "Corrected and independently verified",
+      "affected": [
+        "IAN-EXP-015",
+        "IAN-EXP-016"
+      ],
+      "evidence": [
+        {
+          "role": "independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7g/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7g/audit.md",
+          "available": true,
+          "sha256": "f1c1eb77b2910749cc937fee77763a14243f049a46e8b3e6ba8f726f2ab5b850",
+          "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        },
+        {
+          "role": "independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7h/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7h/audit.md",
+          "available": true,
+          "sha256": "46fe410c40dddee888a0abea9ec6648db5b7654e5e2bbb3ba8d28771577066a9",
+          "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        }
+      ],
+      "consequence": "Closure applies to corrected versions; old failed records remain unchanged."
+    },
+    {
+      "id": "ABI-01",
+      "description": "Native C header and Rust settings layout differ",
+      "disposition": "Intentionally deferred with justification",
+      "affected": [
+        "IAN-EXP-015",
+        "IAN-EXP-020"
+      ],
+      "evidence": [
+        {
+          "role": "independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7g/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7g/audit.md",
+          "available": true,
+          "sha256": "f1c1eb77b2910749cc937fee77763a14243f049a46e8b3e6ba8f726f2ab5b850",
+          "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        }
+      ],
+      "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims."
+    },
+    {
+      "id": "SETTINGS-01",
+      "description": "Old native settings capture incomplete",
+      "disposition": "Intentionally deferred with justification",
+      "affected": [
+        "IAN-EXP-015"
+      ],
+      "evidence": [
+        {
+          "role": "independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7g/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7g/audit.md",
+          "available": true,
+          "sha256": "f1c1eb77b2910749cc937fee77763a14243f049a46e8b3e6ba8f726f2ab5b850",
+          "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        }
+      ],
+      "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims."
+    },
+    {
+      "id": "WARN-01",
+      "description": "Numerical-library warnings not resolved at library level",
+      "disposition": "Intentionally deferred with justification",
+      "affected": [
+        "IAN-EXP-006"
+      ],
+      "evidence": [
+        {
+          "role": "independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-5/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-5/audit.md",
+          "available": true,
+          "sha256": "7793199e2040d0208930ef5fff8d221b842057a1e669d991cbcf2aa7ee2eca68",
+          "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        }
+      ],
+      "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims."
+    },
+    {
+      "id": "SELECT-01",
+      "description": "Scale selection near the optimum remains a policy choice",
+      "disposition": "Awaiting a scientific decision",
+      "affected": [
+        "IAN-EXP-017",
+        "IAN-EXP-018"
+      ],
+      "evidence": [
+        {
+          "role": "independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7i/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7i/audit.md",
+          "available": true,
+          "sha256": "59acd3bf19ef990acb1ce96656f078a841d90ba02a0e99f73f7075df2dfdd7ca",
+          "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        }
+      ],
+      "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims."
+    }
+  ]
+}

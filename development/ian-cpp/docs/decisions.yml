@@ -1,0 +1,29 @@
+{
+  "as_of": "2026-09-18",
+  "decisions": [
+    {
+      "id": "DEC-ORG",
+      "state": "authorized",
+      "scope": "Three-stage organization only; preserve historical evidence; no numerical experiments",
+      "basis": "User instruction in current task, 18 September 2026"
+    },
+    {
+      "id": "DEC-REF",
+      "state": "working implementation reference",
+      "policy": "IAN evaluated-LP 1.0",
+      "basis": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/CONTRACT.md"
+    },
+    {
+      "id": "DEC-SCALE",
+      "state": "gated",
+      "scope": "Further full-trajectory scale ladder, including prepared quadforms",
+      "basis": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7i/audit.md"
+    },
+    {
+      "id": "DEC-POLICY",
+      "state": "not adopted",
+      "scope": "Experimental retries, alternative LP backend and future secondary scale selection",
+      "basis": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7i/audit.md"
+    }
+  ]
+}

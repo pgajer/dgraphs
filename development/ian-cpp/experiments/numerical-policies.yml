@@ -1,0 +1,39 @@
+{
+  "policies": [
+    {
+      "name": "Original-expression Python",
+      "role": "historical diagnostic control",
+      "adoption": "not a blanket numerical equivalence claim"
+    },
+    {
+      "name": "IAN evaluated-LP 1.0",
+      "role": "working implementation reference",
+      "adoption": "authorized in Phase05; bounded acceptance"
+    },
+    {
+      "name": "IAN evaluated-LP retry 0.1",
+      "role": "Phase07C experimental policy",
+      "adoption": "not adopted"
+    },
+    {
+      "name": "IAN evaluated-LP retry units11 0.1",
+      "role": "Phase07D experimental policy",
+      "adoption": "not adopted"
+    },
+    {
+      "name": "IAN evaluated-LP retry units11 almost 0.1",
+      "role": "Phase07E/F experimental policy",
+      "adoption": "not adopted"
+    },
+    {
+      "name": "HiGHS dual-simplex fixed LP",
+      "role": "Phase07H diagnostic; normalized variables",
+      "adoption": "not adopted"
+    },
+    {
+      "name": "HiGHS dual-simplex objective-band range",
+      "role": "Phase07I diagnostic; original units and exact postchecks",
+      "adoption": "not adopted"
+    }
+  ]
+}

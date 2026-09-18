@@ -1,0 +1,35 @@
+{
+  "id": "IAN-EXP-017",
+  "title": "How strongly does the objective determine the disputed scale?",
+  "phase_aliases": [
+    "07I"
+  ],
+  "programme_group": "C",
+  "aims": [
+    "IA1",
+    "IA4"
+  ],
+  "execution_status": "executed",
+  "outcome": "certified near-optimal variation",
+  "documentation_worker": "IAN implementer/coordinator",
+  "dependencies": [
+    {
+      "id": "IAN-EXP-016",
+      "type": "consumed output"
+    },
+    {
+      "id": "IAN-EXP-014",
+      "type": "shared input"
+    }
+  ],
+  "source_paths": [
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/REPORT.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/PLAN.md"
+  ],
+  "figure_paths": [],
+  "missing_figure_reason": "The declared comparisons and limitations are summarized in prose; no standalone chart has been selected for this record.",
+  "audit_status_source": "audit-summary.json",
+  "numerical_check_source": "audit-summary.json",
+  "issues_source": "../correction-dispositions.json",
+  "evidence_source": "evidence-manifest.json"
+}

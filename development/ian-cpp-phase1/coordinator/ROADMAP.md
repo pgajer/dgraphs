@@ -468,3 +468,13 @@ of a finite AlmostSolved return can pass unchanged external certificates, follow
 by complete-trajectory and regression checks. Changing that eligibility rule is
 not yet authorized. Full-engine compatibility for the new units policy remains
 untested because its complete-helix gate failed.
+
+## Phase07E authorization
+
+Phase07D is independently accepted as a bounded study without corrective findings
+([audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7d/audit.md)).
+Pawel has authorized [Phase07E](../phase07e/PLAN.md): precisely extend retry
+eligibility to otherwise usable AlmostSolved returns, retain unchanged acceptance,
+and test complete trajectories and the gated regression panel. The separate audit
+terminal solve is reused diagnostic evidence, not a completed helix. Phase07E is
+in progress; adoption, 1,000-profile runs and later expansion remain gated.

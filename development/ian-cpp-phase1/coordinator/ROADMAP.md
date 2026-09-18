@@ -488,3 +488,14 @@ completed helix. Independent review is pending; adoption, 1,000-profile runs and
 later expansion remain gated. The six difficult fixed LPs are a versioned
 regression collection. A different LP algorithm is reserved for future failure
 diagnosis; always-normalized first attempts require a separate compatibility study.
+
+## Phase07F authorization
+
+Phase07E is independently accepted without corrective findings
+([audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7e/audit.md)).
+Pawel authorized [Phase07F](../phase07f/PLAN.md), returning to the original
+1,000-profile synthetic ladder and considering dgraphs quadforms. The bounded
+plan adds one prescribed quadform at each intrinsic dimension 2–5, retains the
+accepted experimental runtime unchanged, and stops expansion on failed numerical,
+comparison or resource gates. The phase is in progress; production adoption and
+any size beyond 1,000 remain outside its scope.

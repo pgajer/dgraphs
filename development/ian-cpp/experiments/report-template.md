@@ -1,7 +1,8 @@
 # Descriptive question
 
-Result headline with execution state and evidence provenance. Current historical
-review and report-review status are injected from audit-summary.json.
+Result headline with execution state and evidence provenance. Link the authoritative
+audit-summary.json for historical review and current report-review status. Bind
+each authored report to its exact hash.
 
 ## Question and motivation
 

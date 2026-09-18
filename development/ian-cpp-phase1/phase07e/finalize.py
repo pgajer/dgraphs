@@ -34,7 +34,7 @@ for group in ['solver_sources','python_modules']:
  for name,digest in load(root/'fixtures-v1/manifest.json')[group].items():assert sha(name)==digest,name
 for e in load(root/'engine-fixtures-v1/manifest.json')['cases']:
  assert sha(e['input'])==e['sha256'] and sha(e['source'])==e['source_sha256'];a=load(e['input']);b=load(e['source']);a.pop('numerical_policy');b.pop('numerical_policy');assert a==b
-analysis=load(root/'analysis-v1/results.json');assert analysis['complete'] and analysis['full_panel_gate']
+analysis=load(root/'analysis-v2/results.json');assert analysis['complete'] and analysis['full_panel_gate']
 assert not analysis['gated'] and analysis['operation_checks']==19
 for f in ['checks-v1/results.json','eligibility-v1/results.json','trace-checks-v1/results.json','derivation-v1.json']:assert load(root/f)['passed']
 # Independently reconstruct the compiled source/configuration identities.

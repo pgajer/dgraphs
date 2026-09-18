@@ -24,10 +24,13 @@ for name,item in manifest['cases'].items():
   fixed.append(dict(case=name,condition=condition,accepted=c['accepted'],status=raw['status'],iterations=raw['iterations'],alpha=alpha,external=c,saved_exact=r['saved_exact']))
 probe=manifest['reused_auditor_probe'];assert sha(probe['path'])==probe['sha256']
 # Whole trajectories: check every optimization payload again, including rejection.
-trajectories=[]
+trajectories=[];stage_results={}
 for name,item in primary['runs'].items():
  child=Path(item['child']);trace=child/'trace.jsonl'
- if not trace.exists():continue
+ if name.startswith('stage-probes/'):
+  assert item['complete'] and item['same_path']['passed']
+  stage_results[name]=load(child/'stages.json');continue
+ if not trace.exists():raise AssertionError('missing_trace:'+name)
  c=retry_checks(child,out/('certificates-'+name.replace('/','-')),not item['complete'])
  counts=Counter();statuses=Counter();almost=[];logical=0;last=None
  for e in events(trace):
@@ -59,5 +62,5 @@ assert all(p['reason'] is None for p in processes) and sum(p['wall_seconds'] for
 controls={n:load(root/n) for n in ['checks-v1/results.json','eligibility-v1/results.json','trace-checks-v1/results.json','derivation-v1.json']}
 assert all(c['passed'] for c in controls.values())
 warning_logs=[str(p) for p in root.rglob('stderr.log') if 'Warning' in p.read_text()]
-write(out/'results.json',dict(complete=True,full_panel_gate=primary['validation_gate'],fixed=fixed,trajectories=trajectories,operations=operations,operation_checks=len(ops['tests']),fixed_accepted=sum(r['accepted'] for r in fixed),census=census,total=dict(totals),guarded_wall_seconds=sum(p['wall_seconds'] for p in processes),peak_sampled_rss_bytes=max(p['sampled_tree_peak_rss_bytes'] for p in processes),gated=primary['gated'],warning_logs=warning_logs,source_revision=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()))
+write(out/'results.json',dict(complete=True,full_panel_gate=primary['validation_gate'],fixed=fixed,stages=stage_results,trajectories=trajectories,operations=operations,operation_checks=len(ops['tests']),fixed_accepted=sum(r['accepted'] for r in fixed),census=census,total=dict(totals),guarded_wall_seconds=sum(p['wall_seconds'] for p in processes),peak_sampled_rss_bytes=max(p['sampled_tree_peak_rss_bytes'] for p in processes),gated=primary['gated'],warning_logs=warning_logs,source_revision=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()))
 print(dict(complete=True,total=dict(totals),full_panel_gate=primary['validation_gate'],operation_checks=len(ops['tests']),gated=len(primary['gated'])))

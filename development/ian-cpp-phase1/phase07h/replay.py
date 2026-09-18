@@ -5,12 +5,15 @@ from scipy.optimize._highspy import _core as h
 from support import *
 f,out=map(Path,sys.argv[1:]);out.mkdir(parents=True,exist_ok=False);A,b,c=read_arrays(f);origin=load(f/'origin.json');original_class=h._Highs;calls=0
 
+def serial(v):
+    if isinstance(v,(list,tuple)):return [serial(x) for x in v]
+    return v if isinstance(v,(str,int,float,bool)) else str(v)
 def attrs(obj):
     d={}
     for k in dir(obj):
         if k.startswith('_'):continue
         v=getattr(obj,k)
-        if not callable(v):d[k]=v if isinstance(v,(str,int,float,bool,list)) else str(v)
+        if not callable(v):d[k]=serial(v)
     return d
 class ObservedHighs:
     def __init__(self):self.inner=original_class()

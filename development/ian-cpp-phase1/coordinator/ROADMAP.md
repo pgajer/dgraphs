@@ -521,10 +521,24 @@ Production adoption and any size beyond 1,000 remain outside this scope.
 Phase07G is independently accepted with nonblocking N1: the audit reproduced all
 numerical returns but its supervisor lost final-process accounting. Pawel authorized
 the correction and alternative-algorithm diagnostic. [Phase07H](../phase07h/REPORT.md)
-is complete, pending independent acceptance. A new one-shot guard passes synthetic
+is independently accepted; N1 is closed and no new findings were raised. A new one-shot guard passes synthetic
 quota/race controls without weakening the historical multi-solve engine guard.
 All four HiGHS dual-simplex runs complete with identical, certified scale/dual
 vectors across the two frozen inputs and repeats. Three coordinates still disagree
 with successful Clarabel under the frozen scale tolerance. The ladder remains gated.
 An objective-band range study of the previously identified coordinate is proposed,
 not executed. Full trajectories, solver adoption and quadform runs remain separate.
+
+## Phase07I: strict objective-band ranges
+
+Pawel authorized the range study following Phase07H acceptance. [Phase07I](../phase07i/REPORT.md)
+is complete, pending independent review. Six range calls finish, but all raw points
+have exact original-row violations and three exceed their bands. Strict checks
+remain unchanged; no raw endpoint is called exactly feasible. Exact repaired saved
+HiGHS/Clarabel witnesses establish an attained coordinate span of at least 0.33435
+inside an objective allowance at most 1.10503e-8 above the optimum of the common
+stored LP. Exact fresh dual bounds limit that narrow-band full span to at most
+0.438902; the full extrema remain unresolved. This supports weak determination
+within a declared objective allowance, not multiple exact optima. An explicit
+secondary scale-selection policy on fixed regression problems is proposed next;
+no policy change, full trajectory, quadform or ladder run has been performed.

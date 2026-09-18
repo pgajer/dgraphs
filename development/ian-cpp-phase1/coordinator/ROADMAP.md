@@ -515,3 +515,16 @@ pending. The settings capture omission and separate no-solve reconstruction are
 documented. The scale gate remains closed; a different LP algorithm on the two
 fixed problems is proposed before another full trajectory.
 Production adoption and any size beyond 1,000 remain outside this scope.
+
+## Phase07H: alternative LP algorithm and one-shot supervision
+
+Phase07G is independently accepted with nonblocking N1: the audit reproduced all
+numerical returns but its supervisor lost final-process accounting. Pawel authorized
+the correction and alternative-algorithm diagnostic. [Phase07H](../phase07h/REPORT.md)
+is complete, pending independent acceptance. A new one-shot guard passes synthetic
+quota/race controls without weakening the historical multi-solve engine guard.
+All four HiGHS dual-simplex runs complete with identical, certified scale/dual
+vectors across the two frozen inputs and repeats. Three coordinates still disagree
+with successful Clarabel under the frozen scale tolerance. The ladder remains gated.
+An objective-band range study of the previously identified coordinate is proposed,
+not executed. Full trajectories, solver adoption and quadform runs remain separate.

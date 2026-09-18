@@ -4,7 +4,7 @@
   "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "25a2f91a2e8c9242fe85578040f1f7aa8dfa0f7743351f24fdd30a62f331cb51",
+    "report_sha256": "011416de705821316c524e9e522ba82f599f230ea2515b328982f3018cf022e3",
     "review": null
   },
   "audit_history": [
@@ -16,5 +16,12 @@
     }
   ],
   "consequential_limits": "Agreement on refusal is implementation evidence, not a successful fit. Prepared 1,000-profile inputs remained gated at this milestone. The PreSSMat source overlaps prior tests.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "25a2f91a2e8c9242fe85578040f1f7aa8dfa0f7743351f24fdd30a62f331cb51",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

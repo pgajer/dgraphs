@@ -4,7 +4,7 @@
   "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "a012f67c89db7df9c5f63496782d14061c4e9e2ba087f8ca2244993e9ba02848",
+    "report_sha256": "9f1832c1a3538e36851fc636d4d3858d02b25763aecf8a10231d18e5ed69d9ae",
     "review": null
   },
   "audit_history": [
@@ -16,5 +16,12 @@
     }
   ],
   "consequential_limits": "The pruning calibration did not bracket a boundary. Library warnings remain unresolved at their source. IAN evaluated-LP 1.0 is a working implementation reference, not general historical equivalence.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "a012f67c89db7df9c5f63496782d14061c4e9e2ba087f8ca2244993e9ba02848",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

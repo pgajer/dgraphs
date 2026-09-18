@@ -4,7 +4,7 @@
   "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "28e8dba34415703cfcc2511d831f3e2b68ccb3a595fc3db8296a13a34b4b5c1d",
+    "report_sha256": "65ff98d4eb6f4be36a3f6ab7eb559a3231fb2db7b61eb5e93827717f248c3c2b",
     "review": null
   },
   "audit_history": [
@@ -16,5 +16,12 @@
     }
   ],
   "consequential_limits": "Four deterministic calls are not population replicates. The unchanged external tests do not prove exact optimality or a uniquely selected vector. The one-shot supervisor correction is independently accepted; no solver is adopted.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "28e8dba34415703cfcc2511d831f3e2b68ccb3a595fc3db8296a13a34b4b5c1d",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

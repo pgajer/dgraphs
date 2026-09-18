@@ -4,7 +4,7 @@
   "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "f85c9de6478ee25f61f1607c51d7cbb0a893a20440d1347933745cdc7f9e03f1",
+    "report_sha256": "e6ee729f64fc3efba66e4dd6e5c1d5efba696a307c3f043d86d603f0c727c04f",
     "review": null
   },
   "audit_history": [
@@ -21,5 +21,12 @@
     }
   ],
   "consequential_limits": "Native settings capture was incomplete and later reconstructed without solving. Audit N1 found a final-process supervisor race; eight numerical audit outputs exist but only seven complete process records. Phase07H closes N1 prospectively.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "f85c9de6478ee25f61f1607c51d7cbb0a893a20440d1347933745cdc7f9e03f1",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

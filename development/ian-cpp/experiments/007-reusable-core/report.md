@@ -8,13 +8,13 @@ Executed; original bounded evidence independently accepted. This catalogue summa
 
 ## Goal and motivation
 
-The question is: can the engine become a reusable core without changing behavior? This record places the documented comparison in the [project aims](../../docs/project-aims.md); the question-based grouping is a retrospective documentation choice. Its predecessor relationships are stated below and do not imply independent replication.
+Create a callable engine while preserving numerical behavior and reference comparisons. The [project aims](../../docs/project-aims.md) explain its role; this question-based grouping is retrospective.
 
 ## Analysis and data contract
 
 A typed C++ core, CLI and file/R adapters are tested against eight full native traces, twelve boundary probes and prior operational cases. A clean dependency build, external C++ consumer and minimal R example test one-host feasibility.
 
-A solve, a full trajectory and a pruning decision are different observation units. Reference conditions, tolerance meanings and input reuse are defined in [shared methods](../shared-methods.md); example identities and sampling limitations are in [dataset orientation](../dataset-orientation.md). No biological estimand or population-level uncertainty is inferred from these computational checks.
+[Shared methods](../shared-methods.md) define the reference conditions, tolerances and observation units; [dataset orientation](../dataset-orientation.md) identifies the examples and sampling limits. These computational checks do not estimate biological effects.
 
 ## Observed results
 
@@ -30,7 +30,7 @@ The first candidate was not accepted until F1 was independently closed. This is 
 
 The numerical-check flag refers to the independent checks of the original bounded milestone, identified in the audit summary. It does not certify every sentence, figure or intended use of this newly authored record. No optimization was rerun for this catalogue.
 
-Current issue dispositions and later closure evidence are linked above. A completed negative study remains useful evidence; acceptance of its scope does not authorize progression through a failed compatibility gate.
+Issue dispositions and later closure evidence are linked above. Study acceptance does not clear a failed compatibility gate.
 
 ## Recommendations and dependencies
 
@@ -42,7 +42,7 @@ Add checkpoint/resume as a separate behavior-preserving milestone.
 
 - [Historical report](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/REPORT.md)
 - [Historical plan / source](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/PLAN.md)
-- [Evidence identities](evidence-manifest.json) identify declared/resolved locations, available source hashes and known historical provenance.
-- [Catalogue build instructions](../README.md) distinguish figure reconstruction and rendering from numerical execution. Run them from the implementation worktree; numerical reproduction, if separately requested, uses the frozen historical plan and environment.
+- [Evidence identities and historical provenance](evidence-manifest.json).
+- [Catalogue build instructions](../README.md): run from the implementation worktree. Numerical reproduction uses the separately frozen historical plan and environment.
 
-Current file hashes establish what is available now, not proof of which source produced an old execution. Generated catalogue outputs have no confirmed external backup.
+Current hashes identify available files, not historical execution. External backup coverage is unknown.

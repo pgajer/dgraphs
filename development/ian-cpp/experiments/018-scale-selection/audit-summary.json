@@ -3,9 +3,16 @@
   "numerically_checked": false,
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "b917237de4a6b3d0f727eceaf5f2714a36262b61c8c1b2bd4c0625b7c3a48c17",
+    "report_sha256": "47061ef46d525657e9214ba33b7ab2023b052a525ab746f99ba8a3c150e2fbcc",
     "review": null
   },
   "audit_history": [],
-  "consequential_limits": "No rule, budget or adoption decision is approved by catalogue organization. Alternatives must be compared before full trajectories."
+  "consequential_limits": "No rule, budget or adoption decision is approved by catalogue organization. Alternatives must be compared before full trajectories.",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "b917237de4a6b3d0f727eceaf5f2714a36262b61c8c1b2bd4c0625b7c3a48c17",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

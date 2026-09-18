@@ -8,13 +8,13 @@ Executed; original bounded evidence independently accepted. This catalogue summa
 
 ## Goal and motivation
 
-The question is: how strongly does the objective determine the disputed scale? This record places the documented comparison in the [project aims](../../docs/project-aims.md); the question-based grouping is a retrospective documentation choice. Its predecessor relationships are stated below and do not imply independent replication.
+Measure the permitted variation of the disputed scale under an explicit, strictly checked objective allowance. The [project aims](../../docs/project-aims.md) explain its role; this question-based grouping is retrospective.
 
 ## Analysis and data contract
 
 On the Python-generated terminal LP, six min/max calls target coordinate 717 at three frozen objective bands above a rational upper bound. Exact arithmetic checks raw endpoints, repairs and augmented dual bounds; saved HiGHS/Clarabel witnesses are separately labeled.
 
-A solve, a full trajectory and a pruning decision are different observation units. Reference conditions, tolerance meanings and input reuse are defined in [shared methods](../shared-methods.md); example identities and sampling limitations are in [dataset orientation](../dataset-orientation.md). No biological estimand or population-level uncertainty is inferred from these computational checks.
+[Shared methods](../shared-methods.md) define the reference conditions, tolerances and observation units; [dataset orientation](../dataset-orientation.md) identifies the examples and sampling limits. These computational checks do not estimate biological effects.
 
 ## Observed results
 
@@ -30,7 +30,7 @@ The full extrema remain unresolved. A near-optimal range is not proof of multipl
 
 The numerical-check flag refers to the independent checks of the original bounded milestone, identified in the audit summary. It does not certify every sentence, figure or intended use of this newly authored record. No optimization was rerun for this catalogue.
 
-Current issue dispositions and later closure evidence are linked above. A completed negative study remains useful evidence; acceptance of its scope does not authorize progression through a failed compatibility gate.
+Issue dispositions and later closure evidence are linked above. Study acceptance does not clear a failed compatibility gate.
 
 ## Recommendations and dependencies
 
@@ -43,7 +43,7 @@ Consider an explicit secondary scale-selection policy as a new bounded proposal.
 
 - [Historical report](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/REPORT.md)
 - [Historical plan / source](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/PLAN.md)
-- [Evidence identities](evidence-manifest.json) identify declared/resolved locations, available source hashes and known historical provenance.
-- [Catalogue build instructions](../README.md) distinguish figure reconstruction and rendering from numerical execution. Run them from the implementation worktree; numerical reproduction, if separately requested, uses the frozen historical plan and environment.
+- [Evidence identities and historical provenance](evidence-manifest.json).
+- [Catalogue build instructions](../README.md): run from the implementation worktree. Numerical reproduction uses the separately frozen historical plan and environment.
 
-Current file hashes establish what is available now, not proof of which source produced an old execution. Generated catalogue outputs have no confirmed external backup.
+Current hashes identify available files, not historical execution. External backup coverage is unknown.

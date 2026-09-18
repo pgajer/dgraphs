@@ -4,7 +4,7 @@
   "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "d763064e7af43c524a9c9eeb56add6fd99a6c9f0a3432d6b895b04cf2020b572",
+    "report_sha256": "5d882d32eb3c6b5cc452955182eff0063f176ac5a63e0633984e70a6892ee3cb",
     "review": null
   },
   "audit_history": [
@@ -21,5 +21,12 @@
     }
   ],
   "consequential_limits": "Initial resource problems and their versioned correction remain preserved. No mid-retuning restart, power-loss durability or cross-build/platform migration is established. A roadmap documentation comment was closed in the next milestone.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "d763064e7af43c524a9c9eeb56add6fd99a6c9f0a3432d6b895b04cf2020b572",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

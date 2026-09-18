@@ -3,9 +3,16 @@
   "numerically_checked": false,
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "a4307d4cad3882723f71ed1d3fb6e949d509a26411a51a00c7711711c499d81e",
+    "report_sha256": "0a2e5bd283134f766d3fea9879b3820d9b79a15a12c4d4814ef78e9d2b4bd99b",
     "review": null
   },
   "audit_history": [],
-  "consequential_limits": "Early client memory savings are not an engine baseline. Requires compatible complete runs and a frozen resource/correctness contract."
+  "consequential_limits": "Early client memory savings are not an engine baseline. Requires compatible complete runs and a frozen resource/correctness contract.",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "a4307d4cad3882723f71ed1d3fb6e949d509a26411a51a00c7711711c499d81e",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

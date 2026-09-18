@@ -4,7 +4,7 @@
   "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "72f31af04aca776aa38f95d25ce3aa731a0c117dc1fec164be2030b2b44a2ac2",
+    "report_sha256": "50f5551df34c706b7c66179f418a02ecfeb4ff7bc74d4b6ee49ffbd26b1820b5",
     "review": null
   },
   "audit_history": [
@@ -16,5 +16,12 @@
     }
   ],
   "consequential_limits": "The native result is not a completed graph. The prepared quadforms have no IAN trajectory evidence. The larger native restart test is unavailable; preparation is not execution.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "72f31af04aca776aa38f95d25ce3aa731a0c117dc1fec164be2030b2b44a2ac2",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

@@ -4,7 +4,7 @@
   "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "8824cb7fb817b70ea906ad06807f6f3d868ba4cf1d984077ebab7f69a8b5c7d8",
+    "report_sha256": "87b674c5cfb36f31156b665386bbca931f2e2223202c6c77e049a4a2af9a7627",
     "review": null
   },
   "audit_history": [
@@ -16,5 +16,12 @@
     }
   ],
   "consequential_limits": "Acceptance covers this experimental policy and panel; it is not production adoption. Successful 500-profile recovery does not establish larger-scale or historical-expression compatibility.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "8824cb7fb817b70ea906ad06807f6f3d868ba4cf1d984077ebab7f69a8b5c7d8",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

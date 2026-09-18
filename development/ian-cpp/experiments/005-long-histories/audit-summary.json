@@ -4,7 +4,7 @@
   "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "35cffd7fdc14c7d9fe7f637d166195c5988ddb73578fbd4870fd937d7c841158",
+    "report_sha256": "20efe2245b00e6306dfab85de7c6b720a6f3c939d725dcb77153782cd883b71d",
     "review": null
   },
   "audit_history": [
@@ -16,5 +16,12 @@
     }
   ],
   "consequential_limits": "Selection favors coverage, not representative performance. The subsets overlap and are not independent biological replication. Equal final decisions do not erase failed intermediate-array comparisons.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "35cffd7fdc14c7d9fe7f637d166195c5988ddb73578fbd4870fd937d7c841158",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

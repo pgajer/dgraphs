@@ -25,7 +25,9 @@
           "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
         }
       ],
-      "consequence": "Closure applies to corrected versions; old failed records remain unchanged."
+      "consequence": "Closure applies to corrected versions; old failed records remain unchanged.",
+      "original_condition": "The helper label overstated checks of summary tables as revalidation of full solutions.",
+      "change_or_deferral_reason": "The label was corrected; no solver result or acceptance test changed. Later audit closed the wording finding."
     },
     {
       "id": "PARSER-F1",
@@ -52,7 +54,9 @@
           "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
         }
       ],
-      "consequence": "Closure applies to corrected versions; old failed records remain unchanged."
+      "consequence": "Closure applies to corrected versions; old failed records remain unchanged.",
+      "original_condition": "Casting the declared schema version before validating its value could admit invalid declarations.",
+      "change_or_deferral_reason": "The corrected parser rejects fractional and out-of-range declarations before core execution. Eighteen submitted tests and 28 independent checks passed; valid runs preserved numerical results."
     },
     {
       "id": "DOC-06B",
@@ -79,7 +83,9 @@
           "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
         }
       ],
-      "consequence": "Closure applies to corrected versions; old failed records remain unchanged."
+      "consequence": "Closure applies to corrected versions; old failed records remain unchanged.",
+      "original_condition": "The roadmap still described already accepted work as proposed or awaiting acceptance.",
+      "change_or_deferral_reason": "The later documentation update aligned status with the independent audit. It did not change checkpoint behavior or numerical evidence."
     },
     {
       "id": "GUARD-N1",
@@ -107,7 +113,9 @@
           "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
         }
       ],
-      "consequence": "Closure applies to corrected versions; old failed records remain unchanged."
+      "consequence": "Closure applies to corrected versions; old failed records remain unchanged.",
+      "original_condition": "The supervisor could signal the last permitted process after its numerical output was saved but before process accounting completed.",
+      "change_or_deferral_reason": "A one-shot reservation/launch/reap design records completed accounting before refusing an extra call. Independent Phase07H replay retained four outputs and four accounting records. The old Phase07G audit had eight numerical outputs but only seven accounting records; that historical failure is not overwritten."
     },
     {
       "id": "ABI-01",
@@ -127,7 +135,9 @@
           "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
         }
       ],
-      "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims."
+      "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims.",
+      "original_condition": "The tested native C header and Rust settings layout differ; bounded replay is not general interface qualification.",
+      "change_or_deferral_reason": "Deferred to dedicated native-interface qualification because the present studies concern fixed problems and do not establish portability. A prospective in-process layout/settings check with an independent review is required before a broader support claim."
     },
     {
       "id": "SETTINGS-01",
@@ -146,7 +156,9 @@
           "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
         }
       ],
-      "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims."
+      "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims.",
+      "original_condition": "Some native settings were reconstructed after the original executions, rather than recorded inside each solving process.",
+      "change_or_deferral_reason": "Later no-solve reconstruction supports interpretation on the tested build but cannot recreate missing historical observations. Preserve this limit; collect complete settings prospectively. Old evidence is not relabeled as an in-process capture."
     },
     {
       "id": "WARN-01",
@@ -165,7 +177,9 @@
           "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
         }
       ],
-      "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims."
+      "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims.",
+      "original_condition": "Library warnings remained despite accepted bounded external checks.",
+      "change_or_deferral_reason": "Library-level diagnosis is outside the accepted boundary study. Keep warnings visible and require qualification for broader environments; their absence or harmlessness has not been established."
     },
     {
       "id": "SELECT-01",
@@ -185,7 +199,9 @@
           "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
         }
       ],
-      "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims."
+      "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims.",
+      "original_condition": "Near-optimal objective values permit a meaningful scale difference on the saved difficult problem.",
+      "change_or_deferral_reason": "The owner must choose a prespecified secondary criterion, primary-objective allowance and bounded protocol before a new selection study. No retry, solver or tie-breaking policy is adopted by organizing these records."
     }
   ]
 }

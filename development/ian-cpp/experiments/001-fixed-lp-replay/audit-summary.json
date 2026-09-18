@@ -4,7 +4,7 @@
   "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "c3d337181e88b75d83838eb469e40a3a43b1483691bde3aa38792e2c48f45441",
+    "report_sha256": "228a1a7cc237015a49962452526f04eff68e57209e5e3c998b9b315dbd6a115f",
     "review": null
   },
   "audit_history": [
@@ -21,5 +21,12 @@
     }
   ],
   "consequential_limits": "The two gap-observation events are byte-identical. These are fixed-LP client measurements, not full-engine performance, independent biological replicates or a cohort fit.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "c3d337181e88b75d83838eb469e40a3a43b1483691bde3aa38792e2c48f45441",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

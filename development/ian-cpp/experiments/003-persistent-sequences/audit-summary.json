@@ -4,7 +4,7 @@
   "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "8f77536cd93d7cafddb2928fdb24469d2f1b645c2a22784a8cf12fb24ae4a354",
+    "report_sha256": "f350a4e104533348e36ceac4cf87d0c885141d28bdd40c50bd6c96328d0e6491",
     "review": null
   },
   "audit_history": [
@@ -16,5 +16,12 @@
     }
   ],
   "consequential_limits": "The input sequence is reused from one interrupted run. Fresh-process, persistent-client and full-engine memory are different quantities. Updating fixed structure does not qualify dimension-changing reuse.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "8f77536cd93d7cafddb2928fdb24469d2f1b645c2a22784a8cf12fb24ae4a354",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

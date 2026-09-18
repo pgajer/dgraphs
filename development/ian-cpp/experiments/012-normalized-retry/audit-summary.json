@@ -4,7 +4,7 @@
   "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "8ec4a7bf8b57f6bbfcea111e5ecf14f20b36931bf9cfdc8d5424722777a9035f",
+    "report_sha256": "e26661e4aff69960ec8b655d6488519004146105e5d1dd462f9b3c7866eeb48e",
     "review": null
   },
   "audit_history": [
@@ -16,5 +16,12 @@
     }
   ],
   "consequential_limits": "Solver-scaled residuals do not equal the external stationarity check. A separately labeled auditor terminal solve motivates the next experiment; it does not complete this one. Remaining regressions and larger runs are gated.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "8ec4a7bf8b57f6bbfcea111e5ecf14f20b36931bf9cfdc8d5424722777a9035f",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

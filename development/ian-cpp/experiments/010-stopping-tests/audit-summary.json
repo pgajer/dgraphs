@@ -4,7 +4,7 @@
   "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "c731bed6f430af3c7e04f60876539d4013afd68391109a680905cf3837d671e5",
+    "report_sha256": "f11b8ba5df0b8479e42afa1eef6f60ce9c8efb50bc46e2ed7e4bb4b31af00d01",
     "review": null
   },
   "audit_history": [
@@ -16,5 +16,12 @@
     }
   ],
   "consequential_limits": "The selected cases are stress diagnostics. A tighter solve that passes a certificate is not automatically a compatible full-engine policy. No graph trajectory or native rebuild occurs here.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "c731bed6f430af3c7e04f60876539d4013afd68391109a680905cf3837d671e5",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

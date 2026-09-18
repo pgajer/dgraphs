@@ -4,7 +4,7 @@
   "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "245e4e2ecac4f7a3ded0f0d4665e3fbaeca0bca34a9645427c9a8dc80f0a0be7",
+    "report_sha256": "4c99406f267b0d4fb2bd499cd4c549d94ec6653ef9e05da3739530ca49ae0a12",
     "review": null
   },
   "audit_history": [
@@ -16,5 +16,12 @@
     }
   ],
   "consequential_limits": "The last strict retry has stationarity error about 1.053e-7, exceeding 1e-7. Counts from preliminary, primary and operational runs must not be pooled without their labels. The retry policy is experimental.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "245e4e2ecac4f7a3ded0f0d4665e3fbaeca0bca34a9645427c9a8dc80f0a0be7",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

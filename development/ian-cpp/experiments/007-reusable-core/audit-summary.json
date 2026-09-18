@@ -4,7 +4,7 @@
   "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "81ce3e4223883f49ba2de2ec8e48d02148a6d4503ecfc92557683cfbfbc94d6e",
+    "report_sha256": "61312474733016482e030420a89a993e73c68b99c77f5d5088eba8a757a2c01b",
     "review": null
   },
   "audit_history": [
@@ -21,5 +21,12 @@
     }
   ],
   "consequential_limits": "The first candidate was not accepted until F1 was independently closed. This is single-platform interface feasibility, not portable release qualification, resumability or demonstrated memory improvement.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "81ce3e4223883f49ba2de2ec8e48d02148a6d4503ecfc92557683cfbfbc94d6e",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
 }

@@ -8,13 +8,13 @@ Proposal; unexecuted. There are no numerical results or independent numerical au
 
 ## Goal and motivation
 
-The question is: where can complete-engine time and memory be reduced safely? This record places the documented comparison in the [project aims](../../docs/project-aims.md); the question-based grouping is a retrospective documentation choice. Its predecessor relationships are stated below and do not imply independent replication.
+Identify safe engine-level improvements after comparable complete trajectories are established. The [project aims](../../docs/project-aims.md) explain its role; this question-based grouping is retrospective.
 
 ## Analysis and data contract
 
 Profile equivalent persistent full pipelines; test one measured bottleneck at a time with unchanged numerical policy.
 
-A solve, a full trajectory and a pruning decision are different observation units. Reference conditions, tolerance meanings and input reuse are defined in [shared methods](../shared-methods.md); example identities and sampling limitations are in [dataset orientation](../dataset-orientation.md). No biological estimand or population-level uncertainty is inferred from these computational checks.
+[Shared methods](../shared-methods.md) define the reference conditions, tolerances and observation units; [dataset orientation](../dataset-orientation.md) identifies the examples and sampling limits. These computational checks do not estimate biological effects.
 
 ## Observed results
 
@@ -30,7 +30,7 @@ Early client memory savings are not an engine baseline. Requires compatible comp
 
 Execution and numerical checking remain unperformed. A future protocol must identify inputs, settings, acceptance conditions and an execution budget before results can be assessed.
 
-Current issue dispositions and later closure evidence are linked above. A completed negative study remains useful evidence; acceptance of its scope does not authorize progression through a failed compatibility gate.
+Issue dispositions and later closure evidence are linked above. Study acceptance does not clear a failed compatibility gate.
 
 ## Recommendations and dependencies
 
@@ -42,7 +42,7 @@ Resolve scope and prerequisites in the analysis queue; do not treat this record 
 ## Sources and reproduction
 
 - [Historical report](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/coordinator/ROADMAP.md)
-- [Evidence identities](evidence-manifest.json) identify declared/resolved locations, available source hashes and known historical provenance.
-- [Catalogue build instructions](../README.md) distinguish figure reconstruction and rendering from numerical execution. Run them from the implementation worktree; numerical reproduction, if separately requested, uses the frozen historical plan and environment.
+- [Evidence identities and historical provenance](evidence-manifest.json).
+- [Catalogue build instructions](../README.md): run from the implementation worktree. Numerical reproduction uses the separately frozen historical plan and environment.
 
-Current file hashes establish what is available now, not proof of which source produced an old execution. Generated catalogue outputs have no confirmed external backup.
+Current hashes identify available files, not historical execution. External backup coverage is unknown.

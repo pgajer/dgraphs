@@ -1,0 +1,11 @@
+{
+  "audit_status": "not examined; proposal",
+  "numerically_checked": false,
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "fb1178d01f24d67d3f2197a6ef5791cd756b3040c70c67ada496da43cd5da72c",
+    "review": null
+  },
+  "audit_history": [],
+  "consequential_limits": "Engine acceptance and estimator acceptance are separate. No new cohort access, production replacement or full fit is authorized here."
+}

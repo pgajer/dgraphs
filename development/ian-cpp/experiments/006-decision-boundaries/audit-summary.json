@@ -1,0 +1,20 @@
+{
+  "audit_status": "accepted for bounded historical evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "a012f67c89db7df9c5f63496782d14061c4e9e2ba087f8ca2244993e9ba02848",
+    "review": null
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-5/audit.md",
+      "review_sha256": "7793199e2040d0208930ef5fff8d221b842057a1e669d991cbcf2aa7ee2eca68",
+      "candidate": "b2e132562ae61a8849d2c1b8bca317fb805f76b1",
+      "scope": "Original bounded milestone; this question is an indexed part of that scope."
+    }
+  ],
+  "consequential_limits": "The pruning calibration did not bracket a boundary. Library warnings remain unresolved at their source. IAN evaluated-LP 1.0 is a working implementation reference, not general historical equivalence.",
+  "findings_register": "../correction-dispositions.json"
+}

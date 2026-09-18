@@ -26,7 +26,7 @@
     "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/PLAN.md"
   ],
   "figure_paths": [],
-  "missing_figure_reason": "The declared comparisons and limitations are summarized in prose; no standalone chart has been selected for this record.",
+  "missing_figure_reason": "This record summarizes persistent-sequence agreement and client resource comparisons. The frozen report and evidence manifest retain the detailed tables/traces; no additional standalone plot is needed for this question.",
   "audit_status_source": "audit-summary.json",
   "numerical_check_source": "audit-summary.json",
   "issues_source": "../correction-dispositions.json",

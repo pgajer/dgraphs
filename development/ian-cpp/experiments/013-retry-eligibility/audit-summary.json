@@ -1,0 +1,20 @@
+{
+  "audit_status": "accepted for bounded historical evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "8824cb7fb817b70ea906ad06807f6f3d868ba4cf1d984077ebab7f69a8b5c7d8",
+    "review": null
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7e/audit.md",
+      "review_sha256": "6f7936fde995fd6e6a221041f5e698f1c60d7494d2dfb1919a0c314f198f479d",
+      "candidate": "eac10a31a66da10daedf175093a8b6d2e7202cd1",
+      "scope": "Original bounded milestone; this question is an indexed part of that scope."
+    }
+  ],
+  "consequential_limits": "Acceptance covers this experimental policy and panel; it is not production adoption. Successful 500-profile recovery does not establish larger-scale or historical-expression compatibility.",
+  "findings_register": "../correction-dispositions.json"
+}

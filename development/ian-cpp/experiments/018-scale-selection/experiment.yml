@@ -21,7 +21,7 @@
     "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/coordinator/ROADMAP.md"
   ],
   "figure_paths": [],
-  "missing_figure_reason": "No experiment has been executed; no measured figure exists.",
+  "missing_figure_reason": "No new numerical study was executed; a result figure would imply evidence that does not exist.",
   "audit_status_source": "audit-summary.json",
   "numerical_check_source": "audit-summary.json",
   "issues_source": "../correction-dispositions.json",

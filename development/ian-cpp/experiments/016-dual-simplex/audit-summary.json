@@ -1,0 +1,20 @@
+{
+  "audit_status": "accepted for bounded historical evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "28e8dba34415703cfcc2511d831f3e2b68ccb3a595fc3db8296a13a34b4b5c1d",
+    "review": null
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7h/audit.md",
+      "review_sha256": "46fe410c40dddee888a0abea9ec6648db5b7654e5e2bbb3ba8d28771577066a9",
+      "candidate": "c777ca5c2e275a68aae4c87a3034799952d7c525",
+      "scope": "Original bounded milestone; this question is an indexed part of that scope."
+    }
+  ],
+  "consequential_limits": "Four deterministic calls are not population replicates. The unchanged external tests do not prove exact optimality or a uniquely selected vector. The one-shot supervisor correction is independently accepted; no solver is adopted.",
+  "findings_register": "../correction-dispositions.json"
+}

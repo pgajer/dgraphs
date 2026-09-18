@@ -1,0 +1,11 @@
+{
+  "audit_status": "not examined; proposal",
+  "numerically_checked": false,
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "944292d377795937351c21d78b6f90e503a9a5a860f53924f417d19b4399994f",
+    "review": null
+  },
+  "audit_history": [],
+  "consequential_limits": "The native C/Rust header mismatch and complete in-process settings capture need separate qualification; early one-host R success is insufficient."
+}

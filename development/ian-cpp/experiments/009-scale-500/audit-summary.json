@@ -1,0 +1,20 @@
+{
+  "audit_status": "accepted for bounded historical evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "25a2f91a2e8c9242fe85578040f1f7aa8dfa0f7743351f24fdd30a62f331cb51",
+    "review": null
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7/audit.md",
+      "review_sha256": "a6addcc7b49923ceb6f2552415aadd9c9d9b512ec4cadc337741d3c98a18c3d2",
+      "candidate": "c2330c8ed1e9b307700b51dc919391090f4f0ec6",
+      "scope": "Original bounded milestone; this question is an indexed part of that scope."
+    }
+  ],
+  "consequential_limits": "Agreement on refusal is implementation evidence, not a successful fit. Prepared 1,000-profile inputs remained gated at this milestone. The PreSSMat source overlaps prior tests.",
+  "findings_register": "../correction-dispositions.json"
+}

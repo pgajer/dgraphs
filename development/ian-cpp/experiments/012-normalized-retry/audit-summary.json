@@ -1,0 +1,20 @@
+{
+  "audit_status": "accepted for bounded historical evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "8ec4a7bf8b57f6bbfcea111e5ecf14f20b36931bf9cfdc8d5424722777a9035f",
+    "review": null
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7d/audit.md",
+      "review_sha256": "6abf0f65c8ef9798113450f73c5fc5d421b45d4b4554ff05e97e62f2668f8adf",
+      "candidate": "d30573a32b64fc184493192d4657ad924a464a0b",
+      "scope": "Original bounded milestone; this question is an indexed part of that scope."
+    }
+  ],
+  "consequential_limits": "Solver-scaled residuals do not equal the external stationarity check. A separately labeled auditor terminal solve motivates the next experiment; it does not complete this one. Remaining regressions and larger runs are gated.",
+  "findings_register": "../correction-dispositions.json"
+}

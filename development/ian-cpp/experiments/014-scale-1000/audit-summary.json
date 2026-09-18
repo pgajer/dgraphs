@@ -1,0 +1,20 @@
+{
+  "audit_status": "accepted for bounded historical evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "72f31af04aca776aa38f95d25ce3aa731a0c117dc1fec164be2030b2b44a2ac2",
+    "review": null
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7f/audit.md",
+      "review_sha256": "a0368211d67376fa5713978af7d2fd5ea06c989372a2369016e170bd8f6149f7",
+      "candidate": "ec65a871e5f06c5a6e6c6ecccd947d4b0970ff7f",
+      "scope": "Original bounded milestone; this question is an indexed part of that scope."
+    }
+  ],
+  "consequential_limits": "The native result is not a completed graph. The prepared quadforms have no IAN trajectory evidence. The larger native restart test is unavailable; preparation is not execution.",
+  "findings_register": "../correction-dispositions.json"
+}

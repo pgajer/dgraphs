@@ -1,0 +1,20 @@
+{
+  "audit_status": "accepted for bounded historical evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "8f77536cd93d7cafddb2928fdb24469d2f1b645c2a22784a8cf12fb24ae4a354",
+    "review": null
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-2/audit.md",
+      "review_sha256": "88fcb48b4f46f9c9fd5e4a832a722aeb322b674fc4eeb246526f411ab14e2a28",
+      "candidate": "322595c73047c4df3ac9c3b43ed44b20effafcd4",
+      "scope": "Original bounded milestone; this question is an indexed part of that scope."
+    }
+  ],
+  "consequential_limits": "The input sequence is reused from one interrupted run. Fresh-process, persistent-client and full-engine memory are different quantities. Updating fixed structure does not qualify dimension-changing reuse.",
+  "findings_register": "../correction-dispositions.json"
+}

@@ -1,0 +1,11 @@
+{
+  "audit_status": "not examined; proposal",
+  "numerically_checked": false,
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "88709abd542d9146cf13c5946a00bb5ff912f252785d559a025467cffe1332bb",
+    "review": null
+  },
+  "audit_history": [],
+  "consequential_limits": "These are future method studies, not established biological validity or a requirement for a realistic microbiome simulator."
+}

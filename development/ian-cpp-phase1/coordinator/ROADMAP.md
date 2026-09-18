@@ -508,5 +508,10 @@ and correctly refuses acceptance. One original RHS entry differs by one binary64
 step; causality is unproven. Six remaining inputs and the larger native restart
 test are unexecuted. See [report](../phase07f/REPORT.md). Independent review accepted this bounded negative study without corrective findings.
 Pawel has authorized [Phase07G](../phase07g/PLAN.md), an eight-solve exact-data
-cross-interface diagnostic. Its implementation and execution are in progress.
+cross-interface diagnostic. The [Phase07G study](../phase07g/REPORT.md) is complete:
+all eight fixed-problem replays reproduce exactly apart from timing, and outcomes
+follow the one-step RHS change across both interfaces. Independent acceptance is
+pending. The settings capture omission and separate no-solve reconstruction are
+documented. The scale gate remains closed; a different LP algorithm on the two
+fixed problems is proposed before another full trajectory.
 Production adoption and any size beyond 1,000 remain outside this scope.

@@ -268,5 +268,16 @@
       "Typed core refactor"
     ],
     "programme_group": "B"
+  },
+  {
+    "id": "IAN-EXP-026",
+    "aims": [
+      "IA1",
+      "IA4"
+    ],
+    "phase_aliases": [
+      "07K"
+    ],
+    "programme_group": "C"
   }
 ]

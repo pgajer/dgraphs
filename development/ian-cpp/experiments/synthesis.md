@@ -20,7 +20,7 @@ to the specified host and failure paths. See IAN-EXP-004 through IAN-EXP-008.
 
 Scale expansion exposes real refusals. Limited retry, normalization and eligibility
 changes eventually complete the 500-profile helix, but the 1,000-profile attempt
-still disagrees across paths. Exact-input replay attributes the observed terminal
+disagrees across the preserved paths. Exact-input replay attributes the observed terminal
 switch to an input perturbation on the tested builds. See IAN-EXP-009 through
 IAN-EXP-015. These studies contain informative negative results, not erased failures.
 
@@ -37,7 +37,7 @@ saved graph. Both rounded vectors require further retuning and conditionally
 remove the same 52 edges, with identical candidate and removal order. Python and
 native calculations agree. The actual later first-pruning control removes 47
 edges after additional retuning. This distinguishes fixed-state insensitivity at
-two endpoints from the still-unresolved complete-trajectory question. See
+two endpoints from the complete-trajectory question studied next. See
 [IAN-EXP-023](023-saved-pruning/report.md); independent review is pending.
 
 ## Decisions and limits
@@ -72,3 +72,15 @@ checkpoint/resume and failure checks pass; JSON remains at explicit persistence
 and legacy test boundaries. See [IAN-EXP-025](025-typed-core-messages/report.md).
 This is author qualification pending independent review, with no measured
 performance claim or change to the scale gate.
+
+## Focused helix continuation
+
+The new [arithmetic study](026-helix-arithmetic/report.md) traces the mismatch to
+rounding of a squared distance. Matching Python's system-power convention makes
+both engines complete the 1,000-profile helix with identical scales, 47 pruning
+steps and final affinities. Matching multiplication makes both refuse at the
+original point. All 446 fresh attempts are accounted for, and the four small
+paired controls pass. This explains the specific interface discrepancy on this
+host; it does not prove arithmetic robustness, cross-platform equivalence or
+invariance across all near-optimal scale choices. Independent review and wider
+qualification precede any promotion of this candidate or reopening of the ladder.

@@ -1,0 +1,13 @@
+{
+  "audit_status": "not independently reviewed",
+  "numerically_checked": false,
+  "numerical_check_scope": "Author checked all 446 attempts and complete trajectory comparisons; independent review pending.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "70349892b9dc17fc507fad74eeeab59531fde92480a2273ca6446d5aa5321d1f",
+    "review": null
+  },
+  "audit_history": [],
+  "consequential_limits": "One Mac; historical experimental retry policy; power rule not adopted into typed core or adapter; system power portability and broader boundary regression remain unqualified.",
+  "findings_register": "../correction-dispositions.json"
+}

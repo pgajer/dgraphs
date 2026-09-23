@@ -30,6 +30,11 @@ def main():
         graph[r['id']]=[d['id'] for d in r['dependencies']]
         for d in r['dependencies']:check(d['id'] in ids and bool(d['type']),'Invalid dependency '+r['id'])
         for q in ['report.md','audit-summary.json','evidence-manifest.json']:check((p/q).exists(),'Missing record source '+str(p/q))
+        if (p/'build_figure.py').exists():
+            fm=json.loads((p/'build/figure-manifest.json').read_text())
+            check(fm['data_sha256']==sha(p/'figure-data.json'),'Local figure input drift: '+r['id'])
+            check(fm['script_sha256']==sha(p/'build_figure.py'),'Local figure script drift: '+r['id'])
+            for name,digest in fm['outputs'].items():check(sha(p/'build'/name)==digest,'Local figure output drift: '+r['id'])
     def visit(n,stack):
         if n in stack:errors.append('Dependency cycle: '+str(stack+[n]));return
         for v in graph.get(n,[]):visit(v,stack+[n])

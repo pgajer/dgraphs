@@ -34,6 +34,11 @@
       "name": "HiGHS dual-simplex objective-band range",
       "role": "Phase07I diagnostic; original units and exact postchecks",
       "adoption": "not adopted"
+    },
+    {
+      "name": "Explicit constraint-square conventions under Phase07E retry",
+      "role": "Phase07K compatibility experiment: multiply versus system libm power in both interfaces",
+      "adoption": "not adopted; complete helix and four small paired controls pass under power on the tested Mac"
     }
   ]
 }

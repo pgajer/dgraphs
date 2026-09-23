@@ -1,0 +1,134 @@
+{
+  "id": "IAN-EXP-034",
+  "files": [
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/08-r-size-qualification/PLAN.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/08-r-size-qualification/PLAN.md",
+      "available": true,
+      "sha256": "34346f799dd2eaa2e265869b0cd0de145187b97d171a9bbbe51f14f0d265cc94",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/08-r-size-qualification/AMENDMENT-1.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/08-r-size-qualification/AMENDMENT-1.md",
+      "available": true,
+      "sha256": "2d734bdbe933c11fccb6e02baffc146a2c591ce0b5dd98f3ca4f6ff988cf9848",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/08-r-size-qualification/AMENDMENT-2.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/08-r-size-qualification/AMENDMENT-2.md",
+      "available": true,
+      "sha256": "332e08016ddd48170f603fde5b35bfabc1f1b224eb5134a6a45b1d9555a1f6cc",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/fixtures.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/fixtures.json",
+      "available": true,
+      "sha256": "75aaaca2c6343d9062a7d3cb3d250cae900efe817b15a3b076db86c855040292",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/study-summary.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/study-summary.json",
+      "available": true,
+      "sha256": "0a54054e7560b1cfecdd8b2518014b626e7660b0c1bccb0953dea278a052dcf4",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/panel-v1/ledger.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/panel-v1/ledger.json",
+      "available": true,
+      "sha256": "d74d6f6221fdbc14e3af811427811ea24da00a745d54f9c55d42c7e41b9e1e39",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/panel-v2/ledger.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/panel-v2/ledger.json",
+      "available": true,
+      "sha256": "0825aa28df3b5d8a630f42321acd63f1589fe533713bf3d2311fd29aa9fc0ec5",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/supplement-v1/ledger.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/supplement-v1/ledger.json",
+      "available": true,
+      "sha256": "f3c76ac5979bf44d3acb2ff4c074ec104a85b032c2302e9f850e3ee1ca507316",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/graph-checks-final/summary.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/graph-checks-final/summary.json",
+      "available": true,
+      "sha256": "58796edce24fe3704c71abe6e08609ff092d0c0891db4e38f7ccabe4c65b91a0",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/dispatch-comparison.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/dispatch-comparison.json",
+      "available": true,
+      "sha256": "5664f966b7244b2f5b5d7759fd381230c2375935b2bbbec86a27789d6aef50e8",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/build-v3/manifest.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/build-v3/manifest.json",
+      "available": true,
+      "sha256": "957e94b55b231275569802ae1f8f61df20d18357982f629bfdaf09942d3668e2",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/projection-before/checks-v2.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/projection-before/checks-v2.json",
+      "available": true,
+      "sha256": "56b5c441b4ce0ed71e8cce6d9117a5ee49a0aeea5b9cf18f439a1f220cecc9f8",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/projection-final/checks.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/projection-final/checks.json",
+      "available": true,
+      "sha256": "6645cc1b64596a8cc491ee0616780477c5adae3aea4d67c1478aed71aa597301",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/package-build-v3/commands.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/package-build-v3/commands.json",
+      "available": true,
+      "sha256": "3c025bbd744cf209bd7b3cd7dc9140b16158a107baefe6f73664700ad3337671",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/package-check-v3/commands.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/package-check-v3/commands.json",
+      "available": true,
+      "sha256": "c9ba5fcb511247ef560e72226658765d5acd646010361172ede44991e10d97bc",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/package-check-v3/dgraphs.Rcheck/00check.log",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/package-check-v3/dgraphs.Rcheck/00check.log",
+      "available": true,
+      "sha256": "53e34335352263d06d17f890392dad177b9bae3a406ee6e15051fc1e11ee22ee",
+      "identity_scope": "Current submitted bytes"
+    }
+  ],
+  "backup": "External backup coverage unknown"
+}

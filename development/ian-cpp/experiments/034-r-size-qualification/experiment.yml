@@ -1,0 +1,49 @@
+{
+  "id": "IAN-EXP-034",
+  "title": "Can the internal R adapter safely remove its fixed 500-row restriction?",
+  "phase_aliases": [
+    "R size qualification"
+  ],
+  "programme_group": "F",
+  "aims": [
+    "IA2",
+    "IA3"
+  ],
+  "execution_status": "executed",
+  "outcome": "Author qualification passed through 2,000 profiles; 5,000 step unexecuted by prospective resource gate; independent review pending",
+  "documentation_worker": "IAN implementer/coordinator",
+  "dependencies": [
+    {
+      "id": "IAN-EXP-033",
+      "type": "accepted connected pruning and R diagnostics"
+    },
+    {
+      "id": "IAN-EXP-028",
+      "type": "frozen 1,000-profile geometries and accepted reference traces"
+    }
+  ],
+  "source_paths": [
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/08-r-size-qualification/PLAN.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/08-r-size-qualification/AMENDMENT-1.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/08-r-size-qualification/AMENDMENT-2.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/fixtures.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/study-summary.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/panel-v1/ledger.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/panel-v2/ledger.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/supplement-v1/ledger.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/graph-checks-final/summary.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/dispatch-comparison.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/build-v3/manifest.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/projection-before/checks-v2.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/projection-final/checks.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/package-build-v3/commands.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/package-check-v3/commands.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/package-check-v3/dgraphs.Rcheck/00check.log"
+  ],
+  "figure_paths": [],
+  "missing_figure_reason": "Size/mode coverage and resource tables communicate the bounded interface result without a new scientific figure.",
+  "audit_status_source": "audit-summary.json",
+  "numerical_check_source": "audit-summary.json",
+  "issues_source": "../correction-dispositions.json",
+  "evidence_source": "evidence-manifest.json"
+}

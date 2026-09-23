@@ -156,9 +156,13 @@ pruning and solving. Full diagnostics retain extra dense objects; summary remain
 the default. The specimen-level distance matrix is allocated before duplicate
 profiles are collapsed, so original row count matters for memory.
 
-Removing the cap does not certify every larger input. The new larger-input
-qualification is recorded separately in IAN-EXP-034; at this source revision it
-is pending. Previous evidence covers R reference mode through 500 rows and
-connected mode on twelve 200-point examples. Numerical policy, pruning defaults,
+Removing the cap does not certify every larger input. IAN-EXP-034 records
+author qualification on all seven frozen 1,000-profile geometries in reference
+and connected modes, and two 2,000-profile examples in connected mode with
+summary R diagnostics, on Mac arm64 R-devel. Native/R outputs match exactly.
+Independent review is recorded in that experiment’s audit summary. A proposed
+5,000-profile pair was not executed because the preceding full-diagnostic native
+runs exceeded its prospective memory gate. Rebuild the optional module: the
+updated wrapper requires the checked-size entry point and rejects older modules. Numerical policy, pruning defaults,
 solve budget and interrupt behavior are unchanged. Interrupts are checked at
 engine events and do not preempt a running solver or every initialization loop.

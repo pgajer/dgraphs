@@ -25,10 +25,10 @@ try:
    tag=c['name']+'-'+mode;row=dict(case=c['name'],mode=mode)
    native,nr=execute(tag+'/native',[B/'engine',c[mode]['path'],O/'runs'/tag/'native/child','--interval','100'])
    row['native']=v.retry_checks(native,O/'checks'/(tag+'-native'),allow_terminal_rejection=nr['exit_code']!=0)
-   rr=O/'runs'/tag/'R/child';rchild,r=execute(tag+'/R',['/Library/Frameworks/R.framework/Resources/bin/Rscript','--vanilla',H/'r_case.R',P/('library-v2' if B.name=='build-v2' else 'library'),c['metadata'],B/'dgraphs_ian.so',rr,mode,'full'])
+   rr=O/'runs'/tag/'R/child';rchild,r=execute(tag+'/R',['/Library/Frameworks/R.framework/Resources/bin/Rscript','--vanilla',H/'r_case.R',P/('library' if B.name=='build-v1' else 'library-'+B.name.removeprefix('build-')),c['metadata'],B/'dgraphs_ian.so',rr,mode,'full'])
    row['R']=v.retry_checks(rchild,O/'checks'/(tag+'-R'),allow_terminal_rejection=r['exit_code']!=0);row['exact_events']=exact(native/'trace.jsonl',rchild/'trace.jsonl')
    if mode=='reference':row['baseline_events']=exact(native/'trace.jsonl',Path(c['baseline'])/'trace.jsonl')
-   check=O/'checks'/(tag+'-objects.json');cmd=['/Library/Frameworks/R.framework/Resources/bin/Rscript','--vanilla',H/'check_objects.R',P/('library-v2' if B.name=='build-v2' else 'library'),native,rchild,check]
+   check=O/'checks'/(tag+'-objects.json');cmd=['/Library/Frameworks/R.framework/Resources/bin/Rscript','--vanilla',H/'check_objects.R',P/('library' if B.name=='build-v1' else 'library-'+B.name.removeprefix('build-')),native,rchild,check]
    with (O/'checks'/(tag+'-objects.log')).open('w') as log:subprocess.run(list(map(str,cmd)),stdout=log,stderr=subprocess.STDOUT,check=True,timeout=600)
    row['complete']=load(native/'status.json')['complete'] and load(rchild/'status.json')['complete'];L['cases'].append(row);save();print(tag,'complete',row['complete'],'attempts',nr['optimizer_calls'],flush=True)
    if not row['complete']:raise RuntimeError('matching_refusal_closes_larger_gate')

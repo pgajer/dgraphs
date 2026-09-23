@@ -266,6 +266,14 @@
         "Connectivity-preserving pruning"
       ],
       "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-034",
+      "title": "Can the internal R adapter safely remove its fixed 500-row restriction?",
+      "phase": [
+        "R size qualification"
+      ],
+      "execution": "executed"
     }
   ],
   "historical_source_files": {
@@ -665,7 +673,8 @@
       "IAN-EXP-030",
       "IAN-EXP-031",
       "IAN-EXP-032",
-      "IAN-EXP-033"
+      "IAN-EXP-033",
+      "IAN-EXP-034"
     ]
   }
 }

@@ -1,0 +1,16 @@
+{
+  "audit_status": "Independent review pending; author checks complete",
+  "numerically_checked": false,
+  "numerical_check_scope": "Author checks reported separately; no independent disposition yet",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "e54a74edbff16237058e80a5322a8930e9ba43aca57820b11a2a0d45d64b8ce9",
+    "frozen_submission": {
+      "report_sha256": "e54a74edbff16237058e80a5322a8930e9ba43aca57820b11a2a0d45d64b8ce9",
+      "report_pdf_sha256": "3cd5841fc2701b58aaf3862cb01295146e2ddef091480b293935e44336a893ab",
+      "reason": "Two-page author-inspected submission; exact bytes preserved pending independent review"
+    }
+  },
+  "audit_history": [],
+  "consequential_limits": "Internal only; Mac arm64 R-devel; two 2,000-profile connected examples; 5,000 unexecuted; no public/default/scientific change"
+}

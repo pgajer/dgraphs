@@ -359,5 +359,16 @@
       "Connectivity-preserving pruning"
     ],
     "programme_group": "F"
+  },
+  {
+    "id": "IAN-EXP-034",
+    "aims": [
+      "IA2",
+      "IA3"
+    ],
+    "phase_aliases": [
+      "R size qualification"
+    ],
+    "programme_group": "F"
   }
 ]

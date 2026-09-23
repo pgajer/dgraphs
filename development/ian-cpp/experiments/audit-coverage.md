@@ -1,6 +1,6 @@
 # Audit coverage and outstanding review
 
-All 28 executed question records map to independently accepted bounded
+Of 29 executed question records, 28 map to independently accepted bounded
 studies across 27 milestones. The helix arithmetic study (IAN-EXP-026), including
 its current report and figure, was accepted on 23 September 2026 with no corrective
 findings. The internal dgraphs adapter (IAN-EXP-024) and typed-core refactor
@@ -15,7 +15,7 @@ These counts do not imply that every inference, dataset or intended use is valid
 Current review status comes from each audit-summary.json, never a duplicate metadata
 flag. Shared phase02 audit scope is counted once at milestone level.
 
-The other 24 catalogue reports, historical figure reconstructions, aims wording
+The other 25 catalogue reports, historical figure reconstructions, aims wording
 and synthesis have author checks but have not received independent presentation
 review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028, IAN-EXP-029, IAN-EXP-030, IAN-EXP-031, IAN-EXP-032 and IAN-EXP-033 acceptances do not audit the complete catalogue. For every record current_report_review
 names that limitation and binds the current report hash. Historical audit history
@@ -41,3 +41,5 @@ IAN-EXP-031 adds the initial bounded scientific benchmark: nine independent coor
 IAN-EXP-032 reconstructs the first helix disconnections from saved trajectories with zero new solver calls. Independent review accepts the diagnosis and exact Markdown/PDF/figure with no corrective findings. The auditor reconstructed both interfaces and all first-cut metrics; no method variant is adopted.
 
 IAN-EXP-033 implements the owner-authorized connectivity-preserving variant. The bounded implementation and exact corrected report/PDF are independently accepted; F1 measurement wording and C1 contract clarification are closed. The original report/PDF remain preserved.
+
+IAN-EXP-034 removes the fixed R row restriction and adds bounded larger-interface qualification; independent review is pending. Its 5,000-profile conditional pair was not executed because the prospective memory gate failed.

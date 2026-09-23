@@ -1,15 +1,15 @@
 {
-  "audit_status": "Independent review in progress; F1 process-accounting repair submitted for closure",
+  "audit_status": "Independent review in progress; F1 fixed and N1 report precision corrected, closure pending",
   "numerically_checked": true,
   "numerical_check_scope": "Author 504 full certificates and 1090 summary-return comparisons across 56 engine entries",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "cd62a21172427420f309612be70146ada4851cab98552bc59832e3c8eb989060",
-    "scope": "Corrected process-accounting submission; final independent disposition pending",
+    "report_sha256": "e051bf62479f950d9ab47a528c774fd9dbb5ac8e700167deb476415b0a348351",
+    "scope": "N1 report-only correction; independent disposition pending",
     "frozen_submission": {
-      "report_sha256": "cd62a21172427420f309612be70146ada4851cab98552bc59832e3c8eb989060",
-      "report_pdf_sha256": "a7e35c3c0bcb0ca3d18398af75bab89788ff1cadfeb80b0b4c1fa477d9557f6d",
-      "reason": "F1 corrected two-page submission visually inspected; original pair preserved separately"
+      "report_sha256": "e051bf62479f950d9ab47a528c774fd9dbb5ac8e700167deb476415b0a348351",
+      "report_pdf_sha256": "efe3a2f0c067928c777a4d8a85034de00404396ad27573763a40b6151b80bd05",
+      "reason": "N1 report-only budget metadata clarification; both pages author-inspected; earlier versions preserved"
     }
   },
   "audit_history": [],
@@ -26,6 +26,18 @@
       },
       "preserved_report": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/submission-report.md",
       "preserved_pdf": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/submission-report.pdf"
+    },
+    {
+      "status": "not independently reviewed",
+      "report_sha256": "cd62a21172427420f309612be70146ada4851cab98552bc59832e3c8eb989060",
+      "scope": "F1 corrected submission before N1 clarification of requested solve-budget metadata exclusion",
+      "frozen_submission": {
+        "report_sha256": "cd62a21172427420f309612be70146ada4851cab98552bc59832e3c8eb989060",
+        "report_pdf_sha256": "a7e35c3c0bcb0ca3d18398af75bab89788ff1cadfeb80b0b4c1fa477d9557f6d",
+        "reason": "F1 corrected two-page submission visually inspected; original pair preserved separately"
+      },
+      "preserved_report": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface-f1/submission-report.md",
+      "preserved_pdf": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface-f1/submission-report.pdf"
     }
   ]
 }

@@ -282,6 +282,25 @@
         }
       ],
       "consequence": "Documentation only; numerical implementation and original evidence unchanged; exact original and corrected presentations preserved"
+    },
+    {
+      "id": "R-SIZE-N1",
+      "description": "Markdown interpreted the memory-formula multiplication signs as emphasis",
+      "disposition": "Typography corrected and independently verified; closed",
+      "affected": [
+        "IAN-EXP-034"
+      ],
+      "evidence": [
+        {
+          "role": "Independent acceptance and preservation evidence",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-r-size-typography/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-r-size-typography/audit.md",
+          "available": true,
+          "sha256": "c9774af04d3ecbd20a078a916f0d3a2197b6cea8472291f1176866a0a16481a6",
+          "identity_scope": "Final bounded audit or separately preserved typography closure"
+        }
+      ],
+      "consequence": "Report, guide and generated help corrected; numerical results unchanged; original and corrected accepted report/PDF pairs preserved"
     }
   ]
 }

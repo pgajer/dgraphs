@@ -15,9 +15,9 @@ These counts do not imply that every inference, dataset or intended use is valid
 Current review status comes from each audit-summary.json, never a duplicate metadata
 flag. Shared phase02 audit scope is counted once at milestone level.
 
-The other 25 catalogue reports, historical figure reconstructions, aims wording
+The other 24 catalogue reports, historical figure reconstructions, aims wording
 and synthesis have author checks but have not received independent presentation
-review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028, IAN-EXP-029, IAN-EXP-030, IAN-EXP-031, IAN-EXP-032 and IAN-EXP-033 acceptances do not audit the complete catalogue. For every record current_report_review
+review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028, IAN-EXP-029, IAN-EXP-030, IAN-EXP-031, IAN-EXP-032, IAN-EXP-033 and IAN-EXP-034 acceptances do not audit the complete catalogue. For every record current_report_review
 names that limitation and binds the current report hash. Historical audit history
 remains distinct and is not silently carried forward to rewritten prose.
 
@@ -42,4 +42,4 @@ IAN-EXP-032 reconstructs the first helix disconnections from saved trajectories 
 
 IAN-EXP-033 implements the owner-authorized connectivity-preserving variant. The bounded implementation and exact corrected report/PDF are independently accepted; F1 measurement wording and C1 contract clarification are closed. The original report/PDF remain preserved.
 
-IAN-EXP-034 removes the fixed R row restriction and adds bounded larger-interface qualification; the bounded implementation and original report/PDF are independently accepted. A typography-only presentation correction is pending closure. Its 5,000-profile conditional pair was not executed because the prospective memory gate failed.
+IAN-EXP-034 removes the fixed R row restriction and adds bounded larger-interface qualification; the bounded implementation and original report/PDF are independently accepted. N1 typography is closed and the exact corrected report/PDF is independently accepted; the original accepted pair is preserved. Its 5,000-profile conditional pair was not executed because the prospective memory gate failed.

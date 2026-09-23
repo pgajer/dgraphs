@@ -1,10 +1,10 @@
 {
   "as_of": "2026-09-23",
-  "scope": "29 executed and accepted questions across 28 bounded milestones; five proposals; 25 current presentations pending independent review",
+  "scope": "29 accepted questions across 28 bounded milestones; five proposals; 24 current presentations pending independent review",
   "counts": {
     "executed": 29,
     "proposal": 5,
     "historical_audited": 29,
-    "pending_new_report_review": 25
+    "pending_new_report_review": 24
   }
 }

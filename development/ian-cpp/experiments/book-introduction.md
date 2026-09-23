@@ -1,6 +1,6 @@
 # IAN experiment book
 
-Updated 23 September 2026. This local book assembles the project aims, shared definitions, coverage limits and all 26 question records. Twenty questions map to 19 independently accepted bounded milestones; one executed study awaits independent review, and five remain unexecuted proposals. Phase identifiers preserve the original chronology; question identifiers preserve scientific meaning.
+Updated 23 September 2026. This local book assembles the project aims, shared definitions, coverage limits and all 27 question records. Twenty questions map to 19 independently accepted bounded milestones; two executed studies await independent review, and five remain unexecuted proposals. Phase identifiers preserve the original chronology; question identifiers preserve scientific meaning.
 
 Historical acceptance refers to bounded evidence and includes negative studies. The helix arithmetic report and figure (IAN-EXP-026) have independent presentation acceptance; other catalogue summaries, figures and consolidated aims still await that review. Larger runs remain gated; no solver policy is adopted through this organization. Original reports and results remain in their original locations.
 

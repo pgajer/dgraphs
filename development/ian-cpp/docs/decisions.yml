@@ -62,6 +62,14 @@
       "state": "authorized",
       "scope": "Initiate independent IAN audits, address corrective findings and request re-review without new owner prompts",
       "basis": "User instruction 23 September 2026; docs/audit-coordination.md"
+    },
+    {
+      "id": "DEC-FIVE-STAGE-CONTINUATION",
+      "state": "authorized; stage 1 executed and awaiting independent audit",
+      "scope": "Numerical policy, scale, supported platforms, performance, controlled scientific evaluation in that order; resolve findings before advancing",
+      "basis": "Owner instruction in this task on 23 September 2026; experiments/analysis-queue.md",
+      "candidate_policy": "IAN evaluated-LP retry-power 0.1",
+      "candidate_adopted": false
     }
   ]
 }

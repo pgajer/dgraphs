@@ -279,5 +279,17 @@
       "07K"
     ],
     "programme_group": "C"
+  },
+  {
+    "id": "IAN-EXP-027",
+    "aims": [
+      "IA1",
+      "IA2",
+      "IA4"
+    ],
+    "phase_aliases": [
+      "Continuation stage 1"
+    ],
+    "programme_group": "B"
   }
 ]

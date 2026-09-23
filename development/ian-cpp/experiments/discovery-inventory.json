@@ -210,6 +210,14 @@
         "07K"
       ],
       "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-027",
+      "title": "Can the qualified retry and arithmetic rules be integrated into the typed IAN core?",
+      "phase": [
+        "Continuation stage 1"
+      ],
+      "execution": "executed"
     }
   ],
   "historical_source_files": {

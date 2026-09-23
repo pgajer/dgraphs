@@ -19,3 +19,5 @@ unavailable references are reported; modification times are not execution dates.
 Evidence manifests identify current file availability separately from historical
 execution provenance. Backup coverage is unverified: a second checksum or Git ignore
 rule is not a backup. Local/private links do not make this a portable public bundle.
+
+The subsequently authorized five-stage continuation adds IAN-EXP-027: typed numerical-policy integration, executed with independent review pending. The catalogue now contains 27 records and 22 executed questions. This addition does not rewrite the original discovery boundary.

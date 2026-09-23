@@ -26,7 +26,7 @@ Implemented means source exists; tested means identified checks ran; accepted me
 
 | Stage | State | Work | Completion and advancement criteria |
 | --- | --- | --- | --- |
-| 1. Numerical policy qualification and integration | Active: prospective plan and implementation | Preserve strict evaluated-LP baseline; qualify the controlled normalized retry plus shared-power arithmetic in typed native/R paths against Python, fixed problems, boundaries and full histories | Complete accounting; unchanged acceptance limits; explained policy differences; restart/interface parity; independent acceptance with findings closed; record exact adopted scope |
+| 1. Numerical policy qualification and integration | Executed; independent audit pending | Preserve strict evaluated-LP baseline; qualify the controlled normalized retry plus shared-power arithmetic in typed native/R paths against Python, fixed problems, boundaries and full histories | Complete accounting; unchanged acceptance limits; explained policy differences; restart/interface parity; independent acceptance with findings closed; record exact adopted scope |
 | 2. Bounded scale ladder | Waiting for stage 1 | Resume frozen 1,000-profile panel, including intrinsic 2–5 dimensional quadforms; budget any larger step from measured costs | Complete paired trajectories and output checks, known refusal behavior, audited resource envelope; no unexplained implementation divergence |
 | 3. Supported platforms and package | Waiting for stage 2 | Qualify actual named runtime environments, installation and examples; fix packaging issues and document dependency distribution | Reproducible builds, API/output parity, numerical and failure checks, package checks and independent acceptance; compile-only evidence does not qualify runtime |
 | 4. Full-engine performance | Waiting for stage 3 | Measure matched successful persistent pipelines; separate solver, initialization, pruning, affinity, checkpoint and R conversion costs; optimize measured bottlenecks only | Account for all runs; reproducible time/memory evidence; regression preservation and independent acceptance; no gain is a valid outcome |
@@ -42,7 +42,7 @@ Secondary scale selection (IAN-EXP-018) is conditional on a demonstrated need; i
 
 ## Stage completion reports
 
-No stage in this newly authorized sequence is complete yet. After each stage, append a dated concise account of the question, methods/examples, results, interpretation, unresolved boundaries, adopted version (if any), audit and next permitted action. Keep full numerical reports and factual handoffs in their experiment records, linked here. Do not put changing execution history into the stable aims.
+No stage has completed the independent acceptance gate yet. Stage 1 execution is complete and its [report](027-numerical-policy-integration/report.md) is ready for review. After each stage, append a dated concise account of the question, methods/examples, results, interpretation, unresolved boundaries, adopted version (if any), audit and next permitted action. Keep full numerical reports and factual handoffs in their experiment records, linked here. Do not put changing execution history into the stable aims.
 
 ### Starting position — 23 September 2026
 

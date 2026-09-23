@@ -10,7 +10,7 @@
     "IA3"
   ],
   "execution_status": "executed",
-  "outcome": "Faster native complete pipelines and lower matched worker memory on three examples; audit pending",
+  "outcome": "Native pipeline speed/memory advantage reproduced; exact R validation corrected and accepted",
   "documentation_worker": "IAN implementer/coordinator",
   "dependencies": [
     {

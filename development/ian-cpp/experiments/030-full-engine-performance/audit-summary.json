@@ -1,16 +1,31 @@
 {
-  "audit_status": "independent review pending",
+  "audit_status": "accepted for bounded full-pipeline performance; F1 closed",
   "numerically_checked": true,
-  "numerical_check_scope": "Author checks: 846 full payloads and 96 persistent result/history comparisons; not independent acceptance",
+  "numerical_check_scope": "Independent full replay: 110 entries, 5166 attempts, 846 full payloads, exact RDS and checkpoint validation",
   "current_report_review": {
-    "status": "not independently reviewed",
+    "status": "accepted",
     "report_sha256": "d022bcbab7e4573d38a3a667900c94f1a03502bc54aec37c45365ef492c9b6ef",
     "frozen_submission": {
       "report_sha256": "d022bcbab7e4573d38a3a667900c94f1a03502bc54aec37c45365ef492c9b6ef",
       "report_pdf_sha256": "a5c1b65b23f5077208284b76e00e70c6107aa41496afc538b217ef622381bb6d",
       "reason": "Exact visually checked submission; preservation is not audit acceptance."
-    }
+    },
+    "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage04-performance/audit.md",
+    "review_sha256": "f476a9a73a3a83970b4c8bbc536fee42f100963d044bf997cc6ffbe8907c89a1",
+    "report_pdf_sha256": "a5c1b65b23f5077208284b76e00e70c6107aa41496afc538b217ef622381bb6d",
+    "scope": "Exact submitted Markdown/PDF accepted; HTML text/links only"
   },
-  "audit_history": [],
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage04-performance/audit.md",
+      "review_sha256": "f476a9a73a3a83970b4c8bbc536fee42f100963d044bf997cc6ffbe8907c89a1",
+      "candidate": "5b75f3d",
+      "corrections": [
+        "944325f",
+        "87269d8"
+      ],
+      "scope": "Bounded persistent complete-pipeline performance; F1 closed"
+    }
+  ],
   "consequential_limits": "One shared Mac; client/instrumentation boundaries differ; R capped at 500; no pure-language or core-memory claim"
 }

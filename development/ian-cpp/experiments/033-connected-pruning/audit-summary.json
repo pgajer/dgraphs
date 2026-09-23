@@ -4,7 +4,12 @@
   "numerical_check_scope": "Main panel 1560 returns: 1108 accepted and 452 rejected; correct acceptance/rejection decisions checked; 3081 proposals reconstructed; exact native/R and reference preservation",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "91968d8d58d3d0c5f9006190f9544bc4c86bbc24b35ec99928372273ad80e82f"
+    "report_sha256": "91968d8d58d3d0c5f9006190f9544bc4c86bbc24b35ec99928372273ad80e82f",
+    "frozen_submission": {
+      "report_sha256": "91968d8d58d3d0c5f9006190f9544bc4c86bbc24b35ec99928372273ad80e82f",
+      "report_pdf_sha256": "995ade16579dae544d3f3d51c2c09b0e6005b38880d77ca69ac6984d2955144b",
+      "reason": "F1-corrected two-page presentation; author inspected both rendered pages; original submission preserved separately"
+    }
   },
   "audit_history": [],
   "consequential_limits": "Explicit internal variant; Mac arm64 R-devel; R at most 500 rows; no prediction or biological-validity claim",

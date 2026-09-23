@@ -80,6 +80,14 @@
       "available": true,
       "sha256": "c4af584c61f5a949dbfb6879263260ac965902795355a325965999a47cc73633",
       "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Read-only F1 measurement recount",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/report-correction-counts.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/report-correction-counts.json",
+      "available": true,
+      "sha256": "9b7c25ee26ebdd7129b8009a8c6fcea57e055645bb7e5ed70485ca8a91e27d97",
+      "identity_scope": "38 original full traces bound by hash; no engine calls"
     }
   ],
   "backup": "External backup coverage unknown"

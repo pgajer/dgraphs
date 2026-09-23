@@ -38,16 +38,19 @@ for kind,path in [('builder',ROOT/'inst/ian/build_backend.py'),('supervisor',ROO
   env=dict(out=folder,record={'commands':[],'complete':False},Path=Path,json=json,time=time,signal=signal,os=fakeos,fcntl=fcntl,tempfile=tempfile,subprocess=types.SimpleNamespace(Popen=launch,TimeoutExpired=subprocess.TimeoutExpired,STDOUT=subprocess.STDOUT))
   if kind=='supervisor':
    (folder/'runtime').mkdir();(folder/'environment.json').write_text(json.dumps({'runtimes':{'runtime':{'env':{}}}}));env['sys']=types.SimpleNamespace(argv=['command.py',str(folder),'runtime',name,'synthetic'])
-  exec(compile(functions,str(path),'exec'),env);exception=None
+  exec(compile(functions,str(path),'exec'),env);exception=None;exit_result=None
   try:
    if kind=='builder':env['call'](name,['synthetic'])
-   else:env['main']()
+   else:exit_result=env['main']()
   except BaseException as e:exception=type(e).__name__
   rows=json.loads((folder/('build-record.json' if kind=='builder' else 'runtime/commands.json')).read_text());row=rows['commands'][0] if kind=='builder' else rows[0]
   assert row['state']==state and row['returncode']==code,(kind,name,row)
   assert len(calls)==len(waits) and all(t==5 for t in calls[1:])
   if name.startswith('interruption') or name=='cleanup_interruption':assert exception=='KeyboardInterrupt'
   if name=='signal_race':assert row['signal_races']==[int(signal.SIGTERM)]
-  results.append(dict(kind=kind,case=name,state=state,returncode=code,wait_timeouts=calls,signals=sent,exception=exception))
+  if kind=='supervisor' and exception is None:
+   assert exit_result==(1 if waits[0]=='timeout' else code),(name,exit_result)
+   if waits[0]=='timeout':assert row['reason']=='wall_limit'
+  results.append(dict(kind=kind,case=name,state=state,returncode=code,wait_timeouts=calls,signals=sent,exception=exception,supervisor_exit=exit_result))
 result=dict(passed=True,controls=len(results),child_processes_launched=0,engine_calls=0,source_sha256={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [ROOT/'inst/ian/build_backend.py',Path(__file__).parent/'command.py']},results=results)
 (OUT/'checks.json').write_text(json.dumps(result,indent=2)+'\n');print(len(results),'process accounting controls passed; zero children or engine calls')

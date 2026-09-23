@@ -57,5 +57,7 @@ def main():
    raise
   finally:
    rec.update(state=('launch_failed' if proc is None else 'reaped' if proc.returncode is not None else 'termination_unconfirmed'),returncode=proc.returncode if proc else None,seconds=time.monotonic()-start);save()
-  print(label,code,flush=True);return code if code is not None else 1
+  print(label,code,flush=True)
+  # A zero child exit after the deadline does not make the operation timely.
+  return 1 if rec.get('reason')=='wall_limit' or code is None else code
 if __name__=='__main__':raise SystemExit(main())

@@ -22,7 +22,8 @@
 #' @return A list with `complete`, structured `error`, initial Gabriel graph,
 #'   `final_graph` only on full completion, `last_valid_graph` (possibly partial),
 #'   profile mapping, local scales and an affinity matrix distinct from metric
-#'   edge lengths. Graph indices and mappings are one-based. Summary diagnostics
+#'   edge lengths. Graph indices and mappings are one-based. Full traces retain
+#'   original zero-based core indices and declare this in diagnostics. Summary diagnostics
 #'   include per-solve status, acceptance, settings, residuals and iteration counts.
 #'   Refusal and interruption return incomplete structured results; invalid R
 #'   arguments error before native execution. Interrupts are checked at engine
@@ -94,6 +95,8 @@ create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
     last <- .ian.graph(raw$last, ids, "last valid, possibly partial")
     final <- if (isTRUE(raw$complete)) .ian.graph(raw$converged, ids, "completed final") else NULL
     if (isTRUE(raw$diagnostics$affinity_valid)) dimnames(raw$affinity) <- list(ids, ids)
+    raw$diagnostics$trace_index_base <- 0L
+    raw$diagnostics$trace_format <- "original core JSON fields; zero-based indices"
     raw$diagnostics$input_mode <- input.mode
     raw$diagnostics$requested_max_solves <- as.integer(max.solves)
     list(complete = raw$complete, error = raw$error, initial_graph = initial,

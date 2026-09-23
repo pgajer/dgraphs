@@ -69,6 +69,7 @@ inline LPResult solve_lp(const Mat &D, const Edges &edges, const Vec &u, double 
     settings.presolve_enable = false;
     settings.input_sparse_dropzeros = false;
     settings.tol_feas = settings.tol_gap_abs = settings.tol_gap_rel = 1e-9;
+    const Json settings_snapshot = captured_settings(settings);
     auto cone = ClarabelNonnegativeConeT(m);
     std::unique_ptr<ClarabelDefaultSolver, decltype(&clarabel_DefaultSolver_free)> solver(
         clarabel_DefaultSolver_new(&P, q.data(), &A, b.data(), 1, &cone, &settings),
@@ -114,7 +115,7 @@ inline LPResult solve_lp(const Mat &D, const Edges &edges, const Vec &u, double 
                negative <= 1e-7 && gap <= 1e-7;
     Json record = {
         {"event", "solve"},
-        {"settings", captured_settings(settings)},
+        {"settings", settings_snapshot},
         {"site", parameterized ? "parameterized" : "recycled"},
         {"C", C},
         {"A_data", values},

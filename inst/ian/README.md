@@ -36,7 +36,9 @@ Python distance generation. Supplied graphs are rejected. The adapter permits
 2–500 specimen rows; this is a resource guard, not a claim of all-input numerical
 success. Dense distances and affinities require quadratic memory; the initial
 Gabriel construction is cubic in profile count. Summary diagnostics omit dense
-per-solve matrices and vectors; full traces are opt-in and may be large.
+per-solve matrices and vectors; full traces are opt-in and may be large. Full
+traces retain original zero-based core indices (declared in diagnostics); graph
+and mapping objects use one-based R indices.
 
 The pinned core is accepted Phase06B, IAN evaluated-LP 1.0. No normalized retries,
 solver tolerance changes or alternative selection rule are adopted. Clarabel

@@ -6,9 +6,11 @@
   "changes": [
     "C settings header adds missing input_sparse_dropzeros in f32/f64",
     "Rust size/alignment/all 39 settings offsets probe; C++ runtime verification before solve",
-    "Explicit dropzeros=false matches accepted configuration; actual settings captured per solve"
+    "Explicit dropzeros=false matches accepted configuration; actual settings captured per solve",
+    "Adapter captures initial/last graph events, provides interruption/failure QA hooks; full trace remains original zero-based JSON"
   ],
   "files": {
+    "bridge.cpp": "37c821bfa3b1fe1b61dc7bb724f3cb453e00c57c297be058fb9e369a5388865d",
     "core/IAN-LICENSE.txt": "93d57c91a8a44472409c307ea18fca0fb53442c7e06c25d13a2cbc8d14b158f7",
     "core/config.json": "f4565bb7268c303008637f7990d1d539f0a52dc47ce8a2e59657d3b28fcae4ed",
     "core/NUMPY-LICENSE.txt": "01fb016849aa427edb1bbbbd55f91c26ca6cadb32a5b20e7f000655dd05b0760",
@@ -250,7 +252,7 @@
     "Clarabel.cpp/rust_wrapper/src/solver/implementations/default/settings.rs": "11e0af38862edeb7e1e4dcc08b0a752d109097de09603ac6a64eaba166fd4a88",
     "core/src/testing.hpp": "2adf96c169a78a6939f669cfd9bf760c11e4152a27db79ec838d58bf2b76ac13",
     "core/src/engine.hpp": "913515d7542cb9c744acd5275e53f12252101c1dbf5c405b82be6a95196bbce0",
-    "core/src/solver.hpp": "5f3653459a6eb0bf3d9aca88ff6c3ef6b7bb34e2488458bc1741ebb3059b2686",
+    "core/src/solver.hpp": "aa1c9d4f3f6c987d9524354f7d96a2b8324840ae16a1e08ab1215dce34af503e",
     "core/src/json.hpp": "9bea4c8066ef4a1c206b2be5a36302f8926f7fdc6087af5d20b417d0cf103ea6",
     "core/src/store.hpp": "768486f6b54a260489b373266c9aa264ca96f3ac0cf23ef70aab65adb82dd21f",
     "core/src/state_json.hpp": "31483e6ef6a8c36de0a5279e4b17bb764abc564fdec75681dac5c572367b28f4",

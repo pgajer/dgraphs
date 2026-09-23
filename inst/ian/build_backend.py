@@ -25,7 +25,7 @@ rhome=Path(subprocess.check_output([a.r,'RHOME'],text=True).strip())
 rcpp=Path(subprocess.check_output([a.rscript,'--vanilla','-e','cat(system.file("include",package="Rcpp"))'],text=True).strip())
 identity=hashlib.sha256(json.dumps(record['sources'],sort_keys=True).encode()).hexdigest();config=hashlib.sha256((source/'core/config.json').read_bytes()).hexdigest()
 module=out/'dgraphs_ian.so'
-call('module',[a.cxx,'-std=c++17','-O2','-ffp-contract=off','-fno-fast-math','-fPIC','-shared','-undefined','dynamic_lookup',
+call('module',[a.cxx,'-std=c++17','-O2','-ffp-contract=off','-fno-fast-math','-fPIC','-shared','-undefined','dynamic_lookup','-Wl,-install_name,@rpath/dgraphs_ian.so',
  '-I'+str(rhome/'include'),'-I'+str(rcpp),'-I'+str(source/'core/include'),'-I'+str(source/'core/src'),'-I'+str(source/'Clarabel.cpp/include'),
  '-DSOURCE_HASH="'+identity+'"','-DCONFIG_HASH="'+config+'"',source/'core/src/core.cpp',source/'bridge.cpp',out/'target/release/libclarabel_c.a','-framework','Security','-framework','CoreFoundation','-o',module])
 record['module_sha256']=hashlib.sha256(module.read_bytes()).hexdigest();record['core_source_identity']=identity

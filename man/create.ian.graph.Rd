@@ -41,7 +41,8 @@ The actual initial Gabriel graph is always constructed by IAN.}
 A list with \code{complete}, structured \code{error}, initial Gabriel graph,
 \code{final_graph} only on full completion, \code{last_valid_graph} (possibly partial),
 profile mapping, local scales and an affinity matrix distinct from metric
-edge lengths. Graph indices and mappings are one-based. Summary diagnostics
+edge lengths. Graph indices and mappings are one-based. Full traces retain
+original zero-based core indices and declare this in diagnostics. Summary diagnostics
 include per-solve status, acceptance, settings, residuals and iteration counts.
 Refusal and interruption return incomplete structured results; invalid R
 arguments error before native execution. Interrupts are checked at engine

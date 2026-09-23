@@ -1,7 +1,7 @@
 """Small preservation/operational controls and prospectively gated larger pairs."""
 import sys,json,subprocess,itertools,shutil,time
 from pathlib import Path
-H=Path(__file__).resolve().parent;ROOT=H.parents[3];P=Path(sys.argv[1]);B=P/'build-v2';O=P/'supplement-v1';O.mkdir(exist_ok=False)
+H=Path(__file__).resolve().parent;ROOT=H.parents[3];P=Path(sys.argv[1]);B=P/'build-v3';O=P/'supplement-v1';O.mkdir(exist_ok=False)
 sys.path.insert(0,str(H.parent/'01-numerical-policy'));from guard import run,reserve,write
 sys.path.insert(0,str(ROOT/'development/ian-cpp-phase1/phase07e'));import validate as v
 v.POLICY='IAN evaluated-LP retry-power 0.1';load=lambda p:json.loads(Path(p).read_text());old=P.parent
@@ -21,10 +21,10 @@ try:
  for name in ['square-6101','helix-6101','sphere-6101']:
   fixture=old/'connected-pruning/fixtures'/(name+'-connected.json');baseline=old/'connected-pruning/runs'/name/'R/child/result.rds';tag='saved-'+name
   child,r=execute(tag,['/Library/Frameworks/R.framework/Resources/bin/Rscript','--vanilla',H/'r_regression.R',P,fixture,B/'dgraphs_ian.so',O/'runs'/tag/'child',baseline]);check(tag+' exact',r['exit_code']==0);v.retry_checks(child,O/(tag+'-certificates'))
- child,r=execute('R-controls',['/Library/Frameworks/R.framework/Resources/bin/Rscript','--vanilla',H/'r_controls.R',P,B/'dgraphs_ian.so',O/'runs/R-controls/child'],5);check('R controls',r['exit_code']==0 and load(child/'checks.json')['passed'])
+ child,r=execute('R-controls',['/Library/Frameworks/R.framework/Resources/bin/Rscript','--vanilla',H/'r_controls.R',P,B/'dgraphs_ian.so',O/'runs/R-controls/child'],7);check('R controls',r['exit_code']==0 and load(child/'checks.json')['passed'])
  prior_larger=[]
  for c in load(P/'fixtures.json')['cases']:
-  if c['stage']=='main':continue
+  if c['stage']=='main' and c['name']!='helix_1000':continue
   if c['stage']=='conditional':
    gate=len(prior_larger)==4 and all(r['exit_code']==0 and r['wall_seconds']<60 and r['sampled_tree_peak_rss_bytes']<2**30 for r in prior_larger) and shutil.disk_usage(P).free>20*2**30
    L['conditional_gate']=dict(passed=gate,prior_process_count=len(prior_larger),limits=dict(seconds=60,rss_bytes=2**30));save()
@@ -37,8 +37,8 @@ try:
   cmd=[O/'summary',c['metadata'],native] if c['stage']=='conditional' else [B/'engine',c['connected']['path'],native,'--interval','100']
   native,nr=execute(tag+'/native',cmd)
   if c['stage']!='conditional':v.retry_checks(native,O/(tag+'-certificates'),allow_terminal_rejection=nr['exit_code']!=0)
-  rr=O/'runs'/tag/'R/child';rchild,r=execute(tag+'/R',['/Library/Frameworks/R.framework/Resources/bin/Rscript','--vanilla',H/'r_case.R',P/'library-v2',c['metadata'],B/'dgraphs_ian.so',rr,'connected','summary'])
-  checkfile=O/(tag+'-objects.json');cmd=['/Library/Frameworks/R.framework/Resources/bin/Rscript','--vanilla',H/'check_objects.R',P/'library-v2',native,rchild,checkfile]
+  rr=O/'runs'/tag/'R/child';rchild,r=execute(tag+'/R',['/Library/Frameworks/R.framework/Resources/bin/Rscript','--vanilla',H/'r_case.R',P/'library-v3',c['metadata'],B/'dgraphs_ian.so',rr,'connected','summary'])
+  checkfile=O/(tag+'-objects.json');cmd=['/Library/Frameworks/R.framework/Resources/bin/Rscript','--vanilla',H/'check_objects.R',P/'library-v3',native,rchild,checkfile]
   with (O/(tag+'-objects.log')).open('w') as log:subprocess.run(list(map(str,cmd)),stdout=log,stderr=subprocess.STDOUT,check=True,timeout=600)
   success=nr['exit_code']==r['exit_code']==0;L['larger_cases'].append(dict(case=tag,complete=success,exact_objects=True,attempts=nr['optimizer_calls']));save();print(tag,'complete',success,'attempts',nr['optimizer_calls'],flush=True)
   if not success:L['later_size_gate_closed']='numerical refusal';save();break

@@ -77,8 +77,8 @@ create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
         path <- normalizePath(path, mustWork = TRUE)
         if (!exists(path, cache, inherits = FALSE)) {
             dll <- dyn.load(path, local = TRUE)
-            run <- tryCatch(getNativeSymbolInfo("dgraphs_ian_run_v2", dll)$address,
-                error = function(e) stop("IAN backend needs rebuilding for the connectivity interface; use ian/build_backend.py.", call. = FALSE))
+            run <- tryCatch(getNativeSymbolInfo("dgraphs_ian_run_v3", dll)$address,
+                error = function(e) stop("IAN backend needs rebuilding for the checked-size interface; use ian/build_backend.py.", call. = FALSE))
             assign(path, list(dll = dll, run = run), cache)
         }
         get(path, cache, inherits = FALSE)$run

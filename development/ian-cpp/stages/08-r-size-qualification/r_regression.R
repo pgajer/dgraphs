@@ -1,4 +1,4 @@
-a<-commandArgs(TRUE);.libPaths(c(file.path(a[1],'library-v2'),.libPaths()));library(dgraphs)
+a<-commandArgs(TRUE);.libPaths(c(file.path(a[1],'library-v3'),.libPaths()));library(dgraphs)
 source(file.path(dirname(sub('^--file=','',grep('^--file=',commandArgs(),value=TRUE))),'../01-numerical-policy/trace_json.R'))
 j<-jsonlite::fromJSON(a[2],simplifyVector=FALSE);mat<-function(x)do.call(rbind,lapply(x,unlist));out<-a[4];dir.create(out,recursive=TRUE)
 r<-dgraphs:::create.ian.graph(mat(j$features),distances=mat(j$distances),specimen.ids=unlist(j$ids),backend=a[3],numerical.policy=j$numerical_policy,preserve.connectivity=isTRUE(j$preserve_connectivity),diagnostics='full',max.solves=1500L)

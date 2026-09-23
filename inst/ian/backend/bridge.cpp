@@ -80,7 +80,7 @@ Rcpp::List graph(const ian::Edges& e,const ian::Result& result,const ian::Input&
  return Rcpp::List::create(Rcpp::Named("edges")=edges(e),Rcpp::Named("lengths")=lengths);
 }
 }
-extern "C" SEXP dgraphs_ian_run_v2(SEXP features,SEXP distances,SEXP ids,SEXP participants,SEXP detailed,SEXP max_solves,SEXP fault,SEXP policy,SEXP preserve_connectivity) {
+extern "C" SEXP dgraphs_ian_run_v3(SEXP features,SEXP distances,SEXP ids,SEXP participants,SEXP detailed,SEXP max_solves,SEXP fault,SEXP policy,SEXP preserve_connectivity) {
  BEGIN_RCPP
  Rcpp::NumericMatrix feature_view(features),distance_view(distances);
  ian_r::input_dimensions(feature_view.nrow(),feature_view.ncol(),R_XLEN_T_MAX);
@@ -109,12 +109,15 @@ extern "C" SEXP dgraphs_ian_run_v2(SEXP features,SEXP distances,SEXP ids,SEXP pa
  return output;
  END_RCPP
 }
+extern "C" SEXP dgraphs_ian_run_v2(SEXP features,SEXP distances,SEXP ids,SEXP participants,SEXP detailed,SEXP max_solves,SEXP fault,SEXP policy,SEXP preserve_connectivity) {
+ return dgraphs_ian_run_v3(features,distances,ids,participants,detailed,max_solves,fault,policy,preserve_connectivity);
+}
 extern "C" SEXP dgraphs_ian_run(SEXP features,SEXP distances,SEXP ids,SEXP participants,SEXP detailed,SEXP max_solves,SEXP fault,SEXP policy) {
  SEXP flag=PROTECT(Rf_ScalarLogical(0));
  SEXP result=dgraphs_ian_run_v2(features,distances,ids,participants,detailed,max_solves,fault,policy,flag);
  UNPROTECT(1);return result;
 }
 extern "C" void R_init_dgraphs_ian(DllInfo* dll) {
- static const R_CallMethodDef methods[]={{"dgraphs_ian_run_v2",(DL_FUNC)&dgraphs_ian_run_v2,9},{"dgraphs_ian_run",(DL_FUNC)&dgraphs_ian_run,8},{nullptr,nullptr,0}};
+ static const R_CallMethodDef methods[]={{"dgraphs_ian_run_v3",(DL_FUNC)&dgraphs_ian_run_v3,9},{"dgraphs_ian_run_v2",(DL_FUNC)&dgraphs_ian_run_v2,9},{"dgraphs_ian_run",(DL_FUNC)&dgraphs_ian_run,8},{nullptr,nullptr,0}};
  R_registerRoutines(dll,nullptr,methods,nullptr,nullptr);R_useDynamicSymbols(dll,FALSE);R_forceSymbols(dll,TRUE);
 }

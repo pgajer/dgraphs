@@ -1,0 +1,11 @@
+{
+  "audit_status": "independent review pending",
+  "numerically_checked": false,
+  "numerical_check_scope": "Author comparisons and saved-payload checks; independent audit pending",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "ee25144ee86e5e835776303c6bcf9b6665fb56fcaf0823dc6083108ca493929a"
+  },
+  "audit_history": [],
+  "consequential_limits": "Internal Mac arm64 evidence; other platforms, public export and R above 500 rows unqualified"
+}

@@ -302,5 +302,16 @@
       "Continuation stage 2"
     ],
     "programme_group": "C"
+  },
+  {
+    "id": "IAN-EXP-029",
+    "aims": [
+      "IA1",
+      "IA2"
+    ],
+    "phase_aliases": [
+      "Continuation stage 3"
+    ],
+    "programme_group": "D"
   }
 ]

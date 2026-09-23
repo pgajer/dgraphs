@@ -1,0 +1,22 @@
+{
+  "id": "IAN-EXP-029",
+  "files": [
+    {
+      "role": "package qualification evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/03-package-qualification/PLAN.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/03-package-qualification/PLAN.md",
+      "available": true,
+      "sha256": "9e18463906526ff4227fe7b060c4de62a881f30fdb7ef820d184899254dcb189",
+      "identity_scope": "Submission source and evidence bytes"
+    },
+    {
+      "role": "package qualification evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage03-package/summary.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage03-package/summary.json",
+      "available": true,
+      "sha256": "72f9a009c3c87529aecd6b9f5b585710360513bae275123ff7034c23ecd4ed1c",
+      "identity_scope": "Submission source and evidence bytes"
+    }
+  ],
+  "backup": "External backup coverage unknown"
+}

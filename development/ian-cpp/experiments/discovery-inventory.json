@@ -226,6 +226,14 @@
         "Continuation stage 2"
       ],
       "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-029",
+      "title": "Can the internal R adapter be built and used from a fresh package installation?",
+      "phase": [
+        "Continuation stage 3"
+      ],
+      "execution": "executed"
     }
   ],
   "historical_source_files": {

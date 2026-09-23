@@ -218,6 +218,41 @@
         "Continuation stage 1"
       ],
       "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-028",
+      "title": "Does the qualified engine agree across the remaining 1,000-profile geometries?",
+      "phase_aliases": [
+        "Continuation stage 2"
+      ],
+      "programme_group": "C",
+      "aims": [
+        "IA1",
+        "IA2"
+      ],
+      "execution_status": "executed",
+      "outcome": "All six paired geometries pass; arithmetic warnings localized with correct saved products; independent review pending",
+      "documentation_worker": "IAN implementer/coordinator",
+      "dependencies": [
+        {
+          "id": "IAN-EXP-027",
+          "type": "accepted integrated policy"
+        },
+        {
+          "id": "IAN-EXP-014",
+          "type": "frozen 1,000-profile inputs"
+        }
+      ],
+      "source_paths": [
+        "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/02-scale-panel/PLAN.md",
+        "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage02-scale/summary.json"
+      ],
+      "figure_paths": [],
+      "missing_figure_reason": "Per-geometry table presents the complete bounded panel.",
+      "audit_status_source": "audit-summary.json",
+      "numerical_check_source": "audit-summary.json",
+      "issues_source": "../correction-dispositions.json",
+      "evidence_source": "evidence-manifest.json"
     }
   ],
   "historical_source_files": {
@@ -605,12 +640,14 @@
   "private_root": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17",
   "subsequent_extension": {
     "as_of": "2026-09-23",
-    "scope": "Four owner-authorized new studies: saved-state pruning, internal adapter, typed-message refactor, and focused helix arithmetic compatibility; original discovery boundary retained.",
+    "scope": "Owner-authorized subsequent studies and audit-gated continuation stages; original discovery boundary retained.",
     "new_records": [
       "IAN-EXP-023",
       "IAN-EXP-024",
       "IAN-EXP-025",
-      "IAN-EXP-026"
+      "IAN-EXP-026",
+      "IAN-EXP-027",
+      "IAN-EXP-028"
     ]
   }
 }

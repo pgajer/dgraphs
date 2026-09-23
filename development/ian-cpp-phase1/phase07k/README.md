@@ -17,6 +17,7 @@ $PY -B development/ian-cpp-phase1/phase07k/execute.py "$STUDY"
 $PY -B development/ian-cpp-phase1/phase07k/analyze.py "$STUDY"
 $PY -B development/ian-cpp-phase1/phase07k/supplement.py "$STUDY"
 $PY -B development/ian-cpp-phase1/phase07k/test_guard.py "$STUDY"
+$PY -B development/ian-cpp-phase1/phase07k/finalize.py "$STUDY"
 ```
 
 Only `execute.py` invokes numerical solvers. Preparation copies the preserved

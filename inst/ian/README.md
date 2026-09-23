@@ -89,3 +89,49 @@ JSON parsing. Optional file/test serializers preserve the historical JSON schema
 Canonical input fingerprinting still uses the previous JSON encoding at a separate
 persistence boundary, so its format is unchanged. The C++ observer interface has
 changed: Event now carries an EventPayload variant instead of a JSON string.
+
+## Explicit connectivity-preserving variant
+
+Set `preserve.connectivity=TRUE` to request `IAN bridge-protected 0.1`:
+
+```r
+fit <- dgraphs:::create.ian.graph(
+    X, distances = D,
+    numerical.policy = "IAN evaluated-LP retry-power 0.1",
+    preserve.connectivity = TRUE)
+fit$initial_graph
+fit$final_graph
+fit$diagnostics$connectivity$protected.edges
+fit$diagnostics$connectivity$history
+fit$diagnostics$connectivity$stop.reason
+```
+
+The default `FALSE` retains reference pruning. Rebuild the optional backend for
+this interface; old modules are rejected with an explicit rebuild message. The
+new module retains the previous eight-argument native entry point for old callers.
+No public function is exported and the numerical policy/default is unchanged.
+
+For each potential longest-incident-edge proposal in statistical order, the
+variant first skips a cached bridge or checks endpoint reachability with that
+edge omitted. Only a nonbridge proceeds to the pruning-eligibility test. Bridge
+status is permanent while only edges are deleted; nonbridge status is checked
+again after earlier deletions. Global threshold and ranking context still use
+the whole graph. Skips do not consume the actual-deletion allowance; later
+proposals are considered. No shorter edge is substituted for a protected one.
+A full pass with no removal terminates, with `no_connectivity_preserving_removal`
+if statistical candidates remain, or `no_pruning_candidates` otherwise.
+
+`protected.edges` records encountered bridges (one-based profile indices/IDs),
+first/last encounter iteration, count and first statistic/threshold/margin. This
+is not a claim that every protected edge met the pruning conditions, which are
+not tested for skipped bridges. `history` records per-pass checks, skips,
+condition rejections, endpoint conflicts and actual deletions. Summary iterations
+are one-based; full trace `pruning_attempt` events retain the declared zero-based
+core indices and state whether conditions were tested. These diagnostics remain
+available on refusal. The list need not contain every bridge in the graph.
+
+An initially disconnected graph is refused before solving. Protected edges remain
+in scale and affinity calculations; all unique-profile vertices are retained.
+A numerical refusal still returns no final graph. Native checkpoints bind the
+variant and bridge cache; R checkpoint/resume is still not exposed. Connected
+output does not establish that every connecting edge is biologically useful.

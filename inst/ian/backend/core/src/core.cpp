@@ -19,7 +19,7 @@ const char* error_kind_name(ErrorKind kind) {
 }
 namespace {
 ErrorKind classify(const std::string& code) {
-    if (code == "unsupported_initial_isolate" || code == "unsupported_schema" || code == "unsupported_policy")
+    if (code == "disconnected_initial_graph" || code == "unsupported_initial_isolate" || code == "unsupported_schema" || code == "unsupported_policy")
         return ErrorKind::unsupported;
     if (code == "invalid_restart" || code == "incompatible_restart") return ErrorKind::input;
     if (code == "input_shape_or_identity" || code == "invalid_distances_or_features" ||
@@ -33,6 +33,7 @@ ErrorKind classify(const std::string& code) {
 Result execute(const Input& input, Observer* observer, const std::string& fault, const RestartState* saved = nullptr) {
     Result result;
     result.policy = input.policy;
+    result.preserve_connectivity = input.preserve_connectivity;
     detail::Engine engine(result, observer, fault, saved);
     try {
         detail::require(input.version == schema_version, "unsupported_schema");

@@ -16,7 +16,9 @@ inline constexpr const char* numerical_policy = "IAN evaluated-LP 1.0";
 inline constexpr const char* retry_power_policy = "IAN evaluated-LP retry-power 0.1";
 inline bool supported_policy(const std::string& p) { return p == numerical_policy || p == retry_power_policy; }
 
+inline constexpr const char* connected_pruning_policy = "IAN bridge-protected 0.1";
 struct Input {
+    bool preserve_connectivity = false;
     int version = schema_version;
     std::string policy = numerical_policy;
     Matrix features, distances;
@@ -40,7 +42,31 @@ struct Error {
     ErrorKind kind = ErrorKind::none;
     std::string code, message;
 };
+struct ProtectedBridge {
+    std::array<int,2> edge;
+    int trigger = 0, first_iteration = 0, last_iteration = 0, encounters = 0;
+    double statistic = 0, threshold = 0, margin = 0;
+};
+struct PruningStep {
+    int iteration = 0, statistical_candidates = 0, allowance = 0;
+    int examined = 0, bridge_skips = 0, bridge_checks = 0, cached_skips = 0;
+    int condition_rejections = 0, endpoint_conflicts = 0, removed = 0;
+};
+struct PruningDiagnostics {
+    std::vector<ProtectedBridge> protected_bridges;
+    std::vector<PruningStep> history;
+    std::string stop_reason;
+};
+struct PruningAttempt {
+    std::array<int,2> edge;
+    int trigger = 0;
+    std::string action;
+    bool conditions_tested = false;
+    double statistic = 0, threshold = 0, margin = 0;
+};
 struct Result {
+    bool preserve_connectivity = false;
+    PruningDiagnostics pruning;
     int version = schema_version;
     std::string policy = numerical_policy;
     Mapping mapping;
@@ -130,6 +156,7 @@ struct Decision {
     Indices candidates;
     Vector threshold_margins;
     double median_residual;
+    bool candidate_evaluation_deferred = false;
 };
 struct GraphSnapshot { Edges edges; Indices degrees; Vector upper; Indices components, isolates; };
 struct MappingEvent { Mapping mapping; };
@@ -146,7 +173,8 @@ struct CompleteEvent { Edges edges; Vector scales; Matrix affinity; Vector stats
 struct PredicateEvent { double C, median, median_margin; bool converged; };
 using EventPayload = std::variant<MappingEvent, ProcessedEvent, IterationEvent, SolveRecord,
     KernelEvent, VolumeEvent, TuneStartEvent, RetuneEvalEvent, RetuneStopEvent,
-    Decision, PrunedEvent, GraphStopEvent, CompleteEvent, PredicateEvent>;
+    Decision, PrunedEvent, GraphStopEvent, CompleteEvent, PredicateEvent, PruningAttempt>;
+inline const char* event_name(const PruningAttempt&) { return "pruning_attempt"; }
 inline const char* event_name(const MappingEvent&) { return "mapping"; }
 inline const char* event_name(const ProcessedEvent&) { return "processed"; }
 inline const char* event_name(const IterationEvent&) { return "iteration"; }
@@ -168,6 +196,8 @@ struct Event {
 };
 // A completed pruning or graph boundary; no live solver or retuning bracket.
 struct RestartState {
+    bool preserve_connectivity = false;
+    PruningDiagnostics pruning;
     int version = 1;
     std::string policy = numerical_policy, source, configuration, input_hash, boundary;
     Mapping mapping;

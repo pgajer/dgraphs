@@ -55,6 +55,7 @@ struct Sink : ian::Observer {
  explicit Sink(bool detail,int budget):detailed(detail),max_solves(budget) {}
  void on_event(const ian::Event& e) override {
    if(const auto* p=std::get_if<ian::ProcessedEvent>(&e.payload)) {initial=p->initial_edges;last=initial;has_initial=has_last=true;}
+   if(const auto* p=std::get_if<ian::PruningAttempt>(&e.payload)) if(p->action=="removed")last.erase(std::find(last.begin(),last.end(),p->edge));
    if(const auto* p=std::get_if<ian::PrunedEvent>(&e.payload)) {last=p->graph.edges;has_last=true;}
    if(std::holds_alternative<ian::SolveRecord>(e.payload)) {
      ++solves;
@@ -74,15 +75,15 @@ Rcpp::List graph(const ian::Edges& e,const ian::Result& result,const ian::Input&
  return Rcpp::List::create(Rcpp::Named("edges")=edges(e),Rcpp::Named("lengths")=lengths);
 }
 }
-extern "C" SEXP dgraphs_ian_run(SEXP features,SEXP distances,SEXP ids,SEXP participants,SEXP detailed,SEXP max_solves,SEXP fault,SEXP policy) {
+extern "C" SEXP dgraphs_ian_run_v2(SEXP features,SEXP distances,SEXP ids,SEXP participants,SEXP detailed,SEXP max_solves,SEXP fault,SEXP policy,SEXP preserve_connectivity) {
  BEGIN_RCPP
- ian::Input in;in.policy=Rcpp::as<std::string>(policy);in.features=matrix(features);in.distances=matrix(distances);in.specimen_ids=Rcpp::as<std::vector<std::string>>(ids);in.participant_ids=Rcpp::as<std::vector<std::string>>(participants);
+ ian::Input in;in.preserve_connectivity=Rcpp::as<bool>(preserve_connectivity);in.policy=Rcpp::as<std::string>(policy);in.features=matrix(features);in.distances=matrix(distances);in.specimen_ids=Rcpp::as<std::vector<std::string>>(ids);in.participant_ids=Rcpp::as<std::vector<std::string>>(participants);
  Sink sink(Rcpp::as<bool>(detailed),Rcpp::as<int>(max_solves));
  std::string injection=Rcpp::as<std::string>(fault);
  sink.inject_interrupt=injection=="interrupt_after_initial";
  auto r=(injection=="none" || sink.inject_interrupt)?ian::run(in,&sink):ian::testing::run_with_fault(in,&sink,injection);
  if(sink.interrupted)r.error={ian::ErrorKind::cancelled,"R_user_interrupt","Interrupted at an engine event boundary; no live solver was abandoned."};
- return Rcpp::List::create(
+ Rcpp::List output=Rcpp::List::create(
  Rcpp::Named("complete")=r.complete,
  Rcpp::Named("error")=Rcpp::List::create(Rcpp::Named("kind")=ian::error_kind_name(r.error.kind),Rcpp::Named("code")=r.error.code,Rcpp::Named("message")=r.error.message),
  Rcpp::Named("initial")=sink.has_initial?SEXP(graph(sink.initial,r,in)):R_NilValue,
@@ -92,9 +93,19 @@ extern "C" SEXP dgraphs_ian_run(SEXP features,SEXP distances,SEXP ids,SEXP parti
  Rcpp::Named("scales")=r.scales,Rcpp::Named("affinity")=matrix(r.affinity),
  Rcpp::Named("diagnostics")=Rcpp::List::create(Rcpp::Named("solves")=r.solves,Rcpp::Named("last_iteration")=r.last_iteration,Rcpp::Named("distance_multiplier")=r.graph.distance_multiplier,Rcpp::Named("multiplier")=r.multiplier,Rcpp::Named("stats")=r.stats,Rcpp::Named("weighted_stats")=r.weighted_stats,Rcpp::Named("scales_valid")=r.scales_valid,Rcpp::Named("affinity_valid")=r.affinity_valid,Rcpp::Named("graph_converged")=r.graph_valid,Rcpp::Named("solver_history")=sink.history,Rcpp::Named("trace")=sink.events),
  Rcpp::Named("backend")=Rcpp::List::create(Rcpp::Named("numerical_policy")=r.policy,Rcpp::Named("source_identity")=ian::source_identity(),Rcpp::Named("configuration_identity")=ian::configuration_identity(),Rcpp::Named("solver")="Clarabel 0.11.1 / QDLDL"));
+ if(r.preserve_connectivity) {
+   Rcpp::List diagnostics=output["diagnostics"];diagnostics["connectivity"]=r_object(r.pruning);output["diagnostics"]=diagnostics;
+   Rcpp::List backend=output["backend"];backend["pruning_policy"]=ian::connected_pruning_policy;output["backend"]=backend;
+ }
+ return output;
  END_RCPP
 }
+extern "C" SEXP dgraphs_ian_run(SEXP features,SEXP distances,SEXP ids,SEXP participants,SEXP detailed,SEXP max_solves,SEXP fault,SEXP policy) {
+ SEXP flag=PROTECT(Rf_ScalarLogical(0));
+ SEXP result=dgraphs_ian_run_v2(features,distances,ids,participants,detailed,max_solves,fault,policy,flag);
+ UNPROTECT(1);return result;
+}
 extern "C" void R_init_dgraphs_ian(DllInfo* dll) {
- static const R_CallMethodDef methods[]={{"dgraphs_ian_run",(DL_FUNC)&dgraphs_ian_run,8},{nullptr,nullptr,0}};
+ static const R_CallMethodDef methods[]={{"dgraphs_ian_run_v2",(DL_FUNC)&dgraphs_ian_run_v2,9},{"dgraphs_ian_run",(DL_FUNC)&dgraphs_ian_run,8},{nullptr,nullptr,0}};
  R_registerRoutines(dll,nullptr,methods,nullptr,nullptr);R_useDynamicSymbols(dll,FALSE);R_forceSymbols(dll,TRUE);
 }

@@ -13,7 +13,8 @@ create.ian.graph(
   diagnostics = c("summary", "full"),
   backend = NULL,
   max.solves = 10000L,
-  numerical.policy = "IAN evaluated-LP 1.0"
+  numerical.policy = "IAN evaluated-LP 1.0",
+  preserve.connectivity = FALSE
 )
 }
 \arguments{
@@ -40,6 +41,13 @@ The actual initial Gabriel graph is always constructed by IAN.}
 
 \item{numerical.policy}{Exactly \code{"IAN evaluated-LP 1.0"} (strict default) or
 \code{"IAN evaluated-LP retry-power 0.1"} (explicit experimental candidate).}
+
+\item{preserve.connectivity}{Logical scalar, default \code{FALSE} (reference pruning).
+With \code{TRUE}, cache encountered bridges and skip them before testing each
+proposed edge's pruning eligibility. Check noncached edges in the current
+graph after preceding deletions. Skips do not consume the deletion allowance.
+All vertices are retained. An initially disconnected graph returns refusal.
+This explicit variant does not change the numerical solver policy.}
 }
 \value{
 A list with \code{complete}, structured \code{error}, initial Gabriel graph,
@@ -50,7 +58,16 @@ original zero-based core indices and declare this in diagnostics. Summary diagno
 include per-solve status, acceptance, settings, residuals and iteration counts.
 Refusal and interruption return incomplete structured results; invalid R
 arguments error before native execution. Interrupts are checked at engine
-events; they do not interrupt an active solver call.
+events; they do not interrupt an active solver call. In connectivity mode,
+\code{diagnostics$connectivity} contains \code{protected.edges} (one-based profile
+rows and IDs, first/last encounter iteration, count and first statistic),
+per-iteration \code{history}, and \code{stop.reason}. Iterations in this summary are
+one-based. Protected edges are encountered proposals, not necessarily edges
+that would pass the pruning criteria. Full traces also include every edge
+proposal and whether eligibility was tested. A complete pass with no
+deletion stops, including when statistical candidates remain protected.
+Partial results retain available protection diagnostics; \code{final_graph}
+remains \code{NULL} if later optimization or affinity construction fails.
 }
 \description{
 The unexported adapter requires the separately built optional backend. Its

@@ -27,6 +27,12 @@
 #' @param backend Optional path to the separately built `dgraphs_ian.so` module.
 #' @param numerical.policy Exactly `"IAN evaluated-LP 1.0"` (strict default) or
 #'   `"IAN evaluated-LP retry-power 0.1"` (explicit experimental candidate).
+#' @param preserve.connectivity Logical scalar, default `FALSE` (reference pruning).
+#'   With `TRUE`, cache encountered bridges and skip them before testing each
+#'   proposed edge's pruning eligibility. Check noncached edges in the current
+#'   graph after preceding deletions. Skips do not consume the deletion allowance.
+#'   All vertices are retained. An initially disconnected graph returns refusal.
+#'   This explicit variant does not change the numerical solver policy.
 #' @param max.solves Positive integer safety limit; reaching it returns refusal.
 #' @return A list with `complete`, structured `error`, initial Gabriel graph,
 #'   `final_graph` only on full completion, `last_valid_graph` (possibly partial),
@@ -36,14 +42,24 @@
 #'   include per-solve status, acceptance, settings, residuals and iteration counts.
 #'   Refusal and interruption return incomplete structured results; invalid R
 #'   arguments error before native execution. Interrupts are checked at engine
-#'   events; they do not interrupt an active solver call.
+#'   events; they do not interrupt an active solver call. In connectivity mode,
+#'   `diagnostics$connectivity` contains `protected.edges` (one-based profile
+#'   rows and IDs, first/last encounter iteration, count and first statistic),
+#'   per-iteration `history`, and `stop.reason`. Iterations in this summary are
+#'   one-based. Protected edges are encountered proposals, not necessarily edges
+#'   that would pass the pruning criteria. Full traces also include every edge
+#'   proposal and whether eligibility was tested. A complete pass with no
+#'   deletion stops, including when statistical candidates remain protected.
+#'   Partial results retain available protection diagnostics; `final_graph`
+#'   remains `NULL` if later optimization or affinity construction fails.
 #' @keywords internal
 create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
                              participant.ids = NULL, graph = NULL,
                              diagnostics = c("summary", "full"), backend = NULL,
-                             max.solves = 10000L, numerical.policy = "IAN evaluated-LP 1.0") {
+                             max.solves = 10000L, numerical.policy = "IAN evaluated-LP 1.0",
+                             preserve.connectivity = FALSE) {
     .ian.adapter(X, distances, specimen.ids, participant.ids, graph,
-                 match.arg(diagnostics), backend, max.solves, "none", numerical.policy)
+                 match.arg(diagnostics), backend, max.solves, "none", numerical.policy, preserve.connectivity)
 }
 
 .ian.backend <- local({
@@ -55,7 +71,9 @@ create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
         path <- normalizePath(path, mustWork = TRUE)
         if (!exists(path, cache, inherits = FALSE)) {
             dll <- dyn.load(path, local = TRUE)
-            assign(path, list(dll = dll, run = getNativeSymbolInfo("dgraphs_ian_run", dll)$address), cache)
+            run <- tryCatch(getNativeSymbolInfo("dgraphs_ian_run_v2", dll)$address,
+                error = function(e) stop("IAN backend needs rebuilding for the connectivity interface; use ian/build_backend.py.", call. = FALSE))
+            assign(path, list(dll = dll, run = run), cache)
         }
         get(path, cache, inherits = FALSE)$run
     }
@@ -77,7 +95,8 @@ create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
 }
 
 .ian.adapter <- function(X, distances, specimen.ids, participant.ids, graph,
-                         diagnostics, backend, max.solves, fault, numerical.policy = "IAN evaluated-LP 1.0") {
+                         diagnostics, backend, max.solves, fault, numerical.policy = "IAN evaluated-LP 1.0", preserve.connectivity = FALSE) {
+    if (!is.logical(preserve.connectivity) || length(preserve.connectivity) != 1L || is.na(preserve.connectivity)) stop("preserve.connectivity must be TRUE or FALSE.", call. = FALSE)
     if (!is.character(numerical.policy) || length(numerical.policy) != 1L || is.na(numerical.policy) || !numerical.policy %in% c("IAN evaluated-LP 1.0", "IAN evaluated-LP retry-power 0.1")) stop("Unsupported numerical.policy.", call. = FALSE)
     if (!is.null(graph)) stop("Supplied initial graphs are unsupported; IAN constructs its Gabriel graph from distances.", call. = FALSE)
     if (!is.matrix(X) || !is.numeric(X) || nrow(X) < 2L || nrow(X) > 500L || ncol(X) < 1L || any(!is.finite(X)))
@@ -100,12 +119,22 @@ create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
     storage.mode(distances) <- "double"
     native_run <- .ian.backend(backend)
     raw <- .Call(native_run, X, distances, specimen.ids, participant.ids,
-                 identical(diagnostics, "full"), as.integer(max.solves), fault, numerical.policy)
+                 identical(diagnostics, "full"), as.integer(max.solves), fault, numerical.policy, preserve.connectivity)
     ids <- raw$mapping$profile_ids
     initial <- .ian.graph(raw$initial, ids, "initial Gabriel", raw$backend$numerical_policy)
     last <- .ian.graph(raw$last, ids, "last valid, possibly partial", raw$backend$numerical_policy)
     final <- if (isTRUE(raw$complete)) .ian.graph(raw$converged, ids, "completed final", raw$backend$numerical_policy) else NULL
     if (isTRUE(raw$diagnostics$affinity_valid)) dimnames(raw$affinity) <- list(ids, ids)
+    if (preserve.connectivity) {
+        raw$diagnostics$connectivity <- .ian.connectivity(raw$diagnostics$connectivity, ids)
+        for (stage in c("initial", "last", "final")) {
+            value <- get(stage)
+            if (!is.null(value)) {
+                value$metadata$pruning_policy <- raw$backend$pruning_policy
+                assign(stage, value)
+            }
+        }
+    }
     raw$diagnostics$trace_index_base <- 0L
     raw$diagnostics$trace_format <- "schema-1 core fields; zero-based indices"
     raw$diagnostics$input_mode <- input.mode
@@ -115,4 +144,33 @@ create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
          scales = stats::setNames(raw$scales, if (length(raw$scales)) ids else character()),
          affinity = if (isTRUE(raw$diagnostics$affinity_valid)) raw$affinity else NULL,
          diagnostics = raw$diagnostics, backend = raw$backend)
+}
+
+# Direct projection of the typed diagnostic result; no JSON message round-trip.
+.ian.connectivity <- function(raw, ids) {
+    rows <- lapply(raw$protected_bridges, function(b) {
+        edge <- as.integer(unlist(b$edge)) + 1L
+        data.frame(from = edge[1L], to = edge[2L], from.id = ids[edge[1L]],
+                   to.id = ids[edge[2L]], trigger = b$trigger + 1L,
+                   first.iteration = b$first_iteration + 1L,
+                   last.iteration = b$last_iteration + 1L, encounters = b$encounters,
+                   statistic = b$statistic, threshold = b$threshold, margin = b$margin)
+    })
+    protected <- if (length(rows)) do.call(rbind, rows) else data.frame(
+        from = integer(), to = integer(), from.id = character(), to.id = character(),
+        trigger = integer(), first.iteration = integer(), last.iteration = integer(),
+        encounters = integer(), statistic = numeric(), threshold = numeric(), margin = numeric())
+    rows <- lapply(raw$history, function(h) {
+        names(h) <- gsub("_", ".", names(h), fixed = TRUE)
+        h$iteration <- h$iteration + 1L
+        as.data.frame(h)
+    })
+    history <- if (length(rows)) do.call(rbind, rows) else data.frame(
+        iteration = integer(), statistical.candidates = integer(), allowance = integer(),
+        examined = integer(), bridge.skips = integer(), bridge.checks = integer(),
+        cached.skips = integer(), condition.rejections = integer(),
+        endpoint.conflicts = integer(), removed = integer())
+    list(protected.edges = protected, history = history, stop.reason = raw$stop_reason,
+         index.base = 1L, iteration.base = 1L,
+         scope = "Encountered bridge proposals; pruning conditions were not tested for these proposals.")
 }

@@ -283,7 +283,7 @@ inline Vec volumes(const Mat &D2, const Vec &s, const Ids &d, const Mat *K = nul
         }
     return v;
 }
-inline ian::Decision decision(const Vec &stats, double mu) {
+inline ian::Decision decision(const Vec &stats, double mu, bool populate_candidates = true) {
     Vec positive;
     for (double s : stats)
         if (s > 0)
@@ -300,6 +300,7 @@ inline ian::Decision decision(const Vec &stats, double mu) {
     if (below && cap < threshold)
         threshold = cap;
     Ids candidates;
+    if (populate_candidates) {
     for (size_t i = 0; i < stats.size(); i++)
         if (stats[i] > threshold)
             candidates.push_back(i);
@@ -314,10 +315,11 @@ inline ian::Decision decision(const Vec &stats, double mu) {
             candidates.assign(order.rbegin(), order.rbegin() + needed);
         }
     }
+    }
     Vec margins = stats;
     for (double &v : margins)
         v -= threshold;
-    return {location, sd, threshold, raw, floor, cap, stats, candidates, margins, mu - 1};
+    return {location, sd, threshold, raw, floor, cap, stats, candidates, margins, mu - 1, !populate_candidates};
 }
 inline Edges prune(Edges &edges, const Mat &D, const Ids &candidates) {
     auto nbrs = neighbors(D, edges);

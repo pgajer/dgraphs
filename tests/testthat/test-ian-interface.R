@@ -20,3 +20,13 @@ test_that("IAN policy and row guards apply before optional backend loading", {
   expect_error(f(x, numerical.policy=policy, backend=tempfile()), "unavailable")
  expect_error(f(matrix(0, 501, 1), backend=tempfile()), "2 to 500")
 })
+
+test_that("connectivity option validates before optional backend loading", {
+ f <- get("create.ian.graph", asNamespace("dgraphs"))
+ x <- matrix(c(0, 1, 2, 0, 1, 0), 3, 2)
+ for (value in list(NA, NULL, 1, "TRUE", c(TRUE, FALSE)))
+  expect_error(f(x, preserve.connectivity = value, backend = tempfile()), "preserve.connectivity")
+ for (value in c(TRUE, FALSE))
+  expect_error(f(x, preserve.connectivity = value, backend = tempfile()), "unavailable")
+ expect_identical(formals(f)$preserve.connectivity, FALSE)
+})

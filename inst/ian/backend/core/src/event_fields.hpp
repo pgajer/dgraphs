@@ -70,7 +70,27 @@ template<class Out> void fields(Out& out, const GraphSnapshot& x) {
  out.field("components", x.components);
  out.field("isolates", x.isolates);
 }
+template<class Out> void fields(Out& out, const ProtectedBridge& x) {
+ out.field("edge",x.edge);out.field("trigger",x.trigger);out.field("first_iteration",x.first_iteration);
+ out.field("last_iteration",x.last_iteration);out.field("encounters",x.encounters);
+ out.field("statistic",x.statistic);out.field("threshold",x.threshold);out.field("margin",x.margin);
+}
+template<class Out> void fields(Out& out, const PruningStep& x) {
+ out.field("iteration",x.iteration);out.field("statistical_candidates",x.statistical_candidates);out.field("allowance",x.allowance);
+ out.field("examined",x.examined);out.field("bridge_skips",x.bridge_skips);out.field("bridge_checks",x.bridge_checks);
+ out.field("cached_skips",x.cached_skips);out.field("condition_rejections",x.condition_rejections);
+ out.field("endpoint_conflicts",x.endpoint_conflicts);out.field("removed",x.removed);
+}
+template<class Out> void fields(Out& out, const PruningDiagnostics& x) {
+ out.field("protected_bridges",x.protected_bridges);out.field("history",x.history);out.field("stop_reason",x.stop_reason);
+}
+template<class Out> void fields(Out& out, const PruningAttempt& x) {
+ out.field("edge",x.edge);out.field("trigger",x.trigger);out.field("action",x.action);
+ out.field("conditions_tested",x.conditions_tested);out.field("statistic",x.statistic);
+ out.field("threshold",x.threshold);out.field("margin",x.margin);
+}
 template<class Out> void fields(Out& out, const Decision& x) {
+ if(x.candidate_evaluation_deferred)out.field("candidate_evaluation_deferred",true);
  out.field("location", x.location);
  out.field("dispersion", x.dispersion);
  out.field("threshold", x.threshold);

@@ -2,6 +2,7 @@
 #include <ian/core.hpp>
 #include "input.hpp"
 #include "solver.hpp"
+#include "connected.hpp"
 
 namespace ian::detail {
 using Clock = std::chrono::steady_clock;
@@ -154,6 +155,10 @@ struct Engine {
         deg = degrees(D.size(), edges);
         upper = upper_bounds(D, edges);
         if (!restart) emit(ian::ProcessedEvent{D,D2,scl,edges});
+        if (result.preserve_connectivity) {
+            auto labels=components(D.size(),edges);
+            require(*std::max_element(labels.begin(),labels.end())==0,"disconnected_initial_graph");
+        }
         require(isolates(deg).empty(), "unsupported_initial_isolate");
         // Initialize the multiplier from ordered furthest-neighbor ratios.
         auto nbr = neighbors(D, edges);
@@ -174,8 +179,22 @@ struct Engine {
             emit(ian::IterationEvent{graph_data(),scl});
             auto t = tune(false);
             last_stats = t.ratios;
-            auto dec = decision(t.ratios, t.mu);
+            auto dec = decision(t.ratios, t.mu, !result.preserve_connectivity);
             emit(dec);
+            if(result.preserve_connectivity) {
+                Ids selected;
+                auto removed=prune_connected(edges,D,dec,iteration,result.pruning,selected,
+                    [&](const ian::PruningAttempt& attempt){emit(attempt);});
+                deg=degrees(D.size(),edges);upper=upper_bounds(D,edges);
+                if(removed.empty()) {
+                    converged=true;
+                    result.pruning.stop_reason=result.pruning.history.back().statistical_candidates ?
+                        "no_connectivity_preserving_removal" : "no_pruning_candidates";
+                    break;
+                }
+                emit(ian::PrunedEvent{graph_data(),selected,removed});boundary("pruning");
+                continue;
+            }
             Ids candidates = dec.candidates;
             if (candidates.empty()) {
                 converged = true;
@@ -194,7 +213,7 @@ struct Engine {
         // A converged graph is durable before weighted retuning or affinity output.
         phase = "final_affinity_retuning";
         if (!graph_restored) emit(ian::GraphStopEvent{graph_data(),converged,
-            converged ? "no_pruning_candidates" : "pruning_iteration_cap"});
+            converged ? (result.preserve_connectivity ? result.pruning.stop_reason : "no_pruning_candidates") : "pruning_iteration_cap"});
         require(converged, "pruning_iteration_cap");
         result.graph.edges = edges;
         result.graph.degrees = deg;

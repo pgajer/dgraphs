@@ -14,11 +14,13 @@ inline void integers(const Json& v) {
 }
 inline Json state_json(const RestartState& s) {
     auto m = mapping_json(s.mapping); m["participant_ids"] = s.mapping.participant_ids;
-    return Json{{"version",s.version},{"policy",s.policy},{"source",s.source},
+    Json out{{"version",s.version},{"policy",s.policy},{"source",s.source},
         {"configuration",s.configuration},{"input_hash",s.input_hash},{"boundary",s.boundary},
         {"mapping",m},{"edges",s.edges},{"degrees",s.degrees},{"upper",s.upper},
         {"last_stats",s.last_stats},{"multiplier",s.multiplier},{"distance_multiplier",s.distance_multiplier},
         {"iteration",s.iteration},{"solves",s.solves},{"cache",s.cache}};
+    if(s.preserve_connectivity) {out["pruning_policy"]=connected_pruning_policy;out["pruning"]=object_json(s.pruning);}
+    return out;
 }
 inline RestartState parse_state(const Json& j) {
     RestartState s;
@@ -43,6 +45,16 @@ inline RestartState parse_state(const Json& j) {
     s.iteration = integer(j.at("iteration"),0,1999); s.solves = integer(j.at("solves"),1,s.policy == retry_power_policy ? 84000 : 42000);
     if (!j.at("cache").is_boolean()) throw std::invalid_argument("invalid_checkpoint_cache");
     s.cache = j.at("cache").get<bool>();
+    if(j.contains("pruning_policy")) {
+        if(j.at("pruning_policy")!=connected_pruning_policy)throw std::invalid_argument("invalid_pruning_policy");
+        s.preserve_connectivity=true;const auto& p=j.at("pruning");s.pruning.stop_reason=p.at("stop_reason").get<std::string>();
+        if(!p.at("protected_bridges").is_array() || !p.at("history").is_array())throw std::invalid_argument("invalid_checkpoint_array");
+        for(const auto& b:p.at("protected_bridges")) {
+            integers(b.at("edge"));if(b.at("edge").size()!=2)throw std::invalid_argument("invalid_checkpoint_edges");
+            s.pruning.protected_bridges.push_back({b.at("edge").get<std::array<int,2>>(),integer(b.at("trigger")),integer(b.at("first_iteration")),integer(b.at("last_iteration")),integer(b.at("encounters"),1),b.at("statistic").get<double>(),b.at("threshold").get<double>(),b.at("margin").get<double>()});
+        }
+        for(const auto& h:p.at("history"))s.pruning.history.push_back({integer(h.at("iteration")),integer(h.at("statistical_candidates")),integer(h.at("allowance"),1),integer(h.at("examined")),integer(h.at("bridge_skips")),integer(h.at("bridge_checks")),integer(h.at("cached_skips")),integer(h.at("condition_rejections")),integer(h.at("endpoint_conflicts")),integer(h.at("removed"))});
+    } else if(j.contains("pruning"))throw std::invalid_argument("invalid_pruning_policy");
     return s;
 }
 }

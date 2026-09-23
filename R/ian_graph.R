@@ -1,7 +1,13 @@
 #' Experimental Internal IAN Adapter
 #'
-#' The unexported adapter requires the separately built optional backend. It uses
-#' IAN evaluated-LP 1.0 with strict numerical acceptance and no retry policy.
+#' The unexported adapter requires the separately built optional backend. Its
+#' unchanged default, `IAN evaluated-LP 1.0`, uses strict numerical acceptance
+#' without retries. The explicit experimental option
+#' `IAN evaluated-LP retry-power 0.1` uses shared-power constraint arithmetic and
+#' at most one normalized retry after an eligible rejected return. The retry must
+#' return strict solver success and pass the unchanged original-unit checks; the
+#' original rejected result is never accepted directly. This candidate has not
+#' been adopted as the default and its independent qualification is pending.
 #' See `system.file("ian", "README.md", package = "dgraphs")` for build and
 #' numerical limitations. Input rows are specimens; graph vertices are unique
 #' feature profiles in first-occurrence order.
@@ -18,7 +24,8 @@
 #'   The actual initial Gabriel graph is always constructed by IAN.
 #' @param diagnostics `"summary"` or `"full"`; full includes dense LP payloads.
 #' @param backend Optional path to the separately built `dgraphs_ian.so` module.
-#' @param numerical.policy Explicit strict baseline or experimental retry-power policy.
+#' @param numerical.policy Exactly `"IAN evaluated-LP 1.0"` (strict default) or
+#'   `"IAN evaluated-LP retry-power 0.1"` (explicit experimental candidate).
 #' @param max.solves Positive integer safety limit; reaching it returns refusal.
 #' @return A list with `complete`, structured `error`, initial Gabriel graph,
 #'   `final_graph` only on full completion, `last_valid_graph` (possibly partial),

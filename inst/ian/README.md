@@ -26,8 +26,9 @@ Run `python3 <helper> --build-dir <fresh-directory> --install-dir <ian-directory
 Alternatively omit install-dir and pass `backend="<build-directory>/dgraphs_ian.so"`
 to the R function. Build outputs and a command/source identity ledger stay in the
 fresh build directory. The statically linked module has no worker-directory
-runtime dependency. This is author qualification on one host, not portability or
-CRAN acceptance. Public export and the scale ladder remain gated.
+runtime dependency. The strict typed baseline has independent bounded qualification on macOS arm64;
+the candidate policy described below is awaiting its separate audit. Neither
+claim establishes broader portability or CRAN acceptance. Public export and the scale ladder remain gated.
 
 Supply X (specimens in rows), optionally exact unsquared distances, unique IDs and
 participant IDs. X defines exact duplicate profiles; distances alone cannot do so.
@@ -40,10 +41,26 @@ per-solve matrices and vectors; full traces are opt-in and may be large. Full
 traces retain original zero-based core indices (declared in diagnostics); graph
 and mapping objects use one-based R indices.
 
-The pinned core is accepted Phase06B, IAN evaluated-LP 1.0. No normalized retries,
-solver tolerance changes or alternative selection rule are adopted. Clarabel
-0.11.1 uses QDLDL, one thread, fresh solver state and strict original certificate
-checks. The missing `input_sparse_dropzeros` C header field is repaired against
+The `numerical.policy` argument accepts exactly two strings:
+
+- `"IAN evaluated-LP 1.0"` is the unchanged default: strict acceptance, no retries,
+  and the preserved baseline arithmetic.
+- `"IAN evaluated-LP retry-power 0.1"` is an explicit experimental candidate. It
+  squares constraint quantities using the system power function. After an
+  otherwise eligible rejected `Solved` or `AlmostSolved` return, it permits one
+  fresh solve in normalized variable units with solver tolerances of `1e-11`
+  instead of the ordinary `1e-9`. That retry must return `Solved` and pass all
+  unchanged original-unit certificate limits of `1e-7`. A rejected original
+  return is never accepted directly. Both attempts and their actual settings
+  remain in diagnostics. No second retry or secondary scale objective is used.
+
+For example, add `numerical.policy="IAN evaluated-LP retry-power 0.1"` to an
+internal function call to request the candidate. It has not been adopted as the
+default; its independent integration audit is pending. The larger scale gate
+remains closed. Matching the system power operation on one host does not promise
+identical arithmetic across platforms.
+
+Both policies use pinned Clarabel 0.11.1, QDLDL, one thread and fresh solver state.  The missing `input_sparse_dropzeros` C header field is repaired against
 this pinned Rust FFI; runtime size, alignment and every field offset are checked
 before solving. Its value is explicitly false as declared in the accepted policy.
 All actual settings are captured in each solve's diagnostic record. This fix

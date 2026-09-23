@@ -38,7 +38,8 @@ The actual initial Gabriel graph is always constructed by IAN.}
 
 \item{max.solves}{Positive integer safety limit; reaching it returns refusal.}
 
-\item{numerical.policy}{Explicit strict baseline or experimental retry-power policy.}
+\item{numerical.policy}{Exactly \code{"IAN evaluated-LP 1.0"} (strict default) or
+\code{"IAN evaluated-LP retry-power 0.1"} (explicit experimental candidate).}
 }
 \value{
 A list with \code{complete}, structured \code{error}, initial Gabriel graph,
@@ -52,8 +53,14 @@ arguments error before native execution. Interrupts are checked at engine
 events; they do not interrupt an active solver call.
 }
 \description{
-The unexported adapter requires the separately built optional backend. It uses
-IAN evaluated-LP 1.0 with strict numerical acceptance and no retry policy.
+The unexported adapter requires the separately built optional backend. Its
+unchanged default, \verb{IAN evaluated-LP 1.0}, uses strict numerical acceptance
+without retries. The explicit experimental option
+\verb{IAN evaluated-LP retry-power 0.1} uses shared-power constraint arithmetic and
+at most one normalized retry after an eligible rejected return. The retry must
+return strict solver success and pass the unchanged original-unit checks; the
+original rejected result is never accepted directly. This candidate has not
+been adopted as the default and its independent qualification is pending.
 See \code{system.file("ian", "README.md", package = "dgraphs")} for build and
 numerical limitations. Input rows are specimens; graph vertices are unique
 feature profiles in first-occurrence order.

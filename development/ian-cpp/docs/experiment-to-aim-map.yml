@@ -335,5 +335,17 @@
       "Continuation stage 5"
     ],
     "programme_group": "F"
+  },
+  {
+    "id": "IAN-EXP-032",
+    "aims": [
+      "IA1",
+      "IA4",
+      "IA5"
+    ],
+    "phase_aliases": [
+      "Pruning diagnosis after continuation stage 5"
+    ],
+    "programme_group": "F"
   }
 ]

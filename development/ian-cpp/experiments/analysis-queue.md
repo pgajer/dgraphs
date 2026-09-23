@@ -89,3 +89,7 @@ The next scientific question should be why pruning disconnects the three helix s
 Engineering work should follow the intended use: settle the public function contract and numerical default before export; qualify R inputs above 500 rows, R restart and additional operating systems only where required. The current adapter remains internal and unexported. Low-level Python library warnings and general perturbation robustness remain open limitations, despite the accepted bounded checks.
 
 Real-data application needs an explicit population, assay and visit contract, with separate estimator validation. Neither engine acceptance nor this synthetic benchmark resolves observed-response conditioning, assay matching or biological validity. Historical catalogue presentations also retain their version-specific review status; acceptance of these seven report/PDF pairs does not audit every overview page.
+
+## Authorized follow-up: first helix disconnections
+
+The owner authorized the saved-trajectory pruning diagnosis on 23 September 2026. The [study](032-helix-pruning-diagnosis/report.md) reconstructs all three helices without optimizer calls. Each first cut removes a bridge in an already accurate consecutive-point chain, under the ordinary 2.75 cutoff; native and Python agree. The analysis is complete and awaiting independent review. No pruning variant is implemented.

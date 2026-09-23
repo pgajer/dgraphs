@@ -1,5 +1,6 @@
 // Internal optional dgraphs adapter. Numerical core policy is unchanged.
 #include <Rcpp.h>
+#include <csignal>
 #include <R_ext/Utils.h>
 #include <R_ext/Rdynload.h>
 #include <ian/core.hpp>
@@ -24,7 +25,7 @@ ian::Matrix matrix(SEXP value) {Rcpp::NumericMatrix x(value);ian::Matrix a(x.nro
 Rcpp::IntegerVector indices(const ian::Indices& x) {Rcpp::IntegerVector out=Rcpp::wrap(x);for(auto& v:out)++v;return out;}
 void check_interrupt(void*) {R_CheckUserInterrupt();}
 struct Sink : ian::Observer {
- bool detailed, interrupted=false; int max_solves, solves=0;
+ bool detailed, interrupted=false, inject_interrupt=false; int max_solves, solves=0;
  Json events=Json::array(), history=Json::array();
  ian::Edges initial,last; bool has_initial=false,has_last=false;
  explicit Sink(bool detail,int budget):detailed(detail),max_solves(budget) {}
@@ -39,6 +40,7 @@ struct Sink : ian::Observer {
      history.push_back(small);
    }
    if(detailed) events.push_back(j);
+   if(inject_interrupt && e.name=="processed") std::raise(SIGINT);
    if(!R_ToplevelExec(check_interrupt,nullptr)) {interrupted=true;throw std::runtime_error("R_user_interrupt");}
    // Guard before the next solver allocation; an already completed solve is retained.
    if(e.name=="solve" && solves>=max_solves)throw std::runtime_error("adapter_solve_budget");
@@ -55,7 +57,8 @@ extern "C" SEXP dgraphs_ian_run(SEXP features,SEXP distances,SEXP ids,SEXP parti
  ian::Input in;in.features=matrix(features);in.distances=matrix(distances);in.specimen_ids=Rcpp::as<std::vector<std::string>>(ids);in.participant_ids=Rcpp::as<std::vector<std::string>>(participants);
  Sink sink(Rcpp::as<bool>(detailed),Rcpp::as<int>(max_solves));
  std::string injection=Rcpp::as<std::string>(fault);
- auto r=injection=="none"?ian::run(in,&sink):ian::testing::run_with_fault(in,&sink,injection);
+ sink.inject_interrupt=injection=="interrupt_after_initial";
+ auto r=(injection=="none" || sink.inject_interrupt)?ian::run(in,&sink):ian::testing::run_with_fault(in,&sink,injection);
  if(sink.interrupted)r.error={ian::ErrorKind::cancelled,"R_user_interrupt","Interrupted at an engine event boundary; no live solver was abandoned."};
  return Rcpp::List::create(
  Rcpp::Named("complete")=r.complete,
@@ -65,7 +68,7 @@ extern "C" SEXP dgraphs_ian_run(SEXP features,SEXP distances,SEXP ids,SEXP parti
  Rcpp::Named("converged")=r.graph_valid?SEXP(graph(r.graph.edges,r,in)):R_NilValue,
  Rcpp::Named("mapping")=Rcpp::List::create(Rcpp::Named("representatives")=indices(r.mapping.representatives),Rcpp::Named("member_to_profile")=indices(r.mapping.member_to_profile),Rcpp::Named("specimen_ids")=r.mapping.specimen_ids,Rcpp::Named("profile_ids")=r.mapping.profile_ids,Rcpp::Named("participant_ids")=r.mapping.participant_ids),
  Rcpp::Named("scales")=r.scales,Rcpp::Named("affinity")=matrix(r.affinity),
- Rcpp::Named("diagnostics")=Rcpp::List::create(Rcpp::Named("solves")=r.solves,Rcpp::Named("last_iteration")=r.last_iteration,Rcpp::Named("distance_multiplier")=r.graph.distance_multiplier,Rcpp::Named("multiplier")=r.multiplier,Rcpp::Named("stats")=r.stats,Rcpp::Named("weighted_stats")=r.weighted_stats,Rcpp::Named("scales_valid")=r.scales_valid,Rcpp::Named("affinity_valid")=r.affinity_valid,Rcpp::Named("graph_converged")=r.graph_valid,Rcpp::Named("solver_history")=json_r(sink.history),Rcpp::Named("trace")=detailed==R_NilValue?R_NilValue:SEXP(json_r(sink.events))),
+ Rcpp::Named("diagnostics")=Rcpp::List::create(Rcpp::Named("solves")=r.solves,Rcpp::Named("last_iteration")=r.last_iteration,Rcpp::Named("distance_multiplier")=r.graph.distance_multiplier,Rcpp::Named("multiplier")=r.multiplier,Rcpp::Named("stats")=r.stats,Rcpp::Named("weighted_stats")=r.weighted_stats,Rcpp::Named("scales_valid")=r.scales_valid,Rcpp::Named("affinity_valid")=r.affinity_valid,Rcpp::Named("graph_converged")=r.graph_valid,Rcpp::Named("solver_history")=json_r(sink.history),Rcpp::Named("trace")=json_r(sink.events)),
  Rcpp::Named("backend")=Rcpp::List::create(Rcpp::Named("numerical_policy")=r.policy,Rcpp::Named("source_identity")=ian::source_identity(),Rcpp::Named("configuration_identity")=ian::configuration_identity(),Rcpp::Named("solver")="Clarabel 0.11.1 / QDLDL"));
  END_RCPP
 }

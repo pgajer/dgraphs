@@ -1,0 +1,49 @@
+{
+  "id": "IAN-EXP-023",
+  "discovered_on": "2026-09-23",
+  "execution_candidate": "7d34d7570ad119bb6898c66ca966979ba064cac7",
+  "files": [
+    {
+      "role": "prescribed plan",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/experiments/023-saved-pruning/PLAN.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/experiments/023-saved-pruning/PLAN.md",
+      "available": true,
+      "sha256": "58ed2b8a16f4ab0212f79b01cc3e34c5f45e892e335414f49c4d6b4de9d46b14",
+      "identity_scope": "Current bytes; run provenance identifies execution source revision."
+    },
+    {
+      "role": "run provenance",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning/replay-v1/run.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning/replay-v1/run.json",
+      "available": true,
+      "sha256": "6c6b185d6ed7804e864a168575b8e0f4340db2e3488c63a11f6e5c72b79b0903",
+      "identity_scope": "Current bytes; run provenance identifies execution source revision."
+    },
+    {
+      "role": "numerical results",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning/replay-v1/results.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning/replay-v1/results.json",
+      "available": true,
+      "sha256": "127316e4967d91167a2b2fed32a7cf7786414c9dad22bc5f9445083c4b90c5de",
+      "identity_scope": "Current bytes; run provenance identifies execution source revision."
+    },
+    {
+      "role": "exact certification and conversion",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning/replay-v1/exact-witness-checks.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning/replay-v1/exact-witness-checks.json",
+      "available": true,
+      "sha256": "fef309ddcf7625daec233cbcaf69278d659cec95d4f7f2208f8932e7c20b32ef",
+      "identity_scope": "Current bytes; run provenance identifies execution source revision."
+    },
+    {
+      "role": "evidence manifest",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning/replay-v1/manifest.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning/replay-v1/manifest.json",
+      "available": true,
+      "sha256": "3b6adbb4f2fb64ce17a75baec9bf7bf845fbc1ecbd0c1db866f319f961043f75",
+      "identity_scope": "Current bytes; run provenance identifies execution source revision."
+    }
+  ],
+  "execution_time": "2026-09-23; run provenance retained",
+  "backup": "No independently verified backup location"
+}

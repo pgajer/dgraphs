@@ -1,0 +1,877 @@
+{
+  "study_complete": true,
+  "optimizer_calls": 0,
+  "native_evaluations": 10,
+  "python_evaluations": 10,
+  "witnesses": [
+    {
+      "name": "certified_highs",
+      "median": 16.137818200447782,
+      "retune_stop": false,
+      "actual_next_action": "continue_retuning",
+      "threshold": 58.867200937079545,
+      "threshold_only_count": 23,
+      "below_1_1_count": 80,
+      "final_candidate_count": 840,
+      "median_fallback_used": true,
+      "selected_count": 84,
+      "removed_count": 52,
+      "remaining_edge_count": 1681,
+      "minimum_absolute_threshold_margin": 0.48538275122332664,
+      "minimum_absolute_1_1_margin": 0.3611169338225092,
+      "selection_boundary_gap": 0.07570232570027713,
+      "selected": [
+        174,
+        143,
+        337,
+        613,
+        370,
+        672,
+        589,
+        640,
+        702,
+        584,
+        709,
+        572,
+        469,
+        330,
+        560,
+        485,
+        726,
+        734,
+        744,
+        406,
+        763,
+        768,
+        773,
+        566,
+        494,
+        515,
+        537,
+        822,
+        759,
+        655,
+        90,
+        92,
+        89,
+        93,
+        95,
+        684,
+        858,
+        96,
+        83,
+        82,
+        87,
+        86,
+        102,
+        99,
+        103,
+        100,
+        80,
+        105,
+        79,
+        106,
+        689,
+        108,
+        690,
+        109,
+        111,
+        112,
+        693,
+        694,
+        114,
+        884,
+        115,
+        697,
+        116,
+        698,
+        117,
+        119,
+        699,
+        120,
+        122,
+        123,
+        703,
+        704,
+        912,
+        125,
+        705,
+        126,
+        706,
+        707,
+        708,
+        710,
+        711,
+        130,
+        712,
+        934
+      ],
+      "removed": [
+        [
+          174,
+          485
+        ],
+        [
+          143,
+          469
+        ],
+        [
+          337,
+          589
+        ],
+        [
+          370,
+          613
+        ],
+        [
+          672,
+          858
+        ],
+        [
+          406,
+          640
+        ],
+        [
+          702,
+          884
+        ],
+        [
+          330,
+          584
+        ],
+        [
+          494,
+          709
+        ],
+        [
+          572,
+          773
+        ],
+        [
+          560,
+          763
+        ],
+        [
+          515,
+          726
+        ],
+        [
+          734,
+          912
+        ],
+        [
+          537,
+          744
+        ],
+        [
+          566,
+          768
+        ],
+        [
+          822,
+          990
+        ],
+        [
+          759,
+          934
+        ],
+        [
+          75,
+          655
+        ],
+        [
+          90,
+          659
+        ],
+        [
+          92,
+          660
+        ],
+        [
+          95,
+          661
+        ],
+        [
+          158,
+          684
+        ],
+        [
+          83,
+          657
+        ],
+        [
+          87,
+          658
+        ],
+        [
+          102,
+          663
+        ],
+        [
+          99,
+          662
+        ],
+        [
+          80,
+          656
+        ],
+        [
+          105,
+          664
+        ],
+        [
+          171,
+          689
+        ],
+        [
+          108,
+          665
+        ],
+        [
+          172,
+          690
+        ],
+        [
+          111,
+          666
+        ],
+        [
+          180,
+          693
+        ],
+        [
+          181,
+          694
+        ],
+        [
+          114,
+          667
+        ],
+        [
+          189,
+          697
+        ],
+        [
+          116,
+          668
+        ],
+        [
+          190,
+          698
+        ],
+        [
+          119,
+          669
+        ],
+        [
+          192,
+          699
+        ],
+        [
+          122,
+          670
+        ],
+        [
+          202,
+          703
+        ],
+        [
+          204,
+          704
+        ],
+        [
+          125,
+          671
+        ],
+        [
+          206,
+          705
+        ],
+        [
+          207,
+          706
+        ],
+        [
+          209,
+          707
+        ],
+        [
+          211,
+          708
+        ],
+        [
+          215,
+          710
+        ],
+        [
+          217,
+          711
+        ],
+        [
+          130,
+          673
+        ],
+        [
+          219,
+          712
+        ]
+      ],
+      "coordinates": {
+        "229": {
+          "profile_index_1based": 230,
+          "profile_id": "helix_1000-229",
+          "ratio": 33.036438241485065,
+          "threshold_margin": -25.83076269559448,
+          "candidate_rank_1based": 197,
+          "selected": false
+        },
+        "230": {
+          "profile_index_1based": 231,
+          "profile_id": "helix_1000-230",
+          "ratio": 32.94044647332724,
+          "threshold_margin": -25.926754463752303,
+          "candidate_rank_1based": 198,
+          "selected": false
+        },
+        "717": {
+          "profile_index_1based": 718,
+          "profile_id": "helix_1000-717",
+          "ratio": 13.302173861100728,
+          "threshold_margin": -45.56502707597882,
+          "candidate_rank_1based": 664,
+          "selected": false
+        }
+      }
+    },
+    {
+      "name": "certified_clarabel",
+      "median": 16.137818200428384,
+      "retune_stop": false,
+      "actual_next_action": "continue_retuning",
+      "threshold": 58.86720093693559,
+      "threshold_only_count": 23,
+      "below_1_1_count": 80,
+      "final_candidate_count": 840,
+      "median_fallback_used": true,
+      "selected_count": 84,
+      "removed_count": 52,
+      "remaining_edge_count": 1681,
+      "minimum_absolute_threshold_margin": 0.485382751079257,
+      "minimum_absolute_1_1_margin": 0.36111693382244103,
+      "selection_boundary_gap": 0.07570232551091749,
+      "selected": [
+        174,
+        143,
+        337,
+        613,
+        370,
+        672,
+        589,
+        640,
+        702,
+        584,
+        709,
+        572,
+        469,
+        330,
+        560,
+        485,
+        726,
+        734,
+        744,
+        406,
+        763,
+        768,
+        773,
+        566,
+        494,
+        515,
+        537,
+        822,
+        759,
+        655,
+        90,
+        92,
+        89,
+        93,
+        95,
+        684,
+        858,
+        96,
+        83,
+        82,
+        87,
+        86,
+        102,
+        99,
+        103,
+        100,
+        80,
+        105,
+        79,
+        106,
+        689,
+        108,
+        690,
+        109,
+        111,
+        112,
+        693,
+        694,
+        114,
+        884,
+        115,
+        697,
+        116,
+        698,
+        117,
+        119,
+        699,
+        120,
+        122,
+        123,
+        703,
+        704,
+        912,
+        125,
+        705,
+        126,
+        706,
+        707,
+        708,
+        710,
+        711,
+        130,
+        712,
+        934
+      ],
+      "removed": [
+        [
+          174,
+          485
+        ],
+        [
+          143,
+          469
+        ],
+        [
+          337,
+          589
+        ],
+        [
+          370,
+          613
+        ],
+        [
+          672,
+          858
+        ],
+        [
+          406,
+          640
+        ],
+        [
+          702,
+          884
+        ],
+        [
+          330,
+          584
+        ],
+        [
+          494,
+          709
+        ],
+        [
+          572,
+          773
+        ],
+        [
+          560,
+          763
+        ],
+        [
+          515,
+          726
+        ],
+        [
+          734,
+          912
+        ],
+        [
+          537,
+          744
+        ],
+        [
+          566,
+          768
+        ],
+        [
+          822,
+          990
+        ],
+        [
+          759,
+          934
+        ],
+        [
+          75,
+          655
+        ],
+        [
+          90,
+          659
+        ],
+        [
+          92,
+          660
+        ],
+        [
+          95,
+          661
+        ],
+        [
+          158,
+          684
+        ],
+        [
+          83,
+          657
+        ],
+        [
+          87,
+          658
+        ],
+        [
+          102,
+          663
+        ],
+        [
+          99,
+          662
+        ],
+        [
+          80,
+          656
+        ],
+        [
+          105,
+          664
+        ],
+        [
+          171,
+          689
+        ],
+        [
+          108,
+          665
+        ],
+        [
+          172,
+          690
+        ],
+        [
+          111,
+          666
+        ],
+        [
+          180,
+          693
+        ],
+        [
+          181,
+          694
+        ],
+        [
+          114,
+          667
+        ],
+        [
+          189,
+          697
+        ],
+        [
+          116,
+          668
+        ],
+        [
+          190,
+          698
+        ],
+        [
+          119,
+          669
+        ],
+        [
+          192,
+          699
+        ],
+        [
+          122,
+          670
+        ],
+        [
+          202,
+          703
+        ],
+        [
+          204,
+          704
+        ],
+        [
+          125,
+          671
+        ],
+        [
+          206,
+          705
+        ],
+        [
+          207,
+          706
+        ],
+        [
+          209,
+          707
+        ],
+        [
+          211,
+          708
+        ],
+        [
+          215,
+          710
+        ],
+        [
+          217,
+          711
+        ],
+        [
+          130,
+          673
+        ],
+        [
+          219,
+          712
+        ]
+      ],
+      "coordinates": {
+        "229": {
+          "profile_index_1based": 230,
+          "profile_id": "helix_1000-229",
+          "ratio": 33.03310074871992,
+          "threshold_margin": -25.834100188215672,
+          "candidate_rank_1based": 197,
+          "selected": false
+        },
+        "230": {
+          "profile_index_1based": 231,
+          "profile_id": "helix_1000-230",
+          "ratio": 32.937120119138655,
+          "threshold_margin": -25.930080817796934,
+          "candidate_rank_1based": 198,
+          "selected": false
+        },
+        "717": {
+          "profile_index_1based": 718,
+          "profile_id": "helix_1000-717",
+          "ratio": 13.305287740224216,
+          "threshold_margin": -45.56191319671137,
+          "candidate_rank_1based": 664,
+          "selected": false
+        }
+      }
+    }
+  ],
+  "comparison": {
+    "maximum_absolute_scale_difference": 0.3343531246950988,
+    "maximum_absolute_ratio_difference": 0.0033374927651479425,
+    "ratio_changes_largest": [
+      {
+        "coordinate_0based": 229,
+        "difference": -0.0033374927651479425
+      },
+      {
+        "coordinate_0based": 230,
+        "difference": -0.0033263541885872883
+      },
+      {
+        "coordinate_0based": 717,
+        "difference": 0.003113879123487706
+      },
+      {
+        "coordinate_0based": 713,
+        "difference": -5.3499093155551236e-08
+      },
+      {
+        "coordinate_0based": 221,
+        "difference": 1.837283036820736e-08
+      },
+      {
+        "coordinate_0based": 222,
+        "difference": 1.8319116890097575e-08
+      },
+      {
+        "coordinate_0based": 718,
+        "difference": -4.8285713205586944e-09
+      },
+      {
+        "coordinate_0based": 731,
+        "difference": -4.6477808268718945e-09
+      },
+      {
+        "coordinate_0based": 712,
+        "difference": -4.318486901411234e-09
+      },
+      {
+        "coordinate_0based": 728,
+        "difference": -3.7670773167519656e-09
+      }
+    ],
+    "median_difference": -1.9397816686250735e-11,
+    "threshold_difference": -1.439559582649963e-10,
+    "candidate_order_equal": true,
+    "selected_order_equal": true,
+    "removed_order_equal": true,
+    "remaining_graph_equal": true,
+    "removed_only_highs": [],
+    "removed_only_clarabel": []
+  },
+  "cross_implementation_checks": [
+    {
+      "name": "certified_highs",
+      "discrete_agreement": true,
+      "continuous_pass": true,
+      "max_ratio_difference": 0.0
+    },
+    {
+      "name": "certified_clarabel",
+      "discrete_agreement": true,
+      "continuous_pass": true,
+      "max_ratio_difference": 0.0
+    },
+    {
+      "name": "raw_solve25_control",
+      "discrete_agreement": true,
+      "continuous_pass": true,
+      "max_ratio_difference": 0.0
+    },
+    {
+      "name": "actual_first_prune_control",
+      "discrete_agreement": true,
+      "continuous_pass": true,
+      "max_ratio_difference": 1.7763568394002505e-15
+    },
+    {
+      "name": "threshold_-1e-07",
+      "discrete_agreement": true,
+      "continuous_pass": true,
+      "max_ratio_difference": 0.0
+    },
+    {
+      "name": "threshold_0.0",
+      "discrete_agreement": true,
+      "continuous_pass": true,
+      "max_ratio_difference": 0.0
+    },
+    {
+      "name": "threshold_1e-07",
+      "discrete_agreement": true,
+      "continuous_pass": true,
+      "max_ratio_difference": 0.0
+    },
+    {
+      "name": "tie_-1e-07",
+      "discrete_agreement": true,
+      "continuous_pass": true,
+      "max_ratio_difference": 0.0
+    },
+    {
+      "name": "tie_0.0",
+      "discrete_agreement": true,
+      "continuous_pass": true,
+      "max_ratio_difference": 0.0
+    },
+    {
+      "name": "tie_1e-07",
+      "discrete_agreement": true,
+      "continuous_pass": true,
+      "max_ratio_difference": 0.0
+    }
+  ],
+  "saved_control_checks": {
+    "solve25_volume_exact": true,
+    "solve25_median_exact": true,
+    "first_pruning_scales_solve_number": 29,
+    "first_prune_candidates_exact": true,
+    "first_prune_selected_exact": true,
+    "first_prune_removed_exact": true,
+    "first_prune_threshold_exact": true
+  },
+  "all_checks_pass": true,
+  "fixed_context": {
+    "C": 0.50001220703125,
+    "minC": 0.5,
+    "maxC": 0.5000244140625,
+    "iteration": 0,
+    "phase": "initial",
+    "scl": 4977.259653348882,
+    "interpretation": "Conditional pruning at an intermediate retuning solve; not an executed next pruning step"
+  },
+  "limitations": [
+    "Only two certified witness endpoints, converted to binary64 for decision evaluation.",
+    "No invariance proof over the objective band or full trajectories.",
+    "Pruning is conditional at this state: both next-action predicates are reported without solving further."
+  ],
+  "exact_witness_checks": [
+    {
+      "name": "certified_highs",
+      "exact_feasible": true,
+      "exact_objective": [
+        "1797076754376988211024935070790595848095630227222181635",
+        "997160906050304427548487292277855679270424150016"
+      ],
+      "exact_objective_above_L": [
+        "146340340993008565669353731259248120525702812379167427717572030798555249",
+        "161798607498085564742178268009761391715479815552130984792528805484035517655810048"
+      ],
+      "exact_band_slack": [
+        "10116960785209293887150146955177481062653",
+        "997160906050304427548487292277855679270424150016"
+      ],
+      "conversion": "nearest binary64 per coordinate, no repair",
+      "maximum_rounding_error": 3.686401586724749e-13,
+      "rounded_exact_feasible": true,
+      "rounded_maximum_positive_row_violation": 0.0,
+      "rounded_objective_band_excess": 0.0
+    },
+    {
+      "name": "certified_clarabel",
+      "exact_feasible": true,
+      "exact_objective": [
+        "2339986467312987415987167468426406914507584344182541",
+        "1298410332340080004507531648030997457747836928"
+      ],
+      "exact_objective_above_L": [
+        "34317423123354652695600701080060819333009320002627352903834906674870825",
+        "3370865944849279456889010503337879894192850959577965992740818649227552614252544"
+      ],
+      "exact_band_slack": [
+        "1129136268142833741507770535716434163",
+        "1298410332340080004507531648030997457747836928"
+      ],
+      "conversion": "nearest binary64 per coordinate, no repair",
+      "maximum_rounding_error": 4.39431482561662e-13,
+      "rounded_exact_feasible": false,
+      "rounded_maximum_positive_row_violation": 5.918014089646563e-14,
+      "rounded_objective_band_excess": 0.0
+    }
+  ],
+  "provenance": {
+    "source": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning/replay-v1/results.json",
+    "sha256": "127316e4967d91167a2b2fed32a7cf7786414c9dad22bc5f9445083c4b90c5de",
+    "run": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning/replay-v1/run.json",
+    "run_sha256": "6c6b185d6ed7804e864a168575b8e0f4340db2e3488c63a11f6e5c72b79b0903",
+    "operation": "Maintained result snapshot, no recalculation during rendering"
+  }
+}

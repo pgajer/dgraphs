@@ -235,5 +235,27 @@
       "11"
     ],
     "programme_group": "F"
+  },
+  {
+    "id": "IAN-EXP-023",
+    "aims": [
+      "IA1",
+      "IA4"
+    ],
+    "phase_aliases": [
+      "07J"
+    ],
+    "programme_group": "C"
+  },
+  {
+    "id": "IAN-EXP-024",
+    "aims": [
+      "IA1",
+      "IA2"
+    ],
+    "phase_aliases": [
+      "Internal adapter 1"
+    ],
+    "programme_group": "D"
   }
 ]

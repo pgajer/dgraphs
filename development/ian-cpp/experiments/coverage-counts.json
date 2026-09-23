@@ -1,0 +1,10 @@
+{
+  "as_of": "2026-09-23",
+  "scope": "17 historically audited questions across 16 milestones; two new author-checked studies and five proposals",
+  "counts": {
+    "executed": 19,
+    "proposal": 5,
+    "historical_audited": 17,
+    "pending_new_report_review": 24
+  }
+}

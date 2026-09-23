@@ -18,7 +18,8 @@ def main():
     def check(value,msg):
         if not value:errors.append(msg)
     check(sources()==m['source_hashes'],'Maintained sources changed since the full build')
-    check(len(ids)==len(rec)==22,'Question identity/count mismatch')
+    inventory=json.loads((E/'discovery-inventory.json').read_text())
+    check(len(ids)==len(rec) and ids=={r['id'] for r in inventory['records']},'Question identity/inventory mismatch')
     counts={'executed':0,'proposal':0,'historical_audited':0,'pending_new_report_review':0};graph={}
     for p,r in rec:
         a=json.loads((p/'audit-summary.json').read_text());key='executed' if r['execution_status']=='executed' else 'proposal';counts[key]+=1
@@ -33,7 +34,9 @@ def main():
         if n in stack:errors.append('Dependency cycle: '+str(stack+[n]));return
         for v in graph.get(n,[]):visit(v,stack+[n])
     for n in graph:visit(n,[])
-    check(counts=={'executed':17,'proposal':5,'historical_audited':17,'pending_new_report_review':22},'Coverage mismatch')
+    declared=json.loads((E/'coverage-counts.json').read_text())
+    check(counts==declared['counts'],'Coverage mismatch')
+    check(m['counts']['documented']==len(rec) and m['counts']['executed_questions']==counts['executed'] and m['counts']['historical_audited_questions']==counts['historical_audited'],'Build count mismatch')
     links=0;htmls=list(ROOT.glob('**/build/*.html'));cache={}
     for p in htmls:
         parser=Links();parser.feed(p.read_text());cache[p.resolve()]=parser

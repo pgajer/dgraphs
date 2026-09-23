@@ -32,13 +32,25 @@ repaired historical points, with fresh duals supplying outer bounds. This shows
 weak determination within a stated band, not multiple exact optima. See IAN-EXP-016
 and IAN-EXP-017.
 
+The new zero-solver comparison uses those two certified witness vectors at the
+saved graph. Both rounded vectors require further retuning and conditionally
+remove the same 52 edges, with identical candidate and removal order. Python and
+native calculations agree. The actual later first-pruning control removes 47
+edges after additional retuning. This distinguishes fixed-state insensitivity at
+two endpoints from the still-unresolved complete-trajectory question. See
+[IAN-EXP-023](023-saved-pruning/report.md); independent review is pending.
+
 ## Decisions and limits
 
 Keep the scale ladder gated. Any secondary selection rule is an explicit policy
 change needing fixed-problem tests and later trajectory/pruning comparison.
 Do not adopt HiGHS, loosen a status requirement or select favorable rounded
-coefficients merely because a diagnostic succeeds. Native ABI qualification remains
-separate engineering work. Engine acceptance does not resolve downstream estimator
+coefficients merely because a diagnostic succeeds. The internal dgraphs adapter
+now has bounded one-host author qualification, including the pinned C/Rust settings
+layout repair and actual settings capture. Four small reference outputs reproduce
+exactly, and initial/final graphs are returned separately. See
+[IAN-EXP-024](024-internal-dgraphs-adapter/report.md); independent review and broader
+portability remain pending. Engine acceptance does not resolve downstream estimator
 conditioning, assay matching or biological validity.
 
 ## Figures for discussion

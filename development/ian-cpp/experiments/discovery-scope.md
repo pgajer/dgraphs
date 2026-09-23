@@ -5,8 +5,10 @@ the associated private worker manifests and review-1 through review-7i, includin
 named correction reviews. It does not claim an exhaustive search across ZB,
 external projects, other agents or unregistered historical runs.
 
-There are 22 question records: 17 executed records covering 16 historical milestones
-and five unexecuted proposals. Phase02 supplies two questions and one shared audit.
+The original discovery set contains 22 question records: 17 executed records
+covering 16 historical milestones and five unexecuted proposals. Two subsequently
+authorized studies, IAN-EXP-023/024, bring the catalogue to 24 records and 19
+executed questions. Their evidence is new and awaits independent review. Phase02 supplies two questions and one shared audit.
 Records do not equal independent datasets, experiments with random replication,
 solver calls or individual audit documents. Correction controls remain attached to
 shared issue histories. The numerical trial inventory remains in original ledgers.

@@ -1,0 +1,13 @@
+{
+  "audit_status": "not independently reviewed",
+  "numerically_checked": false,
+  "numerical_check_scope": "Author exact-witness, native/Python and saved-control checks passed; independent verification pending.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "57bfbdc03cfe763f7a8e7018e4971f344ce9e47257ceae6923608420fa329bb6",
+    "review": null
+  },
+  "audit_history": [],
+  "consequential_limits": "Two rounded witness endpoints at an intermediate retuning state; no full-trajectory or objective-band invariance claim.",
+  "findings_register": "../correction-dispositions.json"
+}

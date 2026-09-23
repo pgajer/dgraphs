@@ -1,7 +1,10 @@
 # Audit coverage and outstanding review
 
-All 17 executed question records map to independently accepted bounded historical
-evidence, across 16 milestones. The five proposal records have no numerical audit.
+Of 19 executed question records, 17 map to independently accepted bounded
+historical evidence across 16 milestones. The new saved-state pruning comparison
+(IAN-EXP-023) and internal dgraphs adapter qualification (IAN-EXP-024) have author
+checks and await independent review. The five proposal records have no numerical
+audit.
 These counts do not imply that every inference, dataset or intended use is validated.
 Current review status comes from each audit-summary.json, never a duplicate metadata
 flag. Shared phase02 audit scope is counted once at milestone level.

@@ -1,6 +1,6 @@
 # IAN experiment book
 
-Organization edition: 18 September 2026. This local book assembles the project aims, shared definitions, coverage limits and all 22 question records. Seventeen questions were executed across 16 historical milestones; five are unexecuted proposals. Phase identifiers preserve the original chronology; question identifiers preserve scientific meaning.
+Updated 23 September 2026. This local book assembles the project aims, shared definitions, coverage limits and all 24 question records. Seventeen questions map to 16 independently accepted historical milestones; two newly executed studies await independent review, and five remain unexecuted proposals. Phase identifiers preserve the original chronology; question identifiers preserve scientific meaning.
 
 Historical acceptance refers to bounded evidence and includes negative studies. The newly written summaries, figures and consolidated aims have author checks but no independent presentation review. Larger runs remain gated; no solver policy is adopted through this organization. Original reports and results remain in their original locations.
 

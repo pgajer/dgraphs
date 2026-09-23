@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-09-18",
+  "as_of": "2026-09-23",
   "decisions": [
     {
       "id": "DEC-ORG",
@@ -24,6 +24,18 @@
       "state": "not adopted",
       "scope": "Experimental retries, alternative LP backend and future secondary scale selection",
       "basis": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7i/audit.md"
+    },
+    {
+      "id": "DEC-PRUNE-REPLAY",
+      "state": "authorized study complete; independent review pending",
+      "scope": "Zero-solver saved-state comparison of the two existing certified scale vectors; no larger trajectory or new policy",
+      "basis": "User instruction in current task, 23 September 2026; IAN-EXP-023"
+    },
+    {
+      "id": "DEC-INTERNAL-ADAPTER",
+      "state": "authorized bounded implementation complete; independent review pending",
+      "scope": "Internal unexported dgraphs adapter returning initial Gabriel graph, completed final graph and diagnostics; public export and comprehensive portability excluded",
+      "basis": "User instruction in current task, 23 September 2026; IAN-EXP-024"
     }
   ]
 }

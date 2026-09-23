@@ -178,6 +178,22 @@
         "11"
       ],
       "execution": "proposal; unexecuted"
+    },
+    {
+      "id": "IAN-EXP-023",
+      "title": "Do certified scale differences change pruning at the saved graph?",
+      "phase": [
+        "07J"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-024",
+      "title": "Can an internal dgraphs adapter preserve results and expose useful graph stages?",
+      "phase": [
+        "Internal adapter 1"
+      ],
+      "execution": "executed"
     }
   ],
   "historical_source_files": {
@@ -562,5 +578,13 @@
     "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/test_validation.py": "636af14ccffcbf1f36e27118e3c783aa80414753404f0893491c9a50b484d16b",
     "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/verify_submission.py": "b4343b24162ffe8c5bd0a869310c9b7c168ae686c3b8550ec982b47bf057758e"
   },
-  "private_root": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17"
+  "private_root": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17",
+  "subsequent_extension": {
+    "as_of": "2026-09-23",
+    "scope": "Two owner-authorized new studies: saved-state pruning replay and internal dgraphs adapter qualification. Original discovery boundary/source identities below are retained.",
+    "new_records": [
+      "IAN-EXP-023",
+      "IAN-EXP-024"
+    ]
+  }
 }

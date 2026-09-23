@@ -1,0 +1,39 @@
+{
+  "id": "IAN-EXP-023",
+  "title": "Do certified scale differences change pruning at the saved graph?",
+  "phase_aliases": [
+    "07J"
+  ],
+  "programme_group": "C",
+  "aims": [
+    "IA1",
+    "IA4"
+  ],
+  "execution_status": "executed",
+  "outcome": "identical conditional pruning at both witness endpoints; further retuning required",
+  "documentation_worker": "IAN implementer/coordinator",
+  "dependencies": [
+    {
+      "id": "IAN-EXP-017",
+      "type": "consumed certified witnesses"
+    },
+    {
+      "id": "IAN-EXP-014",
+      "type": "shared saved graph and trajectory"
+    },
+    {
+      "id": "IAN-EXP-006",
+      "type": "shared boundary controls"
+    }
+  ],
+  "source_paths": [
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/experiments/023-saved-pruning/PLAN.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning/replay-v1/results.json"
+  ],
+  "figure_paths": [],
+  "missing_figure_reason": "A paired result table states the fixed-state comparison; no additional figure needed.",
+  "audit_status_source": "audit-summary.json",
+  "numerical_check_source": "audit-summary.json",
+  "issues_source": "../correction-dispositions.json",
+  "evidence_source": "evidence-manifest.json"
+}

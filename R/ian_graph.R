@@ -98,7 +98,8 @@ create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
     if (input.mode == "supplied unsquared distances") for (labels in dimnames(distances))
         if (!is.null(labels) && !identical(labels, specimen.ids)) stop("Named distances must match specimen.ids in order.", call. = FALSE)
     storage.mode(distances) <- "double"
-    raw <- .Call(.ian.backend(backend), X, distances, specimen.ids, participant.ids,
+    native_run <- .ian.backend(backend)
+    raw <- .Call(native_run, X, distances, specimen.ids, participant.ids,
                  identical(diagnostics, "full"), as.integer(max.solves), fault, numerical.policy)
     ids <- raw$mapping$profile_ids
     initial <- .ian.graph(raw$initial, ids, "initial Gabriel", raw$backend$numerical_policy)

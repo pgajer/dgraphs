@@ -42,3 +42,6 @@ audit_artifacts/
 /dev/papers/
 
 /inst/build-provenance.json
+
+/inst/ian/backend-sources.zip
+/inst/ian/backend-source-manifest.json

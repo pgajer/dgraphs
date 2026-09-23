@@ -7,7 +7,11 @@ lengths retain input distance units. Affinities are separate similarities; they
 are not substituted for metric edge lengths. Final graph is NULL after any
 refusal or interruption, even if graph pruning had converged before later failure.
 
-This package installs the wrapper and pinned backend sources. The native IAN
+This package installs the wrapper and pinned backend sources in `backend-sources.zip`,
+with per-file identities in `backend-source-manifest.json`. The build helper verifies
+and expands them into the fresh build directory. The editable source tree remains
+under `inst/ian/backend` in the repository. To inspect an installed copy without
+building, extract the ZIP with `python3 -m zipfile -e <archive> <new-directory>`. The native IAN
 module is optional and is NOT built during ordinary package installation. Without
 it the function gives an explicit unavailable-backend error. Other graph methods
 do not depend on this module. Building currently requires macOS arm64, Python 3,
@@ -75,7 +79,7 @@ checkpoint or resume interface is exposed by this first R adapter. `max.solves`
 stops execution after its last allowed solve and retains that attempt's record.
 R allocation failure and operating-system termination are not recoverable promises.
 
-Source provenance and licenses are under backend/. Ordinary package tests perform
+Source provenance and licenses are in the source archive (and the repository backend/ tree). Ordinary package tests perform
 argument checks without solving. Qualification with a built module is separate
 under dev/ian and writes attempt accounting outside the source tree.
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Build the optional IAN module from installed, pinned sources; never runs solves."""
-import argparse, hashlib, json, os, platform, shutil, subprocess
+import argparse, hashlib, json, os, platform, shutil, subprocess, zipfile
 from pathlib import Path
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--build-dir',required=True,type=Path)
@@ -10,7 +10,7 @@ p.add_argument('--cargo',default='cargo');p.add_argument('--r',default='R');p.ad
 p.add_argument('--offline',action='store_true');a=p.parse_args()
 if platform.system()!='Darwin' or platform.machine()!='arm64':p.error('This bounded backend build supports macOS arm64 only; other platforms are unqualified.')
 src=Path(__file__).resolve().parent/'backend';out=a.build_dir.resolve();out.mkdir(parents=True,exist_ok=False)
-record={'commands':[],'complete':False,'platform':platform.platform(),'sources':{str(f.relative_to(src)):hashlib.sha256(f.read_bytes()).hexdigest() for f in src.rglob('*') if f.is_file()}}
+record={'commands':[],'complete':False,'platform':platform.platform(),'sources':{}}
 def save(): (out/'build-record.json').write_text(json.dumps(record,indent=2)+'\n')
 def call(name,cmd,env=None):
  with (out/(name+'.log')).open('w') as log:
@@ -18,7 +18,27 @@ def call(name,cmd,env=None):
  record['commands'].append({'name':name,'command':list(map(str,cmd)),'returncode':x.returncode});save()
  print(name,x.returncode,flush=True)
  if x.returncode:raise SystemExit('Build failed; logs retained in '+str(out))
-shutil.copytree(src,out/'sources');source=out/'sources'
+source=out/'sources'
+if src.is_dir():
+ shutil.copytree(src,source)
+else:
+ bundle=src.parent/'backend-sources.zip';manifest=src.parent/'backend-source-manifest.json'
+ try:
+  declared=json.loads(manifest.read_text())
+  if hashlib.sha256(bundle.read_bytes()).hexdigest()!=declared['zip_sha256']:raise ValueError('source archive digest mismatch')
+  with zipfile.ZipFile(bundle) as z:
+   if len(z.namelist())!=len(declared['files']) or set(z.namelist())!=set(declared['files']):raise ValueError('source archive inventory mismatch')
+   for name,digest in declared['files'].items():
+    relative=Path(name)
+    if relative.is_absolute() or '..' in relative.parts:raise ValueError('invalid source archive path')
+    data=z.read(name)
+    if hashlib.sha256(data).hexdigest()!=digest:raise ValueError('source member digest mismatch: '+name)
+    target=source/relative;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
+  record['source_bundle']={'path':str(bundle),'sha256':declared['zip_sha256'],'manifest_sha256':hashlib.sha256(manifest.read_bytes()).hexdigest()}
+ except Exception as error:
+  record['error']='Invalid installed source bundle: '+str(error);save();raise SystemExit(record['error'])
+record['sources']={str(f.relative_to(source)):hashlib.sha256(f.read_bytes()).hexdigest() for f in source.rglob('*') if f.is_file()}
+save()
 env=os.environ.copy();env['CARGO_BUILD_JOBS']='2';env['RUSTC']=a.rustc
 call('cargo-version',[a.cargo,'--version'])
 call('rust-version',[a.rustc,'-vV'])

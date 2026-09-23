@@ -13,10 +13,12 @@ temporary_dir=$(mktemp -d "$(dirname -- "$package_dir")/.${package_name}-build.X
 cleanup() {
     rm -rf -- "$temporary_dir"
     rm -f -- "$package_dir/inst/build-provenance.json"
+    rm -f -- "$package_dir/inst/ian/backend-sources.zip" "$package_dir/inst/ian/backend-source-manifest.json"
 }
 trap cleanup EXIT HUP INT TERM
 
 mkdir -p -- "$build_dir"
+python3 "$script_dir/ian/bundle_sources.py"
 python3 "$script_dir/artifact-provenance.py" write
 (
     cd -- "$temporary_dir"

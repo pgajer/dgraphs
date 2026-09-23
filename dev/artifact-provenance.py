@@ -7,7 +7,8 @@ def snapshot():
     for directory in ('R','src','man','vignettes','inst','tests'):
         paths.extend(p for p in (ROOT / directory).rglob('*') if p.is_file()
                      and p.suffix not in ('.o','.so','.dll','.dylib')
-                     and p.name != 'build-provenance.json')
+                     and p.name != 'build-provenance.json'
+                     and p.relative_to(ROOT).as_posix() not in ('inst/ian/backend-sources.zip','inst/ian/backend-source-manifest.json'))
     files = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes().replace(b'\r\n',b'\n')).hexdigest()
              for p in sorted(paths)}
     return files

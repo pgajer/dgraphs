@@ -22,3 +22,5 @@
 ^_pkgdown\.yml$
 
 ^development$
+
+^inst/ian/backend$

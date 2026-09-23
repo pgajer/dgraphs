@@ -147,7 +147,7 @@ recommended size or tested capacity. Resources can be exhausted well below them.
 The wrapper checks these dimensions before making distances, and the native
 bridge checks dimensions and exact integer conversion at its interface.
 
-One dense n-by-n double matrix uses 8*n*n bytes excluding overhead: 8 MB at
+One dense n-by-n double matrix uses `8*n*n` bytes excluding overhead: 8 MB at
 1,000 rows, 200 MB at 5,000 and 800 MB at 10,000 (decimal units). Distances,
 squared distances, affinities and conversion copies can coexist. These numbers
 are individual array sizes, not peak memory estimates. Initial Gabriel-graph

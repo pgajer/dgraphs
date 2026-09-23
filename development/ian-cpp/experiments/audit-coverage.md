@@ -1,7 +1,7 @@
 # Audit coverage and outstanding review
 
-Of 29 executed question records, 28 map to independently accepted bounded
-studies across 27 milestones. The helix arithmetic study (IAN-EXP-026), including
+All 29 executed question records map to independently accepted bounded
+studies across 28 milestones. The helix arithmetic study (IAN-EXP-026), including
 its current report and figure, was accepted on 23 September 2026 with no corrective
 findings. The internal dgraphs adapter (IAN-EXP-024) and typed-core refactor
 (IAN-EXP-025) are accepted for bounded implementation evidence on macOS arm64,
@@ -42,4 +42,4 @@ IAN-EXP-032 reconstructs the first helix disconnections from saved trajectories 
 
 IAN-EXP-033 implements the owner-authorized connectivity-preserving variant. The bounded implementation and exact corrected report/PDF are independently accepted; F1 measurement wording and C1 contract clarification are closed. The original report/PDF remain preserved.
 
-IAN-EXP-034 removes the fixed R row restriction and adds bounded larger-interface qualification; independent review is pending. Its 5,000-profile conditional pair was not executed because the prospective memory gate failed.
+IAN-EXP-034 removes the fixed R row restriction and adds bounded larger-interface qualification; the bounded implementation and original report/PDF are independently accepted. A typography-only presentation correction is pending closure. Its 5,000-profile conditional pair was not executed because the prospective memory gate failed.

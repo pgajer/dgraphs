@@ -1,16 +1,41 @@
 {
-  "audit_status": "Independent review pending; author checks complete",
-  "numerically_checked": false,
-  "numerical_check_scope": "Author checks reported separately; no independent disposition yet",
+  "audit_status": "Accepted bounded implementation; N1 typography correction awaiting presentation closure",
+  "numerically_checked": true,
+  "numerical_check_scope": "Independent 48-entry final-source replay: 1986 attempts, 1696 full certificates and 290 summary returns; 13363 pruning proposals, 31 R objects and 16 affinity reconstructions",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "e54a74edbff16237058e80a5322a8930e9ba43aca57820b11a2a0d45d64b8ce9",
+    "report_sha256": "1751f9c7a2fa9e799d12c28fd6b078b2cf01f2c16a646527fb3627e420ff331b",
+    "scope": "Typography-only N1 revision; original accepted report/PDF preserved",
     "frozen_submission": {
-      "report_sha256": "e54a74edbff16237058e80a5322a8930e9ba43aca57820b11a2a0d45d64b8ce9",
-      "report_pdf_sha256": "3cd5841fc2701b58aaf3862cb01295146e2ddef091480b293935e44336a893ab",
-      "reason": "Two-page author-inspected submission; exact bytes preserved pending independent review"
+      "report_sha256": "1751f9c7a2fa9e799d12c28fd6b078b2cf01f2c16a646527fb3627e420ff331b",
+      "report_pdf_sha256": "9ef3dc4f9534cbc98bf04b156d49065823a30fa5205b26f663876df57e81ccd9",
+      "reason": "N1 typography-only revision; corrected formula visually checked and accepted original preserved"
     }
   },
-  "audit_history": [],
-  "consequential_limits": "Internal only; Mac arm64 R-devel; two 2,000-profile connected examples; 5,000 unexecuted; no public/default/scientific change"
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-r-size-qualification/audit.md",
+      "review_sha256": "0e737a01ae38dca1d937842bb85d170b56bd23354f30e9c5b2dac3752d9f7dd1",
+      "candidate": "ae711055ac4a20380705c0e4570115849c566999",
+      "scope": "Bounded internal R row-cap removal and larger-input qualification; no corrective findings"
+    }
+  ],
+  "consequential_limits": "Internal only; Mac arm64 R-devel; two 2,000-profile connected examples; 5,000 unexecuted; no public/default/scientific change",
+  "presentation_history": [
+    {
+      "status": "accepted",
+      "report_sha256": "e54a74edbff16237058e80a5322a8930e9ba43aca57820b11a2a0d45d64b8ce9",
+      "frozen_submission": {
+        "report_sha256": "e54a74edbff16237058e80a5322a8930e9ba43aca57820b11a2a0d45d64b8ce9",
+        "report_pdf_sha256": "3cd5841fc2701b58aaf3862cb01295146e2ddef091480b293935e44336a893ab",
+        "reason": "Two-page author-inspected submission; exact bytes preserved pending independent review"
+      },
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-r-size-qualification/audit.md",
+      "review_sha256": "0e737a01ae38dca1d937842bb85d170b56bd23354f30e9c5b2dac3752d9f7dd1",
+      "report_pdf_sha256": "3cd5841fc2701b58aaf3862cb01295146e2ddef091480b293935e44336a893ab",
+      "scope": "Bounded implementation and original exact report/PDF accepted; N1 typography recommendation",
+      "preserved_report": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/submission-report.md",
+      "preserved_pdf": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/r-size-qualification/submission-report.pdf"
+    }
+  ]
 }

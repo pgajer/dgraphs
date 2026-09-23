@@ -16,7 +16,7 @@
 #' @param X Finite numeric specimen-by-feature matrix, at least two rows and one
 #'   column. There is no fixed experimental row cap. Input size must fit R/native
 #'   index representations and available memory. Dense distances and affinities
-#'   require quadratic storage: each n-by-n double matrix uses 8*n*n bytes before
+#'   require quadratic storage: each n-by-n double matrix uses `8*n*n` bytes before
 #'   overhead. Several matrices/copies coexist; this is not a peak-memory estimate.
 #'   Initial Gabriel construction has cubic worst-case cost. Full diagnostics
 #'   retain additional dense data. See the backend guide for tested sizes.

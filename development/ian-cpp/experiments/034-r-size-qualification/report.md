@@ -33,7 +33,7 @@ The optional 5,000-profile pair was **not run**: both native full-diagnostic run
 
 ## Practical meaning and limitations
 
-There is no replacement experimental row cap. One dense n-by-n double matrix uses 8*n*n bytes: 8 MB at 1,000 rows, 200 MB at 5,000 and 800 MB at 10,000, before overhead. Several matrices and conversion copies coexist; these figures are not peak-memory estimates. Distances are allocated before duplicate profiles are collapsed. Full diagnostics retain additional dense data; summary remains the default. Gabriel construction has cubic worst-case work. Removing a guard cannot guarantee that an arbitrary larger dataset fits or completes.
+There is no replacement experimental row cap. One dense n-by-n double matrix uses `8*n*n` bytes: 8 MB at 1,000 rows, 200 MB at 5,000 and 800 MB at 10,000, before overhead. Several matrices and conversion copies coexist; these figures are not peak-memory estimates. Distances are allocated before duplicate profiles are collapsed. Full diagnostics retain additional dense data; summary remains the default. Gabriel construction has cubic worst-case work. Removing a guard cannot guarantee that an arbitrary larger dataset fits or completes.
 
 Qualification here uses the available Mac arm64 R-devel environment and an identified, previously accepted Rust archive. Other platforms and R versions were not newly tested. The larger comparisons establish internal interface agreement; there is no new Python trajectory at 2,000, biological validation, R restart or public export. The 5,000-profile input is frozen but unexecuted. Original projection/probe failures and earlier evidence remain preserved.
 

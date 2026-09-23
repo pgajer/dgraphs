@@ -1,16 +1,25 @@
 {
-  "audit_status": "author checks passed; independent review pending",
+  "audit_status": "author checks reproduced by independent reviewer; F1 report correction awaiting closure",
   "numerically_checked": true,
-  "numerical_check_scope": "Main panel 1560 payloads; 3081 pruning proposals reconstructed; exact native/R objects and reference traces; restart and R failure controls",
+  "numerical_check_scope": "Main panel 1560 returns: 1108 accepted and 452 rejected; correct acceptance/rejection decisions checked; 3081 proposals reconstructed; exact native/R and reference preservation",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "06a414fbeb513d1a70148fbc8125b710249296d627fd52e8dab8593e1135a45d",
-    "frozen_submission": {
-      "report_sha256": "06a414fbeb513d1a70148fbc8125b710249296d627fd52e8dab8593e1135a45d",
-      "report_pdf_sha256": "628adf069fd25ea2cc4610b550017d31bb7383932a1fc4f220adfc2943a26ad3",
-      "reason": "Exact two-page author-inspected submission, preserved pending independent review"
-    }
+    "report_sha256": "91968d8d58d3d0c5f9006190f9544bc4c86bbc24b35ec99928372273ad80e82f"
   },
   "audit_history": [],
-  "consequential_limits": "Explicit internal variant; Mac arm64 R-devel; R at most 500 rows; no prediction or biological-validity claim"
+  "consequential_limits": "Explicit internal variant; Mac arm64 R-devel; R at most 500 rows; no prediction or biological-validity claim",
+  "presentation_history": [
+    {
+      "status": "not independently reviewed",
+      "report_sha256": "06a414fbeb513d1a70148fbc8125b710249296d627fd52e8dab8593e1135a45d",
+      "frozen_submission": {
+        "report_sha256": "06a414fbeb513d1a70148fbc8125b710249296d627fd52e8dab8593e1135a45d",
+        "report_pdf_sha256": "628adf069fd25ea2cc4610b550017d31bb7383932a1fc4f220adfc2943a26ad3",
+        "reason": "Exact two-page author-inspected submission, preserved pending independent review"
+      },
+      "disposition": "Superseded for F1: ambiguous acceptance/rejection wording",
+      "preserved_report": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/submission-report.md",
+      "preserved_pdf": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/submission-report.pdf"
+    }
+  ]
 }

@@ -4,7 +4,7 @@ clean<-function(x) {
  if(!is.list(x))return(x)
  n<-names(x)
  if(!is.null(n)) x<-x[!n %in% c("seconds","source_identity","configuration_identity","trace_format")]
- lapply(x,clean)
+ out<-lapply(x,clean);attributes(out)<-attributes(x);out
 }
 files<-sort(basename(list.files(args[1],pattern="[.]rds$",full.names=TRUE)));files<-setdiff(files,"ledger.rds")
 checks<-setNames(lapply(files,function(f){a<-readRDS(file.path(args[1],f));b<-readRDS(file.path(args[2],f));identical(clean(a),clean(b))}),files)

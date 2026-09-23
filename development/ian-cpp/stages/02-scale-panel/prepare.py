@@ -12,6 +12,7 @@ assert not subprocess.check_output(['git','status','--porcelain'],text=True)
 build=PRE/'build-v1';ref=PRE/'reference-v2';bm=load(build/'manifest.json')
 assert sha(build/'engine')==bm['binaries']['engine']
 rmanifest=load(PRE/'reference-v2-manifest.json')
+assert all(sha(ref/k)==h for k,h in rmanifest.items())
 manifest=dict(revision=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),plan_sha256=sha(HERE/'PLAN.md'),build=str(build),engine_sha256=sha(build/'engine'),reference=str(ref),reference_sha256={p.name:sha(p) for p in ref.iterdir() if p.is_file()},accepted_reference_manifest=rmanifest,source_manifest=str(build/'manifest.json'),source_manifest_sha256=sha(build/'manifest.json'),original_manifest=str(OLD/'manifest.json'),original_manifest_sha256=sha(OLD/'manifest.json'),fixtures=[],prior_helix=dict(fresh=False,path=str(PRE/'qualification-v2/runs/helix_1000'),audit='/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage01-policy/audit.md'))
 for c in load(OLD/'manifest.json')['cases'][1:]:
  p=Path(c['input']);assert sha(p)==c['sha256'];j=load(p);j['numerical_policy']='IAN evaluated-LP retry-power 0.1';target=out/(c['name']+'.json');write(target,j)

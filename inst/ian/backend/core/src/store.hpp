@@ -1,6 +1,7 @@
 #pragma once
 #include "files.hpp"
 #include "state_json.hpp"
+#include "events_json.hpp"
 #include <csignal>
 #include <regex>
 #include <sys/resource.h>
@@ -77,16 +78,17 @@ struct RestartFiles : Files {
             {"checkpoint_commit_uncertain",commit_uncertain},{"resources",resources()}});
     }
     void on_event(const ian::Event& e) override {
+        const auto encoded=event_json(e).dump();
         account(e.phase=="final_affinity_retuning" ? "final_retuning" :
             (e.name=="mapping" || e.name=="processed" ? "initialization" : "pruning"));
         if (!pending_resume.empty()) { confirmed=pending_resume; pending_resume.clear(); }
         Files::on_event(e); ++events;
         size_t offset=0;
-        while(offset<e.json.size()) {
-            size_t count=std::min(size_t(65536),e.json.size()-offset);
-            CC_SHA256_Update(&trace_digest,e.json.data()+offset,CC_LONG(count)); offset+=count;
+        while(offset<encoded.size()) {
+            size_t count=std::min(size_t(65536),encoded.size()-offset);
+            CC_SHA256_Update(&trace_digest,encoded.data()+offset,CC_LONG(count)); offset+=count;
         }
-        CC_SHA256_Update(&trace_digest,"\n",1); trace_bytes+=e.json.size()+1;
+        CC_SHA256_Update(&trace_digest,"\n",1); trace_bytes+=encoded.size()+1;
     }
     void on_stage(ian::Stage stage,const ian::Result& result) override {
         if (!pending_resume.empty()) { confirmed=pending_resume; pending_resume.clear(); }

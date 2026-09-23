@@ -27,7 +27,7 @@ identity=hashlib.sha256(json.dumps(record['sources'],sort_keys=True).encode()).h
 module=out/'dgraphs_ian.so'
 call('module',[a.cxx,'-std=c++17','-O2','-ffp-contract=off','-fno-fast-math','-fPIC','-shared','-undefined','dynamic_lookup','-Wl,-install_name,@rpath/dgraphs_ian.so',
  '-I'+str(rhome/'include'),'-I'+str(rcpp),'-I'+str(source/'core/include'),'-I'+str(source/'core/src'),'-I'+str(source/'Clarabel.cpp/include'),
- '-DSOURCE_HASH="'+identity+'"','-DCONFIG_HASH="'+config+'"',source/'core/src/core.cpp',source/'bridge.cpp',out/'target/release/libclarabel_c.a','-framework','Security','-framework','CoreFoundation','-o',module])
+ '-DSOURCE_HASH="'+identity+'"','-DCONFIG_HASH="'+config+'"',source/'core/src/core.cpp',source/'core/src/identity_json.cpp',source/'bridge.cpp',out/'target/release/libclarabel_c.a','-framework','Security','-framework','CoreFoundation','-o',module])
 record['module_sha256']=hashlib.sha256(module.read_bytes()).hexdigest();record['core_source_identity']=identity
 if a.install_dir:
  a.install_dir.mkdir(parents=True,exist_ok=True);shutil.copy2(module,a.install_dir/module.name)

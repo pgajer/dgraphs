@@ -4,20 +4,44 @@
 #include <R_ext/Utils.h>
 #include <R_ext/Rdynload.h>
 #include <ian/core.hpp>
-#include "core/src/numeric.hpp"
+#include "core/src/event_fields.hpp"
+#include <map>
+#include <set>
 #include "core/src/testing.hpp"
-using Json = ian::detail::Json;
+
 namespace {
-Rcpp::RObject json_r(const Json& j) {
- if(j.is_null()) return R_NilValue;
- if(j.is_boolean()) return Rcpp::wrap(j.get<bool>());
- if(j.is_number_integer()) return Rcpp::wrap(j.get<int>());
- if(j.is_number()) return Rcpp::wrap(j.get<double>());
- if(j.is_string()) return Rcpp::wrap(j.get<std::string>());
- Rcpp::List out(j.size());
- if(j.is_object()) { Rcpp::CharacterVector names(j.size()); int k=0; for(auto it=j.begin();it!=j.end();++it) {names[k]=it.key();out[k++]=json_r(it.value());} out.attr("names")=names; }
- else {int k=0;for(auto& v:j)out[k++]=json_r(v);}
- return out;
+// Direct typed-to-R projection. Arrays intentionally retain the historical trace
+// list shape; top-level graph/mapping/scales objects keep their R-specific types.
+template<class T> Rcpp::RObject r_object(const T&);
+template<class T> Rcpp::RObject r_object(const std::vector<T>&);
+template<class T,std::size_t N> Rcpp::RObject r_object(const std::array<T,N>&);
+struct RFields {
+ std::map<std::string,Rcpp::RObject> values;
+ bool summary=false;
+ template<class T> void field(const char* name,const T& value) {
+   static const std::set<std::string> dense{"A_data","A_indices","A_indptr","A_shape","b","c","upper","active","scales","dual"};
+   if(summary && dense.count(name))return;
+   values.emplace(name,r_object(value));
+ }
+ Rcpp::List finish() const {
+   Rcpp::List out(values.size()); Rcpp::CharacterVector names(values.size());int k=0;
+   for(const auto& p:values){names[k]=p.first;out[k++]=p.second;}
+   out.attr("names")=names;return out;
+ }
+};
+template<class T> Rcpp::RObject r_object(const T& value) {
+ if constexpr(std::is_same_v<T,bool> || std::is_same_v<T,std::string>)return Rcpp::wrap(value);
+ else if constexpr(std::is_integral_v<T>)return Rcpp::wrap(static_cast<int>(value));
+ else if constexpr(std::is_floating_point_v<T>) {
+   // JSON trace schema previously represented non-finite numbers as null.
+   return std::isfinite(value)?Rcpp::RObject(Rcpp::wrap(value)):Rcpp::RObject(R_NilValue);
+ } else {RFields out;ian::serialization::fields(out,value);return out.finish();}
+}
+template<class T> Rcpp::RObject r_object(const std::vector<T>& value) {
+ Rcpp::List out(value.size());for(size_t k=0;k<value.size();++k)out[k]=r_object(value[k]);return out;
+}
+template<class T,std::size_t N> Rcpp::RObject r_object(const std::array<T,N>& value) {
+ Rcpp::List out(N);for(size_t k=0;k<N;++k)out[k]=r_object(value[k]);return out;
 }
 Rcpp::IntegerMatrix edges(const ian::Edges& e) {Rcpp::IntegerMatrix out(e.size(),2);for(size_t i=0;i<e.size();i++)for(int j=0;j<2;j++)out(i,j)=e[i][j]+1;return out;}
 Rcpp::NumericMatrix matrix(const ian::Matrix& a) {size_t n=a.size(),p=n?a[0].size():0;Rcpp::NumericMatrix out(n,p);for(size_t i=0;i<n;i++)for(size_t j=0;j<p;j++)out(i,j)=a[i][j];return out;}
@@ -26,20 +50,18 @@ Rcpp::IntegerVector indices(const ian::Indices& x) {Rcpp::IntegerVector out=Rcpp
 void check_interrupt(void*) {R_CheckUserInterrupt();}
 struct Sink : ian::Observer {
  bool detailed, interrupted=false, inject_interrupt=false; int max_solves, solves=0;
- Json events=Json::array(), history=Json::array();
+ Rcpp::List events, history;
  ian::Edges initial,last; bool has_initial=false,has_last=false;
  explicit Sink(bool detail,int budget):detailed(detail),max_solves(budget) {}
  void on_event(const ian::Event& e) override {
-   auto j=Json::parse(e.json);
-   if(e.name=="processed") {initial=j.at("initial_edges").get<ian::Edges>();last=initial;has_initial=has_last=true;}
-   if(e.name=="pruned") {last=j.at("edges").get<ian::Edges>();has_last=true;}
-   if(e.name=="solve") {
+   if(const auto* p=std::get_if<ian::ProcessedEvent>(&e.payload)) {initial=p->initial_edges;last=initial;has_initial=has_last=true;}
+   if(const auto* p=std::get_if<ian::PrunedEvent>(&e.payload)) {last=p->graph.edges;has_last=true;}
+   if(std::holds_alternative<ian::SolveRecord>(e.payload)) {
      ++solves;
-     Json small=j;
-     for(auto key:{"A_data","A_indices","A_indptr","A_shape","b","c","upper","active","scales","dual"})small.erase(key);
-     history.push_back(small);
+     RFields out;out.summary=true;ian::serialization::fields(out,e);
+     history.push_back(out.finish());
    }
-   if(detailed) events.push_back(j);
+   if(detailed) events.push_back(r_object(e));
    if(inject_interrupt && e.name=="processed") std::raise(SIGINT);
    if(!R_ToplevelExec(check_interrupt,nullptr)) {interrupted=true;throw std::runtime_error("R_user_interrupt");}
    // Guard before the next solver allocation; an already completed solve is retained.
@@ -68,7 +90,7 @@ extern "C" SEXP dgraphs_ian_run(SEXP features,SEXP distances,SEXP ids,SEXP parti
  Rcpp::Named("converged")=r.graph_valid?SEXP(graph(r.graph.edges,r,in)):R_NilValue,
  Rcpp::Named("mapping")=Rcpp::List::create(Rcpp::Named("representatives")=indices(r.mapping.representatives),Rcpp::Named("member_to_profile")=indices(r.mapping.member_to_profile),Rcpp::Named("specimen_ids")=r.mapping.specimen_ids,Rcpp::Named("profile_ids")=r.mapping.profile_ids,Rcpp::Named("participant_ids")=r.mapping.participant_ids),
  Rcpp::Named("scales")=r.scales,Rcpp::Named("affinity")=matrix(r.affinity),
- Rcpp::Named("diagnostics")=Rcpp::List::create(Rcpp::Named("solves")=r.solves,Rcpp::Named("last_iteration")=r.last_iteration,Rcpp::Named("distance_multiplier")=r.graph.distance_multiplier,Rcpp::Named("multiplier")=r.multiplier,Rcpp::Named("stats")=r.stats,Rcpp::Named("weighted_stats")=r.weighted_stats,Rcpp::Named("scales_valid")=r.scales_valid,Rcpp::Named("affinity_valid")=r.affinity_valid,Rcpp::Named("graph_converged")=r.graph_valid,Rcpp::Named("solver_history")=json_r(sink.history),Rcpp::Named("trace")=json_r(sink.events)),
+ Rcpp::Named("diagnostics")=Rcpp::List::create(Rcpp::Named("solves")=r.solves,Rcpp::Named("last_iteration")=r.last_iteration,Rcpp::Named("distance_multiplier")=r.graph.distance_multiplier,Rcpp::Named("multiplier")=r.multiplier,Rcpp::Named("stats")=r.stats,Rcpp::Named("weighted_stats")=r.weighted_stats,Rcpp::Named("scales_valid")=r.scales_valid,Rcpp::Named("affinity_valid")=r.affinity_valid,Rcpp::Named("graph_converged")=r.graph_valid,Rcpp::Named("solver_history")=sink.history,Rcpp::Named("trace")=sink.events),
  Rcpp::Named("backend")=Rcpp::List::create(Rcpp::Named("numerical_policy")=r.policy,Rcpp::Named("source_identity")=ian::source_identity(),Rcpp::Named("configuration_identity")=ian::configuration_identity(),Rcpp::Named("solver")="Clarabel 0.11.1 / QDLDL"));
  END_RCPP
 }

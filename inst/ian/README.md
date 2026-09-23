@@ -60,3 +60,10 @@ R allocation failure and operating-system termination are not recoverable promis
 Source provenance and licenses are under backend/. Ordinary package tests perform
 argument checks without solving. Qualification with a built module is separate
 under dev/ian and writes attempt accounting outside the source tree.
+
+Internal messages now use typed C++ input, decision, solve, settings, event and
+stage structures. The R bridge constructs diagnostic lists directly, without
+JSON parsing. Optional file/test serializers preserve the historical JSON schema.
+Canonical input fingerprinting still uses the previous JSON encoding at a separate
+persistence boundary, so its format is unchanged. The C++ observer interface has
+changed: Event now carries an EventPayload variant instead of a JSON string.

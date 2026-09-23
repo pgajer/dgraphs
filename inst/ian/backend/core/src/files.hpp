@@ -1,6 +1,7 @@
 #pragma once
 #include <ian/core.hpp>
 #include "json_adapter.hpp"
+#include "events_json.hpp"
 #include "checkpoint.hpp"
 #include "testing.hpp"
 #include <chrono>
@@ -19,7 +20,7 @@ struct Files : ian::Observer {
                     {"configuration_sha256",ian::configuration_identity()}};
     }
     void on_event(const ian::Event& event) override {
-        trace << event.json << '\n'; trace.flush(); require(bool(trace),"trace_write");
+        trace << event_json(event).dump() << '\n'; trace.flush(); require(bool(trace),"trace_write");
     }
     void on_stage(ian::Stage s, const ian::Result& r) override {
         std::string stage;

@@ -4,13 +4,13 @@
 #include <set>
 // Exact feature-row duplicates preserve first-occurrence specimen order.
 namespace ian::detail {
-struct Input {
+struct ProcessedInput {
     Mat D;
-    Json mapping;
+    ian::Mapping mapping;
 };
-Input preprocess(const Json &in) {
-    Mat X = in.at("features").get<Mat>(), D = in.at("distances").get<Mat>();
-    auto ids = in.at("ids").get<std::vector<std::string>>();
+inline ProcessedInput preprocess(const ian::Input &in) {
+    const Mat& X = in.features; const Mat& D = in.distances;
+    const auto& ids = in.specimen_ids;
     size_t n = X.size();
     require(n > 0 && D.size() == n && ids.size() == n, "input_shape_or_identity");
     std::set<std::string> distinct(ids.begin(), ids.end());
@@ -54,10 +54,7 @@ Input preprocess(const Json &in) {
     std::vector<std::string> profileids;
     for (int i : reps)
         profileids.push_back(ids[i]);
-    return {U, Json{{"representatives", reps},
-                    {"member_to_profile", mapping},
-                    {"specimen_ids", ids},
-                    {"profile_ids", profileids}}};
+    return {U, ian::Mapping{reps, mapping, ids, profileids, in.participant_ids}};
 }
 
 } // namespace ian::detail

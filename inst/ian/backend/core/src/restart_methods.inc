@@ -22,7 +22,7 @@
         Vec positive;
         for (double v : s.last_stats) if (v > 0) positive.push_back(v);
         require(!positive.empty(), "invalid_restart");
-        bool stopped = decision(s.last_stats, median(positive))["candidates"].empty();
+        bool stopped = decision(s.last_stats, median(positive)).candidates.empty();
         require(stopped == (s.boundary == "graph"), "invalid_restart");
         edges = s.edges; deg = s.degrees; upper = s.upper; C = s.multiplier;
         cache = s.cache; solves = s.solves; iteration = s.iteration; last_stats = s.last_stats;

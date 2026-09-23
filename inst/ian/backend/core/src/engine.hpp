@@ -2,7 +2,7 @@
 #include <ian/core.hpp>
 #include "input.hpp"
 #include "solver.hpp"
-#include "digest.hpp"
+
 namespace ian::detail {
 using Clock = std::chrono::steady_clock;
 struct ObserverFailure : std::runtime_error { using std::runtime_error::runtime_error; };
@@ -24,46 +24,19 @@ struct Engine {
     std::string phase = "initial", inject;
     Engine(ian::Result &value, ian::Observer *sink, std::string injection, const ian::RestartState* saved = nullptr)
         : result(value), observer(sink), restart(saved), inject(std::move(injection)) {}
-    void emit(Json event) {
-        event["iteration"] = iteration;
-        event["phase"] = phase;
+    template<class Payload> void emit(Payload payload) {
         if (observer) {
-            try { observer->on_event({event.at("event").get<std::string>(), phase, iteration, event.dump()}); }
+            try { observer->on_event({ian::event_name(payload), phase, iteration, std::move(payload)}); }
             catch (const std::exception &e) { throw ObserverFailure(e.what()); }
             catch (...) { throw ObserverFailure("nonstandard_callback_exception"); }
         }
     }
     #include "restart_methods.inc"
-    Json graph_data() {
-        return Json{{"edges", edges},
-                    {"degrees", deg},
-                    {"upper", upper},
-                    {"components", components(D.size(), edges)},
-                    {"isolates", isolates(deg)}};
+    ian::GraphSnapshot graph_data() {
+        return {edges, deg, upper, components(D.size(), edges), isolates(deg)};
     }
-    void checkpoint(const std::string &stage, const Json &data) {
-        ian::Stage which;
-        if (stage == "graph") {
-            result.graph.edges = edges;
-            result.graph.degrees = deg;
-            result.graph.internal_upper = upper;
-            result.graph.components = components(D.size(), edges);
-            result.graph.isolates = isolates(deg);
-            result.graph.distance_multiplier = scl;
-            for (auto e : edges) result.graph.edge_lengths.push_back(input_distances[e[0]][e[1]]);
-            result.graph_valid = true;
-            which = ian::Stage::graph;
-        } else if (stage == "scales") {
-            result.scales = data.at("scales").get<Vec>();
-            result.internal_scales = data.at("internal_scales").get<Vec>();
-            result.multiplier = C;
-            result.scales_valid = true;
-            which = ian::Stage::scales;
-        } else {
-            result.affinity = data.at("affinity").get<Mat>();
-            result.affinity_valid = true;
-            which = ian::Stage::affinity;
-        }
+    // Each stage commits typed values before notifying the observer.
+    void notify_stage(ian::Stage which) {
         result.solves = solves;
         result.last_iteration = iteration;
         if (observer) {
@@ -75,23 +48,19 @@ struct Engine {
     Vec solve(bool parameterized) {
         auto r =
             solve_lp(D, edges, upper, C, parameterized, inject == "invalid_solver" && solves == 0);
-        r.record["number"] = solves++;
+        r.record.number = solves++;
         emit(r.record);
-        require(r.record["accepted"].get<bool>(), "invalid_solver_result");
+        require(r.record.accepted, "invalid_solver_result");
         return r.x;
     }
     Mat kernel(const Vec &s) {
         Mat K = affinity(D2, s, deg);
-        emit(Json{{"event", "kernel"}, {"affinity", K}, {"scales", s}});
+        emit(ian::KernelEvent{K,s});
         return K;
     }
     Vec volume(const Vec &s, const Mat *K) {
         Vec v = volumes(D2, s, deg, K);
-        emit(Json{{"event", "volume"},
-                  {"ratios", v},
-                  {"scales", s},
-                  {"degrees", deg},
-                  {"multiscale", K != nullptr}});
+        emit(ian::VolumeEvent{v,s,deg,K != nullptr});
         return v;
     }
     // Retuning uses the original fresh/recycled expression order and stop rules.
@@ -104,10 +73,7 @@ struct Engine {
         if (weighted)
             phase = "final_affinity_retuning";
         double lo = std::min(C, .5), hi = std::max(C, 1.);
-        Json begin = graph_data();
-        begin.update(Json{
-            {"event", "tune_start"}, {"C", C}, {"minC", lo}, {"maxC", hi}, {"recycled", cache}});
-        emit(begin);
+        emit(ian::TuneStartEvent{graph_data(),C,lo,hi,cache});
         Tune result;
         int nits = 0;
         auto evaluate = [&](bool parameterized, int index) {
@@ -120,15 +86,10 @@ struct Engine {
                 if (x > 0)
                     positive.push_back(x);
             result.mu = median(positive);
-            emit(Json{{"event", "retune_eval"},
-                      {"C", C},
-                      {"median", result.mu},
-                      {"minC", lo},
-                      {"maxC", hi},
-                      {"bisection_index", index},
-                      {"median_margin", std::abs(result.mu - 1) - .1},
-                      {"lower_margin", std::abs(C - lo) - (1e-8 + 1e-5 * std::abs(lo))},
-                      {"upper_margin", std::abs(C - hi) - (1e-8 + 1e-5 * std::abs(hi))}});
+            emit(ian::RetuneEvalEvent{C,result.mu,lo,hi,index,
+                std::abs(result.mu - 1) - .1,
+                std::abs(C - lo) - (1e-8 + 1e-5 * std::abs(lo)),
+                std::abs(C - hi) - (1e-8 + 1e-5 * std::abs(hi))});
         };
         auto centered = [&]() { return std::abs(result.mu - 1) <= .1; };
         auto boundary = [&]() {
@@ -142,15 +103,7 @@ struct Engine {
             C = lo + .5 * (hi - lo);
         };
         auto stop = [&]() {
-            emit(Json{{"event", "retune_stop"},
-                      {"C", C},
-                      {"median", result.mu},
-                      {"minC", lo},
-                      {"maxC", hi},
-                      {"median_target_met", centered()},
-                      {"boundary_stop", boundary()},
-                      {"cap_reached", nits >= 20},
-                      {"bisection_updates", nits}});
+            emit(ian::RetuneStopEvent{C,result.mu,lo,hi,centered(),boundary(),nits >= 20,nits});
             require(nits < 20, "retuning_cap");
         };
         if (cache) {
@@ -173,16 +126,11 @@ struct Engine {
         return result;
     }
     // Complete construction: input, graph/pruning, then durable output stages.
-    void run(const Json &input) {
-        Input p = preprocess(input);
-        result.mapping.representatives = p.mapping["representatives"].get<Ids>();
-        result.mapping.member_to_profile = p.mapping["member_to_profile"].get<Ids>();
-        result.mapping.specimen_ids = p.mapping["specimen_ids"].get<std::vector<std::string>>();
-        result.mapping.profile_ids = p.mapping["profile_ids"].get<std::vector<std::string>>();
+    void run(const ian::Input &input) {
+        auto p = preprocess(input);
+        result.mapping = p.mapping;
         input_distances = p.D;
-        Json map = p.mapping;
-        map["event"] = "mapping";
-        if (!restart) emit(map);
+        if (!restart) emit(ian::MappingEvent{p.mapping});
         D = p.D;
         D2 = D;
         double minimum = std::numeric_limits<double>::infinity();
@@ -199,8 +147,7 @@ struct Engine {
         edges = gabriel(D2);
         deg = degrees(D.size(), edges);
         upper = upper_bounds(D, edges);
-        if (!restart) emit(Json{
-            {"event", "processed"}, {"D1", D}, {"D2", D2}, {"scl", scl}, {"initial_edges", edges}});
+        if (!restart) emit(ian::ProcessedEvent{D,D2,scl,edges});
         require(isolates(deg).empty(), "unsupported_initial_isolate");
         // Initialize the multiplier from ordered furthest-neighbor ratios.
         auto nbr = neighbors(D, edges);
@@ -218,14 +165,12 @@ struct Engine {
         for (iteration = restart ? restart->iteration + (graph_restored ? 0 : 1) : 0;
              !graph_restored && iteration < (inject == "pruning_cap" ? 1 : 2000); iteration++) {
             phase = iteration == 0 ? "initial" : "post_prune";
-            Json event = graph_data();
-            event.update(Json{{"event", "iteration"}, {"scl", scl}});
-            emit(event);
+            emit(ian::IterationEvent{graph_data(),scl});
             auto t = tune(false);
             last_stats = t.ratios;
             auto dec = decision(t.ratios, t.mu);
             emit(dec);
-            Ids candidates = dec["candidates"].get<Ids>();
+            Ids candidates = dec.candidates;
             if (candidates.empty()) {
                 converged = true;
                 break;
@@ -235,27 +180,25 @@ struct Engine {
             auto removed = prune(edges, D, candidates);
             deg = degrees(D.size(), edges);
             upper = upper_bounds(D, edges);
-            event = graph_data();
-            event.update(Json{{"event", "pruned"}, {"selected", candidates}, {"removed", removed}});
-            emit(event);
+            emit(ian::PrunedEvent{graph_data(),candidates,removed});
             boundary("pruning");
         }
         if (!converged && iteration > 0)
             --iteration; // match adapter STATE.it: last visited iteration
         // A converged graph is durable before weighted retuning or affinity output.
         phase = "final_affinity_retuning";
-        Json stop = graph_data();
-        stop.update(
-            Json{{"event", "graph_stop"},
-                 {"converged", converged},
-                 {"reason", converged ? "no_pruning_candidates" : "pruning_iteration_cap"}});
-        if (!graph_restored) emit(stop);
+        if (!graph_restored) emit(ian::GraphStopEvent{graph_data(),converged,
+            converged ? "no_pruning_candidates" : "pruning_iteration_cap"});
         require(converged, "pruning_iteration_cap");
-        Json graph = graph_data();
-        graph["scl"] = scl;
-        graph["upper_units"] = "internal_distance = input_distance * scl";
-        graph["upper_to_input_distance"] = 1 / scl;
-        checkpoint("graph", graph);
+        result.graph.edges = edges;
+        result.graph.degrees = deg;
+        result.graph.internal_upper = upper;
+        result.graph.components = components(D.size(),edges);
+        result.graph.isolates = isolates(deg);
+        result.graph.distance_multiplier = scl;
+        for(auto e:edges) result.graph.edge_lengths.push_back(input_distances[e[0]][e[1]]);
+        result.graph_valid = true;
+        notify_stage(ian::Stage::graph);
         if (!graph_restored) boundary("graph");
         if (inject == "after_graph")
             throw std::runtime_error("injected_after_graph");
@@ -263,9 +206,11 @@ struct Engine {
         Vec original = final.scales;
         for (double &x : original)
             x /= scl;
-        checkpoint(
-            "scales",
-            Json{{"scales", original}, {"internal_scales", final.scales}, {"scl", scl}, {"C", C}});
+        result.scales = original;
+        result.internal_scales = final.scales;
+        result.multiplier = C;
+        result.scales_valid = true;
+        notify_stage(ian::Stage::scales);
         if (inject == "after_scales")
             throw std::runtime_error("injected_after_scales");
         for (size_t i = 0; i < D.size(); i++)
@@ -274,16 +219,12 @@ struct Engine {
                             final.K[i][j] == final.K[j][i] &&
                             (i != j || final.K[i][i] == (deg[i] ? 1 : 0)),
                         "invalid_affinity");
-        checkpoint("affinity", Json{{"affinity", final.K}, {"scales", original}, {"C", C}});
+        result.affinity = final.K;
+        result.affinity_valid = true;
+        notify_stage(ian::Stage::affinity);
         if (inject == "after_affinity")
             throw std::runtime_error("injected_after_affinity");
-        emit(Json{{"event", "complete"},
-                  {"edges", edges},
-                  {"scales", original},
-                  {"affinity", final.K},
-                  {"stats", last_stats},
-                  {"wstats", final.ratios},
-                  {"isolates", isolates(deg)}});
+        emit(ian::CompleteEvent{edges,original,final.K,last_stats,final.ratios,isolates(deg)});
         result.stats = last_stats;
         result.weighted_stats = final.ratios;
         result.complete = true;

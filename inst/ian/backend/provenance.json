@@ -267,5 +267,10 @@
     "core/src/input.hpp": "96f1e3ebfc468dd52cbd4bdec8474d5f52dc4913f687abea6781dfb7cf7ee8d6",
     "core/src/stages.hpp": "72fbe5cc0ce17aa98a84afbd0887b12f27724ab72a6f9d0beb4bb6f86f7d3608",
     "core/include/ian/core.hpp": "e4756ebe4c5447e686ba9759a4db94115a7a92edf4bcf2f56d88b199b54f1652"
+  },
+  "typed_message_refactor": {
+    "base": "9fbabc6a5d36098f896936cd79e8f7a963ec363c",
+    "scope": "Named typed payloads and direct R projection; unchanged numerical policy; optional JSON persistence/test boundaries",
+    "original_files_field": "Hashes below describe the original adapter ancestry, not current refactored bytes; build records hash all actual compiled sources."
   }
 }

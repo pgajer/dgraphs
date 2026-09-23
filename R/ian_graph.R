@@ -96,7 +96,7 @@ create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
     final <- if (isTRUE(raw$complete)) .ian.graph(raw$converged, ids, "completed final") else NULL
     if (isTRUE(raw$diagnostics$affinity_valid)) dimnames(raw$affinity) <- list(ids, ids)
     raw$diagnostics$trace_index_base <- 0L
-    raw$diagnostics$trace_format <- "original core JSON fields; zero-based indices"
+    raw$diagnostics$trace_format <- "schema-1 core fields; zero-based indices"
     raw$diagnostics$input_mode <- input.mode
     raw$diagnostics$requested_max_solves <- as.integer(max.solves)
     list(complete = raw$complete, error = raw$error, initial_graph = initial,

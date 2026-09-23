@@ -1,19 +1,22 @@
 #pragma once
 #include "input.hpp"
 #include "solver.hpp"
+#include "events_json.hpp"
+#include "json_adapter.hpp"
 // Small targeted stages retained alongside complete-run regression tests.
 namespace ian::detail {
+using io::Json;
 Json stages(const Json &in) {
     Json results;
-    auto dup = preprocess(in["duplicate"]);
-    results["duplicate"] = dup.mapping;
+    auto dup = preprocess(io::parse_input(in["duplicate"]));
+    results["duplicate"] = io::mapping_json(dup.mapping);
     results["gabriel"] = Json::array();
     for (auto f : in["gabriel"])
         results["gabriel"].push_back(
             Json{{"name", f["name"]}, {"edges", gabriel(f["D2"].get<Mat>())}});
     results["decisions"] = Json::array();
     for (auto d : in["decisions"]) {
-        auto out = decision(d["stats"].get<Vec>(), d["median"].get<double>());
+        auto out = io::payload_json(decision(d["stats"].get<Vec>(), d["median"].get<double>()));
         out["name"] = d["name"];
         results["decisions"].push_back(out);
     }
@@ -30,9 +33,9 @@ Json stages(const Json &in) {
     Ids deg = degrees(D.size(), edges);
     Vec u = upper_bounds(D, edges);
     auto sol = solve_lp(D, edges, u, c["C"].get<double>(), true);
-    require(sol.record["accepted"], "stage_solve_invalid");
+    require(sol.record.accepted, "stage_solve_invalid");
     Mat K = affinity(D2, sol.x, deg);
-    results["disconnected"] = {{"solve", sol.record},
+    results["disconnected"] = {{"solve", io::payload_json(sol.record)},
                                {"components", components(D.size(), edges)},
                                {"ratios", volumes(D2, sol.x, deg)},
                                {"affinity", K},

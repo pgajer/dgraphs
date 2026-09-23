@@ -9,7 +9,7 @@ extern "C" {
 namespace ian::detail {
 struct LPResult {
     Vec x, z;
-    Json record;
+    ian::SolveRecord record;
 };
 inline LPResult solve_lp(const Mat &D, const Edges &edges, const Vec &u, double C,
                          bool parameterized, bool inject = false) {
@@ -69,7 +69,7 @@ inline LPResult solve_lp(const Mat &D, const Edges &edges, const Vec &u, double 
     settings.presolve_enable = false;
     settings.input_sparse_dropzeros = false;
     settings.tol_feas = settings.tol_gap_abs = settings.tol_gap_rel = 1e-9;
-    const Json settings_snapshot = captured_settings(settings);
+    const auto settings_snapshot = captured_settings(settings);
     auto cone = ClarabelNonnegativeConeT(m);
     std::unique_ptr<ClarabelDefaultSolver, decltype(&clarabel_DefaultSolver_free)> solver(
         clarabel_DefaultSolver_new(&P, q.data(), &A, b.data(), 1, &cone, &settings),
@@ -113,35 +113,12 @@ inline LPResult solve_lp(const Mat &D, const Edges &edges, const Vec &u, double 
            gap = std::abs(obj - dual) / std::max({1., std::abs(obj), std::abs(dual)});
     accepted = accepted && maxnormal <= 1e-7 && error <= 1e-7 && stationarity <= 1e-7 &&
                negative <= 1e-7 && gap <= 1e-7;
-    Json record = {
-        {"event", "solve"},
-        {"settings", settings_snapshot},
-        {"site", parameterized ? "parameterized" : "recycled"},
-        {"C", C},
-        {"A_data", values},
-        {"A_indices", indices},
-        {"A_indptr", indptr},
-        {"A_shape", {m, n}},
-        {"b", b},
-        {"c", q},
-        {"upper", u},
-        {"active", active},
-        {"scales", x},
-        {"dual", z},
-        {"status", sol.status == ClarabelSolved ? "optimal" : "not_optimal"},
-        {"objective", sol.obj_val},
-        {"iterations", sol.iterations},
-        {"accepted", accepted},
-        {"validation",
-         {{"max_normalized_violation", maxnormal},
-          {"max_absolute_violation", maxabsolute},
-          {"objective_relative_error", error}}},
-        {"dual_check",
-         {{"stationarity", stationarity}, {"negative", negative}, {"relative_gap", gap}}},
-        {"canonical_shape", {m, n}},
-        {"canonical_soc", Json::array()},
-        {"seconds",
-         std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count()}};
+    ian::SolveRecord record{settings_snapshot, parameterized ? "parameterized" : "recycled", C,
+        values, indices, indptr, {m,n}, b, q, u, active, x, z,
+        sol.status == ClarabelSolved ? "optimal" : "not_optimal", sol.obj_val,
+        sol.iterations, accepted, {maxnormal, maxabsolute, error},
+        {stationarity, negative, gap},
+        std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count()};
     return {x, z, record};
 }
 

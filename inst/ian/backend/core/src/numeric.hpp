@@ -1,6 +1,6 @@
 // IAN arithmetic/order port. IAN-LICENSE.txt and NUMPY-LICENSE.txt apply.
 #pragma once
-#include <json.hpp>
+#include <ian/core.hpp>
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <vector>
 namespace ian::detail {
-using Json = nlohmann::json;
+
 using Vec = std::vector<double>;
 using Mat = std::vector<Vec>;
 using Ids = std::vector<int>;
@@ -283,7 +283,7 @@ inline Vec volumes(const Mat &D2, const Vec &s, const Ids &d, const Mat *K = nul
         }
     return v;
 }
-inline Json decision(const Vec &stats, double mu) {
+inline ian::Decision decision(const Vec &stats, double mu) {
     Vec positive;
     for (double s : stats)
         if (s > 0)
@@ -317,17 +317,7 @@ inline Json decision(const Vec &stats, double mu) {
     Vec margins = stats;
     for (double &v : margins)
         v -= threshold;
-    return Json{{"event", "decision"},
-                {"location", location},
-                {"dispersion", sd},
-                {"threshold", threshold},
-                {"raw_threshold", raw},
-                {"floored_threshold", floor},
-                {"cap", cap},
-                {"stats", stats},
-                {"candidates", candidates},
-                {"threshold_margins", margins},
-                {"median_residual", mu - 1}};
+    return {location, sd, threshold, raw, floor, cap, stats, candidates, margins, mu - 1};
 }
 inline Edges prune(Edges &edges, const Mat &D, const Ids &candidates) {
     auto nbrs = neighbors(D, edges);

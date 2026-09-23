@@ -10,9 +10,9 @@ address findings and request re-review without a new owner prompt.
 | Group | Programme purpose | Historical aliases | Current boundary |
 |---|---|---|---|
 | A | Feasibility and computational comparisons | 01-02 | Fixed-LP and persistent-client evidence; not full-engine speed claims. |
-| B | Reference behavior and reusable implementation | 03-06B | Bounded fidelity/core/restart historically accepted; typed-message refactor now author-qualified and awaiting independent review. |
+| B | Reference behavior and reusable implementation | 03-06B | Bounded fidelity/core/restart historically accepted; typed-message refactor independently accepted for bounded macOS arm64 evidence. |
 | C | Numerical robustness and scale expansion | 07-07K | Historical bounded studies include refusals and near-optimal scale variation. New helix arithmetic agreement is accepted for its bounded scope; the ladder stays gated. |
-| D | Performance and platform qualification | Proposed 08-09 | Comprehensive milestones unexecuted; internal adapter has new bounded one-host author qualification. |
+| D | Performance and platform qualification | Proposed 08-09 | Comprehensive milestones unexecuted; internal adapter independently accepted on macOS arm64; an additional typed R 4.5.2 subset passes. |
 | E | Controlled scientific application | Proposed 10 | Engine and downstream estimator acceptance must both be specified. |
 | F | Methodological alternatives and benchmarks | Proposed 11 | Can proceed alongside engineering after an explicit bounded authorization. |
 
@@ -31,8 +31,10 @@ separate proposed milestone.
 An unresolved methodological choice is whether and how to define a secondary scale
 selection rule. The objective-band study supports weak determination near the
 optimum but proves neither exact nonuniqueness nor full-trajectory compatibility.
-The internal adapter now has bounded author checks of its repaired pinned
-header layout and in-process settings capture; independent review is pending.
+The internal adapter now has independent acceptance of its repaired pinned
+header layout and complete in-process settings capture on macOS arm64. Linux,
+Windows and Intel Mac runtime remain unqualified; see the
+[platform coverage and proposed matrix](../experiments/020-portable-r-interface/report.md).
 See the ranked [analysis queue](../experiments/analysis-queue.md).
 
 The focused helix continuation (IAN-EXP-026) identifies the differing constraint

@@ -9,19 +9,28 @@
     "IA2"
   ],
   "execution_status": "proposal; unexecuted",
-  "outcome": "not tested",
+  "outcome": "Broader platforms unexecuted; adjacent adapter audit qualifies macOS arm64 R-devel and a typed R 4.5.2 subset.",
   "documentation_worker": "IAN implementer/coordinator",
   "dependencies": [
     {
       "id": "IAN-EXP-007",
       "type": "shared infrastructure"
+    },
+    {
+      "id": "IAN-EXP-024",
+      "type": "bounded interface baseline"
+    },
+    {
+      "id": "IAN-EXP-025",
+      "type": "bounded interface baseline"
     }
   ],
   "source_paths": [
-    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/coordinator/ROADMAP.md"
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/coordinator/ROADMAP.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md"
   ],
   "figure_paths": [],
-  "missing_figure_reason": "No new numerical study was executed; a result figure would imply evidence that does not exist.",
+  "missing_figure_reason": "The coverage table distinguishes executed Mac/R evidence from untested platform targets.",
   "audit_status_source": "audit-summary.json",
   "numerical_check_source": "audit-summary.json",
   "issues_source": "../correction-dispositions.json",

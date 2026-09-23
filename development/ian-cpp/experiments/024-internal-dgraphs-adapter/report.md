@@ -2,7 +2,7 @@
 
 IAN-EXP-024 · Internal adapter 1 · Aims IA1 and IA2 · Executed 23 September 2026.
 
-**The installed, unexported adapter reproduces all four small reference examples and returns the actual initial Gabriel graph separately from the completed final graph.** This is a usable local integration candidate with author qualification; independent review and public export remain pending.
+**The installed, unexported adapter reproduces all four small reference examples and returns the actual initial Gabriel graph separately from the completed final graph.** The bounded implementation now has independent acceptance on macOS arm64. Public export and broader runtime qualification remain pending; this maintained catalogue presentation has not itself been independently reviewed.
 
 ## Interface and numerical policy
 
@@ -50,4 +50,10 @@ The candidate lives in the isolated branch `codex/ian-internal-adapter-20260923`
 
 See the [adapter report](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/worktree/dev/ian/REPORT.md), [frozen contract](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/worktree/dev/ian/CONTRACT.md), [build and interface guide](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/worktree/inst/ian/README.md), [tested usage example](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/worktree/dev/ian/example.R), [handoff and private installation instructions](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/implementer-handoff.md), [qualification summary](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/evidence/summary.json), and [maintained snapshot](results-summary.json).
 
-Independent review should cover this bounded implementation and the optional backend arrangement. A supported export, other platforms, durable R checkpoint/resume and larger trajectories remain separate milestones. This study does not complete the [portable R qualification proposal](../020-portable-r-interface/report.md). The numerical scale ladder remains closed.
+Independent review accepted this bounded implementation and optional backend arrangement. A supported export, other platforms, durable R checkpoint/resume and larger trajectories remain separate milestones. This study does not complete the [portable R qualification proposal](../020-portable-r-interface/report.md). The numerical scale ladder remains closed.
+
+## Subsequent independent review
+
+The [independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md) accepted the original adapter and its preservation in the typed core, with no corrective findings requiring an implementer patch. Fresh original and typed installations passed the same interface and full-trace comparisons. All 39 settings fields agree; all 82 deliberately mismatched layout probes stop before solving. All 237 solver-attempt records across the combined audit retain the complete settings snapshot. The combined audit independently recalculated 96 complete numerical payloads. These audit counts are separate from the original author schedules above.
+
+The audit also built the typed candidate under R 4.5.2 and passed four full fixtures and three controls on the same macOS arm64 host. This seven-case subset is narrower than the R-devel schedule. A clean private launcher/library setup and privately built dependency were necessary; earlier environment failures remain recorded. Linux, Windows and macOS x86_64 runtime qualification remain open. The [portability proposal](../020-portable-r-interface/report.md) records the remaining build and runner requirements.

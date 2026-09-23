@@ -33,15 +33,21 @@
     },
     {
       "id": "DEC-INTERNAL-ADAPTER",
-      "state": "authorized bounded implementation complete; independent review pending",
+      "state": "independently accepted for bounded macOS arm64 implementation scope",
       "scope": "Internal unexported dgraphs adapter returning initial Gabriel graph, completed final graph and diagnostics; public export and comprehensive portability excluded",
-      "basis": "User instruction in current task, 23 September 2026; IAN-EXP-024"
+      "basis": "User instruction in current task, 23 September 2026; IAN-EXP-024",
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md",
+      "presentation_review": "maintained catalogue report not independently reviewed",
+      "broader_platforms": "Linux, Windows and macOS x86_64 runtime unqualified"
     },
     {
       "id": "DEC-TYPED-CORE",
-      "state": "authorized refactor complete; independent review pending",
+      "state": "independently accepted for bounded macOS arm64 implementation scope",
       "scope": "Typed internal messages and direct R diagnostics; unchanged numerical policy; preserved persistence formats",
-      "basis": "User instruction 23 September 2026; IAN-EXP-025"
+      "basis": "User instruction 23 September 2026; IAN-EXP-025",
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md",
+      "presentation_review": "maintained catalogue report not independently reviewed",
+      "broader_platforms": "Linux, Windows and macOS x86_64 runtime unqualified"
     },
     {
       "id": "DEC-HELIX-ARITHMETIC",
@@ -50,6 +56,12 @@
       "basis": "User four-point continuation authorization 23 September 2026; IAN-EXP-026",
       "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7k/audit.md",
       "policy_adopted": false
+    },
+    {
+      "id": "DEC-AUDIT-STANDING",
+      "state": "authorized",
+      "scope": "Initiate independent IAN audits, address corrective findings and request re-review without new owner prompts",
+      "basis": "User instruction 23 September 2026; docs/audit-coordination.md"
     }
   ]
 }

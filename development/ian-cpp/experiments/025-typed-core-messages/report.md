@@ -2,7 +2,7 @@
 
 IAN-EXP-025 · Typed core refactor · Aims IA1 and IA2 · Executed 23 September 2026.
 
-Author qualification complete; independent review pending.
+The bounded implementation has independent acceptance on macOS arm64. This maintained catalogue presentation still awaits independent review.
 
 The numerical engine and R bridge now exchange typed C++ structures. Four small
 reference examples retain exactly the same graphs, scales, affinities and complete
@@ -69,11 +69,18 @@ subsequent development comparison/report changes are excluded from the package.
 The new private installation and full evidence paths are in the private handoff.
 The older tested adapter and all historical evidence remain in place.
 
-This is author qualification on one macOS arm64 host. No performance improvement
-was measured. General numerical robustness, other platforms, public export, larger
-runs and independent audit acceptance remain outside this change. Cross-build
+The author qualification and subsequent independent implementation acceptance
+cover one macOS arm64 host. No performance improvement was measured. General
+numerical robustness, other platforms, public export and larger runs remain outside
+this acceptance. Cross-build
 checkpoint migration is still unsupported; source identities continue to guard it.
 
 ## Source and evidence
 
 See the [typed structures](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/worktree/inst/ian/backend/core/include/ian/core.hpp), [engine](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/worktree/inst/ian/backend/core/src/engine.hpp), [plan](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/worktree/dev/ian/typed-core/PLAN.md), [handoff and installed-use instructions](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/implementer-handoff.md), [summary](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/evidence/summary.json), and [evidence manifest](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/evidence/manifest.json). The [previous adapter study](../024-internal-dgraphs-adapter/report.md) remains a separate preserved result.
+
+## Subsequent independent review
+
+The [independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md) accepted the typed-message, numerical and failure-preservation claims, with no corrective findings requiring an implementer patch. Fresh installed-source builds, all 13 interface cases, four full traces, native checkpoint/observer tests, six fixed decision controls and direct/serialized event comparisons pass within the stated scope. All 39 captured settings match the intended Rust settings, and every deliberately mismatched layout response is refused before solver construction.
+
+The combined original/typed/R-version audit made 46 engine calls and 237 attempts: 234 accepted and three deliberately rejected numerical returns. Seven typed-candidate cases under an isolated R 4.5.2 installation match the fresh typed R-devel results after the declared timing/build exclusions. The original adapter and full interrupt schedule were not separately tested under R 4.5.2. Environment and auditor-checker failures are preserved in the audit; none required a candidate source correction. Linux, Windows and other-architecture runtime qualification remain outside this acceptance.

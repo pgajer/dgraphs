@@ -1,13 +1,28 @@
 {
-  "audit_status": "not independently reviewed",
-  "numerically_checked": false,
-  "numerical_check_scope": "Author qualification and reference comparisons passed; independent verification pending.",
+  "audit_status": "accepted for bounded macOS arm64 implementation evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Bounded original adapter/interface claims on macOS arm64 R-devel, including 39-field repair, mismatch refusal, complete settings capture and fresh installed-source builds. Auditor independently recomputed 96 complete numerical payloads across the combined review and checked all 237 settings records.",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "3c2db567bedf21d4b12ad9a71f294abc9f29a5877526bead023ff4bf8cb42cad",
+    "report_sha256": "971d14099152ef8ab0335e41a8d51b278cee26c408dcc27649311a7a28a099e6",
     "review": null
   },
-  "audit_history": [],
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md",
+      "review_sha256": "7cfbca7ed21634030f2bdebaab84bdee26d244963de0ecddd4918e82ca96dcdb",
+      "candidate": "9fbabc6a5d36098f896936cd79e8f7a963ec363c",
+      "scope": "Bounded original adapter/interface claims on macOS arm64 R-devel, including 39-field repair, mismatch refusal, complete settings capture and fresh installed-source builds.",
+      "corrective_findings": []
+    }
+  ],
   "consequential_limits": "One macOS host and small cases; optional backend; source packaging warnings; no full R CMD check, public export, larger trajectories or R checkpoint/resume.",
-  "findings_register": "../correction-dispositions.json"
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "3c2db567bedf21d4b12ad9a71f294abc9f29a5877526bead023ff4bf8cb42cad",
+      "status": "unreviewed catalogue submission before independent implementation acceptance",
+      "change": "Record later implementation audit and additional R-version evidence; presentation remains unreviewed."
+    }
+  ]
 }

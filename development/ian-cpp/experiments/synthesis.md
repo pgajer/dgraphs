@@ -46,11 +46,11 @@ Keep the scale ladder gated. Any secondary selection rule is an explicit policy
 change needing fixed-problem tests and later trajectory/pruning comparison.
 Do not adopt HiGHS, loosen a status requirement or select favorable rounded
 coefficients merely because a diagnostic succeeds. The internal dgraphs adapter
-now has bounded one-host author qualification, including the pinned C/Rust settings
+now has independent bounded macOS arm64 acceptance, including the pinned C/Rust settings
 layout repair and actual settings capture. Four small reference outputs reproduce
 exactly, and initial/final graphs are returned separately. See
-[IAN-EXP-024](024-internal-dgraphs-adapter/report.md); independent review and broader
-portability remain pending. Engine acceptance does not resolve downstream estimator
+[IAN-EXP-024](024-internal-dgraphs-adapter/report.md). Broader
+portability remains pending; a separate typed R 4.5.2 seven-case subset passes on the same Mac. Engine acceptance does not resolve downstream estimator
 conditioning, assay matching or biological validity.
 
 ## Figures for discussion
@@ -70,8 +70,9 @@ records and observer messages with typed C++ structures. Direct R diagnostics an
 all four full reference traces remain exact apart from timing/build metadata. Disk
 checkpoint/resume and failure checks pass; JSON remains at explicit persistence
 and legacy test boundaries. See [IAN-EXP-025](025-typed-core-messages/report.md).
-This is author qualification pending independent review, with no measured
-performance claim or change to the scale gate.
+Independent review accepts this bounded macOS arm64 implementation evidence,
+including the additional R 4.5.2 subset. The maintained catalogue presentation
+remains unreviewed; there is no measured performance claim or change to the scale gate.
 
 ## Focused helix continuation
 

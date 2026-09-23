@@ -67,6 +67,46 @@
       "available": true,
       "sha256": "5a98c87d408da4337209b9301dfbbc2701c54966e6e419d157c9c9a2b58c1191",
       "identity_scope": "Current bytes; final-source-state.json binds execution and final source revisions separately."
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md",
+      "available": true,
+      "sha256": "7cfbca7ed21634030f2bdebaab84bdee26d244963de0ecddd4918e82ca96dcdb",
+      "identity_scope": "Independent audit, limited to its explicitly stated candidate and platform scope"
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/PLAN.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/PLAN.md",
+      "available": true,
+      "sha256": "7fae77dfb0de1dfe564fd3b328337efe6d4ca443d344af2373e49230d72fd15d",
+      "identity_scope": "Independent audit, limited to its explicitly stated candidate and platform scope"
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit-manifest.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit-manifest.json",
+      "available": true,
+      "sha256": "22e224f74c872c67f425141dc9bacde4874f987ba253f13e100771fba8290f11",
+      "identity_scope": "Independent audit, limited to its explicitly stated candidate and platform scope"
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/final-checks.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/final-checks.json",
+      "available": true,
+      "sha256": "1cafc944af75e1e2eb612d1aaefabadcbc25fe8b4495b5ef1f0fa9aba8ac1d3d",
+      "identity_scope": "Independent audit, limited to its explicitly stated candidate and platform scope"
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/preservation-after.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/preservation-after.json",
+      "available": true,
+      "sha256": "4d790a07886e29a9bab0fb683144bd0bc21b705e43a62904fb6c3968385c51b4",
+      "identity_scope": "Independent audit, limited to its explicitly stated candidate and platform scope"
     }
   ],
   "backup": "No independently verified backup location"

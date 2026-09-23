@@ -3,16 +3,21 @@
   "numerically_checked": false,
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "722eff77231dfc4beba7fad69fe777402eb7025d83ecfbf705b1f95d4bdce11c",
+    "report_sha256": "355c9c21111d054d35ef365634057e0846c93678a8112fa6651421a7bc933e64",
     "review": null
   },
   "audit_history": [],
-  "consequential_limits": "The native C/Rust header mismatch and complete in-process settings capture need separate qualification; early one-host R success is insufficient.",
+  "consequential_limits": "Linux, Windows and Intel Mac runtime remain unqualified. The repaired adapter was accepted separately on macOS arm64, with an additional R 4.5.2 typed subset.",
   "presentation_revision_history": [
     {
       "report_sha256": "944292d377795937351c21d78b6f90e503a9a5a860f53924f417d19b4399994f",
       "status": "unreviewed first catalogue draft",
       "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    },
+    {
+      "report_sha256": "722eff77231dfc4beba7fad69fe777402eb7025d83ecfbf705b1f95d4bdce11c",
+      "status": "unreviewed proposal presentation",
+      "change": "Distinguish adjacent accepted Mac evidence from the still unexecuted broader platform proposal."
     }
   ]
 }

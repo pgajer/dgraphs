@@ -1,10 +1,13 @@
 # Audit coverage and outstanding review
 
-Of 21 executed question records, 18 map to independently accepted bounded
-studies across 17 milestones. The helix arithmetic study (IAN-EXP-026), including
+Of 21 executed question records, 20 map to independently accepted bounded
+studies across 19 milestones. The helix arithmetic study (IAN-EXP-026), including
 its current report and figure, was accepted on 23 September 2026 with no corrective
-findings. The saved-state pruning comparison (IAN-EXP-023), internal dgraphs adapter
-(IAN-EXP-024), and typed-core refactor (IAN-EXP-025) await independent review.
+findings. The internal dgraphs adapter (IAN-EXP-024) and typed-core refactor
+(IAN-EXP-025) are accepted for bounded implementation evidence on macOS arm64,
+including an additional seven-case typed R 4.5.2 subset. Their current catalogue
+presentation was not reviewed. Only the saved-state pruning comparison
+(IAN-EXP-023) awaits independent implementation review.
 The five proposal records have no numerical audit.
 These counts do not imply that every inference, dataset or intended use is validated.
 Current review status comes from each audit-summary.json, never a duplicate metadata

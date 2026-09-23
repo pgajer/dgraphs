@@ -4,6 +4,9 @@ Current navigation, 23 September 2026. This replaces no frozen milestone report.
 Use each experiment's audit-summary.json for current historical-evidence review
 status and decisions.yml for advancement; old roadmap prose is historical context.
 
+The implementer has [standing authorization to coordinate independent audits](audit-coordination.md),
+address findings and request re-review without a new owner prompt.
+
 | Group | Programme purpose | Historical aliases | Current boundary |
 |---|---|---|---|
 | A | Feasibility and computational comparisons | 01-02 | Fixed-LP and persistent-client evidence; not full-engine speed claims. |

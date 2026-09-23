@@ -66,13 +66,13 @@
     },
     {
       "id": "DEC-FIVE-STAGE-CONTINUATION",
-      "state": "stages 1 and 2 accepted; all findings closed; stage 3 may begin",
+      "state": "stages 1, 2 and 3 accepted; all findings closed; stage 4 may begin",
       "scope": "Numerical policy, scale, supported platforms, performance, controlled scientific evaluation in that order; resolve findings before advancing",
       "basis": "Owner instruction in this task on 23 September 2026; experiments/analysis-queue.md",
       "candidate_policy": "IAN evaluated-LP retry-power 0.1",
       "candidate_adopted": true,
       "adoption_scope": "Explicit internal qualification option on tested Mac; strict R default retained",
-      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage02-scale/audit.md"
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage03-package/audit.md"
     },
     {
       "id": "DEC-SUPPORTED-TARGET",

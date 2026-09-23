@@ -1,7 +1,7 @@
 # Audit coverage and outstanding review
 
-Of 24 executed question records, 23 map to independently accepted bounded
-studies across 22 milestones. The helix arithmetic study (IAN-EXP-026), including
+Of 24 executed question records, 24 map to independently accepted bounded
+studies across 23 milestones. The helix arithmetic study (IAN-EXP-026), including
 its current report and figure, was accepted on 23 September 2026 with no corrective
 findings. The internal dgraphs adapter (IAN-EXP-024) and typed-core refactor
 (IAN-EXP-025) are accepted for bounded implementation evidence on macOS arm64,
@@ -9,15 +9,15 @@ including an additional seven-case typed R 4.5.2 subset. Their current catalogue
 presentation was not reviewed. The saved-state pruning comparison (IAN-EXP-023), including its Markdown/PDF
 presentation, is also accepted without corrective findings. The numerical-policy integration (IAN-EXP-027) is accepted with its documentation comment closed and its exact Markdown/PDF reviewed.
 The scale-panel record (IAN-EXP-028), its saved warning diagnostic and exact Markdown/PDF are independently accepted with no corrective findings.
-The package-qualification record (IAN-EXP-029) is in author validation and awaits independent review.
+The package-qualification record (IAN-EXP-029), exact Markdown/PDF and separate accounting, scope and grip compatibility corrections are independently accepted with no open findings.
 The five proposal records have no numerical audit.
 These counts do not imply that every inference, dataset or intended use is validated.
 Current review status comes from each audit-summary.json, never a duplicate metadata
 flag. Shared phase02 audit scope is counted once at milestone level.
 
-The other 25 catalogue reports, historical figure reconstructions, aims wording
+The other 24 catalogue reports, historical figure reconstructions, aims wording
 and synthesis have author checks but have not received independent presentation
-review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027 and IAN-EXP-028 acceptances do not audit the complete catalogue. For every record current_report_review
+review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028 and IAN-EXP-029 acceptances do not audit the complete catalogue. For every record current_report_review
 names that limitation and binds the current report hash. Historical audit history
 remains distinct and is not silently carried forward to rewritten prose.
 

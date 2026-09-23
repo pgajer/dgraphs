@@ -1,16 +1,32 @@
 {
-  "audit_status": "independent review pending",
-  "numerically_checked": false,
-  "numerical_check_scope": "Author comparisons and saved-payload checks; independent audit pending",
+  "audit_status": "accepted within bounded Mac package scope; F1, N1 and F2 closed",
+  "numerically_checked": true,
+  "numerical_check_scope": "52 fresh R entries, 414 attempts, 290 full payload certificates; exact full-object comparisons and all settings pass",
   "current_report_review": {
-    "status": "not independently reviewed",
+    "status": "accepted",
     "report_sha256": "a6716bd47c387ec014a412d0298a3ccca9d5d36b1b061b2b20c94dd37820d3eb",
     "frozen_submission": {
       "report_sha256": "a6716bd47c387ec014a412d0298a3ccca9d5d36b1b061b2b20c94dd37820d3eb",
       "report_pdf_sha256": "b77d929f697840654500303edfcc716287d61b1a0b61e72f3211966c59c79164",
       "reason": "Preserve exact submitted presentation during unrelated catalogue corrections; not an acceptance claim."
-    }
+    },
+    "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage03-package/audit.md",
+    "review_sha256": "6a6afff687bc20702d01af8b51357a54b3d5c31d076a2348e9b9ec88c1f47c12",
+    "report_pdf_sha256": "b77d929f697840654500303edfcc716287d61b1a0b61e72f3211966c59c79164",
+    "scope": "Exact submitted Markdown/PDF accepted; HTML text/links checked, browser appearance unverified; pending labels retain submission history"
   },
-  "audit_history": [],
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage03-package/audit.md",
+      "review_sha256": "6a6afff687bc20702d01af8b51357a54b3d5c31d076a2348e9b9ec88c1f47c12",
+      "candidate": "aef1c01",
+      "corrections": [
+        "f3d2af7",
+        "91406a1",
+        "25f914c"
+      ],
+      "scope": "Bounded package qualification; later grip patch separately reviewed with targeted overlays"
+    }
+  ],
   "consequential_limits": "Internal Mac arm64 evidence; other platforms, public export and R above 500 rows unqualified"
 }

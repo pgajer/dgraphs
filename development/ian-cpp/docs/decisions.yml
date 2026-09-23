@@ -45,9 +45,11 @@
     },
     {
       "id": "DEC-HELIX-ARITHMETIC",
-      "state": "authorized bounded study complete; independent review pending",
+      "state": "independently accepted bounded study; no corrective findings",
       "scope": "Exact arithmetic origin, preserved convergence histories, two explicit square rules and full native/Python helix plus four small controls; no policy adoption or ladder expansion",
-      "basis": "User four-point continuation authorization 23 September 2026; IAN-EXP-026"
+      "basis": "User four-point continuation authorization 23 September 2026; IAN-EXP-026",
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7k/audit.md",
+      "policy_adopted": false
     }
   ]
 }

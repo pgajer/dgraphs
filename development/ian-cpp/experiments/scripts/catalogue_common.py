@@ -41,6 +41,10 @@ def document(p):
 
 def html_document(p,out,ast,pandoc):
     body=subprocess.run([pandoc,'--from=json','--to=html5'],input=json.dumps(ast),text=True,capture_output=True,check=True).stdout
+    if p.name=='report.md' and (p.parent/'audit-summary.json').exists():
+        review=json.loads((p.parent/'audit-summary.json').read_text())['current_report_review']
+        if review.get('status')=='accepted':
+            body='<div class="panel"><strong>Independent audit: accepted.</strong> <a href="'+html.escape(review['review'],quote=True)+'">Read the audit</a>. The reviewed submission below is preserved; its earlier “review pending” labels describe the submission state.</div>'+body
     def link(m):
         attr,url=m.groups()
         if url.startswith('/'):

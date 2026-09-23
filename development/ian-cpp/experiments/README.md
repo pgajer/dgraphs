@@ -1,6 +1,6 @@
 # IAN experiment catalogue
 
-Start with the [project aims](../docs/project-aims.md), [synthesis](synthesis.md) and [HTML catalogue](build/index.html). The catalogue contains 17 executed questions across 16 independently accepted historical milestones, four newly executed studies awaiting independent review, and five separate unexecuted proposals. Historical phases and evidence stay in place. `.yml` files use JSON syntax, valid YAML 1.2, so no YAML package is needed.
+Start with the [project aims](../docs/project-aims.md), [synthesis](synthesis.md) and [HTML catalogue](build/index.html). The catalogue contains 18 executed questions across 17 independently accepted bounded milestones, three newly executed studies awaiting independent review, and five separate unexecuted proposals. Historical phases and evidence stay in place. `.yml` files use JSON syntax, valid YAML 1.2, so no YAML package is needed.
 
 ## Rebuild presentation only
 
@@ -15,7 +15,7 @@ python3 development/ian-cpp/experiments/scripts/check_catalogue.py
 
 The first command reconstructs four presentation figures from the maintained aggregate snapshot. The new helix figure command reconstructs its separately bound snapshot. The catalogue command renders all records and shared documents, then assembles a bookmarked PDF book. Neither runs an optimizer or reads private operational evidence. The final command validates maintained identities, dependencies, local links, source-to-render hashes and book assembly. It is an author check, not an independent numerical audit.
 
-All generated assets and QA belong in ignored `build/` directories. Rendering never edits maintained prose, metadata or audit summaries. Do not reuse stale partial builds; this initial renderer always rebuilds every record. External backup/archive coverage is unknown. These files are local project artifacts: absolute evidence links require the original authorized filesystem.
+All generated assets and QA belong in ignored `build/` directories. Rendering never edits maintained prose, metadata or audit summaries. Do not reuse stale partial builds. The renderer rebuilds every HTML record and preserves an existing independently reviewed PDF only when its bytes match the accepted hash; otherwise it renders the reviewed source anew. External backup/archive coverage is unknown. These files are local project artifacts: absolute evidence links require the original authorized filesystem.
 
 ## Maintenance
 

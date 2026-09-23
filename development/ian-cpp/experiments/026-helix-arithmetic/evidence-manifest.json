@@ -66,6 +66,38 @@
       "available": true,
       "sha256": "dd55ea83e5a2f7b6cbdfee3072dce96014adfc320de68bcd3ae26fd08005aaae",
       "identity_scope": "Current immutable delivery bytes"
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7k/audit.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7k/audit.md",
+      "available": true,
+      "sha256": "358ffb8236f906005296cc4d4c7e8f874f30f9a300a5c52bf324f4410b6aced7",
+      "identity_scope": "Independent review bytes; scope and accepted versions specified by reviewer"
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7k/findings.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7k/findings.json",
+      "available": true,
+      "sha256": "766566bd4642fa0f9b9db63bb0b0731f8f6a2b938d59359741962b0d2aaac03f",
+      "identity_scope": "Independent review bytes; scope and accepted versions specified by reviewer"
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7k/report-checks.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7k/report-checks.json",
+      "available": true,
+      "sha256": "fd297fb2f60ee0f47c6e0aeb94e70341ee6924ab917d23a7277417ba8da45d8c",
+      "identity_scope": "Independent review bytes; scope and accepted versions specified by reviewer"
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7k/audit-manifest.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7k/audit-manifest.json",
+      "available": true,
+      "sha256": "c93e4efa7ea81a35ef28a3a9d8d37e440905d798703334762286b86627eae0c8",
+      "identity_scope": "Independent review bytes; scope and accepted versions specified by reviewer"
     }
   ],
   "backup": "No independently verified backup location"

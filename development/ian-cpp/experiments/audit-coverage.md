@@ -1,17 +1,18 @@
 # Audit coverage and outstanding review
 
-Of 21 executed question records, 17 map to independently accepted bounded
-historical evidence across 16 milestones. The new saved-state pruning comparison
-(IAN-EXP-023), internal dgraphs adapter qualification (IAN-EXP-024), typed
-core refactor (IAN-EXP-025), and helix arithmetic study (IAN-EXP-026) have author
-checks and await independent review. The five proposal records have no numerical
-audit.
+Of 21 executed question records, 18 map to independently accepted bounded
+studies across 17 milestones. The helix arithmetic study (IAN-EXP-026), including
+its current report and figure, was accepted on 23 September 2026 with no corrective
+findings. The saved-state pruning comparison (IAN-EXP-023), internal dgraphs adapter
+(IAN-EXP-024), and typed-core refactor (IAN-EXP-025) await independent review.
+The five proposal records have no numerical audit.
 These counts do not imply that every inference, dataset or intended use is validated.
 Current review status comes from each audit-summary.json, never a duplicate metadata
 flag. Shared phase02 audit scope is counted once at milestone level.
 
-The new catalogue reports, figures, aims wording and synthesis have author checks
-but have not received independent review. For every record current_report_review
+The other 25 catalogue reports, historical figure reconstructions, aims wording
+and synthesis have author checks but have not received independent presentation
+review. The IAN-EXP-026 acceptance does not audit the complete catalogue. For every record current_report_review
 names that limitation and binds the current report hash. Historical audit history
 remains distinct and is not silently carried forward to rewritten prose.
 

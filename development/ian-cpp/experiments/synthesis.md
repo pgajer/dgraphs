@@ -82,5 +82,6 @@ steps and final affinities. Matching multiplication makes both refuse at the
 original point. All 446 fresh attempts are accounted for, and the four small
 paired controls pass. This explains the specific interface discrepancy on this
 host; it does not prove arithmetic robustness, cross-platform equivalence or
-invariance across all near-optimal scale choices. Independent review and wider
-qualification precede any promotion of this candidate or reopening of the ladder.
+invariance across all near-optimal scale choices. Independent review accepted this bounded study and its current report/figure with
+no corrective findings. Wider regression and portability qualification precede any
+promotion of this candidate or reopening of the ladder.

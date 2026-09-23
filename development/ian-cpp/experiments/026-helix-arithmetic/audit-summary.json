@@ -1,13 +1,25 @@
 {
-  "audit_status": "not independently reviewed",
-  "numerically_checked": false,
-  "numerical_check_scope": "Author checked all 446 attempts and complete trajectory comparisons; independent review pending.",
+  "audit_status": "accepted for bounded helix arithmetic compatibility study",
+  "numerically_checked": true,
+  "numerical_check_scope": "Independent audit rebuilt and reproduced 14 complete/refused executions, all 446 attempts and every classification; exact trajectories, vectors, arithmetic, controls and current report/figure passed. No corrective findings.",
   "current_report_review": {
-    "status": "not independently reviewed",
+    "status": "accepted",
     "report_sha256": "70349892b9dc17fc507fad74eeeab59531fde92480a2273ca6446d5aa5321d1f",
-    "review": null
+    "report_pdf_sha256": "27285f479ac79dc24619f025f18f29cae9235619fbc585f2c7a2636b885f0958",
+    "figure_data_sha256": "c20b748e0b51d16af005ba8058497ed037707ceb61d28df209a7c78d53bf0d47",
+    "figure_png_sha256": "0c096ae91960760743c0698a13183e552c35b3485a71253ed4a156b20bd69987",
+    "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7k/audit.md",
+    "review_sha256": "358ffb8236f906005296cc4d4c7e8f874f30f9a300a5c52bf324f4410b6aced7",
+    "scope": "Reviewed source text and submitted PDF/figure; frozen pending labels refer to submission state."
   },
-  "audit_history": [],
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7k/audit.md",
+      "review_sha256": "358ffb8236f906005296cc4d4c7e8f874f30f9a300a5c52bf324f4410b6aced7",
+      "candidate": "cd6d7549432cfe41de929534b24852861882bf69",
+      "scope": "Focused arithmetic study, all submitted/fresh attempts and current report/figure; no policy adoption or larger-scale advancement."
+    }
+  ],
   "consequential_limits": "One Mac; historical experimental retry policy; power rule not adopted into typed core or adapter; system power portability and broader boundary regression remain unqualified.",
   "findings_register": "../correction-dispositions.json"
 }

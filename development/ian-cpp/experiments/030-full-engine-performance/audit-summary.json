@@ -1,0 +1,11 @@
+{
+  "audit_status": "independent review pending",
+  "numerically_checked": true,
+  "numerical_check_scope": "Author checks: 846 full payloads and 96 persistent result/history comparisons; not independent acceptance",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "4b43e709587602749ad1fb7dc1b1e6d4893bdf7b4435d568549238dbf312af7d"
+  },
+  "audit_history": [],
+  "consequential_limits": "One shared Mac; client/instrumentation boundaries differ; R capped at 500; no pure-language or core-memory claim"
+}

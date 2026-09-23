@@ -1,6 +1,6 @@
 # Audit coverage and outstanding review
 
-Of 24 executed question records, 24 map to independently accepted bounded
+Of 25 executed question records, 24 map to independently accepted bounded
 studies across 23 milestones. The helix arithmetic study (IAN-EXP-026), including
 its current report and figure, was accepted on 23 September 2026 with no corrective
 findings. The internal dgraphs adapter (IAN-EXP-024) and typed-core refactor
@@ -15,7 +15,7 @@ These counts do not imply that every inference, dataset or intended use is valid
 Current review status comes from each audit-summary.json, never a duplicate metadata
 flag. Shared phase02 audit scope is counted once at milestone level.
 
-The other 24 catalogue reports, historical figure reconstructions, aims wording
+The other 25 catalogue reports, historical figure reconstructions, aims wording
 and synthesis have author checks but have not received independent presentation
 review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028 and IAN-EXP-029 acceptances do not audit the complete catalogue. For every record current_report_review
 names that limitation and binds the current report hash. Historical audit history
@@ -34,3 +34,5 @@ Historical limits remain claim-specific: original-expression fidelity fails some
 array comparisons; full-engine performance/portability and biological utility are
 not established; unrestricted scale advancement is gated; the bounded stage-2 panel is now permitted. The correction register keeps
 closed defects distinct from these unresolved scientific and qualification limits.
+
+IAN-EXP-030 adds 110 author-executed calls for complete-pipeline profiling. Its numerical evidence and current presentation await independent review; no stage advancement follows yet.

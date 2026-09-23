@@ -1,12 +1,22 @@
 {
-  "audit_status": "submitted; independent review pending",
-  "numerically_checked": false,
-  "numerical_check_scope": "Author scalar and structural checks; independent stage-2 audit not yet performed",
+  "audit_status": "accepted within bounded scale-panel scope; no corrective findings",
+  "numerically_checked": true,
+  "numerical_check_scope": "Fresh independent twelve-run 388-attempt replay; scalar certificates, all settings, geometry, graph/affinity, checkpoint and warning checks pass",
   "current_report_review": {
-    "status": "not independently reviewed",
+    "status": "accepted",
     "report_sha256": "7899f2452f9b1e6b2254002e65eef291e149084541dfd531d2dcaf7ceebd6308",
-    "review": null
+    "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage02-scale/audit.md",
+    "report_pdf_sha256": "8c2959e6666d8c1ab747d01d8f288a462094a237789a8fc33ebe87071bbbdc8c",
+    "review_sha256": "70da880a8a525e130d5afc4270c22deb9ee730e9ec3bc007d0805395caeaeb29",
+    "scope": "Exact Markdown/PDF accepted; HTML content and links accepted, browser appearance unverified. Frozen pending labels describe submission state."
   },
-  "audit_history": [],
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage02-scale/audit.md",
+      "review_sha256": "70da880a8a525e130d5afc4270c22deb9ee730e9ec3bc007d0805395caeaeb29",
+      "candidate": "ddf25ec9e8cd4aa355e8f82fca33c653c910ac2d",
+      "scope": "Bounded scale evidence and exact report; no corrective findings"
+    }
+  ],
   "consequential_limits": "Mac arm64 synthetic panel only; R size, larger scale and other platforms unqualified; low-level NumPy warning cause unresolved"
 }

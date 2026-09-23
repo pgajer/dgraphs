@@ -111,3 +111,5 @@ For an isolated installation, set `R_LIBS` to its absolute library directory
 before launching and check `find.package("dgraphs")`. Background jobs inherit
 that library setting. The existing private study/log locations remain valid;
 relocation does not rewrite saved study data or reuse a validation server port.
+
+The GRIP calls use the current dot-delimited argument API (`edge.weights`, `max.iter`, `final.rounds`, and related names). Metric MDS explicitly selects `backend = "smacof"` to preserve the explorer’s previous algorithm when the newer grip default is SGD. Use a grip installation with this API. Existing Geometry Lab saved-data fields and UI identifiers retain their versioned names.

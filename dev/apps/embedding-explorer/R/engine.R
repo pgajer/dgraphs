@@ -152,17 +152,17 @@ run_fit <- function(cloud,spec,app_root,python='') {
       d<-graph_distances(graph,n);pad3(cmdscale(as.dist(d),k=3))
     } else if(spec$method=='mds') {
       graph_distances(graph,n)
-      fit<-grip::metric.mds(edges=graph$edges,n=n,edge_weights=graph$weights,dim=3,
-        init=spec$mds_init,n_init=as.integer(spec$mds_starts),max_iter=as.integer(spec$iterations),
-        eps=spec$tolerance,seed=as.integer(spec$seed))
+      fit<-grip::metric.mds(edges=graph$edges,n=n,edge.weights=graph$weights,dim=3,
+        init=spec$mds_init,n.init=as.integer(spec$mds_starts),max.iter=as.integer(spec$iterations),
+        eps=spec$tolerance,seed=as.integer(spec$seed),backend="smacof")
       metadata<-fit$metadata
       if(metadata$termination %in% c('backend_error','rejected_increase')) stop('Metric MDS terminated: ',metadata$termination)
       fit$coords
     } else if(spec$method=='grip') {
       graph_distances(graph,n)
-      grip::grip(edges=graph$edges,n=n,edge_weights=graph$weights,dim=3,metric='edge_length',
-        rounds=as.integer(spec$rounds),final_rounds=as.integer(spec$final_rounds),
-        placement=spec$placement,final_mode=spec$final_mode,seed=as.integer(spec$seed),disconnected='error')
+      grip::grip(edges=graph$edges,n=n,edge.weights=graph$weights,dim=3,metric='edge_length',
+        rounds=as.integer(spec$rounds),final.rounds=as.integer(spec$final_rounds),
+        placement=spec$placement,final.mode=spec$final_mode,seed=as.integer(spec$seed),disconnected='error')
     } else {
       if(!nzchar(python) || !file.exists(python)) stop('Set GEOMETRY_LAB_PYTHON to a Python executable with umap-learn installed; see README.')
       if(spec$min_dist>spec$spread) stop('UMAP min_dist must not exceed spread.')
@@ -198,9 +198,9 @@ run_fit <- function(cloud,spec,app_root,python='') {
     # A refinement failure must not discard the completed parent fit.
     refined<-tryCatch({
       start<-proc.time()[['elapsed']]
-      z<-grip::edge.kk(coords=fit$coords,edges=graph$edges,n=n,edge_weights=graph$weights,dim=3,
-        scale_mode=spec$kk_scale,stiffness_method=spec$stiffness,max_iter=as.integer(spec$kk_iterations),
-        seed=as.integer(spec$seed),return_trace=TRUE)
+      z<-grip::edge.kk(coords=fit$coords,edges=graph$edges,n=n,edge.weights=graph$weights,dim=3,
+        scale.mode=spec$kk_scale,stiffness.method=spec$stiffness,max.iter=as.integer(spec$kk_iterations),
+        seed=as.integer(spec$seed),return.trace=TRUE)
       r<-fit;r$id<-paste0(fit$id,'-kk');r$label<-paste(fit$label,'+ edge-KK')
       r$coords<-z$coords;r$metadata<-z$metadata;r$trace<-z$trace;r$parent<-fit$id
       r$seconds<-proc.time()[['elapsed']]-start;r$scores<-score_fit(r$coords,cloud,graph);r

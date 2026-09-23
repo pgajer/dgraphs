@@ -7,7 +7,7 @@ a<-commandArgs(TRUE);d<-jsonlite::fromJSON(a[1],simplifyVector=FALSE);out<-a[2]
 render<-function(){
  par(mfrow=c(2,3),mar=c(3.2,3.8,3.8,1),oma=c(1,0,1,0),mgp=c(2.3,.6,0),cex=.9)
  for(c in d$cases){
-  X<-do.call(rbind,c$coordinates);ee<-do.call(rbind,c$edges_before)+1;cut<-unlist(c$edge)+1;groups<-c$groups
+  X<-do.call(rbind,lapply(c$coordinates,unlist));ee<-do.call(rbind,lapply(c$edges_before,unlist))+1;cut<-unlist(c$edge)+1;groups<-c$groups
   pm<-persp(c(-1.1,1.1),c(-1.1,1.1),matrix(0,2,2),zlim=c(0,2),theta=35,phi=22,expand=.8,box=FALSE,axes=FALSE,col=NA,border=NA,xlab='',ylab='',zlab='',main=paste('Helix seed',c$seed))
   xy<-trans3d(X[,1],X[,2],X[,3],pm)
   colors<-rep('#16728b',nrow(X));colors[unlist(groups[[2]])+1]<-'#bd7727'

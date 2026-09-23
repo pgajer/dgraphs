@@ -5,6 +5,9 @@ This working charter records the organization explicitly authorized by the owner
 Its consolidated wording has not received a separate scientific sign-off. It does
 not authorize additional experiments, a new numerical policy or deployment.
 
+Current progress, authorized execution stages and completion reports are maintained in
+[Project status and next steps](../experiments/analysis-queue.md).
+
 ## Purpose
 
 Establish whether a transparent, reproducible IAN implementation can provide useful

@@ -1,22 +1,49 @@
-# Ranked analysis queue
+# Project status and next steps
 
-Organization is complete separately from numerical progression. The owner
-subsequently authorized the saved-state pruning comparison (IAN-EXP-023) and
-internal adapter qualification (IAN-EXP-024), followed by the typed-message
-refactor (IAN-EXP-025) and focused helix arithmetic continuation (IAN-EXP-026). Building this catalogue does not
-authorize additional studies.
+Updated 23 September 2026. Owner: Pawel Gajer. Implementer/coordinator: IAN implementer. Independent reviewer: IAN auditor.
 
-| Priority | Work and motivation | Existing inputs/work | Remaining scope and decision | Cost and possible outcome |
-|---|---|---|---|---|
-| 1 | Documentary review of this catalogue | Frozen historical evidence; new reports/figures and author QA | Independent version-specific review; owner review of consolidated aims wording | No optimization; review time not estimated. Corrected presentation or supported current synthesis. |
-| 2 | Review saved-state replay (IAN-EXP-023) | Completed comparison and preserved evidence; adapter and typed-core bounded implementation reviews are accepted | Independent review of this remaining comparison; catalogue presentation has separate review scope | No new optimization by the catalogue. Review may identify corrections. |
-| 3 | Qualify the helix arithmetic convention | Complete native/Python helix agreement under shared system power; four small paired controls | IAN-EXP-026 accepted independently; declare full boundary-regression and portability scope before promotion into typed core | Budget pending. Other builds or geometries may still refuse; ladder remains gated. |
-| 4 | Define a secondary scale-selection study (IAN-EXP-018) | Difficult LPs; exact near-optimal variation; two-endpoint conditional pruning agrees | Choose criterion, objective allowance and bounded call budget before execution | Computational cost requires a protocol. Stable selection or a negative result; no automatic adoption. |
-| 5 | Re-test full trajectories after a candidate policy | Frozen boundary cases, complete histories and failed scale inputs | Prospective policy/compatibility contract and regression budget | Potentially substantial; compatible completion or preserved refusal. Ladder remains gated. |
-| 6 | Full-engine performance (IAN-EXP-019) | Early client comparisons, reusable core | Establish comparable valid pipelines and choose measured bottlenecks | Runtime/memory budget pending. Improvement is not assumed. |
-| 7 | Portable R qualification (IAN-EXP-020) | Independently accepted Mac arm64 R-devel schedules and typed R 4.5.2 subset | Actual Linux/Windows/Intel Mac runners and platform build path; declare supported targets and distribution | Proposed per-environment schedule: 22 calls/111 expected attempts, hard caps 24/200. No cross-platform runtime qualification yet. |
-| 8 | Scientific applications/benchmarks (IAN-EXP-021/022) | Aims and consumer contracts; prepared geometries | Declare population/estimand or synthetic oracle; separate estimator acceptance | New scientific decisions and possibly substantial computation. Negative utility findings remain informative. |
+The native engine, recoverable core and internal R adapter exist and have independent acceptance for bounded tests. Larger-use numerical qualification, full-engine performance and scientific usefulness remain unfinished. This is the living execution record; [project aims](../docs/project-aims.md) remain the stable statement of purpose. Earlier plans and submitted evidence remain historical records.
 
-No missing evidence is repaired by inventing dates, IDs or numerical results.
-The frozen unexecuted quadforms remain useful coverage inputs, not a license to
-skip the failed helix or select easier replacements.
+## Authorization and advancement
+
+On 23 September 2026 the owner authorized the five-stage sequence below, with independent audit of each stage, resolution of all findings before advancing, and a concise completion report after each stage. This supersedes earlier requirements to obtain a fresh prompt for each bounded stage. It does not authorize public release, changes to shared installations, spending on remote infrastructure, or inventing scientific outcomes.
+
+Before each stage executes, commit its prospective methods, fixtures, limits and completion criteria. Preserve unsuccessful attempts. The same independent auditor receives a factual handoff under the [Audit Charter](/Users/pgajer/.codex/notes/workflows/worker_auditor_workflow.md). Resolve corrective and nonblocking findings and obtain the auditor's recorded disposition before beginning the next stage. If a scientific limitation prevents the next gate, record that outcome and diagnose it within a newly declared bounded continuation; do not call the gate passed. Missing infrastructure or a necessary scientific choice is reported explicitly.
+
+Implemented means source exists; tested means identified checks ran; accepted means an independent audit supports the named scope; adopted means the qualified candidate is selected for the maintained internal implementation. These are separate states. An accepted negative study need not permit advancement.
+
+## Progress against the aims
+
+| Aim | Accomplished | Remaining |
+| --- | --- | --- |
+| IA1: faithful numerical behavior | Fixed LP certificates, complete native/Python comparisons, boundary controls; the 1,000-profile helix discrepancy is explained | Qualify a consistent arithmetic/retry policy, integrate it without unexplained regressions, then broaden trajectories |
+| IA2: maintainable and recoverable implementation | Typed core, native checkpoint/resume, internal R adapter, initial/final graphs and diagnostics; solver interface independently accepted on Mac arm64 | Consolidate policy; supported-platform/package qualification; R restart interface if required for intended use |
+| IA3: computational efficiency | Persistent timings nearly equal; native benchmark-client memory 52–61% lower | Comparable full-engine time/memory measurements; only then targeted optimization |
+| IA4: explicit methodological improvements | Bounded retry, normalization, alternative-LP and scale-sensitivity studies | Qualify and select improvements; secondary scale selection remains conditional research |
+| IA5: scientific usefulness | Consumer contracts and small real-data engineering fixtures | Controlled benchmarks and applications, simpler alternatives, known conditional means and valid sampling/dependence treatment |
+
+## Ordered execution stages
+
+| Stage | State | Work | Completion and advancement criteria |
+| --- | --- | --- | --- |
+| 1. Numerical policy qualification and integration | Active: prospective plan and implementation | Preserve strict evaluated-LP baseline; qualify the controlled normalized retry plus shared-power arithmetic in typed native/R paths against Python, fixed problems, boundaries and full histories | Complete accounting; unchanged acceptance limits; explained policy differences; restart/interface parity; independent acceptance with findings closed; record exact adopted scope |
+| 2. Bounded scale ladder | Waiting for stage 1 | Resume frozen 1,000-profile panel, including intrinsic 2–5 dimensional quadforms; budget any larger step from measured costs | Complete paired trajectories and output checks, known refusal behavior, audited resource envelope; no unexplained implementation divergence |
+| 3. Supported platforms and package | Waiting for stage 2 | Qualify actual named runtime environments, installation and examples; fix packaging issues and document dependency distribution | Reproducible builds, API/output parity, numerical and failure checks, package checks and independent acceptance; compile-only evidence does not qualify runtime |
+| 4. Full-engine performance | Waiting for stage 3 | Measure matched successful persistent pipelines; separate solver, initialization, pruning, affinity, checkpoint and R conversion costs; optimize measured bottlenecks only | Account for all runs; reproducible time/memory evidence; regression preservation and independent acceptance; no gain is a valid outcome |
+| 5. Controlled scientific evaluation | Waiting for stage 4 | Begin declared synthetic neighborhood/geodesic and known conditional-mean benchmarks against simpler methods; specify cohort population/assay/visit contracts before real-data application | Reproducible data generation, fair comparisons, dependence-aware evaluation and independent audit; engine acceptance and estimator acceptance remain separate |
+
+Stage 1 must distinguish the strict policy currently exposed by the internal R adapter from the successful historical retry/arithmetic experiment. A successful experiment is not already an adopted adapter change. Stage 3 needs real Linux/Windows runners for those targets; current evidence qualifies Mac arm64 R-devel and a smaller R 4.5.2 subset only. Restricted supported-platform decisions must be explicit, not silent completion of an untested platform promise.
+
+## Existing review and research work
+
+The saved-state pruning comparison (IAN-EXP-023) awaits independent review. Its two certified scale vectors give the same conditional pruning at one saved state; this does not establish whole-trajectory invariance. The exact current catalogue presentations, except IAN-EXP-026, also remain independently unreviewed. Review these records separately from numerical progression, without rerunning all historical experiments merely to revise documentation.
+
+Secondary scale selection (IAN-EXP-018) is conditional on a demonstrated need; it is not an automatic algorithm change. The six remaining frozen scale inputs must not be replaced by easier geometries. Historical original-expression array disagreements and diagnostic warnings remain documented; broader unattended qualification must address the applicable warnings.
+
+## Stage completion reports
+
+No stage in this newly authorized sequence is complete yet. After each stage, append a dated concise account of the question, methods/examples, results, interpretation, unresolved boundaries, adopted version (if any), audit and next permitted action. Keep full numerical reports and factual handoffs in their experiment records, linked here. Do not put changing execution history into the stable aims.
+
+### Starting position — 23 September 2026
+
+The most recent [adapter and typed-core audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md) accepts the settings repair and preservation of tested behavior without corrective findings. Forty-six fresh engine calls produced 237 solver attempts; all attempt settings were checked and 96 complete payloads independently recalculated. Linux, Windows and Intel Mac runtime remain unqualified. The [helix arithmetic study](026-helix-arithmetic/report.md) is independently accepted, but its policy has not been promoted to the adapter. The larger scale gate remains closed until stage 1 earns advancement.

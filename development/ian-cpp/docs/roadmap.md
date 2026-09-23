@@ -1,6 +1,7 @@
 # IAN programme roadmap
 
-Current navigation, 23 September 2026. This replaces no frozen milestone report.
+Current navigation, 23 September 2026. The owner has authorized the audit-gated
+five-stage continuation recorded in [Project status and next steps](../experiments/analysis-queue.md). This replaces no frozen milestone report.
 Use each experiment's audit-summary.json for current historical-evidence review
 status and decisions.yml for advancement; old roadmap prose is historical context.
 
@@ -35,7 +36,7 @@ The internal adapter now has independent acceptance of its repaired pinned
 header layout and complete in-process settings capture on macOS arm64. Linux,
 Windows and Intel Mac runtime remain unqualified; see the
 [platform coverage and proposed matrix](../experiments/020-portable-r-interface/report.md).
-See the ranked [analysis queue](../experiments/analysis-queue.md).
+See [Project status and next steps](../experiments/analysis-queue.md).
 
 The focused helix continuation (IAN-EXP-026) identifies the differing constraint
 square and obtains identical complete native/Python trajectories with an explicit

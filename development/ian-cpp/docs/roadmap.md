@@ -12,7 +12,7 @@ address findings and request re-review without a new owner prompt.
 |---|---|---|---|
 | A | Feasibility and computational comparisons | 01-02 | Fixed-LP and persistent-client evidence; not full-engine speed claims. |
 | B | Reference behavior and reusable implementation | 03-06B | Bounded fidelity/core/restart historically accepted; typed-message refactor independently accepted for bounded macOS arm64 evidence. |
-| C | Numerical robustness and scale expansion | 07-07K | Historical bounded studies include refusals and near-optimal scale variation. New helix arithmetic agreement is accepted for its bounded scope; the ladder stays gated. |
+| C | Numerical robustness and scale expansion | 07-07K | Historical bounded studies include refusals and near-optimal scale variation. New helix arithmetic agreement is accepted for its bounded scope; the bounded stage-2 panel is permitted after stage-1 acceptance. |
 | D | Performance and platform qualification | Proposed 08-09 | Comprehensive milestones unexecuted; internal adapter independently accepted on macOS arm64; an additional typed R 4.5.2 subset passes. |
 | E | Controlled scientific application | Proposed 10 | Engine and downstream estimator acceptance must both be specified. |
 | F | Methodological alternatives and benchmarks | Proposed 11 | Can proceed alongside engineering after an explicit bounded authorization. |
@@ -42,5 +42,4 @@ The focused helix continuation (IAN-EXP-026) identifies the differing constraint
 square and obtains identical complete native/Python trajectories with an explicit
 system-power convention. The matching multiplication control refuses in both
 interfaces. This is independently accepted bounded evidence, with
-broader regression and portability qualification still pending; it does not change the adapter
-policy or automatically reopen the ladder.
+the subsequent stage-1 regression/integration panel also accepted. The coordinator has selected its explicit retry-power option for the bounded stage-2 panel; strict default and platform limits remain.

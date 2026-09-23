@@ -16,6 +16,14 @@
       "available": true,
       "sha256": "606cf97cd4c6b82e7f6feee2728e0ec4976eb40c6914738aa8524c65d44f5d08",
       "identity_scope": "Current bytes; execution identities are in linked build and run manifests."
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage01-policy/audit.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage01-policy/audit.md",
+      "available": true,
+      "sha256": "af8ff675f4cc644037fffa17f9260d413bd18fbe5f3d899ba0328b1e2a836df0",
+      "identity_scope": "Independent bounded acceptance"
     }
   ],
   "backup": "External backup coverage unknown"

@@ -1,12 +1,23 @@
 {
-  "audit_status": "implementation submitted; independent review pending",
-  "numerically_checked": false,
-  "numerical_check_scope": "Author checks only; independent review not yet performed.",
+  "audit_status": "accepted within bounded numerical-policy integration scope; N1 closed",
+  "numerically_checked": true,
+  "numerical_check_scope": "Fresh independent 87-launch, 2,455-attempt replay, certificate/settings/trace/R/restart checks; all findings closed.",
   "current_report_review": {
-    "status": "not independently reviewed",
+    "status": "accepted",
     "report_sha256": "88007ef380c16abf6744cc53fbd8fbdebd60ec85343e8341cde1a2979d478d43",
-    "review": null
+    "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage01-policy/audit.md",
+    "report_pdf_sha256": "154c6c458fd8118b21defb06ba426ca5266aa1fcf1cb77d265ba9a5916f7d701",
+    "review_sha256": "af8ff675f4cc644037fffa17f9260d413bd18fbe5f3d899ba0328b1e2a836df0",
+    "scope": "Exact Markdown/PDF accepted; HTML content/links accepted, browser appearance unverified. Frozen pending labels describe submission state."
   },
-  "audit_history": [],
-  "consequential_limits": "One Mac; experimental option not adopted; fresh R installation and broader platforms deferred."
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage01-policy/audit.md",
+      "review_sha256": "af8ff675f4cc644037fffa17f9260d413bd18fbe5f3d899ba0328b1e2a836df0",
+      "candidate": "e6cc40be80843eb567069ce9edceea56b35d51ee",
+      "documentation_correction": "7bb4c660338f598d2a02c9f7bd2b9c61d4d52115",
+      "scope": "Bounded numerical integration and exact report; all findings closed."
+    }
+  ],
+  "consequential_limits": "macOS arm64 only; fresh package installation, R >500 rows and R restart remain unqualified. Internal qualification option adopted after audit; strict default retained."
 }

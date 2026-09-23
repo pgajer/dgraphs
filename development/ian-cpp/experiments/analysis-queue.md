@@ -16,8 +16,8 @@ Implemented means source exists; tested means identified checks ran; accepted me
 
 | Aim | Accomplished | Remaining |
 | --- | --- | --- |
-| IA1: faithful numerical behavior | Fixed LP certificates, complete native/Python comparisons, boundary controls; the 1,000-profile helix discrepancy is explained | Qualify a consistent arithmetic/retry policy, integrate it without unexplained regressions, then broaden trajectories |
-| IA2: maintainable and recoverable implementation | Typed core, native checkpoint/resume, internal R adapter, initial/final graphs and diagnostics; solver interface independently accepted on Mac arm64 | Consolidate policy; supported-platform/package qualification; R restart interface if required for intended use |
+| IA1: faithful numerical behavior | Fixed LP certificates, complete native/Python comparisons, boundary controls; the 1,000-profile helix discrepancy is explained | Arithmetic/retry policy integrated and independently accepted on the bounded panel; broaden trajectories |
+| IA2: maintainable and recoverable implementation | Typed core, native checkpoint/resume, internal R adapter, initial/final graphs and diagnostics; solver interface independently accepted on Mac arm64 | Supported-platform/package qualification; R restart interface if required for intended use |
 | IA3: computational efficiency | Persistent timings nearly equal; native benchmark-client memory 52–61% lower | Comparable full-engine time/memory measurements; only then targeted optimization |
 | IA4: explicit methodological improvements | Bounded retry, normalization, alternative-LP and scale-sensitivity studies | Qualify and select improvements; secondary scale selection remains conditional research |
 | IA5: scientific usefulness | Consumer contracts and small real-data engineering fixtures | Controlled benchmarks and applications, simpler alternatives, known conditional means and valid sampling/dependence treatment |
@@ -26,13 +26,13 @@ Implemented means source exists; tested means identified checks ran; accepted me
 
 | Stage | State | Work | Completion and advancement criteria |
 | --- | --- | --- | --- |
-| 1. Numerical policy qualification and integration | Executed; independent audit pending | Preserve strict evaluated-LP baseline; qualify the controlled normalized retry plus shared-power arithmetic in typed native/R paths against Python, fixed problems, boundaries and full histories | Complete accounting; unchanged acceptance limits; explained policy differences; restart/interface parity; independent acceptance with findings closed; record exact adopted scope |
-| 2. Bounded scale ladder | Waiting for stage 1 | Resume frozen 1,000-profile panel, including intrinsic 2–5 dimensional quadforms; budget any larger step from measured costs | Complete paired trajectories and output checks, known refusal behavior, audited resource envelope; no unexplained implementation divergence |
+| 1. Numerical policy qualification and integration | Accepted; all findings closed | Preserve strict evaluated-LP baseline; qualify the controlled normalized retry plus shared-power arithmetic in typed native/R paths against Python, fixed problems, boundaries and full histories | Complete accounting; unchanged acceptance limits; explained policy differences; restart/interface parity; independent acceptance with findings closed; record exact adopted scope |
+| 2. Bounded scale ladder | Authorized to begin | Resume frozen 1,000-profile panel, including intrinsic 2–5 dimensional quadforms; budget any larger step from measured costs | Complete paired trajectories and output checks, known refusal behavior, audited resource envelope; no unexplained implementation divergence |
 | 3. Supported platforms and package | Waiting for stage 2 | Qualify actual named runtime environments, installation and examples; fix packaging issues and document dependency distribution | Reproducible builds, API/output parity, numerical and failure checks, package checks and independent acceptance; compile-only evidence does not qualify runtime |
 | 4. Full-engine performance | Waiting for stage 3 | Measure matched successful persistent pipelines; separate solver, initialization, pruning, affinity, checkpoint and R conversion costs; optimize measured bottlenecks only | Account for all runs; reproducible time/memory evidence; regression preservation and independent acceptance; no gain is a valid outcome |
 | 5. Controlled scientific evaluation | Waiting for stage 4 | Begin declared synthetic neighborhood/geodesic and known conditional-mean benchmarks against simpler methods; specify cohort population/assay/visit contracts before real-data application | Reproducible data generation, fair comparisons, dependence-aware evaluation and independent audit; engine acceptance and estimator acceptance remain separate |
 
-Stage 1 must distinguish the strict policy currently exposed by the internal R adapter from the successful historical retry/arithmetic experiment. A successful experiment is not already an adopted adapter change. Stage 3 needs real Linux/Windows runners for those targets; current evidence qualifies Mac arm64 R-devel and a smaller R 4.5.2 subset only. Restricted supported-platform decisions must be explicit, not silent completion of an untested platform promise.
+Stage 1 selected `IAN evaluated-LP retry-power 0.1` explicitly for the maintained internal qualification studies. The R default remains `IAN evaluated-LP 1.0`; no public release or general robustness claim follows. Stage 3 needs real Linux/Windows runners for those targets; current evidence qualifies Mac arm64 R-devel and a smaller R 4.5.2 subset only. Restricted supported-platform decisions must be explicit, not silent completion of an untested platform promise.
 
 ## Existing review and research work
 
@@ -42,7 +42,7 @@ Secondary scale selection (IAN-EXP-018) is conditional on a demonstrated need; i
 
 ## Stage completion reports
 
-No stage has completed the independent acceptance gate yet. Stage 1 execution is complete and its [report](027-numerical-policy-integration/report.md) is ready for review. After each stage, append a dated concise account of the question, methods/examples, results, interpretation, unresolved boundaries, adopted version (if any), audit and next permitted action. Keep full numerical reports and factual handoffs in their experiment records, linked here. Do not put changing execution history into the stable aims.
+Completion reports below record the achieved scope, independent review, remaining boundaries and next permitted action. Full evidence stays in the linked experiment records.
 
 ### Starting position — 23 September 2026
 
@@ -51,3 +51,9 @@ The most recent [adapter and typed-core audit](/Users/pgajer/.codex/private/ZB/i
 ### Prior review closed — 23 September 2026
 
 The [saved-pruning audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7j/audit.md) independently reproduced both witness comparisons and all controls without optimization. Both witnesses continue retuning and give the same conditional 52-edge removal; the actual later historical control removes 47. The report and PDF are accepted; HTML browser appearance remains unverified. No correction was needed, and this does not advance the stage-1 or scale gates.
+
+### Stage 1 complete — 23 September 2026
+
+The numerical rules that repaired the helix example are now integrated into the typed native core and internal R interface. All 26 native/Python comparisons passed, including difficult saved problems, decision boundaries, long pruning histories and the 1,000-profile helix. Strict-policy R results were preserved; candidate R results and native checkpoint recovery agreed. The [independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage01-policy/audit.md) rebuilt the candidate, reproduced 2,455 solver attempts, checked the numerical certificates and closed the sole documentation comment. The [report](027-numerical-policy-integration/report.md) and exact PDF are accepted.
+
+Under the owner’s sequence authorization, the coordinator selects `IAN evaluated-LP retry-power 0.1` for subsequent internal qualification on this Mac, using the audited backend snapshot `ae2dc31` plus documentation correction `7bb4c66`. It permits one eligible retry and retains every final acceptance check. The strict R default remains unchanged. Other platforms, fresh package installation, R inputs above 500 rows, R restart and general perturbation robustness remain unqualified. Stage 2 may now test the remaining frozen 1,000-profile examples under a prospective resource budget.

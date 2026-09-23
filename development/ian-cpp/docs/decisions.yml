@@ -15,15 +15,15 @@
     },
     {
       "id": "DEC-SCALE",
-      "state": "gated",
+      "state": "authorized bounded stage 2 after accepted stage 1; unrestricted expansion remains gated",
       "scope": "Further full-trajectory scale ladder, including prepared quadforms",
-      "basis": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7i/audit.md"
+      "basis": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage01-policy/audit.md"
     },
     {
       "id": "DEC-POLICY",
-      "state": "not adopted",
-      "scope": "Experimental retries, alternative LP backend and future secondary scale selection",
-      "basis": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7i/audit.md"
+      "state": "explicit retry-power option selected for internal qualification; strict default retained",
+      "scope": "IAN evaluated-LP retry-power 0.1 on tested Mac; alternative LP and secondary scale selection remain unadopted",
+      "basis": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage01-policy/audit.md"
     },
     {
       "id": "DEC-PRUNE-REPLAY",
@@ -66,11 +66,13 @@
     },
     {
       "id": "DEC-FIVE-STAGE-CONTINUATION",
-      "state": "authorized; stage 1 executed and awaiting independent audit",
+      "state": "stage 1 accepted; findings closed; stage 2 may begin",
       "scope": "Numerical policy, scale, supported platforms, performance, controlled scientific evaluation in that order; resolve findings before advancing",
       "basis": "Owner instruction in this task on 23 September 2026; experiments/analysis-queue.md",
       "candidate_policy": "IAN evaluated-LP retry-power 0.1",
-      "candidate_adopted": false
+      "candidate_adopted": true,
+      "adoption_scope": "Explicit internal qualification option on tested Mac; strict R default retained",
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage01-policy/audit.md"
     }
   ]
 }

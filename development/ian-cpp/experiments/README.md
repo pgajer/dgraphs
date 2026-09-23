@@ -1,6 +1,6 @@
 # IAN experiment catalogue
 
-Start with the [project aims](../docs/project-aims.md), [synthesis](synthesis.md) and [HTML catalogue](build/index.html). The catalogue contains 21 executed questions across 20 independently accepted bounded milestones, one executed study awaiting independent review, and five separate unexecuted proposals. Historical phases and evidence stay in place. `.yml` files use JSON syntax, valid YAML 1.2, so no YAML package is needed.
+Start with the [project aims](../docs/project-aims.md), [synthesis](synthesis.md) and [HTML catalogue](build/index.html). The catalogue contains 22 executed questions across 21 independently accepted bounded milestones, and five separate unexecuted proposals. Historical phases and evidence stay in place. `.yml` files use JSON syntax, valid YAML 1.2, so no YAML package is needed.
 
 ## Rebuild presentation only
 
@@ -21,4 +21,4 @@ All generated assets and QA belong in ignored `build/` directories. Rendering ne
 
 Edit reports directly; never rerun the private one-time authoring scripts over maintained records. Give a new scientific question a stable identifier; record new analyses separately from chart reconstruction and rendering. Update audit-summary.json deliberately when a report changes, retaining the earlier report hash/review in audit history. Acceptance of historical evidence never automatically covers changed prose. Add substantive corrections as maintained sources and link their exact independent review.
 
-The [discovery inventory](discovery-inventory.json), [audit coverage](audit-coverage.md), [policy registry](numerical-policies.yml), [fixture register](fixture-register.yml), [correction register](correction-dispositions.json), [figure selection](meeting-figure-selection.md) and [analysis queue](analysis-queue.md) define the catalogue's scope and limits. The private handoff records the organization and author QA; it is not a scientific build dependency.
+The [discovery inventory](discovery-inventory.json), [audit coverage](audit-coverage.md), [policy registry](numerical-policies.yml), [fixture register](fixture-register.yml), [correction register](correction-dispositions.json), [figure selection](meeting-figure-selection.md) and [Project status and next steps](analysis-queue.md) define the catalogue's scope and limits. The private handoff records the organization and author QA; it is not a scientific build dependency.

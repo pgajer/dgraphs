@@ -237,18 +237,33 @@ dg_generated_layout_cache_path <- function(run_id, key) {
   )
 }
 
+# This boundary translates three retained layout-schema fields to the public
+# grip API. Saved assets and UI fields keep their existing spellings.
+dg.weighted.layout.adapter <- function(layout.fun) {
+  if (!is.function(layout.fun)) return(NULL)
+  formal.names <- names(formals(layout.fun))
+  common <- c("dim", "rounds", "seed", "metric")
+  current <- all(c(common, "adj.list", "weight.list", "final.rounds") %in% formal.names)
+  previous <- all(c(common, "adj_list", "weight_list", "final_rounds") %in% formal.names)
+  if (!current && !previous) return(NULL)
+  function(...) {
+    args <- list(...)
+    aliases <- c(adj_list = "adj.list", weight_list = "weight.list", final_rounds = "final.rounds")
+    if (!current) aliases <- setNames(names(aliases), unname(aliases))
+    renamed <- names(args)
+    hit <- renamed %in% names(aliases)
+    renamed[hit] <- unname(aliases[renamed[hit]])
+    if (anyDuplicated(renamed)) stop("Ambiguous old and new GRIP argument names.", call. = FALSE)
+    names(args) <- renamed
+    if ("metric" %in% names(args)) stop("The explorer fixes the GRIP metric to edge_length.", call. = FALSE)
+    do.call(layout.fun, c(args, list(metric = "edge_length")))
+  }
+}
+
 dg_weighted_layout_fun <- function() {
   if (!requireNamespace("grip", quietly = TRUE)) return(NULL)
-  # Retain the historical implementation when available, otherwise use the
-  # current public weighted-metric interface. Existing saved layouts never refit.
-  if (exists("grip.layout.weighted", envir = asNamespace("grip"), inherits = FALSE)) {
-    return(get("grip.layout.weighted", envir = asNamespace("grip"), inherits = FALSE))
-  }
-  f <- getExportedValue("grip", "grip")
-  if (!"metric" %in% names(formals(f))) return(NULL)
-  function(adj_list, weight_list, ...) {
-    f(adj_list = adj_list, weight_list = weight_list, metric = "edge_length", ...)
-  }
+  # Prefer the public interface; never call the deprecated weighted alias.
+  dg.weighted.layout.adapter(getExportedValue("grip", "grip"))
 }
 
 dg_generate_weighted_layout <- function(graph_asset_path, output_path, params = list(), weighted_layout_fun = dg_weighted_layout_fun()) {
@@ -257,7 +272,7 @@ dg_generate_weighted_layout <- function(graph_asset_path, output_path, params = 
     return(list(status = graph$status, message = graph$message %||% "Graph asset unavailable."))
   }
   if (!is.function(weighted_layout_fun)) {
-    return(list(status = "unavailable", message = "Package `grip` with `grip(metric = \"edge_length\")` or legacy `grip.layout.weighted()` is required."))
+    return(list(status = "unavailable", message = "Package `grip` with `grip(metric = \"edge_length\")` is required."))
   }
   params_use <- list(dim = 3L, rounds = 8L, final_rounds = 12L, seed = 6L)
   if (is.list(params) && length(params) > 0L) {

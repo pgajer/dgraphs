@@ -319,7 +319,7 @@ test_that("weighted layout generation uses weighted function and reports unavail
 
     unavailable <- graph_explorer_test_env$dg_generate_weighted_layout(fx$graph_file, tempfile(), weighted_layout_fun = NULL)
     expect_equal(unavailable$status, "unavailable")
-    expect_match(unavailable$message, "grip.layout.weighted", fixed = TRUE)
+    expect_match(unavailable$message, "grip(metric", fixed = TRUE)
   })
 })
 
@@ -418,10 +418,50 @@ test_that("launcher and saved-project selection work without starting a server",
   })
 })
 
+test_that("current dotted GRIP formals generate layouts without changing saved schemas", {
+  e <- graph_explorer_test_env
+  root <- tempfile("dg-dotted-grip-")
+  fx <- make_dg_fixture(root)
+  on.exit(unlink(root, recursive = TRUE), add = TRUE)
+  before <- tools::md5sum(c(fx$graph_file, fx$layout_file))
+  received <- NULL
+  current <- function(adj.list, weight.list, dim, rounds, final.rounds, seed, metric) {
+    received <<- list(adj.list = adj.list, weight.list = weight.list, dim = dim,
+                     rounds = rounds, final.rounds = final.rounds, seed = seed, metric = metric)
+    cbind(seq_along(adj.list), 0, 1)
+  }
+  adapter <- e$dg.weighted.layout.adapter(current)
+  expect_true(is.function(adapter))
+  target <- file.path(root, "new.rds")
+  result <- e$dg_generate_weighted_layout(fx$graph_file, target,
+      params = list(rounds = 2L, final_rounds = 3L, seed = 17L), weighted_layout_fun = adapter)
+  expect_identical(result$status, "ok")
+  expect_equal(dim(result$coords), c(10L, 3L))
+  expect_equal(received$adj.list, readRDS(fx$graph_file)$adj_list)
+  expect_equal(received$weight.list, readRDS(fx$graph_file)$weight_list)
+  expect_identical(received[c("dim", "rounds", "final.rounds", "seed", "metric")],
+      list(dim = 3L, rounds = 2L, final.rounds = 3L, seed = 17L, metric = "edge_length"))
+  expect_identical(readRDS(target)$params,
+      list(dim = 3L, rounds = 2L, final_rounds = 3L, seed = 17L))
+  expect_identical(tools::md5sum(c(fx$graph_file, fx$layout_file)), before)
+  expect_error(adapter(adj_list = list(2L), adj.list = list(2L)), "Ambiguous")
+  expect_null(e$dg.weighted.layout.adapter(function(adj_list, weight_list) NULL))
+})
+
+test_that("previous public GRIP spelling uses explicit boundary compatibility", {
+  e <- graph_explorer_test_env
+  previous <- function(adj_list, weight_list, dim, rounds, final_rounds, seed, metric)
+    list(adj_list = adj_list, weight_list = weight_list, final_rounds = final_rounds, metric = metric)
+  result <- e$dg.weighted.layout.adapter(previous)(adj.list = list(2L), weight.list = list(1),
+      dim = 3L, rounds = 1L, final.rounds = 2L, seed = 6L)
+  expect_identical(result, list(adj_list = list(2L), weight_list = list(1),
+                              final_rounds = 2L, metric = "edge_length"))
+})
+
 test_that("current public GRIP can explicitly generate a missing weighted layout", {
   skip_if_not_installed("grip")
   f <- graph_explorer_test_env$dg_weighted_layout_fun()
-  skip_if(is.null(f), "No supported weighted GRIP interface")
+  expect_true(is.function(f), info = "Installed public GRIP must expose a supported weighted interface")
   root <- tempfile("dg-weighted-")
   fx <- make_dg_fixture(root, missing_layout = TRUE)
   on.exit(unlink(root, recursive = TRUE), add = TRUE)

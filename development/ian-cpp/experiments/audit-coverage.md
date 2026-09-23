@@ -1,7 +1,7 @@
 # Audit coverage and outstanding review
 
-Of 30 executed question records, 29 map to independently accepted bounded
-studies across 28 milestones. The helix arithmetic study (IAN-EXP-026), including
+All 30 executed question records map to independently accepted bounded
+studies across 29 milestones. The helix arithmetic study (IAN-EXP-026), including
 its current report and figure, was accepted on 23 September 2026 with no corrective
 findings. The internal dgraphs adapter (IAN-EXP-024) and typed-core refactor
 (IAN-EXP-025) are accepted for bounded implementation evidence on macOS arm64,
@@ -15,9 +15,9 @@ These counts do not imply that every inference, dataset or intended use is valid
 Current review status comes from each audit-summary.json, never a duplicate metadata
 flag. Shared phase02 audit scope is counted once at milestone level.
 
-The other 25 catalogue reports, historical figure reconstructions, aims wording
+The other 24 catalogue reports, historical figure reconstructions, aims wording
 and synthesis have author checks but have not received independent presentation
-review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028, IAN-EXP-029, IAN-EXP-030, IAN-EXP-031, IAN-EXP-032, IAN-EXP-033 and IAN-EXP-034 acceptances do not audit the complete catalogue. For every record current_report_review
+review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028, IAN-EXP-029, IAN-EXP-030, IAN-EXP-031, IAN-EXP-032, IAN-EXP-033 IAN-EXP-034 and IAN-EXP-035 acceptances do not audit the complete catalogue. For every record current_report_review
 names that limitation and binds the current report hash. Historical audit history
 remains distinct and is not silently carried forward to rewritten prose.
 
@@ -44,4 +44,4 @@ IAN-EXP-033 implements the owner-authorized connectivity-preserving variant. The
 
 IAN-EXP-034 removes the fixed R row restriction and adds bounded larger-interface qualification; the bounded implementation and original report/PDF are independently accepted. N1 typography is closed and the exact corrected report/PDF is independently accepted; the original accepted pair is preserved. Its 5,000-profile conditional pair was not executed because the prospective memory gate failed.
 
-IAN-EXP-035 adds public-interface qualification with 56 author engine entries and two private R installations. Its evidence and exact presentation await independent review; it adds no accepted milestone yet. There are now 25 current presentations pending review.
+IAN-EXP-035 is independently accepted for the public interface in the two named Mac arm64 R environments, after fresh 56-entry replay and complete package qualification. F1, F2 and N1 are closed. Its exact corrected report/PDF are accepted, with all three submission versions preserved. There are 24 other current presentations pending review.

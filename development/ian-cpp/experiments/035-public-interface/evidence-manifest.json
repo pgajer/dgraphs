@@ -272,6 +272,38 @@
       "available": true,
       "sha256": "828a213f7f826c4652f8517f3742cab79230cd3595193c164eef8065ee1ec64e",
       "identity_scope": "Current submitted bytes; original report and evidence preserved separately"
+    },
+    {
+      "role": "Independent bounded acceptance and finding closure",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit.md",
+      "available": true,
+      "sha256": "c33bd318fd9c9421cc04cece2ef89cc75afedfe0d85f50cf858755c3bd05af06",
+      "identity_scope": "Frozen independent audit bytes"
+    },
+    {
+      "role": "Independent bounded acceptance and finding closure",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit-summary.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit-summary.json",
+      "available": true,
+      "sha256": "efd0f9c70b84758f46f63a99d4ccdd37bf33d025c8a0f6268eccb374b4908a90",
+      "identity_scope": "Frozen independent audit bytes"
+    },
+    {
+      "role": "Independent bounded acceptance and finding closure",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit-manifest.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit-manifest.json",
+      "available": true,
+      "sha256": "b1b11d22b22e81a54b628282b7bcaf43ea67d1bdd65783fede45ed843cc1b4f3",
+      "identity_scope": "Frozen independent audit bytes"
+    },
+    {
+      "role": "Independent bounded acceptance and finding closure",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/findings.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/findings.json",
+      "available": true,
+      "sha256": "2efc5d0149875f240ececb5ebed42a0e73e74030c20bd38458dcc883342c4ce4",
+      "identity_scope": "Frozen independent audit bytes"
     }
   ]
 }

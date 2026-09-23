@@ -91,10 +91,12 @@
     },
     {
       "id": "DEC-PUBLIC-INTERFACE",
-      "state": "owner-authorized; implemented and author-tested; independent review pending",
+      "state": "independently accepted; F1, F2 and N1 closed",
       "scope": "Export create.ian.graph and build.ian.backend; connected/retry-power defaults; explicit strict/reference alternatives; no shared installation or public release",
       "basis": "Owner instruction 23 September 2026; IAN-EXP-035",
-      "next_research": "Prospective scientific comparison of connectivity-preserving IAN after interface audit closure"
+      "next_research": "Prospective scientific comparison of connectivity-preserving IAN; no new scientific runs in the interface milestone",
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit.md",
+      "candidate": "fa58fe0a7ea1abb2f1a415b77d0692f2c4ff1980"
     }
   ]
 }

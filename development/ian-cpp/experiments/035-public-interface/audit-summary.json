@@ -1,18 +1,28 @@
 {
-  "audit_status": "Independent review in progress; F1 fixed and N1 report precision corrected, closure pending",
+  "audit_status": "Accepted for the public IAN interface in the two qualified Mac arm64 R environments; F1, F2 and N1 closed; no open findings",
   "numerically_checked": true,
-  "numerical_check_scope": "Author 504 full certificates and 1090 summary-return comparisons across 56 engine entries",
+  "numerical_check_scope": "Independent fresh 56-entry/1594-attempt replay; 504 full certificates, 1090 summaries, all 56 R objects and 36 traces; both fresh package installations/builds qualified",
   "current_report_review": {
-    "status": "not independently reviewed",
+    "status": "accepted",
     "report_sha256": "e051bf62479f950d9ab47a528c774fd9dbb5ac8e700167deb476415b0a348351",
-    "scope": "N1 report-only correction; independent disposition pending",
+    "scope": "Exact N1-corrected report/PDF and bounded public interface independently accepted; all findings closed; browser appearance unverified",
     "frozen_submission": {
       "report_sha256": "e051bf62479f950d9ab47a528c774fd9dbb5ac8e700167deb476415b0a348351",
       "report_pdf_sha256": "efe3a2f0c067928c777a4d8a85034de00404396ad27573763a40b6151b80bd05",
       "reason": "N1 report-only budget metadata clarification; both pages author-inspected; earlier versions preserved"
-    }
+    },
+    "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit.md",
+    "review_sha256": "c33bd318fd9c9421cc04cece2ef89cc75afedfe0d85f50cf858755c3bd05af06",
+    "report_pdf_sha256": "efe3a2f0c067928c777a4d8a85034de00404396ad27573763a40b6151b80bd05"
   },
-  "audit_history": [],
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit.md",
+      "review_sha256": "c33bd318fd9c9421cc04cece2ef89cc75afedfe0d85f50cf858755c3bd05af06",
+      "candidate": "fa58fe0a7ea1abb2f1a415b77d0692f2c4ff1980",
+      "scope": "Owner-authorized public exports and default selection; private source-archive installs and fresh offline Rust/native backend builds under R-devel and corrected R 4.5.2 on Mac arm64."
+    }
+  ],
   "consequential_limits": "Two Mac arm64 R installations; offline builds; no shared installation, merge, CRAN release or scientific benefit claim",
   "presentation_history": [
     {

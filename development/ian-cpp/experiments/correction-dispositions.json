@@ -301,6 +301,63 @@
         }
       ],
       "consequence": "Report, guide and generated help corrected; numerical results unchanged; original and corrected accepted report/PDF pairs preserved"
+    },
+    {
+      "id": "PUBLIC-INTERFACE-F1",
+      "description": "Public builder could claim reaping after a cleanup signal race without obtaining child exit status.",
+      "disposition": "Corrected and independently closed",
+      "affected": [
+        "IAN-EXP-035"
+      ],
+      "evidence": [
+        {
+          "role": "Independent closure",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit.md",
+          "available": true,
+          "sha256": "c33bd318fd9c9421cc04cece2ef89cc75afedfe0d85f50cf858755c3bd05af06",
+          "identity_scope": "Frozen independent audit"
+        }
+      ],
+      "consequence": "Explicit setup/command failure accounting or report disclosure corrected; numerical core and original evidence unchanged"
+    },
+    {
+      "id": "PUBLIC-INTERFACE-F2",
+      "description": "Qualification supervisor could return success after a timeout when the child subsequently exited zero.",
+      "disposition": "Corrected and independently closed",
+      "affected": [
+        "IAN-EXP-035"
+      ],
+      "evidence": [
+        {
+          "role": "Independent closure",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit.md",
+          "available": true,
+          "sha256": "c33bd318fd9c9421cc04cece2ef89cc75afedfe0d85f50cf858755c3bd05af06",
+          "identity_scope": "Frozen independent audit"
+        }
+      ],
+      "consequence": "Explicit setup/command failure accounting or report disclosure corrected; numerical core and original evidence unchanged"
+    },
+    {
+      "id": "PUBLIC-INTERFACE-N1",
+      "description": "Report omitted requested solve-budget metadata from its list of comparison exclusions.",
+      "disposition": "Corrected and independently closed",
+      "affected": [
+        "IAN-EXP-035"
+      ],
+      "evidence": [
+        {
+          "role": "Independent closure",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit.md",
+          "available": true,
+          "sha256": "c33bd318fd9c9421cc04cece2ef89cc75afedfe0d85f50cf858755c3bd05af06",
+          "identity_scope": "Frozen independent audit"
+        }
+      ],
+      "consequence": "Explicit setup/command failure accounting or report disclosure corrected; numerical core and original evidence unchanged"
     }
   ]
 }

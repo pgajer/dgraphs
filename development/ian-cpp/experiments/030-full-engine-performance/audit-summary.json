@@ -4,7 +4,12 @@
   "numerical_check_scope": "Author checks: 846 full payloads and 96 persistent result/history comparisons; not independent acceptance",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "d022bcbab7e4573d38a3a667900c94f1a03502bc54aec37c45365ef492c9b6ef"
+    "report_sha256": "d022bcbab7e4573d38a3a667900c94f1a03502bc54aec37c45365ef492c9b6ef",
+    "frozen_submission": {
+      "report_sha256": "d022bcbab7e4573d38a3a667900c94f1a03502bc54aec37c45365ef492c9b6ef",
+      "report_pdf_sha256": "a5c1b65b23f5077208284b76e00e70c6107aa41496afc538b217ef622381bb6d",
+      "reason": "Exact visually checked submission; preservation is not audit acceptance."
+    }
   },
   "audit_history": [],
   "consequential_limits": "One shared Mac; client/instrumentation boundaries differ; R capped at 500; no pure-language or core-memory claim"

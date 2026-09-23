@@ -234,6 +234,14 @@
         "Continuation stage 3"
       ],
       "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-030",
+      "title": "What does a complete IAN run cost in a persistent process?",
+      "phase": [
+        "Continuation stage 4"
+      ],
+      "execution": "executed"
     }
   ],
   "historical_source_files": {
@@ -628,7 +636,9 @@
       "IAN-EXP-025",
       "IAN-EXP-026",
       "IAN-EXP-027",
-      "IAN-EXP-028"
+      "IAN-EXP-028",
+      "IAN-EXP-029",
+      "IAN-EXP-030"
     ]
   }
 }

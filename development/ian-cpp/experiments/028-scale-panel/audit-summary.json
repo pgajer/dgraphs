@@ -1,0 +1,12 @@
+{
+  "audit_status": "submitted; independent review pending",
+  "numerically_checked": false,
+  "numerical_check_scope": "Author scalar and structural checks; independent stage-2 audit not yet performed",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "7899f2452f9b1e6b2254002e65eef291e149084541dfd531d2dcaf7ceebd6308",
+    "review": null
+  },
+  "audit_history": [],
+  "consequential_limits": "Mac arm64 synthetic panel only; R size, larger scale and other platforms unqualified; low-level NumPy warning cause unresolved"
+}

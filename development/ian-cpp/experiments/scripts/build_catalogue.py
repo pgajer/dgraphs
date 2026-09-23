@@ -25,9 +25,12 @@ def main():
         out=destination(p);ast,pandoc=document(p);html_document(p,out,ast,pandoc)
         review=json.loads((p.parent/'audit-summary.json').read_text())['current_report_review'] if p.name=='report.md' and (p.parent/'audit-summary.json').exists() else {}
         pdf=out.with_suffix('.pdf')
-        preserve=review.get('status')=='accepted' and pdf.exists() and review.get('report_pdf_sha256')==sha(pdf)
+        frozen=review.get('frozen_submission',{})
+        preserve=pdf.exists() and (
+            (review.get('status')=='accepted' and review.get('report_pdf_sha256')==sha(pdf)) or
+            (frozen.get('report_sha256')==sha(p) and frozen.get('report_pdf_sha256')==sha(pdf)))
         if not preserve:pdf_document(ast,pdf,p.parent.name if p.name=='report.md' else p.stem,page_per_section=p.name=='meeting-figure-selection.md')
-        rendered[str(p.relative_to(ROOT))]={'source_sha256':sha(p),'html':str(out.relative_to(ROOT)),'html_sha256':sha(out),'pdf':str(out.with_suffix('.pdf').relative_to(ROOT)),'pdf_sha256':sha(out.with_suffix('.pdf')),'preserved_reviewed_pdf':preserve}
+        rendered[str(p.relative_to(ROOT))]={'source_sha256':sha(p),'html':str(out.relative_to(ROOT)),'html_sha256':sha(out),'pdf':str(out.with_suffix('.pdf').relative_to(ROOT)),'pdf_sha256':sha(out.with_suffix('.pdf')),'preserved_reviewed_pdf':preserve and review.get('status')=='accepted','preserved_submitted_pdf':preserve and review.get('status')!='accepted'}
         pages[str(out.with_suffix('.pdf').relative_to(ROOT))]=len(pypdf.PdfReader(out.with_suffix('.pdf')).pages)
     groups={'A':'Feasibility and attribution','B':'Reference fidelity and reusable core','C':'Numerical reliability and scale compatibility','D':'Performance and portability','E':'Controlled scientific application','F':'Method and scientific benchmarks'}
     def link(path,label):return '<a href="'+html.escape(os.path.relpath(path,B))+'">'+html.escape(label)+'</a>'

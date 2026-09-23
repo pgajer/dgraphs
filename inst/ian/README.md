@@ -117,7 +117,10 @@ edge omitted. Only a nonbridge proceeds to the pruning-eligibility test. Bridge
 status is permanent while only edges are deleted; nonbridge status is checked
 again after earlier deletions. Global threshold and ranking context still use
 the whole graph. Skips do not consume the actual-deletion allowance; later
-proposals are considered. No shorter edge is substituted for a protected one.
+proposals are considered. A vertex already used by an earlier deletion in the
+batch is excluded before forming another proposal, as in reference pruning. For
+each actual proposal, the opposite-endpoint exclusion follows the bridge and
+pruning-eligibility tests. No shorter edge is substituted for a protected one.
 A full pass with no removal terminates, with `no_connectivity_preserving_removal`
 if statistical candidates remain, or `no_pruning_candidates` otherwise.
 

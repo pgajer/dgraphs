@@ -1,0 +1,38 @@
+{
+  "id": "IAN-EXP-031",
+  "files": [
+    {
+      "role": "scientific study source/evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/05-scientific-benchmark/PLAN.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/05-scientific-benchmark/PLAN.md",
+      "available": true,
+      "sha256": "9dcedf862921b1c3b9434968538c0d8b9c0c8b17e719b7d29238c88dbf92a62a",
+      "identity_scope": "Submitted source and saved evidence bytes"
+    },
+    {
+      "role": "scientific study source/evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage05-science/manifest.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage05-science/manifest.json",
+      "available": true,
+      "sha256": "c7cae49bbd1b9217c515cdf363b48f8ce45639496c09e0205621c5e32c94d8bb",
+      "identity_scope": "Submitted source and saved evidence bytes"
+    },
+    {
+      "role": "scientific study source/evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage05-science/analysis-v1/summary.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage05-science/analysis-v1/summary.json",
+      "available": true,
+      "sha256": "58de73eb84cb3df6b7da5c698bfc48689e92fde2f83784d6a325ea264cc5ae51",
+      "identity_scope": "Submitted source and saved evidence bytes"
+    },
+    {
+      "role": "scientific study source/evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage05-science/final-checks.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage05-science/final-checks.json",
+      "available": true,
+      "sha256": "5452d06bf65edf977f1937beb971d04714b8847509f804a1ac2db328c1e8c013",
+      "identity_scope": "Submitted source and saved evidence bytes"
+    }
+  ],
+  "backup": "External backup coverage unknown"
+}

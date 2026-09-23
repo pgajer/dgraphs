@@ -1,0 +1,11 @@
+{
+  "audit_status": "independent scientific audit pending",
+  "numerically_checked": true,
+  "numerical_check_scope": "Author checks all 572 full payloads, exact paired scale/dual vectors and analytic/holdout controls; not independent acceptance",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "c89c9fe930db4ec3ba041dde639bebcea87d371f8bfbfb875531e82072b047fb"
+  },
+  "audit_history": [],
+  "consequential_limits": "Nine datasets at n=200, one function per geometry/noise level, transductive access, no biological or general-superiority claim"
+}

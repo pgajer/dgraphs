@@ -202,6 +202,24 @@
       "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims.",
       "original_condition": "Near-optimal objective values permit a meaningful scale difference on the saved difficult problem.",
       "change_or_deferral_reason": "The owner must choose a prespecified secondary criterion, primary-objective allowance and bounded protocol before a new selection study. No retry, solver or tie-breaking policy is adopted by organizing these records."
+    },
+    {
+      "id": "STAGE04-F1",
+      "description": "Rounded R JSON projections were insufficient for an exact-output claim",
+      "disposition": "Exact RDS checks independently verified; closed",
+      "affected": [
+        "IAN-EXP-030"
+      ],
+      "evidence": [
+        {
+          "role": "independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage04-performance/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage04-performance/audit.md",
+          "available": true,
+          "sha256": "f476a9a73a3a83970b4c8bbc536fee42f100963d044bf997cc6ffbe8907c89a1",
+          "identity_scope": "Final bounded acceptance and F1 closure"
+        }
+      ]
     }
   ]
 }

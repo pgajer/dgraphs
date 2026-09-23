@@ -242,6 +242,14 @@
         "Continuation stage 4"
       ],
       "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-031",
+      "title": "Do numerically valid IAN graphs improve geometry and smooth-signal recovery?",
+      "phase": [
+        "Continuation stage 5"
+      ],
+      "execution": "executed"
     }
   ],
   "historical_source_files": {
@@ -638,7 +646,8 @@
       "IAN-EXP-027",
       "IAN-EXP-028",
       "IAN-EXP-029",
-      "IAN-EXP-030"
+      "IAN-EXP-030",
+      "IAN-EXP-031"
     ]
   }
 }

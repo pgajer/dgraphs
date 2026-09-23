@@ -1,6 +1,6 @@
-# Internal IAN adapter (bounded local qualification)
+# IAN graphs: setup, results and supported behavior
 
-`dgraphs:::create.ian.graph()` is deliberately unexported. It returns the actual
+`dgraphs::create.ian.graph()` returns the actual
 initial Gabriel graph, completed final graph, last valid graph, profile/specimen
 mapping, local scales, affinity matrix and numerical diagnostics. Graph edge
 lengths retain input distance units. Affinities are separate similarities; they
@@ -19,22 +19,31 @@ R/Rcpp, Apple's C++ compiler/SDK, Cargo and Rust >=1.77. Cargo uses the checked-
 lockfile; an initial build needs its crates cached or network access. No external
 executables are launched by the R graph function.
 
-After installing dgraphs into a writable private library, locate the helper:
+After installing dgraphs, build the optional module explicitly in a new directory:
 
 ```r
-system.file("ian", "build_backend.py", package = "dgraphs")
-system.file("ian", package = "dgraphs")
+library(dgraphs)
+backend <- build.ian.backend("ian-build")
+X <- rbind(c(0, 0), c(1, 0), c(2, 0), c(0, 0))
+fit <- create.ian.graph(X, backend = backend)
+stopifnot(fit$complete)
 ```
 
-Run `python3 <helper> --build-dir <fresh-directory> --install-dir <ian-directory>/native`.
-Alternatively omit install-dir and pass `backend="<build-directory>/dgraphs_ian.so"`
-to the R function. Build outputs and a command/source identity ledger stay in the
-fresh build directory. The helper checks the Rust host architecture before building;
-if the default toolchain targets Intel Mac, select `--rustc /path/to/arm64/rustc`
-and `--cargo /path/to/arm64/cargo` from the same native arm64 toolchain.
-The statically linked module has no worker-directory
-runtime dependency. The strict typed baseline has independent bounded qualification on macOS arm64;
-the explicit retry-power option has independent integration and frozen scale-panel acceptance on the tested Mac. Neither claim establishes broader portability or CRAN acceptance. Public export and unrestricted larger sizes remain gated.
+Save the returned path and reuse it for later calls. Existing build directories
+are refused; no shared package library is changed. If the default Rust toolchain
+targets Intel Mac, pass `cargo` and `rustc` paths from the same native arm64
+toolchain. `offline=TRUE` requires cached dependencies. The helper uses the calling
+R installation and verifies that R/Rscript agree. Rebuild for a different R
+runtime or changed backend source. Logs and source identities remain in the build
+directory, including failed command records.
+
+The installed Python command-line helper remains available through
+`system.file("ian", "build_backend.py", package="dgraphs")`. It accepts
+`--build-dir`, optional `--install-dir`, and explicit tool paths. The public R setup
+command returns a path for `backend=` and does not use install-dir. The module
+has no dependency on the implementer's private workspace at runtime. Current
+qualification is bounded to macOS arm64; other platforms and CRAN release are
+not established by this interface.
 
 Supply X (specimens in rows), optionally exact unsquared distances, unique IDs and
 participant IDs. X defines exact duplicate profiles; distances alone cannot do so.
@@ -49,9 +58,9 @@ and mapping objects use one-based R indices.
 
 The `numerical.policy` argument accepts exactly two strings:
 
-- `"IAN evaluated-LP 1.0"` is the unchanged default: strict acceptance, no retries,
+- `"IAN evaluated-LP 1.0"` is the explicit strict baseline: no retries,
   and the preserved baseline arithmetic.
-- `"IAN evaluated-LP retry-power 0.1"` is an explicit experimental candidate. It
+- `"IAN evaluated-LP retry-power 0.1"` is the public default. It
   squares constraint quantities using the system power function. After an
   otherwise eligible rejected `Solved` or `AlmostSolved` return, it permits one
   fresh solve in normalized variable units with solver tolerances of `1e-11`
@@ -60,10 +69,11 @@ The `numerical.policy` argument accepts exactly two strings:
   return is never accepted directly. Both attempts and their actual settings
   remain in diagnostics. No second retry or secondary scale objective is used.
 
-For example, add `numerical.policy="IAN evaluated-LP retry-power 0.1"` to an
-internal function call to request the candidate. It has not been adopted as the
-default. It is selected explicitly for internal qualification after accepted integration and 1,000-profile native/Python studies. The R wrapper has no fixed experimental row cap. Matching the system power operation on one host does not promise
-identical arithmetic across platforms.
+The public default adopts the already-qualified retry-power policy and connected
+pruning. To select the previous strict/reference behavior, explicitly use
+`numerical.policy="IAN evaluated-LP 1.0", preserve.connectivity=FALSE`. These
+choices preserve their existing numerical implementations. Neither policy
+promises success for every input or identical arithmetic across platforms.
 
 Both policies use pinned Clarabel 0.11.1, QDLDL, one thread and fresh solver state.  The missing `input_sparse_dropzeros` C header field is repaired against
 this pinned Rust FFI; runtime size, alignment and every field offset are checked
@@ -75,7 +85,7 @@ A numeric refusal returns `complete=FALSE`, `final_graph=NULL`, an error and any
 available initial/last-valid graph. R interrupts are checked at engine events via
 R_ToplevelExec, allowing C++ to unwind; an active solver call is allowed to return
 before interruption is handled. This is not mid-solve cancellation. No durable
-checkpoint or resume interface is exposed by this first R adapter. `max.solves`
+checkpoint or resume interface is exposed by this R interface. `max.solves`
 stops execution after its last allowed solve and retains that attempt's record.
 R allocation failure and operating-system termination are not recoverable promises.
 
@@ -90,12 +100,12 @@ Canonical input fingerprinting still uses the previous JSON encoding at a separa
 persistence boundary, so its format is unchanged. The C++ observer interface has
 changed: Event now carries an EventPayload variant instead of a JSON string.
 
-## Explicit connectivity-preserving variant
+## Connectivity-preserving default
 
-Set `preserve.connectivity=TRUE` to request `IAN bridge-protected 0.1`:
+The default `preserve.connectivity=TRUE` selects `IAN bridge-protected 0.1`:
 
 ```r
-fit <- dgraphs:::create.ian.graph(
+fit <- dgraphs::create.ian.graph(
     X, distances = D,
     numerical.policy = "IAN evaluated-LP retry-power 0.1",
     preserve.connectivity = TRUE)
@@ -106,10 +116,10 @@ fit$diagnostics$connectivity$history
 fit$diagnostics$connectivity$stop.reason
 ```
 
-The default `FALSE` retains reference pruning. Rebuild the optional backend for
+Explicit `FALSE` retains reference pruning. Rebuild the optional backend for
 this interface; old modules are rejected with an explicit rebuild message. The
 new module retains the previous eight-argument native entry point for old callers.
-No public function is exported and the numerical policy/default is unchanged.
+The public defaults select the existing connected and retry-power policies.
 
 For each potential longest-incident-edge proposal in statistical order, the
 variant first skips a cached bridge or checks endpoint reachability with that

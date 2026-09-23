@@ -2,7 +2,7 @@
 % Please edit documentation in R/ian_graph.R
 \name{create.ian.graph}
 \alias{create.ian.graph}
-\title{Experimental Internal IAN Adapter}
+\title{Construct an Iterated Adaptive Neighborhood Graph}
 \usage{
 create.ian.graph(
   X,
@@ -13,8 +13,8 @@ create.ian.graph(
   diagnostics = c("summary", "full"),
   backend = NULL,
   max.solves = 10000L,
-  numerical.policy = "IAN evaluated-LP 1.0",
-  preserve.connectivity = FALSE
+  numerical.policy = "IAN evaluated-LP retry-power 0.1",
+  preserve.connectivity = TRUE
 )
 }
 \arguments{
@@ -45,10 +45,11 @@ The actual initial Gabriel graph is always constructed by IAN.}
 
 \item{max.solves}{Positive integer safety limit; reaching it returns refusal.}
 
-\item{numerical.policy}{Exactly \code{"IAN evaluated-LP 1.0"} (strict default) or
-\code{"IAN evaluated-LP retry-power 0.1"} (explicit experimental candidate).}
+\item{numerical.policy}{Exactly \code{"IAN evaluated-LP 1.0"} (strict, without retries) or
+\code{"IAN evaluated-LP retry-power 0.1"} (default: one eligible checked retry).}
 
-\item{preserve.connectivity}{Logical scalar, default \code{FALSE} (reference pruning).
+\item{preserve.connectivity}{Logical scalar, default \code{TRUE}. Use \code{FALSE} for
+reference pruning, which may disconnect the graph.
 With \code{TRUE}, cache encountered bridges and skip them before testing each
 proposed edge's pruning eligibility. Check noncached edges in the current
 graph after preceding deletions. Skips do not consume the deletion allowance.
@@ -76,17 +77,58 @@ Partial results retain available protection diagnostics; \code{final_graph}
 remains \code{NULL} if later optimization or affinity construction fails.
 }
 \description{
-The unexported adapter requires the separately built optional backend. Its
-unchanged default, \verb{IAN evaluated-LP 1.0}, uses strict numerical acceptance
-without retries. The explicit experimental option
-\verb{IAN evaluated-LP retry-power 0.1} uses shared-power constraint arithmetic and
-at most one normalized retry after an eligible rejected return. The retry must
-return strict solver success and pass the unchanged original-unit checks; the
-original rejected result is never accepted directly. This candidate has not
-been adopted as the default. It has independent bounded qualification on
-macOS arm64 and is selected explicitly for internal qualification studies.
-See \code{system.file("ian", "README.md", package = "dgraphs")} for build and
-numerical limitations. Input rows are specimens; graph vertices are unique
-feature profiles in first-occurrence order.
+Construct the initial Gabriel graph, adapt local scales and prune edges,
+returning graphs, affinities and diagnostics. By default, proposed bridge
+edges are protected so that pruning retains connectivity, and the audited
+retry-power numerical policy permits one checked retry after an eligible
+solver rejection. These are explicit variants of reference IAN.
 }
-\keyword{internal}
+\details{
+Build the optional module once with \code{\link[=build.ian.backend]{build.ian.backend()}} and pass its returned
+path as \code{backend}. The supported build target is macOS arm64. The function
+itself does not compile code, download dependencies or launch an external
+solver. See \code{system.file("ian", "README.md", package = "dgraphs")} for the
+numerical contract, setup requirements and bounded qualification.
+
+Input rows are specimens; graph vertices are unique feature profiles in
+first-occurrence order. Always check \code{complete} before using \code{final_graph}.
+Invalid R arguments or an unavailable backend raise an R error. Numerical
+refusal and interruption during engine execution return an incomplete result
+with the available diagnostics. Memory exhaustion or process termination is
+not a recoverable-result guarantee.
+
+The default numerical policy is \verb{IAN evaluated-LP retry-power 0.1}.
+A rejected original return remains rejected. Its single eligible retry must
+itself pass strict solver success and the unchanged original-unit checks.
+\code{numerical.policy="IAN evaluated-LP 1.0"} together with
+\code{preserve.connectivity=FALSE} selects the previous strict/reference behavior.
+This public default adoption changes neither policy's implementation.
+
+The returned top-level fields are \code{complete}, \code{error}, \code{initial_graph},
+\code{final_graph}, \code{last_valid_graph}, \code{mapping}, \code{scales}, \code{affinity},
+\code{diagnostics} and \code{backend}. Graphs are \code{\link[=dgraph]{dgraph()}} objects with metric edge
+lengths in input distance units; affinity values are separate similarities.
+Mapping contains one-based \code{representatives} and \code{member_to_profile}, plus
+specimen, profile and participant IDs. Repeated participant IDs do not merge
+specimens. Error information contains \code{kind}, \code{code} and \code{message}.
+\code{diagnostics$solver_history} retains both accepted and rejected attempts.
+Backend information identifies the selected policies, source and settings.
+Checkpoint/resume is not exposed through this R interface.
+}
+\examples{
+# Set this variable to the path returned by build.ian.backend().
+backend <- Sys.getenv("DGRAPHS_IAN_BACKEND")
+if (nzchar(backend) && file.exists(backend)) {
+  X <- rbind(c(0, 0), c(1, 0), c(2, 0), c(0, 0))
+  fit <- create.ian.graph(X, backend = backend,
+      specimen.ids = c("alpha", "beta", "gamma", "delta"))
+  stopifnot(fit$complete)
+  graph.edges(fit$initial_graph)
+  graph.edges(fit$final_graph)
+  fit$mapping$member_to_profile # Four specimens, three unique profiles.
+  fit$diagnostics$connectivity$protected.edges
+}
+}
+\seealso{
+\code{\link[=build.ian.backend]{build.ian.backend()}}
+}

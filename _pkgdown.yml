@@ -15,11 +15,14 @@ articles:
     navbar: ~
     contents:
       - function-guide
+      - ian-graphs
       - data-derived-graph-workflow
       - synthetic-geometry
 reference:
   - title: Graph construction and parameter sequences
     contents:
+      - create.ian.graph
+      - build.ian.backend
       - create.mknn.graph
       - create.mknn.graphs
       - create.sknn.graph

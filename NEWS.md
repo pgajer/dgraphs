@@ -1,5 +1,12 @@
 # dgraphs (development version)
 
+* Export `create.ian.graph()` with connectivity preservation and the audited
+  retry-power numerical policy as defaults. Retain explicit strict/reference
+  options, initial/final graphs, profile mapping and diagnostics; no fixed row cap.
+* Add `build.ian.backend()` for explicit optional-backend setup on macOS arm64.
+  Backend compilation remains separate from ordinary package installation.
+
+
 * Geodesic nearest-neighbor queries now count other vertices, exclude self by
   identity, preserve coincident observations and break ties by vertex index.
   Insufficient reachable neighbors error unless `small.component = "truncate"`;

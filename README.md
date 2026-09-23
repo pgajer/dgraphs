@@ -49,6 +49,29 @@ print(graph)
 The remaining examples use the development installation above. Breaking
 changes are described in [NEWS](https://pgajer.github.io/dgraphs/news/index.html).
 
+## IAN graphs
+
+`create.ian.graph()` builds a Gabriel graph and adapts its neighborhoods, preserving
+connectivity by default. It returns the initial and final graphs, local scales,
+affinities and diagnostics. IAN uses an optional backend; setup currently supports
+macOS arm64 and needs Python 3, native Cargo/Rust and Apple's C++ tools.
+
+```r
+backend <- build.ian.backend("ian-build") # New directory; explicit one-time setup.
+X <- rbind(c(0, 0), c(1, 0), c(2, 0))
+fit <- create.ian.graph(X, backend = backend)
+if (!fit$complete) stop(fit$error$message)
+graph.edges(fit$initial_graph)
+graph.edges(fit$final_graph)
+fit$diagnostics$connectivity$protected.edges
+```
+
+Keep the returned backend path for later calls. Ordinary package installation does
+not compile the optional Rust backend. See `vignette("ian-graphs")` and
+`help("build.ian.backend")` for setup, reference options, duplicate handling and
+resource limits. Successful graph construction does not establish biological or
+predictive usefulness.
+
 ## Example
 
 ```r

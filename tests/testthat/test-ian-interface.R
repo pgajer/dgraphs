@@ -1,5 +1,5 @@
-test_that("IAN remains internal and validates arguments before backend loading", {
- expect_false("create.ian.graph" %in% getNamespaceExports("dgraphs"))
+test_that("IAN is exported and validates arguments before backend loading", {
+ expect_true("create.ian.graph" %in% getNamespaceExports("dgraphs"))
  f <- get("create.ian.graph", asNamespace("dgraphs"))
  x <- matrix(c(0,1,2,0,1,0),3,2)
  expect_error(f(x,graph=list()),"Supplied initial graphs")
@@ -30,7 +30,8 @@ test_that("connectivity option validates before optional backend loading", {
   expect_error(f(x, preserve.connectivity = value, backend = tempfile()), "preserve.connectivity")
  for (value in c(TRUE, FALSE))
   expect_error(f(x, preserve.connectivity = value, backend = tempfile()), "unavailable")
- expect_identical(formals(f)$preserve.connectivity, FALSE)
+ expect_identical(formals(f)$preserve.connectivity, TRUE)
+ expect_identical(formals(f)$numerical.policy, "IAN evaluated-LP retry-power 0.1")
 })
 
 test_that("IAN dimensions use representation bounds without allocating large arrays", {
@@ -44,4 +45,21 @@ test_that("IAN dimensions use representation bounds without allocating large arr
  }
  for (n in list(NA_real_, Inf, -1, 2.5, numeric(), c(2, 3)))
   expect_error(f(n, 1), "nonnegative integers")
+})
+
+test_that("public IAN setup validates paths and tools without launching compilation", {
+ expect_true("build.ian.backend" %in% getNamespaceExports("dgraphs"))
+ f <- get("build.ian.backend", asNamespace("dgraphs"))
+ for (x in list(NULL, NA_character_, "", c("one", "two")))
+  expect_error(f(x), "build.dir")
+ expect_error(f(tempdir()), "new directory")
+ expect_error(f(tempfile(), offline = NA), "offline")
+ expect_error(f(tempfile(), python = tempfile()), "python executable is unavailable")
+ expect_error(f(tempfile(), python = character()), "python must name")
+ for (name in c("create.ian.graph", "build.ian.backend")) {
+  g <- get(name, asNamespace("dgraphs"))
+  expect_true(grepl("^[a-z]+([.][a-z]+)*$", name))
+  expect_true(all(names(formals(g)) == "X" |
+                    grepl("^[a-z]+([.][a-z]+)*$", names(formals(g)))))
+ }
 })

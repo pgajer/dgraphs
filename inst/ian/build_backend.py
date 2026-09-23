@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Build the optional IAN module from installed, pinned sources; never runs solves."""
-import argparse, hashlib, json, os, platform, shutil, subprocess, zipfile
+import argparse, hashlib, json, os, platform, shutil, subprocess, zipfile, signal, time
 from pathlib import Path
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--build-dir',required=True,type=Path)
@@ -11,13 +11,27 @@ p.add_argument('--offline',action='store_true');a=p.parse_args()
 if platform.system()!='Darwin' or platform.machine()!='arm64':p.error('This bounded backend build supports macOS arm64 only; other platforms are unqualified.')
 src=Path(__file__).resolve().parent/'backend';out=a.build_dir.resolve();out.mkdir(parents=True,exist_ok=False)
 record={'commands':[],'complete':False,'platform':platform.platform(),'sources':{}}
-def save(): (out/'build-record.json').write_text(json.dumps(record,indent=2)+'\n')
+def save():
+ tmp=out/'build-record.tmp';tmp.write_text(json.dumps(record,indent=2)+'\n');os.replace(tmp,out/'build-record.json')
 def call(name,cmd,env=None):
- with (out/(name+'.log')).open('w') as log:
-  x=subprocess.run(list(map(str,cmd)),stdout=log,stderr=subprocess.STDOUT,env=env)
- record['commands'].append({'name':name,'command':list(map(str,cmd)),'returncode':x.returncode});save()
- print(name,x.returncode,flush=True)
- if x.returncode:raise SystemExit('Build failed; logs retained in '+str(out))
+ row=dict(name=name,command=list(map(str,cmd)),state='reserved',timeout_seconds=1800);record['commands'].append(row);save()
+ start=time.monotonic();proc=None
+ try:
+  with (out/(name+'.log')).open('w') as log:
+   proc=subprocess.Popen(row['command'],stdout=log,stderr=subprocess.STDOUT,env=env,start_new_session=True)
+   row.update(state='running',pid=proc.pid);save()
+   proc.wait(timeout=1800)
+ except BaseException as error:
+  row['error']=repr(error)
+  if proc is not None and proc.poll() is None:
+   os.killpg(proc.pid,signal.SIGTERM)
+   try:proc.wait(timeout=5)
+   except subprocess.TimeoutExpired:os.killpg(proc.pid,signal.SIGKILL);proc.wait()
+  raise
+ finally:
+  row.update(state='reaped' if proc is not None else 'launch_failed',returncode=proc.returncode if proc else None,seconds=time.monotonic()-start);save()
+ print(name,row['returncode'],flush=True)
+ if row['returncode']:raise SystemExit('Build failed; logs retained in '+str(out))
 source=out/'sources'
 if src.is_dir():
  shutil.copytree(src,source)
@@ -39,14 +53,20 @@ else:
   record['error']='Invalid installed source bundle: '+str(error);save();raise SystemExit(record['error'])
 record['sources']={str(f.relative_to(source)):hashlib.sha256(f.read_bytes()).hexdigest() for f in source.rglob('*') if f.is_file()}
 save()
+# Bind compilation to the selected R runtime before building the solver.
+call('r-home',[a.r,'RHOME'])
+call('rscript-info',[a.rscript,'--vanilla','-e',"cat(R.home(),R.version$arch,system.file('include',package='Rcpp'),sep='\\n')"])
+rhome=Path((out/'r-home.log').read_text().strip()).resolve()
+rinfo=(out/'rscript-info.log').read_text().strip().splitlines()
+if len(rinfo)!=3 or Path(rinfo[0]).resolve()!=rhome or rinfo[1] not in ['aarch64','arm64'] or not Path(rinfo[2]).is_dir():
+ record['error']='R and Rscript must select the same native arm64 R installation with Rcpp available.';save();raise SystemExit(record['error'])
+rcpp=Path(rinfo[2]);record['R_runtime']=dict(home=str(rhome),arch=rinfo[1],rcpp_include=str(rcpp));save()
 env=os.environ.copy();env['CARGO_BUILD_JOBS']='2';env['RUSTC']=a.rustc
 call('cargo-version',[a.cargo,'--version'])
 call('rust-version',[a.rustc,'-vV'])
 if 'host: aarch64-apple-darwin' not in (out/'rust-version.log').read_text():
  record['error']='Native macOS arm64 Rust is required; select --rustc and --cargo from the same arm64 toolchain.';save();raise SystemExit(record['error'])
 call('solver',[a.cargo,'build','--locked','--release','--lib',*(['--offline'] if a.offline else []),'--manifest-path',source/'Clarabel.cpp/rust_wrapper/Cargo.toml','--target-dir',out/'target'],env)
-rhome=Path(subprocess.check_output([a.r,'RHOME'],text=True).strip())
-rcpp=Path(subprocess.check_output([a.rscript,'--vanilla','-e','cat(system.file("include",package="Rcpp"))'],text=True).strip())
 identity=hashlib.sha256(json.dumps(record['sources'],sort_keys=True).encode()).hexdigest();config=hashlib.sha256((source/'core/config.json').read_bytes()).hexdigest()
 module=out/'dgraphs_ian.so'
 call('module',[a.cxx,'-std=c++17','-O2','-ffp-contract=off','-fno-fast-math','-fPIC','-shared','-undefined','dynamic_lookup','-Wl,-install_name,@rpath/dgraphs_ian.so',

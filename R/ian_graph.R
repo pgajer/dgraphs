@@ -1,17 +1,23 @@
-#' Experimental Internal IAN Adapter
+#' Construct an Iterated Adaptive Neighborhood Graph
 #'
-#' The unexported adapter requires the separately built optional backend. Its
-#' unchanged default, `IAN evaluated-LP 1.0`, uses strict numerical acceptance
-#' without retries. The explicit experimental option
-#' `IAN evaluated-LP retry-power 0.1` uses shared-power constraint arithmetic and
-#' at most one normalized retry after an eligible rejected return. The retry must
-#' return strict solver success and pass the unchanged original-unit checks; the
-#' original rejected result is never accepted directly. This candidate has not
-#' been adopted as the default. It has independent bounded qualification on
-#' macOS arm64 and is selected explicitly for internal qualification studies.
-#' See `system.file("ian", "README.md", package = "dgraphs")` for build and
-#' numerical limitations. Input rows are specimens; graph vertices are unique
-#' feature profiles in first-occurrence order.
+#' Construct the initial Gabriel graph, adapt local scales and prune edges,
+#' returning graphs, affinities and diagnostics. By default, proposed bridge
+#' edges are protected so that pruning retains connectivity, and the audited
+#' retry-power numerical policy permits one checked retry after an eligible
+#' solver rejection. These are explicit variants of reference IAN.
+#'
+#' Build the optional module once with [build.ian.backend()] and pass its returned
+#' path as `backend`. The supported build target is macOS arm64. The function
+#' itself does not compile code, download dependencies or launch an external
+#' solver. See `system.file("ian", "README.md", package = "dgraphs")` for the
+#' numerical contract, setup requirements and bounded qualification.
+#'
+#' Input rows are specimens; graph vertices are unique feature profiles in
+#' first-occurrence order. Always check `complete` before using `final_graph`.
+#' Invalid R arguments or an unavailable backend raise an R error. Numerical
+#' refusal and interruption during engine execution return an incomplete result
+#' with the available diagnostics. Memory exhaustion or process termination is
+#' not a recoverable-result guarantee.
 #'
 #' @param X Finite numeric specimen-by-feature matrix, at least two rows and one
 #'   column. There is no fixed experimental row cap. Input size must fit R/native
@@ -31,9 +37,10 @@
 #'   The actual initial Gabriel graph is always constructed by IAN.
 #' @param diagnostics `"summary"` or `"full"`; full includes dense LP payloads.
 #' @param backend Optional path to the separately built `dgraphs_ian.so` module.
-#' @param numerical.policy Exactly `"IAN evaluated-LP 1.0"` (strict default) or
-#'   `"IAN evaluated-LP retry-power 0.1"` (explicit experimental candidate).
-#' @param preserve.connectivity Logical scalar, default `FALSE` (reference pruning).
+#' @param numerical.policy Exactly `"IAN evaluated-LP 1.0"` (strict, without retries) or
+#'   `"IAN evaluated-LP retry-power 0.1"` (default: one eligible checked retry).
+#' @param preserve.connectivity Logical scalar, default `TRUE`. Use `FALSE` for
+#'   reference pruning, which may disconnect the graph.
 #'   With `TRUE`, cache encountered bridges and skip them before testing each
 #'   proposed edge's pruning eligibility. Check noncached edges in the current
 #'   graph after preceding deletions. Skips do not consume the deletion allowance.
@@ -58,12 +65,43 @@
 #'   deletion stops, including when statistical candidates remain protected.
 #'   Partial results retain available protection diagnostics; `final_graph`
 #'   remains `NULL` if later optimization or affinity construction fails.
-#' @keywords internal
+#' @details The default numerical policy is `IAN evaluated-LP retry-power 0.1`.
+#'   A rejected original return remains rejected. Its single eligible retry must
+#'   itself pass strict solver success and the unchanged original-unit checks.
+#'   `numerical.policy="IAN evaluated-LP 1.0"` together with
+#'   `preserve.connectivity=FALSE` selects the previous strict/reference behavior.
+#'   This public default adoption changes neither policy's implementation.
+#'
+#'   The returned top-level fields are `complete`, `error`, `initial_graph`,
+#'   `final_graph`, `last_valid_graph`, `mapping`, `scales`, `affinity`,
+#'   `diagnostics` and `backend`. Graphs are [dgraph()] objects with metric edge
+#'   lengths in input distance units; affinity values are separate similarities.
+#'   Mapping contains one-based `representatives` and `member_to_profile`, plus
+#'   specimen, profile and participant IDs. Repeated participant IDs do not merge
+#'   specimens. Error information contains `kind`, `code` and `message`.
+#'   `diagnostics$solver_history` retains both accepted and rejected attempts.
+#'   Backend information identifies the selected policies, source and settings.
+#'   Checkpoint/resume is not exposed through this R interface.
+#' @examples
+#' # Set this variable to the path returned by build.ian.backend().
+#' backend <- Sys.getenv("DGRAPHS_IAN_BACKEND")
+#' if (nzchar(backend) && file.exists(backend)) {
+#'   X <- rbind(c(0, 0), c(1, 0), c(2, 0), c(0, 0))
+#'   fit <- create.ian.graph(X, backend = backend,
+#'       specimen.ids = c("alpha", "beta", "gamma", "delta"))
+#'   stopifnot(fit$complete)
+#'   graph.edges(fit$initial_graph)
+#'   graph.edges(fit$final_graph)
+#'   fit$mapping$member_to_profile # Four specimens, three unique profiles.
+#'   fit$diagnostics$connectivity$protected.edges
+#' }
+#' @seealso [build.ian.backend()]
+#' @export
 create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
                              participant.ids = NULL, graph = NULL,
                              diagnostics = c("summary", "full"), backend = NULL,
-                             max.solves = 10000L, numerical.policy = "IAN evaluated-LP 1.0",
-                             preserve.connectivity = FALSE) {
+                             max.solves = 10000L, numerical.policy = "IAN evaluated-LP retry-power 0.1",
+                             preserve.connectivity = TRUE) {
     .ian.adapter(X, distances, specimen.ids, participant.ids, graph,
                  match.arg(diagnostics), backend, max.solves, "none", numerical.policy, preserve.connectivity)
 }
@@ -73,12 +111,12 @@ create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
     function(path) {
         if (is.null(path)) path <- system.file("ian", "native", "dgraphs_ian.so", package = "dgraphs")
         if (!is.character(path) || length(path) != 1L || is.na(path) || !nzchar(path) || !file.exists(path))
-            stop("IAN optional backend is unavailable. Build it using the installed ian/build_backend.py helper; see ian/README.md.", call. = FALSE)
+            stop("IAN optional backend is unavailable. Run build.ian.backend() and pass its returned path as backend; see the installed ian/README.md.", call. = FALSE)
         path <- normalizePath(path, mustWork = TRUE)
         if (!exists(path, cache, inherits = FALSE)) {
             dll <- dyn.load(path, local = TRUE)
             run <- tryCatch(getNativeSymbolInfo("dgraphs_ian_run_v3", dll)$address,
-                error = function(e) stop("IAN backend needs rebuilding for the checked-size interface; use ian/build_backend.py.", call. = FALSE))
+                error = function(e) stop("IAN backend needs rebuilding for the checked-size interface; use build.ian.backend() in a new build directory.", call. = FALSE))
             assign(path, list(dll = dll, run = run), cache)
         }
         get(path, cache, inherits = FALSE)$run

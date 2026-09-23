@@ -17,7 +17,7 @@ flag. Shared phase02 audit scope is counted once at milestone level.
 
 The other 24 catalogue reports, historical figure reconstructions, aims wording
 and synthesis have author checks but have not received independent presentation
-review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028, IAN-EXP-029, IAN-EXP-030, IAN-EXP-031, IAN-EXP-032, IAN-EXP-033 IAN-EXP-034 and IAN-EXP-035 acceptances do not audit the complete catalogue. For every record current_report_review
+review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028, IAN-EXP-029, IAN-EXP-030, IAN-EXP-031, IAN-EXP-032, IAN-EXP-033, IAN-EXP-034 and IAN-EXP-035 acceptances do not audit the complete catalogue. For every record current_report_review
 names that limitation and binds the current report hash. Historical audit history
 remains distinct and is not silently carried forward to rewritten prose.
 

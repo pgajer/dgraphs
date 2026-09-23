@@ -1,0 +1,13 @@
+a<-commandArgs(TRUE);.libPaths(c(a[1],.libPaths()));library(dgraphs);out<-a[2];dir.create(out,recursive=TRUE)
+checks<-list();check<-function(n,v){checks[[n]]<<-isTRUE(v);jsonlite::write_json(list(engine.calls=0,checks=checks),file.path(out,'checks.json'),pretty=TRUE,auto_unbox=TRUE);stopifnot(isTRUE(v))}
+error<-function(expr)tryCatch({force(expr);''},error=function(e)conditionMessage(e))
+e<-error(build.ian.backend(file.path(out,'build failure'),python=a[3],cargo='/usr/bin/false',rustc=a[4],offline=TRUE))
+check('R setup reports failed build',grepl('build failed',e,fixed=TRUE))
+r<-jsonlite::fromJSON(file.path(out,'build failure','build-record.json'),simplifyVector=FALSE)
+check('failed command completely recorded',!r$complete && tail(r$commands,1)[[1]]$name=='cargo-version' && tail(r$commands,1)[[1]]$state=='reaped' && tail(r$commands,1)[[1]]$returncode==1L)
+check('no Rust compilation after tool failure',!any(vapply(r$commands,function(x)x$name=='solver',TRUE)))
+x<-matrix(0:2,ncol=1)
+e<-error(create.ian.graph(x,backend=a[5]));check('obsolete module refused before engine',grepl('checked-size interface',e,fixed=TRUE))
+e<-error(create.ian.graph(x,backend=file.path(out,'missing.so')));check('missing module has public setup advice',grepl('build.ian.backend()',e,fixed=TRUE))
+check('failed directory not overwritten',grepl('new directory',error(build.ian.backend(file.path(out,'build failure'))),fixed=TRUE))
+cat('Zero-engine setup and backend-refusal controls passed.\n')

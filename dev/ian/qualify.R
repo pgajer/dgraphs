@@ -22,7 +22,7 @@ check <- function(label, okay) { checks[[label]] <<- isTRUE(okay); save(); if(!i
 run <- function(name, x, d=NULL, ids=NULL, participants=NULL, detail="summary", limit=80L, fault="none") {
  stopifnot(prior_calls+length(ledger)<30L, nrow(x)<=96L,prior_solves+total+limit<=600L)
  ledger[[name]] <<- list(status="started",max_solves=limit,rows=nrow(x));save()
- r <- if(fault=="none") f(x,distances=d,specimen.ids=ids,participant.ids=participants,diagnostics=detail,backend=backend,max.solves=limit) else internal(x,d,ids,participants,NULL,detail,backend,limit,fault)
+ r <- if(fault=="none") f(x,distances=d,specimen.ids=ids,participant.ids=participants,diagnostics=detail,backend=backend,max.solves=limit,numerical.policy="IAN evaluated-LP 1.0",preserve.connectivity=FALSE) else internal(x,d,ids,participants,NULL,detail,backend,limit,fault)
  saveRDS(r,file.path(out,paste0(name,".rds")))
  count <- r$diagnostics$solves
  total <<- total+count
@@ -71,6 +71,6 @@ check("all duplicates structured refusal",!all_dup$complete && all_dup$error$cod
 d <- unname(as.matrix(dist(x)));d[4,2]<-d[2,4]<-1.1
 baddup<-run("inconsistent_duplicate_refusal",x,d,ids)
 check("duplicate distances refused",!baddup$complete && baddup$error$code=="duplicate_distance_inconsistency" && baddup$diagnostics$solves==0)
-check("unexported",!"create.ian.graph"%in%getNamespaceExports("dgraphs"))
+check("exported","create.ian.graph"%in%getNamespaceExports("dgraphs"))
 cat(length(ledger),"calls;",total,"solver attempts;",length(checks),"checks passed\n")
 writeLines(capture.output(str(list(calls=ledger,total_solves=total,checks=checks),max.level=2)),file.path(out,"summary.txt"))

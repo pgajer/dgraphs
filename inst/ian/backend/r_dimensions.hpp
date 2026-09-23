@@ -27,7 +27,8 @@ template<class T> bool integer_as_double(T value) {
     constexpr std::uint64_t exact_limit=std::uint64_t(1)<<53;
     if constexpr(std::is_signed_v<T>) {
         const auto v=static_cast<std::int64_t>(value);
-        if(v>=std::numeric_limits<int>::min() && v<=std::numeric_limits<int>::max())return false;
+        // R reserves INT_MIN as its integer NA sentinel.
+        if(v>std::numeric_limits<int>::min() && v<=std::numeric_limits<int>::max())return false;
         if(v < -static_cast<std::int64_t>(exact_limit) || v > static_cast<std::int64_t>(exact_limit))
             throw std::runtime_error("IAN integer cannot be represented exactly in R");
     } else {

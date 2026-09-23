@@ -14,7 +14,7 @@ int main() {
  refusal([&]{matrix_dimensions(std::numeric_limits<std::size_t>::max(),2,rmax);});
  refusal([&]{matrix_dimensions(2,std::numeric_limits<std::size_t>::max(),rmax);});
  matrix_dimensions(0,0,rmax);++checks;
- pass(!integer_as_double(imax));pass(!integer_as_double(std::numeric_limits<int>::min()));
+ pass(!integer_as_double(imax));pass(integer_as_double(std::numeric_limits<int>::min()));pass(!integer_as_double(std::numeric_limits<int>::min()+1));
  pass(integer_as_double(std::uint64_t(imax)+1));pass(integer_as_double(std::int64_t(std::numeric_limits<int>::min())-1));
  pass(integer_as_double(std::uint64_t(1)<<53));pass(integer_as_double(-(std::int64_t(1)<<53)));
  refusal([&]{integer_as_double((std::uint64_t(1)<<53)+1);});

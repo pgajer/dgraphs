@@ -17,7 +17,7 @@ if(r$complete){
 # For summary R mode, compare the projected native solve history exactly.
 if(!length(r$diagnostics$trace)){
  expected<-vapply(r$diagnostics$solver_history,function(e){e$seconds<-NULL;ian.trace.json(e)},'')
- source<-file(file.path(a[2],'trace.jsonl'),'r');on.exit<-NULL;actual<-character()
+ source<-file(file.path(a[2],'trace.jsonl'),'r');actual<-character()
  dense<-c('A_data','A_indices','A_indptr','A_shape','b','c','upper','active','scales','dual','backend_rhs','backend_primal','backend_dual','backend_slack','seconds')
  repeat{line<-readLines(source,n=1,warn=FALSE);if(!length(line))break;e<-jsonlite::fromJSON(line,simplifyVector=FALSE);if(e$event=='solve')actual<-c(actual,ian.trace.json(e[!names(e)%in%dense]))};close(source)
  stopifnot(identical(unname(expected),unname(actual)))

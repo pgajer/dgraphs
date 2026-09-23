@@ -458,6 +458,16 @@ test_that("previous public GRIP spelling uses explicit boundary compatibility", 
                               final_rounds = 2L, metric = "edge_length"))
 })
 
+test_that("older public weighted GRIP retains its explicit metric-free contract", {
+  e <- graph_explorer_test_env
+  previous <- function(adj_list, weight_list, dim, rounds, final_rounds, seed)
+    cbind(seq_along(adj_list), 0, 1)
+  f <- e$dg.weighted.layout.adapter(previous, weighted.only = TRUE)
+  expect_true(is.function(f))
+  expect_equal(f(adj_list = list(2L, 1L), weight_list = list(1, 1),
+      dim = 3L, rounds = 1L, final_rounds = 2L, seed = 6L), cbind(1:2, 0, 1))
+})
+
 test_that("current public GRIP can explicitly generate a missing weighted layout", {
   skip_if_not_installed("grip")
   f <- graph_explorer_test_env$dg_weighted_layout_fun()

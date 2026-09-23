@@ -14,10 +14,11 @@ manifest['sources']={str(p.relative_to(source)):sha(p) for p in source.rglob('*'
 identity=hashlib.sha256(json.dumps(manifest['sources'],sort_keys=True).encode()).hexdigest();config=sha(source/'core/config.json')
 manifest.update(source_identity=identity,configuration_identity=config)
 ref=out/'reference';ref.mkdir();old=ROOT/'development/ian-cpp-phase1/phase07e/candidate'
-for name in ['reference.py','reference_probe.py','retry_policy.py']:shutil.copy2(old/name,ref/name)
+for name in ['reference.py','reference_probe.py','retry_policy.py','config.json']:shutil.copy2(old/name,ref/name)
 p=ref/'reference.py';s=p.read_text().replace('IAN evaluated-LP retry units11 almost 0.1',POLICY)
 s=s.replace('import clarabel','import clarabel\nimport math\ndef _square(v): return math.pow(float(v),2.)').replace('C**2','_square(C)')
 a=" generated=generate.prepare(folder/'source');text=generated.read_text()";assert a in s;s=s.replace(a,a+"\n assert text.count('e_len**2')==1 and text.count('w**2')==1\n text=text.replace('e_len**2','_ian_square(e_len)').replace('w**2','_ian_square(w)')");s=s.replace(' exec(compile(tree',' module._ian_square=_square\n exec(compile(tree');p.write_text(s)
+cfg=json.loads((ref/'config.json').read_text());cfg['numerical_policy']=POLICY;write(ref/'config.json',cfg)
 manifest['reference']={str(p.name):sha(p) for p in ref.iterdir()}
 fixtures=out/'fixtures';fixtures.mkdir()
 cases=json.loads((W/'phase07e/engine-fixtures-v1/manifest.json').read_text())['cases']

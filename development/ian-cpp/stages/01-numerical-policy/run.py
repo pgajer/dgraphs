@@ -10,19 +10,26 @@ v.POLICY='IAN evaluated-LP retry-power 0.1'
 load=lambda p:json.loads(Path(p).read_text())
 build=Path(sys.argv[1]);out=Path(sys.argv[2]);out.mkdir(parents=True,exist_ok=False)
 manifest=load(build/'manifest.json');schedule=manifest['fixtures']
+prior=load(Path(sys.argv[3])/'ledger.json') if len(sys.argv)>3 else None
+reference=Path(sys.argv[4]) if len(sys.argv)>4 else build/'reference'
 fixed=load(W/'phase07e/fixtures-v1/manifest.json')['cases']
 ledger=dict(revision=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),build=str(build),fixed_schedule=list(fixed),engine_schedule=schedule,processes=[],comparisons={},complete=False,gate=True)
+ledger['prior_processes']=(prior.get('prior_processes',[])+prior['processes']) if prior else []
+ledger['reference']=str(reference)
 write(out/'ledger.json',ledger)
 def execute(cmd,folder,fixed_call=False):
- used=sum(p['optimizer_calls'] for p in ledger['processes']);wall=sum(p['wall_seconds'] for p in ledger['processes'])
+ census=ledger['prior_processes']+ledger['processes']
+ used=sum(p['optimizer_calls'] for p in census);wall=sum(p['wall_seconds'] for p in census)
+ fixed_count=sum(any(str(c).endswith('/replay.py') for c in p['command']) for p in census)
+ assert fixed_count<24 if fixed_call else len(census)-fixed_count<100
  assert used<8000 and wall<3600 and shutil.disk_usage(out).free>20*2**30
  reserve(out/('fixed-reservations.json' if fixed_call else 'engine-reservations.json'),24 if fixed_call else 100,dict(command=list(map(str,cmd))))
- r=run(cmd,folder,out,wall_limit=min(900,3600-wall),max_attempts=min(1 if fixed_call else 1000,8000-used))
+ r=run(cmd,folder,out.parent,wall_limit=min(900,3600-wall),max_attempts=min(1 if fixed_call else 1000,8000-used))
  ledger['processes'].append(r);write(out/'ledger.json',ledger)
  assert r['state']=='reaped' and r['reason'] is None,r
  return r
 try:
- for name,item in fixed.items():
+ for name,item in ([] if prior else fixed.items()):
   for mode in ['ordinary','units11']:
    folder=out/'fixed'/name/mode
    r=execute([sys.executable,'-B',E/'replay.py',W/'phase07e/fixtures-v1',name,mode,folder/'child'],folder,True)
@@ -33,7 +40,7 @@ try:
   name=case['name'];kind=case['kind'];probe=kind in ['probe','stage'];paths={}
   for interface in ['native','evaluated']:
    folder=out/'runs'/name/interface;child=folder/'child';paths[interface]=child
-   cmd=[build/('probe' if probe else 'engine'),case['path'],child]+([] if probe else ['--interval','100']) if interface=='native' else [sys.executable,'-B',build/'reference'/('reference_probe.py' if probe else 'reference.py'),case['path'],child,'evaluated']
+   cmd=[build/('probe' if probe else 'engine'),case['path'],child]+([] if probe else ['--interval','100']) if interface=='native' else [sys.executable,'-B',reference/('reference_probe.py' if probe else 'reference.py'),case['path'],child,'evaluated']
    r=execute(cmd,folder)
    complete=(child/'stages.json').exists() if kind=='stage' else load(child/'status.json')['complete']
    print(name,interface,'complete' if complete else 'REFUSED',r['optimizer_calls'],flush=True)
@@ -46,7 +53,7 @@ try:
       if e['event']=='solve':
        s=e['settings'];assert len(s)==41 and s['settings_layout_verified'] and not s['input_sparse_dropzeros'] and s['tol_feas']==e['solver_tolerance'] and s['max_threads']==1
    if not complete or r['exit_code']!=0:ledger['gate']=False
-  if kind=='stage':passed=load(paths['native']/'stages.json')==load(paths['evaluated']/'stages.json');check=dict(passed=passed)
+  if kind=='stage':passed=all((p/'stages.json').exists() for p in paths.values()) and load(paths['native']/'stages.json')==load(paths['evaluated']/'stages.json');check=dict(passed=passed)
   else:
    check=v.compare(paths['native']/'trace.jsonl',paths['evaluated']/'trace.jsonl',out/'runs'/name/'comparison')
    # Compare retry identity and recovered duals as well as historical field checks.

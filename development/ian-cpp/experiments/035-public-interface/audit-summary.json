@@ -1,0 +1,17 @@
+{
+  "audit_status": "Author qualification complete; independent review pending",
+  "numerically_checked": true,
+  "numerical_check_scope": "Author 504 full certificates and 1090 summary-return comparisons across 56 engine entries",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "d9a87cfb3e73bb526d356410693dcae563c1df1d8b69dd0bbdd3856af3718eb3",
+    "scope": "New public-interface submission",
+    "frozen_submission": {
+      "report_sha256": "d9a87cfb3e73bb526d356410693dcae563c1df1d8b69dd0bbdd3856af3718eb3",
+      "report_pdf_sha256": "a57573090418b88f85cf6b0745b67485d2266155433e1939dcd46950fba5ef8d",
+      "reason": "Two-page author-inspected submission preserved for independent review"
+    }
+  },
+  "audit_history": [],
+  "consequential_limits": "Two Mac arm64 R installations; offline builds; no shared installation, merge, CRAN release or scientific benefit claim"
+}

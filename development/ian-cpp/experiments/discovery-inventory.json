@@ -274,6 +274,14 @@
         "R size qualification"
       ],
       "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-035",
+      "title": "Can IAN become a supported public dgraphs interface on the qualified Mac environments?",
+      "phase": [
+        "Public R interface"
+      ],
+      "execution": "executed"
     }
   ],
   "historical_source_files": {
@@ -674,7 +682,8 @@
       "IAN-EXP-031",
       "IAN-EXP-032",
       "IAN-EXP-033",
-      "IAN-EXP-034"
+      "IAN-EXP-034",
+      "IAN-EXP-035"
     ]
   }
 }

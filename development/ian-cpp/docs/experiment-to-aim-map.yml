@@ -370,5 +370,16 @@
       "R size qualification"
     ],
     "programme_group": "F"
+  },
+  {
+    "id": "IAN-EXP-035",
+    "aims": [
+      "IA1",
+      "IA2"
+    ],
+    "phase_aliases": [
+      "Public R interface"
+    ],
+    "programme_group": "D"
   }
 ]

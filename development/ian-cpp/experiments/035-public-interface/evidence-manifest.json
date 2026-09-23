@@ -1,0 +1,165 @@
+{
+  "id": "IAN-EXP-035",
+  "files": [
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/09-public-interface/PLAN.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/09-public-interface/PLAN.md",
+      "available": true,
+      "sha256": "2ebae18489f7765fdec27d0d5888299a4e6a2cb54a56bd0476d111c8556e1805",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/09-public-interface/HARNESS-CORRECTIONS.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/09-public-interface/HARNESS-CORRECTIONS.md",
+      "available": true,
+      "sha256": "3995575d161e25b7f7db08e4ebeaf6f183956999c0714637fcb5bcf733dc8dc0",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/environment.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/environment.json",
+      "available": true,
+      "sha256": "a5892b517f61055f2521945214632108d12f7759effcd4db2e8daa30321e3aed",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/fixtures.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/fixtures.json",
+      "available": true,
+      "sha256": "d523acc01ccae8ba1a0ef762e92c3a2f0d0cc33e03ecd0527eff62c49e45c938",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/study-summary.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/study-summary.json",
+      "available": true,
+      "sha256": "e832ad159937e3126037e3d6fcfd579e937d053a3147c9f903d18d09aefd8af4",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/numerical-v1/ledger.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/numerical-v1/ledger.json",
+      "available": true,
+      "sha256": "7452c64f5b56d8a0519df45093a1f34bc90a7eebfa6a04d95d8d8b1cf18aa992",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/numerical-v2/ledger.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/numerical-v2/ledger.json",
+      "available": true,
+      "sha256": "5f89eb8fd598d15dfd88aefdd7c226a55111499d72d5925bb0829f73c0b1c4a3",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/commands.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/commands.json",
+      "available": true,
+      "sha256": "763305ac6a9a1dc97ea8ca780020ac8312222c301175d6f6a2f2259c31ee4bb0",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/backend with spaces/build-record.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/backend with spaces/build-record.json",
+      "available": true,
+      "sha256": "34961d73c3264949ed9600077a0ded0cf7d066722647041c50106854d710dad1",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/zero-controls/checks.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/zero-controls/checks.json",
+      "available": true,
+      "sha256": "07fc00f384368dd503a2b80e15b48b85480788c8cee81ce89f877b34120411a5",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/check/dgraphs.Rcheck/00check.log",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/check/dgraphs.Rcheck/00check.log",
+      "available": true,
+      "sha256": "91eafa490e3bf7dc625791c187b81390cd7ef8dbb76ea469ff0c6eeaa6893022",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/installed-guides.log",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/installed-guides.log",
+      "available": true,
+      "sha256": "781d561f31e027e683d9dc6784d71c52e9be3d8d7e83c97cf337e5958268fc18",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/html-guides.log",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/html-guides.log",
+      "available": true,
+      "sha256": "828a213f7f826c4652f8517f3742cab79230cd3595193c164eef8065ee1ec64e",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/commands.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/commands.json",
+      "available": true,
+      "sha256": "6f3717b9869d7ea65d9317c9fd6d3c4d543a1f824cc827f1aa344b109794fbee",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/backend with spaces/build-record.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/backend with spaces/build-record.json",
+      "available": true,
+      "sha256": "563ee58fb8a01cf24e3c45aa8f493b7967e2a88b467f6ab2ee805d1a48ad12d2",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/zero-controls/checks.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/zero-controls/checks.json",
+      "available": true,
+      "sha256": "07fc00f384368dd503a2b80e15b48b85480788c8cee81ce89f877b34120411a5",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/check/dgraphs.Rcheck/00check.log",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/check/dgraphs.Rcheck/00check.log",
+      "available": true,
+      "sha256": "49e3bcbbb06325c03350cf9a982f05601b81a27dee528f7953f0ef494362db28",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/installed-guides.log",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/installed-guides.log",
+      "available": true,
+      "sha256": "781d561f31e027e683d9dc6784d71c52e9be3d8d7e83c97cf337e5958268fc18",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/html-guides.log",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/html-guides.log",
+      "available": true,
+      "sha256": "828a213f7f826c4652f8517f3742cab79230cd3595193c164eef8065ee1ec64e",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "Author source archive identity check",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/backend-source-check.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/backend-source-check.json",
+      "available": true,
+      "sha256": "85e0711dddc462db142d3ffac45b52aafd7b6b3474ebd868dee31075e12939f1",
+      "identity_scope": "Current submitted bytes"
+    }
+  ]
+}

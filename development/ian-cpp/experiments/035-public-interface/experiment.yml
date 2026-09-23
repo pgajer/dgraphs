@@ -1,0 +1,56 @@
+{
+  "id": "IAN-EXP-035",
+  "title": "Can IAN become a supported public dgraphs interface on the qualified Mac environments?",
+  "phase_aliases": [
+    "Public R interface"
+  ],
+  "programme_group": "D",
+  "aims": [
+    "IA1",
+    "IA2"
+  ],
+  "execution_status": "executed",
+  "outcome": "Public defaults and explicit setup helper pass author qualification in two private Mac arm64 R installations; independent review pending",
+  "documentation_worker": "IAN implementer/coordinator",
+  "dependencies": [
+    {
+      "id": "IAN-EXP-034",
+      "type": "accepted size and interface qualification"
+    },
+    {
+      "id": "IAN-EXP-033",
+      "type": "accepted connectivity-preserving option"
+    },
+    {
+      "id": "IAN-EXP-029",
+      "type": "accepted two-runtime build environments"
+    }
+  ],
+  "source_paths": [
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/09-public-interface/PLAN.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/09-public-interface/HARNESS-CORRECTIONS.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/environment.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/fixtures.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/study-summary.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/numerical-v1/ledger.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/numerical-v2/ledger.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/commands.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/backend with spaces/build-record.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/zero-controls/checks.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/check/dgraphs.Rcheck/00check.log",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/installed-guides.log",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/rdevel/html-guides.log",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/commands.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/backend with spaces/build-record.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/zero-controls/checks.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/check/dgraphs.Rcheck/00check.log",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/installed-guides.log",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/r45/html-guides.log"
+  ],
+  "figure_paths": [],
+  "missing_figure_reason": "An interface coverage table communicates this qualification without a new scientific figure.",
+  "audit_status_source": "audit-summary.json",
+  "numerical_check_source": "audit-summary.json",
+  "issues_source": "../correction-dispositions.json",
+  "evidence_source": "evidence-manifest.json"
+}

@@ -88,6 +88,13 @@
       "scope": "Three Stage 5 helices, both saved interfaces; zero optimizer calls; no pruning variant adopted",
       "basis": "Owner request on 23 September 2026",
       "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-pruning-diagnosis/audit.md"
+    },
+    {
+      "id": "DEC-PUBLIC-INTERFACE",
+      "state": "owner-authorized; implemented and author-tested; independent review pending",
+      "scope": "Export create.ian.graph and build.ian.backend; connected/retry-power defaults; explicit strict/reference alternatives; no shared installation or public release",
+      "basis": "Owner instruction 23 September 2026; IAN-EXP-035",
+      "next_research": "Prospective scientific comparison of connectivity-preserving IAN after interface audit closure"
     }
   ]
 }

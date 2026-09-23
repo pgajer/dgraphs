@@ -12,7 +12,7 @@ struct ThrowRejected final : ian::Observer {
     explicit ThrowRejected(const std::string& out):trace(out) {}
     void on_event(const ian::Event& e) override {
         trace<<ian::io::event_json(e).dump()<<'\n';trace.flush();
-        auto j=ian::io::ian::io::event_json(e);
+        auto j=ian::io::event_json(e);
         if(j.at("event")=="solve") { ++solves; if(!j.at("accepted").get<bool>()) throw std::runtime_error("test_observer_rejection"); }
     }
 };

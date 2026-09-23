@@ -222,37 +222,10 @@
     {
       "id": "IAN-EXP-028",
       "title": "Does the qualified engine agree across the remaining 1,000-profile geometries?",
-      "phase_aliases": [
+      "phase": [
         "Continuation stage 2"
       ],
-      "programme_group": "C",
-      "aims": [
-        "IA1",
-        "IA2"
-      ],
-      "execution_status": "executed",
-      "outcome": "All six paired geometries pass; arithmetic warnings localized with correct saved products; independent review pending",
-      "documentation_worker": "IAN implementer/coordinator",
-      "dependencies": [
-        {
-          "id": "IAN-EXP-027",
-          "type": "accepted integrated policy"
-        },
-        {
-          "id": "IAN-EXP-014",
-          "type": "frozen 1,000-profile inputs"
-        }
-      ],
-      "source_paths": [
-        "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/02-scale-panel/PLAN.md",
-        "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage02-scale/summary.json"
-      ],
-      "figure_paths": [],
-      "missing_figure_reason": "Per-geometry table presents the complete bounded panel.",
-      "audit_status_source": "audit-summary.json",
-      "numerical_check_source": "audit-summary.json",
-      "issues_source": "../correction-dispositions.json",
-      "evidence_source": "evidence-manifest.json"
+      "execution": "executed"
     }
   ],
   "historical_source_files": {

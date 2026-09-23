@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 import scipy
 from scipy import sparse
-root=Path(sys.argv[1]);out=root/'warning-study-v1';out.mkdir(exist_ok=False)
+root=Path(sys.argv[1]);out=root/sys.argv[2];out.mkdir(exist_ok=False)
 load=lambda p:json.loads(Path(p).read_text())
 rows=[];totals=collections.Counter();maxerr=collections.defaultdict(float)
 with (out/'products.jsonl').open('w') as f:
@@ -12,7 +12,7 @@ with (out/'products.jsonl').open('w') as f:
   for line in path.open():
    e=json.loads(line)
    if e['event']!='solve':continue
-   c=np.array(e['c']);x=np.array(e['scales']);b=np.array(e['b']);z=np.array(e['dual']);A=sparse.csc_matrix((e['A_data'],e['A_indices'],e['A_indptr']),shape=e['A_shape'])
+   c=np.array(e['c']);x=np.array(e['scales']);b=np.array(e['b']);z=np.array(e['dual']);A=sparse.csr_matrix((e['A_data'],e['A_indices'],e['A_indptr']),shape=e['A_shape']).tocsc()
    scalar={'primal':math.fsum(float(a)*float(v) for a,v in zip(c,x)),'dual':math.fsum(float(a)*float(v) for a,v in zip(b,z)),'transpose':np.array([math.fsum(float(A.data[k])*float(z[A.indices[k]]) for k in range(A.indptr[i],A.indptr[i+1])) for i in range(len(c))])}
    ops={'transpose':lambda:A.T@z,'primal_matmul':lambda:c@x,'dual_matmul':lambda:b@z,'primal_dot':lambda:np.dot(c,x),'dual_dot':lambda:np.dot(b,z),'primal_sum':lambda:np.sum(c*x),'dual_sum':lambda:np.sum(b*z)}
    record=dict(case=path.parents[2].name,number=e['number'],finite_inputs=all(np.isfinite(v).all() for v in [c,x,b,z,A.data]),operations={})

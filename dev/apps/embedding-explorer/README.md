@@ -113,6 +113,6 @@ that library setting. The existing private study/log locations remain valid;
 relocation does not rewrite saved study data or reuse a validation server port.
 
 Metric MDS offers SGD (the default) and SMACOF. The convergence tolerance applies
-only to SMACOF. Saved fit specifications without an optimizer selection use
-SMACOF when rerun, preserving their tolerance setting. New grip calls use its
+only to an explicit SMACOF selection. Saved fit specifications without an optimizer
+selection also use SGD when rerun; their old SMACOF tolerance is ignored. New grip calls use its
 dot-delimited API; saved graph fields and existing fitted coordinates are unchanged.

@@ -152,8 +152,8 @@ run_fit <- function(cloud,spec,app_root,python='') {
       d<-graph_distances(graph,n);pad3(cmdscale(as.dist(d),k=3))
     } else if(spec$method=='mds') {
       graph_distances(graph,n)
-      # Saved specifications from before backend selection used a tolerance.
-      backend <- if (is.null(spec$mds_backend)) 'smacof' else spec$mds_backend
+      # A missing backend follows the same SGD default as a new fit.
+      backend <- if (is.null(spec$mds_backend)) 'sgd' else spec$mds_backend
       args <- list(edges=graph$edges,n=n,edge.weights=graph$weights,dim=3,
         init=spec$mds_init,n.init=as.integer(spec$mds_starts),max.iter=as.integer(spec$iterations),
         backend=backend,seed=as.integer(spec$seed))

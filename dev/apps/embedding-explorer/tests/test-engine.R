@@ -125,17 +125,19 @@ test_that('nondefault RNG kinds preserve direct geometry, noise and continuation
   }
 })
 
-test_that('MDS selects the requested backend and retains legacy tolerances', {
+test_that('MDS uses SGD by default, including saved specs without a backend', {
   s<-default_spec();s$n<-35L;cloud<-make_experiment(s)$cloud
+  expect_identical(default_fit_spec()$mds_backend,'sgd')
   for(backend in c('sgd','smacof')) {
     f<-default_fit_spec();f$method<-'mds';f$mds_backend<-backend;f$iterations<-3L
     fit<-run_fit(cloud,f,app_root)[[1L]]
     expect_identical(fit$metadata$engine,backend)
     expect_match(fit$label,toupper(backend),fixed=TRUE)
     expect_true(all(is.finite(fit$coords)))
-    if(backend=='smacof') {
+    if(backend=='sgd') {
       legacy<-f;legacy$mds_backend<-NULL
       old<-run_fit(cloud,legacy,app_root)[[1L]]
+      expect_identical(old$metadata$engine,'sgd')
       expect_identical(old$coords,fit$coords)
     }
   }

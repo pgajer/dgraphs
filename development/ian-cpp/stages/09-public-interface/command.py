@@ -11,6 +11,22 @@ def atomic_json(path,value):
  finally:
   if os.path.exists(name):os.unlink(name)
 
+def stop_and_reap(proc, row):
+ """Attempt bounded cleanup; a missing process group still requires wait()."""
+ for sig in (signal.SIGTERM, signal.SIGKILL):
+  try:
+   os.killpg(proc.pid, sig)
+  except ProcessLookupError:
+   row.setdefault('signal_races', []).append(int(sig))
+  except BaseException as error:
+   row.setdefault('cleanup_errors', []).append(repr(error))
+  try:
+   proc.wait(timeout=5)
+   return
+  except BaseException as error:
+   row.setdefault('cleanup_errors', []).append(repr(error))
+ # The caller records termination_unconfirmed if returncode is still unknown.
+
 def main():
  root=Path(sys.argv[1]).resolve();runtime,label=sys.argv[2:4];args=sys.argv[4:]
  # One global lock is held from budget reservation through child reaping and final save.
@@ -33,19 +49,13 @@ def main():
     proc=subprocess.Popen(args,stdout=stream,stderr=subprocess.STDOUT,env=env,start_new_session=True);rec.update(pid=proc.pid,state='running');save()
     try:code=proc.wait(timeout=limit)
     except subprocess.TimeoutExpired:
-     rec['reason']='wall_limit';os.killpg(proc.pid,signal.SIGTERM)
-     try:code=proc.wait(timeout=5)
-     except subprocess.TimeoutExpired:os.killpg(proc.pid,signal.SIGKILL);code=proc.wait(timeout=5)
-   rec.update(state='reaped',returncode=code)
+     rec['reason']='wall_limit';stop_and_reap(proc, rec);code=proc.returncode
   except BaseException as error:
    rec['exception']=repr(error)
-   if proc is not None and proc.poll() is None:
-    os.killpg(proc.pid,signal.SIGTERM)
-    try:proc.wait(timeout=5)
-    except subprocess.TimeoutExpired:os.killpg(proc.pid,signal.SIGKILL);proc.wait(timeout=5)
-   rec.update(state='reaped' if proc else 'launch_failed',returncode=proc.returncode if proc else None)
+   if proc is not None and proc.returncode is None:
+    stop_and_reap(proc, rec)
    raise
   finally:
-   rec['seconds']=time.monotonic()-start;save()
-  print(label,code,flush=True);return code
+   rec.update(state=('launch_failed' if proc is None else 'reaped' if proc.returncode is not None else 'termination_unconfirmed'),returncode=proc.returncode if proc else None,seconds=time.monotonic()-start);save()
+  print(label,code,flush=True);return code if code is not None else 1
 if __name__=='__main__':raise SystemExit(main())

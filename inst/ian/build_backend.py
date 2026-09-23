@@ -13,6 +13,21 @@ src=Path(__file__).resolve().parent/'backend';out=a.build_dir.resolve();out.mkdi
 record={'commands':[],'complete':False,'platform':platform.platform(),'sources':{}}
 def save():
  tmp=out/'build-record.tmp';tmp.write_text(json.dumps(record,indent=2)+'\n');os.replace(tmp,out/'build-record.json')
+def stop_and_reap(proc, row):
+ """Attempt bounded cleanup; a missing process group still requires wait()."""
+ for sig in (signal.SIGTERM, signal.SIGKILL):
+  try:
+   os.killpg(proc.pid, sig)
+  except ProcessLookupError:
+   row.setdefault('signal_races', []).append(int(sig))
+  except BaseException as error:
+   row.setdefault('cleanup_errors', []).append(repr(error))
+  try:
+   proc.wait(timeout=5)
+   return
+  except BaseException as error:
+   row.setdefault('cleanup_errors', []).append(repr(error))
+ # The caller records termination_unconfirmed if returncode is still unknown.
 def call(name,cmd,env=None):
  row=dict(name=name,command=list(map(str,cmd)),state='reserved',timeout_seconds=1800);record['commands'].append(row);save()
  start=time.monotonic();proc=None
@@ -23,13 +38,11 @@ def call(name,cmd,env=None):
    proc.wait(timeout=1800)
  except BaseException as error:
   row['error']=repr(error)
-  if proc is not None and proc.poll() is None:
-   os.killpg(proc.pid,signal.SIGTERM)
-   try:proc.wait(timeout=5)
-   except subprocess.TimeoutExpired:os.killpg(proc.pid,signal.SIGKILL);proc.wait()
+  if proc is not None and proc.returncode is None:
+   stop_and_reap(proc, row)
   raise
  finally:
-  row.update(state='reaped' if proc is not None else 'launch_failed',returncode=proc.returncode if proc else None,seconds=time.monotonic()-start);save()
+  row.update(state=('launch_failed' if proc is None else 'reaped' if proc.returncode is not None else 'termination_unconfirmed'),returncode=proc.returncode if proc else None,seconds=time.monotonic()-start);save()
  print(name,row['returncode'],flush=True)
  if row['returncode']:raise SystemExit('Build failed; logs retained in '+str(out))
 source=out/'sources'

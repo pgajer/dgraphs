@@ -7,7 +7,8 @@
 #' at most one normalized retry after an eligible rejected return. The retry must
 #' return strict solver success and pass the unchanged original-unit checks; the
 #' original rejected result is never accepted directly. This candidate has not
-#' been adopted as the default and its independent qualification is pending.
+#' been adopted as the default. It has independent bounded qualification on
+#' macOS arm64 and is selected explicitly for internal qualification studies.
 #' See `system.file("ian", "README.md", package = "dgraphs")` for build and
 #' numerical limitations. Input rows are specimens; graph vertices are unique
 #' feature profiles in first-occurrence order.

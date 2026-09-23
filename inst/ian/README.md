@@ -25,10 +25,12 @@ system.file("ian", package = "dgraphs")
 Run `python3 <helper> --build-dir <fresh-directory> --install-dir <ian-directory>/native`.
 Alternatively omit install-dir and pass `backend="<build-directory>/dgraphs_ian.so"`
 to the R function. Build outputs and a command/source identity ledger stay in the
-fresh build directory. The statically linked module has no worker-directory
+fresh build directory. The helper checks the Rust host architecture before building;
+if the default toolchain targets Intel Mac, select `--rustc /path/to/arm64/rustc`
+and `--cargo /path/to/arm64/cargo` from the same native arm64 toolchain.
+The statically linked module has no worker-directory
 runtime dependency. The strict typed baseline has independent bounded qualification on macOS arm64;
-the candidate policy described below is awaiting its separate audit. Neither
-claim establishes broader portability or CRAN acceptance. Public export and the scale ladder remain gated.
+the explicit retry-power option has independent integration and frozen scale-panel acceptance on the tested Mac. Neither claim establishes broader portability or CRAN acceptance. Public export and unrestricted larger sizes remain gated.
 
 Supply X (specimens in rows), optionally exact unsquared distances, unique IDs and
 participant IDs. X defines exact duplicate profiles; distances alone cannot do so.
@@ -56,8 +58,7 @@ The `numerical.policy` argument accepts exactly two strings:
 
 For example, add `numerical.policy="IAN evaluated-LP retry-power 0.1"` to an
 internal function call to request the candidate. It has not been adopted as the
-default; its independent integration audit is pending. The larger scale gate
-remains closed. Matching the system power operation on one host does not promise
+default. It is selected explicitly for internal qualification after accepted integration and 1,000-profile native/Python studies. R retains its 500-row guard. Matching the system power operation on one host does not promise
 identical arithmetic across platforms.
 
 Both policies use pinned Clarabel 0.11.1, QDLDL, one thread and fresh solver state.  The missing `input_sparse_dropzeros` C header field is repaired against

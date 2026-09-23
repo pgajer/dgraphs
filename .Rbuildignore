@@ -20,3 +20,5 @@
 ^\.git$
 
 ^_pkgdown\.yml$
+
+^development$

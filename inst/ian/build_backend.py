@@ -5,6 +5,7 @@ from pathlib import Path
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--build-dir',required=True,type=Path)
 p.add_argument('--install-dir',type=Path,help='Optional directory receiving dgraphs_ian.so (usually installed dgraphs/ian/native)')
+p.add_argument('--rustc',default=os.environ.get('RUSTC','rustc'),help='Native arm64 Rust compiler; must match the selected Cargo toolchain')
 p.add_argument('--cargo',default='cargo');p.add_argument('--r',default='R');p.add_argument('--rscript',default='Rscript');p.add_argument('--cxx',default='clang++')
 p.add_argument('--offline',action='store_true');a=p.parse_args()
 if platform.system()!='Darwin' or platform.machine()!='arm64':p.error('This bounded backend build supports macOS arm64 only; other platforms are unqualified.')
@@ -18,8 +19,11 @@ def call(name,cmd,env=None):
  print(name,x.returncode,flush=True)
  if x.returncode:raise SystemExit('Build failed; logs retained in '+str(out))
 shutil.copytree(src,out/'sources');source=out/'sources'
-env=os.environ.copy();env['CARGO_BUILD_JOBS']='2'
-call('rust-version',[a.cargo,'--version'])
+env=os.environ.copy();env['CARGO_BUILD_JOBS']='2';env['RUSTC']=a.rustc
+call('cargo-version',[a.cargo,'--version'])
+call('rust-version',[a.rustc,'-vV'])
+if 'host: aarch64-apple-darwin' not in (out/'rust-version.log').read_text():
+ record['error']='Native macOS arm64 Rust is required; select --rustc and --cargo from the same arm64 toolchain.';save();raise SystemExit(record['error'])
 call('solver',[a.cargo,'build','--locked','--release','--lib',*(['--offline'] if a.offline else []),'--manifest-path',source/'Clarabel.cpp/rust_wrapper/Cargo.toml','--target-dir',out/'target'],env)
 rhome=Path(subprocess.check_output([a.r,'RHOME'],text=True).strip())
 rcpp=Path(subprocess.check_output([a.rscript,'--vanilla','-e','cat(system.file("include",package="Rcpp"))'],text=True).strip())

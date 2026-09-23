@@ -258,6 +258,14 @@
         "Pruning diagnosis after continuation stage 5"
       ],
       "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-033",
+      "title": "Can candidate-first bridge protection preserve connected IAN graphs?",
+      "phase": [
+        "Connectivity-preserving pruning"
+      ],
+      "execution": "executed"
     }
   ],
   "historical_source_files": {
@@ -656,7 +664,8 @@
       "IAN-EXP-029",
       "IAN-EXP-030",
       "IAN-EXP-031",
-      "IAN-EXP-032"
+      "IAN-EXP-032",
+      "IAN-EXP-033"
     ]
   }
 }

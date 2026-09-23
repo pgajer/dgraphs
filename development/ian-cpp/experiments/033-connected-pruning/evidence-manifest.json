@@ -1,0 +1,86 @@
+{
+  "id": "IAN-EXP-033",
+  "files": [
+    {
+      "role": "author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/07-connected-pruning/PLAN.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/07-connected-pruning/PLAN.md",
+      "available": true,
+      "sha256": "ed0a894ab31ed93a5fc12817378ad3d536174a765c7917e5bca2150bf8e7f77e",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/fixtures.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/fixtures.json",
+      "available": true,
+      "sha256": "e196a55ebc3ac578f6ae9c51372d9b6258b7e5f9cd3b411a4aa84bf6fa31c20b",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/build-v2/manifest.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/build-v2/manifest.json",
+      "available": true,
+      "sha256": "9f9a9768bee5e09c9324a0c1de47363bff54eb5206658ba0009510791c9b6e85",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/ledger.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/ledger.json",
+      "available": true,
+      "sha256": "511e4fe462cc7a34fc16f6dfaa5cd7fce1764c5898641c9065ad28f1e21a9a63",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/guard-checks-v1/summary.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/guard-checks-v1/summary.json",
+      "available": true,
+      "sha256": "01d8a7fb4d2a68aed50fca8a2b4a1ffa3894ebaf918d6b35b8bb8e1c3c1a6b5f",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/rds-checks-v1/summary.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/rds-checks-v1/summary.json",
+      "available": true,
+      "sha256": "5f38a4f089b0da4ee0fce532156b45c30dd8cc24bfe820d0c0fa45e97fbd4226",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/supplement-v1/ledger.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/supplement-v1/ledger.json",
+      "available": true,
+      "sha256": "3dd01f67451b0cb9eff917b42ab6e48d9815a865e6cb2c7d7f4cf515a5d9bd00",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/supplement-v2/ledger.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/supplement-v2/ledger.json",
+      "available": true,
+      "sha256": "0c0bedc962f0a5a6da4e3cb29f31762e1c3dbb2e9b3ec40b8a98f21eb6c7dc72",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/check/dgraphs.Rcheck/00check.log",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/check/dgraphs.Rcheck/00check.log",
+      "available": true,
+      "sha256": "eb4435b94e178dd431a3fb2e19006658708b41454736d83b88784197f948b536",
+      "identity_scope": "Current submitted bytes"
+    },
+    {
+      "role": "author implementation evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/targeted-tests.log",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/targeted-tests.log",
+      "available": true,
+      "sha256": "c4af584c61f5a949dbfb6879263260ac965902795355a325965999a47cc73633",
+      "identity_scope": "Current submitted bytes"
+    }
+  ],
+  "backup": "External backup coverage unknown"
+}

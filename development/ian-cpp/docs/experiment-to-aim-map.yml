@@ -347,5 +347,17 @@
       "Pruning diagnosis after continuation stage 5"
     ],
     "programme_group": "F"
+  },
+  {
+    "id": "IAN-EXP-033",
+    "aims": [
+      "IA1",
+      "IA2",
+      "IA4"
+    ],
+    "phase_aliases": [
+      "Connectivity-preserving pruning"
+    ],
+    "programme_group": "F"
   }
 ]

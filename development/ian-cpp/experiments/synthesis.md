@@ -62,3 +62,13 @@ attained spans from outer bounds. The illustrated selection includes limitations
 and documentary readiness. All are newly reconstructed presentation assets pending
 independent review, based on previously audited evidence. No figure implies new
 optimization or scientific validation.
+
+## Typed core follow-up
+
+The authorized internal-message refactor replaces JSON inputs, decisions, solver
+records and observer messages with typed C++ structures. Direct R diagnostics and
+all four full reference traces remain exact apart from timing/build metadata. Disk
+checkpoint/resume and failure checks pass; JSON remains at explicit persistence
+and legacy test boundaries. See [IAN-EXP-025](025-typed-core-messages/report.md).
+This is author qualification pending independent review, with no measured
+performance claim or change to the scale gate.

@@ -6,8 +6,8 @@ named correction reviews. It does not claim an exhaustive search across ZB,
 external projects, other agents or unregistered historical runs.
 
 The original discovery set contains 22 question records: 17 executed records
-covering 16 historical milestones and five unexecuted proposals. Two subsequently
-authorized studies, IAN-EXP-023/024, bring the catalogue to 24 records and 19
+covering 16 historical milestones and five unexecuted proposals. Three subsequently
+authorized studies, IAN-EXP-023/024/025, bring the catalogue to 25 records and 20
 executed questions. Their evidence is new and awaits independent review. Phase02 supplies two questions and one shared audit.
 Records do not equal independent datasets, experiments with random replication,
 solver calls or individual audit documents. Correction controls remain attached to

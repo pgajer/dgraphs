@@ -7,7 +7,7 @@ status and decisions.yml for advancement; old roadmap prose is historical contex
 | Group | Programme purpose | Historical aliases | Current boundary |
 |---|---|---|---|
 | A | Feasibility and computational comparisons | 01-02 | Fixed-LP and persistent-client evidence; not full-engine speed claims. |
-| B | Reference behavior and reusable implementation | 03-06B | Bounded fidelity, core and one-host restart accepted; portability unqualified. |
+| B | Reference behavior and reusable implementation | 03-06B | Bounded fidelity/core/restart historically accepted; typed-message refactor now author-qualified and awaiting independent review. |
 | C | Numerical robustness and scale expansion | 07-07J | Accepted bounded studies include refusals and near-optimal scale variation. The ladder stays gated. |
 | D | Performance and platform qualification | Proposed 08-09 | Comprehensive milestones unexecuted; internal adapter has new bounded one-host author qualification. |
 | E | Controlled scientific application | Proposed 10 | Engine and downstream estimator acceptance must both be specified. |

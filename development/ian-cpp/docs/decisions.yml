@@ -36,6 +36,12 @@
       "state": "authorized bounded implementation complete; independent review pending",
       "scope": "Internal unexported dgraphs adapter returning initial Gabriel graph, completed final graph and diagnostics; public export and comprehensive portability excluded",
       "basis": "User instruction in current task, 23 September 2026; IAN-EXP-024"
+    },
+    {
+      "id": "DEC-TYPED-CORE",
+      "state": "authorized refactor complete; independent review pending",
+      "scope": "Typed internal messages and direct R diagnostics; unchanged numerical policy; preserved persistence formats",
+      "basis": "User instruction 23 September 2026; IAN-EXP-025"
     }
   ]
 }

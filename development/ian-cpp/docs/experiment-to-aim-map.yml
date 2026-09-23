@@ -257,5 +257,16 @@
       "Internal adapter 1"
     ],
     "programme_group": "D"
+  },
+  {
+    "id": "IAN-EXP-025",
+    "aims": [
+      "IA1",
+      "IA2"
+    ],
+    "phase_aliases": [
+      "Typed core refactor"
+    ],
+    "programme_group": "B"
   }
 ]

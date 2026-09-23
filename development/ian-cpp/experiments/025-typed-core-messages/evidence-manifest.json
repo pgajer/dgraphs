@@ -1,0 +1,57 @@
+{
+  "id": "IAN-EXP-025",
+  "discovered_on": "2026-09-23",
+  "candidate_revision": "d8f9d1be0712a19e7b36771f6eb896a7473a5a5c",
+  "package_execution_source_revision": "e6728bc286fc8199ca9c1640c79625fd8f1bd13e",
+  "files": [
+    {
+      "role": "source or execution evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/worktree/dev/ian/typed-core/REPORT.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/worktree/dev/ian/typed-core/REPORT.md",
+      "available": true,
+      "sha256": "0bf31f25ecc9f9987e51ad1c90cd48ae838830d691fd477fffe1fd2a818782cf",
+      "identity_scope": "Current bytes; execution source identity separately recorded in final-source-state.json"
+    },
+    {
+      "role": "source or execution evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/worktree/dev/ian/typed-core/PLAN.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/worktree/dev/ian/typed-core/PLAN.md",
+      "available": true,
+      "sha256": "5914a53cb820d7994f75a7b320b62a095118ef36ea6ea77af0f8f3178b878352",
+      "identity_scope": "Current bytes; execution source identity separately recorded in final-source-state.json"
+    },
+    {
+      "role": "source or execution evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/evidence/summary.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/evidence/summary.json",
+      "available": true,
+      "sha256": "8d00e618595821e674eb03999b7c6d41653a7750b8dc1ac1bc21c3a38545e5db",
+      "identity_scope": "Current bytes; execution source identity separately recorded in final-source-state.json"
+    },
+    {
+      "role": "source or execution evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/evidence/manifest.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/evidence/manifest.json",
+      "available": true,
+      "sha256": "518d9c0f17c237cfdbf5cecbaf57a6cca732252debc8fef0a52968d2f35c2d81",
+      "identity_scope": "Current bytes; execution source identity separately recorded in final-source-state.json"
+    },
+    {
+      "role": "source or execution evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/evidence/final-source-state.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/evidence/final-source-state.json",
+      "available": true,
+      "sha256": "c1e69b5b0e86be486be9673d6a25b28f1b78f9e6698da79cabd6d57e382b18eb",
+      "identity_scope": "Current bytes; execution source identity separately recorded in final-source-state.json"
+    },
+    {
+      "role": "source or execution evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/implementer-handoff.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/implementer-handoff.md",
+      "available": true,
+      "sha256": "930204c169dff9656b96fbae6477562fcf81a1b85158aa3117eef20a16d16d89",
+      "identity_scope": "Current bytes; execution source identity separately recorded in final-source-state.json"
+    }
+  ],
+  "backup": "No independently verified backup location"
+}

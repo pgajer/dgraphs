@@ -194,6 +194,14 @@
         "Internal adapter 1"
       ],
       "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-025",
+      "title": "Can typed C++ messages preserve IAN behavior?",
+      "phase": [
+        "Typed core refactor"
+      ],
+      "execution": "executed"
     }
   ],
   "historical_source_files": {
@@ -581,10 +589,11 @@
   "private_root": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17",
   "subsequent_extension": {
     "as_of": "2026-09-23",
-    "scope": "Two owner-authorized new studies: saved-state pruning replay and internal dgraphs adapter qualification. Original discovery boundary/source identities below are retained.",
+    "scope": "Three owner-authorized new studies: saved-state pruning, internal adapter qualification, and typed-message refactor; original discovery boundary retained.",
     "new_records": [
       "IAN-EXP-023",
-      "IAN-EXP-024"
+      "IAN-EXP-024",
+      "IAN-EXP-025"
     ]
   }
 }

@@ -4,7 +4,12 @@
   "numerical_check_scope": "Main panel 1560 payloads; 3081 pruning proposals reconstructed; exact native/R objects and reference traces; restart and R failure controls",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "06a414fbeb513d1a70148fbc8125b710249296d627fd52e8dab8593e1135a45d"
+    "report_sha256": "06a414fbeb513d1a70148fbc8125b710249296d627fd52e8dab8593e1135a45d",
+    "frozen_submission": {
+      "report_sha256": "06a414fbeb513d1a70148fbc8125b710249296d627fd52e8dab8593e1135a45d",
+      "report_pdf_sha256": "628adf069fd25ea2cc4610b550017d31bb7383932a1fc4f220adfc2943a26ad3",
+      "reason": "Exact two-page author-inspected submission, preserved pending independent review"
+    }
   },
   "audit_history": [],
   "consequential_limits": "Explicit internal variant; Mac arm64 R-devel; R at most 500 rows; no prediction or biological-validity claim"

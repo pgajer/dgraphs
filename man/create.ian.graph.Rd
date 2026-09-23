@@ -12,7 +12,8 @@ create.ian.graph(
   graph = NULL,
   diagnostics = c("summary", "full"),
   backend = NULL,
-  max.solves = 10000L
+  max.solves = 10000L,
+  numerical.policy = "IAN evaluated-LP 1.0"
 )
 }
 \arguments{
@@ -36,6 +37,8 @@ The actual initial Gabriel graph is always constructed by IAN.}
 \item{backend}{Optional path to the separately built \code{dgraphs_ian.so} module.}
 
 \item{max.solves}{Positive integer safety limit; reaching it returns refusal.}
+
+\item{numerical.policy}{Explicit strict baseline or experimental retry-power policy.}
 }
 \value{
 A list with \code{complete}, structured \code{error}, initial Gabriel graph,

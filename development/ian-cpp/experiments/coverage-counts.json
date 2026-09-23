@@ -1,10 +1,10 @@
 {
   "as_of": "2026-09-23",
-  "scope": "20 independently accepted bounded questions across 19 milestones; two executed studies awaiting review and five proposals",
+  "scope": "21 independently accepted questions across 20 milestones; numerical-policy integration awaits review; five proposals",
   "counts": {
     "executed": 22,
     "proposal": 5,
-    "historical_audited": 20,
-    "pending_new_report_review": 26
+    "historical_audited": 21,
+    "pending_new_report_review": 25
   }
 }

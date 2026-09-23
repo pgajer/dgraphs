@@ -1,6 +1,6 @@
 # IAN experiment catalogue
 
-Start with the [project aims](../docs/project-aims.md), [synthesis](synthesis.md) and [HTML catalogue](build/index.html). The catalogue contains 20 executed questions across 19 independently accepted bounded milestones, two executed studies awaiting independent review, and five separate unexecuted proposals. Historical phases and evidence stay in place. `.yml` files use JSON syntax, valid YAML 1.2, so no YAML package is needed.
+Start with the [project aims](../docs/project-aims.md), [synthesis](synthesis.md) and [HTML catalogue](build/index.html). The catalogue contains 21 executed questions across 20 independently accepted bounded milestones, one executed study awaiting independent review, and five separate unexecuted proposals. Historical phases and evidence stay in place. `.yml` files use JSON syntax, valid YAML 1.2, so no YAML package is needed.
 
 ## Rebuild presentation only
 

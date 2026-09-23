@@ -23,8 +23,8 @@ two records because historical discrepancy and persistent cost are distinct
 questions. Supervisor fixes are shared corrections, not biological experiments.
 
 The zero-solver saved-state comparison (IAN-EXP-023) is complete with matching
-conditional pruning at two certified witness endpoints; independent review is
-pending. It does not establish complete-trajectory compatibility. The separately
+conditional pruning at two certified witness endpoints; independent review accepts
+that bounded evidence and its Markdown/PDF presentation. It does not establish complete-trajectory compatibility. The separately
 authorized internal dgraphs adapter (IAN-EXP-024) develops the interface while
 retaining the accepted numerical policy. Comprehensive portability remains a
 separate proposed milestone.

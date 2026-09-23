@@ -36,7 +36,7 @@ Stage 1 must distinguish the strict policy currently exposed by the internal R a
 
 ## Existing review and research work
 
-The saved-state pruning comparison (IAN-EXP-023) awaits independent review. Its two certified scale vectors give the same conditional pruning at one saved state; this does not establish whole-trajectory invariance. The exact current catalogue presentations, except IAN-EXP-026, also remain independently unreviewed. Review these records separately from numerical progression, without rerunning all historical experiments merely to revise documentation.
+The saved-state pruning comparison (IAN-EXP-023) is independently accepted, including the exact Markdown/PDF presentation, with no corrective findings. Its two certified scale vectors give the same conditional pruning at one saved state; this does not establish whole-trajectory invariance. The exact current catalogue presentations, except IAN-EXP-023 and IAN-EXP-026, also remain independently unreviewed. Review these records separately from numerical progression, without rerunning all historical experiments merely to revise documentation.
 
 Secondary scale selection (IAN-EXP-018) is conditional on a demonstrated need; it is not an automatic algorithm change. The six remaining frozen scale inputs must not be replaced by easier geometries. Historical original-expression array disagreements and diagnostic warnings remain documented; broader unattended qualification must address the applicable warnings.
 
@@ -47,3 +47,7 @@ No stage has completed the independent acceptance gate yet. Stage 1 execution is
 ### Starting position — 23 September 2026
 
 The most recent [adapter and typed-core audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md) accepts the settings repair and preservation of tested behavior without corrective findings. Forty-six fresh engine calls produced 237 solver attempts; all attempt settings were checked and 96 complete payloads independently recalculated. Linux, Windows and Intel Mac runtime remain unqualified. The [helix arithmetic study](026-helix-arithmetic/report.md) is independently accepted, but its policy has not been promoted to the adapter. The larger scale gate remains closed until stage 1 earns advancement.
+
+### Prior review closed — 23 September 2026
+
+The [saved-pruning audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7j/audit.md) independently reproduced both witness comparisons and all controls without optimization. Both witnesses continue retuning and give the same conditional 52-edge removal; the actual later historical control removes 47. The report and PDF are accepted; HTML browser appearance remains unverified. No correction was needed, and this does not advance the stage-1 or scale gates.

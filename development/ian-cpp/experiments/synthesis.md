@@ -38,7 +38,8 @@ remove the same 52 edges, with identical candidate and removal order. Python and
 native calculations agree. The actual later first-pruning control removes 47
 edges after additional retuning. This distinguishes fixed-state insensitivity at
 two endpoints from the complete-trajectory question studied next. See
-[IAN-EXP-023](023-saved-pruning/report.md); independent review is pending.
+[IAN-EXP-023](023-saved-pruning/report.md); independent review accepts this bounded
+evidence and its Markdown/PDF presentation.
 
 ## Decisions and limits
 

@@ -7,6 +7,8 @@ old=load(B/'stage03-package/environment.json');cargo=P/'cargo-home';cargo.mkdir(
 config=dict(runtimes={},cargo_config_sha256=sha(cargo/'config.toml'),reused_environment=str(B/'stage03-package/environment.json'),revision=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip())
 for label,previous in [('rdevel','rdevel-v2'),('r45','r45-v3')]:
  prior=old['runtimes'][previous];folder=P/label;folder.mkdir();lib=folder/'library';lib.mkdir();env=dict(prior['env']);env.update(CARGO_HOME=str(cargo),R_LIBS=str(lib)+':'+prior['library'],R_LIBS_USER=str(lib),R_LIBS_SITE=str(lib)+':'+prior['library'],MAKEFLAGS='-j2')
+ if label=='rdevel':
+  standard=subprocess.check_output([prior['rscript'],'--vanilla','-e',"cat(.libPaths(),sep='\\n')"],text=True).strip().splitlines();env['R_LIBS']=':'.join([str(lib),prior['library'],*standard])
  if label=='r45':
   m=folder/'Makevars';shutil.copy2(env['R_MAKEVARS_USER'],m);env['R_MAKEVARS_USER']=str(m)
  config['runtimes'][label]=dict(r=prior['r'],rscript=prior['rscript'],library=str(lib),env=env,prior_dependency_library=prior['library'],backend=str(folder/'backend with spaces/dgraphs_ian.so'))

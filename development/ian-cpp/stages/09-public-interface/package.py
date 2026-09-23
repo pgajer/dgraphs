@@ -2,7 +2,10 @@
 import sys,json,subprocess,shutil
 from pathlib import Path
 H=Path(__file__).resolve().parent;P=Path(sys.argv[1]);mode=sys.argv[2];runtime=sys.argv[3] if len(sys.argv)>3 else 'rdevel';M=json.loads((P/'environment.json').read_text());C=M['runtimes'][runtime];archive=P/'dgraphs_0.3.0.9000.tar.gz';ROOT=H.parents[3]
-def call(label,args):subprocess.run([sys.executable,str(H/'command.py'),str(P),runtime,label,*map(str,args)],check=True)
+attempt=sys.argv[4] if len(sys.argv)>4 else ''
+def call(label,args):
+ if attempt:label+='-'+attempt
+ subprocess.run([sys.executable,str(H/'command.py'),str(P),runtime,label,*map(str,args)],check=True)
 if mode=='archive':
  call('archive',['make','build']);shutil.copy2(ROOT/'build/dgraphs_0.3.0.9000.tar.gz',archive)
 elif mode=='install':

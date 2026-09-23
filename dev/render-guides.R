@@ -11,7 +11,7 @@ stopifnot(as.character(utils::packageVersion("dgraphs")) ==
           read.dcf("DESCRIPTION")[1L, "Version"])
 out <- file.path(root, "build", "validation", "vignettes")
 dir.create(out, recursive = TRUE, showWarnings = FALSE)
-for (name in c("function-guide", "synthetic-geometry", "data-derived-graph-workflow")) {
+for (name in c("function-guide", "synthetic-geometry", "data-derived-graph-workflow", "ian-graphs")) {
   tmp <- tempfile("dgraphs-vignette-")
   dir.create(tmp)
   rmarkdown::render(file.path(root, "vignettes", paste0(name, ".Rmd")),

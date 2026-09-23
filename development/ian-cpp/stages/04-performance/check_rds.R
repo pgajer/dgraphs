@@ -25,7 +25,7 @@ for(name in c('pressmat_hellinger_subset','helix_500')){
  }
  # Reference objects come from the independently accepted Stage-3 package study.
  stage3<-file.path(dirname(root),'stage03-package')
- bpath<-if(name=='helix_500')file.path(stage3,'numerical-v2/rdevel-v2/candidate-helix_500/child/result.rds') else file.path(stage3,'numerical-v1/rdevel/candidate-pressmat_hellinger_subset/child/result.rds')
+ bpath<-if(name=='helix_500')file.path(stage3,'numerical-v2/rdevel-v2/candidate-helix_500/child/result.rds') else file.path(stage3,'numerical-v3/r45-v3/candidate-pressmat_hellinger_subset/child/result.rds')
  b<-readRDS(bpath)
  stopifnot(identical(strip.seconds(q),strip.seconds(b)))
  qualified.attempts<-qualified.attempts+q$diagnostics$solves

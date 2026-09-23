@@ -244,6 +244,44 @@
           "identity_scope": "Final bounded acceptance and F1 closure"
         }
       ]
+    },
+    {
+      "id": "CONNECTED-PRUNING-F1",
+      "description": "Report wording did not distinguish accepted returns from correctly rejected returns",
+      "disposition": "Corrected or clarified and independently verified; closed",
+      "affected": [
+        "IAN-EXP-033"
+      ],
+      "evidence": [
+        {
+          "role": "Independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-connected-pruning/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-connected-pruning/audit.md",
+          "available": true,
+          "sha256": "8d8afa91439c72aad26dce247de2192b5e21e6efdfe8b3c96cb032c3ec713bd5",
+          "identity_scope": "Final bounded acceptance and closure"
+        }
+      ],
+      "consequence": "Documentation only; numerical implementation and original evidence unchanged; exact original and corrected presentations preserved"
+    },
+    {
+      "id": "CONNECTED-PRUNING-C1",
+      "description": "Contract wording did not distinguish source filtering from opposite-endpoint exclusion",
+      "disposition": "Corrected or clarified and independently verified; closed",
+      "affected": [
+        "IAN-EXP-033"
+      ],
+      "evidence": [
+        {
+          "role": "Independent finding/disposition",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-connected-pruning/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-connected-pruning/audit.md",
+          "available": true,
+          "sha256": "8d8afa91439c72aad26dce247de2192b5e21e6efdfe8b3c96cb032c3ec713bd5",
+          "identity_scope": "Final bounded acceptance and closure"
+        }
+      ],
+      "consequence": "Documentation only; numerical implementation and original evidence unchanged; exact original and corrected presentations preserved"
     }
   ]
 }

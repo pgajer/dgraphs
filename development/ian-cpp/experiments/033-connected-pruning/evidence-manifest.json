@@ -88,6 +88,14 @@
       "available": true,
       "sha256": "9b7c25ee26ebdd7129b8009a8c6fcea57e055645bb7e5ed70485ca8a91e27d97",
       "identity_scope": "38 original full traces bound by hash; no engine calls"
+    },
+    {
+      "role": "Independent acceptance and finding closure",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-connected-pruning/audit.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-connected-pruning/audit.md",
+      "available": true,
+      "sha256": "8d8afa91439c72aad26dce247de2192b5e21e6efdfe8b3c96cb032c3ec713bd5",
+      "identity_scope": "Final bounded implementation and exact corrected presentation acceptance"
     }
   ],
   "backup": "External backup coverage unknown"

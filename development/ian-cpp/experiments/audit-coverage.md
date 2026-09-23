@@ -1,7 +1,7 @@
 # Audit coverage and outstanding review
 
-Of 28 executed question records, 27 map to independently accepted bounded
-studies across 26 milestones. The helix arithmetic study (IAN-EXP-026), including
+All 28 executed question records map to independently accepted bounded
+studies across 27 milestones. The helix arithmetic study (IAN-EXP-026), including
 its current report and figure, was accepted on 23 September 2026 with no corrective
 findings. The internal dgraphs adapter (IAN-EXP-024) and typed-core refactor
 (IAN-EXP-025) are accepted for bounded implementation evidence on macOS arm64,
@@ -15,9 +15,9 @@ These counts do not imply that every inference, dataset or intended use is valid
 Current review status comes from each audit-summary.json, never a duplicate metadata
 flag. Shared phase02 audit scope is counted once at milestone level.
 
-The other 25 catalogue reports, historical figure reconstructions, aims wording
+The other 24 catalogue reports, historical figure reconstructions, aims wording
 and synthesis have author checks but have not received independent presentation
-review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028, IAN-EXP-029, IAN-EXP-030, IAN-EXP-031 and IAN-EXP-032 acceptances do not audit the complete catalogue. For every record current_report_review
+review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028, IAN-EXP-029, IAN-EXP-030, IAN-EXP-031, IAN-EXP-032 and IAN-EXP-033 acceptances do not audit the complete catalogue. For every record current_report_review
 names that limitation and binds the current report hash. Historical audit history
 remains distinct and is not silently carried forward to rewritten prose.
 
@@ -40,4 +40,4 @@ IAN-EXP-031 adds the initial bounded scientific benchmark: nine independent coor
 
 IAN-EXP-032 reconstructs the first helix disconnections from saved trajectories with zero new solver calls. Independent review accepts the diagnosis and exact Markdown/PDF/figure with no corrective findings. The auditor reconstructed both interfaces and all first-cut metrics; no method variant is adopted.
 
-IAN-EXP-033 implements the owner-authorized connectivity-preserving variant. Author checks pass; its implementation and current report await independent review.
+IAN-EXP-033 implements the owner-authorized connectivity-preserving variant. The bounded implementation and exact corrected report/PDF are independently accepted; F1 measurement wording and C1 contract clarification are closed. The original report/PDF remain preserved.

@@ -11,7 +11,7 @@
     "IA4"
   ],
   "execution_status": "executed",
-  "outcome": "Twelve native/R connected trajectories pass author checks; independent review pending",
+  "outcome": "Independently accepted: twelve connected native/R trajectories and useful R diagnostics; F1 and C1 closed",
   "documentation_worker": "IAN implementer/coordinator",
   "dependencies": [
     {

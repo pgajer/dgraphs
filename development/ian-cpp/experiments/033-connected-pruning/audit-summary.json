@@ -1,17 +1,28 @@
 {
-  "audit_status": "author checks reproduced by independent reviewer; F1 report correction awaiting closure",
+  "audit_status": "accepted for bounded internal bridge-protected pruning; F1 and C1 closed; no open findings",
   "numerically_checked": true,
-  "numerical_check_scope": "Main panel 1560 returns: 1108 accepted and 452 rejected; correct acceptance/rejection decisions checked; 3081 proposals reconstructed; exact native/R and reference preservation",
+  "numerical_check_scope": "Independent 56-entry replay, 1702 full certificates (1229 accepted/473 rejected), 15 exact summary projections, 3081 proposals per schedule, 353 checkpoints and 12 native/R cases",
   "current_report_review": {
-    "status": "not independently reviewed",
+    "status": "accepted",
     "report_sha256": "91968d8d58d3d0c5f9006190f9544bc4c86bbc24b35ec99928372273ad80e82f",
     "frozen_submission": {
       "report_sha256": "91968d8d58d3d0c5f9006190f9544bc4c86bbc24b35ec99928372273ad80e82f",
       "report_pdf_sha256": "995ade16579dae544d3f3d51c2c09b0e6005b38880d77ca69ac6984d2955144b",
       "reason": "F1-corrected two-page presentation; author inspected both rendered pages; original submission preserved separately"
-    }
+    },
+    "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-connected-pruning/audit.md",
+    "review_sha256": "8d8afa91439c72aad26dce247de2192b5e21e6efdfe8b3c96cb032c3ec713bd5",
+    "report_pdf_sha256": "995ade16579dae544d3f3d51c2c09b0e6005b38880d77ca69ac6984d2955144b",
+    "scope": "Corrected exact report/PDF accepted; original submission preserved; HTML content/links reviewed, browser appearance unverified"
   },
-  "audit_history": [],
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-connected-pruning/audit.md",
+      "review_sha256": "8d8afa91439c72aad26dce247de2192b5e21e6efdfe8b3c96cb032c3ec713bd5",
+      "candidate": "bb43073abfec40aaa824a7453c8f73067478fe03",
+      "scope": "Bounded internal connectivity-preserving implementation; F1 and C1 closed; exact corrected report/PDF accepted"
+    }
+  ],
   "consequential_limits": "Explicit internal variant; Mac arm64 R-devel; R at most 500 rows; no prediction or biological-validity claim",
   "presentation_history": [
     {

@@ -31,7 +31,13 @@ try:
   used=sum(p['optimizer_calls'] for p in ledger['processes']);wall=sum(p['wall_seconds'] for p in ledger['processes']);entries=sum(p['engine_entries'] for p in ledger['processes'])
   assert used<2000 and wall<3600 and entries+item['entries']<=64 and shutil.disk_usage(root).free>20*2**30
   reserve(out/'reservations.json',64,dict(name=item['name'],engine_entries=item['entries'],command=item['command']))
-  r=run(item['command'],item['folder'],root,wall_limit=min(900,3600-wall),max_attempts=min(250,2000-used));r.update(name=item['name'],engine_entries=item['entries']);ledger['processes'].append(r);save()
+  r=run(item['command'],item['folder'],root,wall_limit=min(900,3600-wall),max_attempts=min(250,2000-used))
+  child=Path(item['folder'])/'child';observed=0
+  if (child/'ledger.json').exists():
+   interim=load(child/'ledger.json');observed=len(interim['calls'] if item['kind']=='interface' else interim)
+  elif (child/'reservation.txt').exists():observed=1
+  r.update(name=item['name'],engine_entries=observed,reserved_engine_entries=item['entries'],entry_count_scope='observed R adapter-call reservations; failures may leave an incomplete call')
+  ledger['processes'].append(r);save()
   check(item['name']+' completion/accounting',r['state']=='reaped' and r['reason'] is None and r['exit_code']==0)
   child=Path(item['folder'])/'child';kind=item['kind']
   if kind in ['strict','candidate']:

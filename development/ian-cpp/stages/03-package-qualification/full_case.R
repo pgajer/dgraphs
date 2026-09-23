@@ -1,7 +1,7 @@
 args<-commandArgs(TRUE);stopifnot(length(args)==5)
 source(file.path(dirname(sub('^--file=','',grep('^--file=',commandArgs(),value=TRUE))),'../01-numerical-policy/trace_json.R'))
 .libPaths(c(args[1],.libPaths()))
-library(dgraphs);create.ian.graph<-get("create.ian.graph",asNamespace("dgraphs"))
+library(dgraphs);stopifnot(normalizePath(find.package("dgraphs"))==normalizePath(file.path(args[1],"dgraphs")));create.ian.graph<-get("create.ian.graph",asNamespace("dgraphs"))
 f<-jsonlite::fromJSON(args[2],simplifyVector=FALSE);out<-args[4];dir.create(out,recursive=TRUE)
 mat<-function(x) do.call(rbind,lapply(x,unlist))
 writeLines('reserved one R engine call',file.path(out,'reservation.txt'))

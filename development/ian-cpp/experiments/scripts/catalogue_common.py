@@ -14,6 +14,8 @@ def sources():return {str(p.relative_to(ROOT)):sha(p) for p in sorted(ROOT.rglob
 def records():return [(p.parent,json.loads(p.read_text())) for p in sorted(E.glob('[0-9]*/experiment.yml'))]
 def md_sources():return sorted(ROOT.rglob('*.md'))
 def destination(p):
+    if p.is_relative_to(ROOT/'stages'):
+        return B/'stages'/p.relative_to(ROOT/'stages').with_suffix('.html')
     if p.name=='report.md' and p.parent.parent==E:return p.parent/'build/report.html'
     if p.parent.parent==E:return p.parent/'build'/(p.stem+'.html')
     return B/(('docs-' if p.parent==ROOT/'docs' else 'project-' if p.parent==ROOT else '')+p.stem+'.html')

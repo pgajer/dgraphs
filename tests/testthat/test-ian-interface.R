@@ -10,3 +10,13 @@ test_that("IAN remains internal and validates arguments before backend loading",
  expect_error(f(x,distances=matrix(c(0,1,2,1,0,3,2,4,0),3)),"symmetric")
  expect_error(f(matrix(NA_real_,3,2)),"finite")
 })
+
+test_that("IAN policy and row guards apply before optional backend loading", {
+ f <- get("create.ian.graph", asNamespace("dgraphs"))
+ x <- matrix(c(0, 1, 2, 0, 1, 0), 3, 2)
+ for (policy in list(NA_character_, character(), c("IAN evaluated-LP 1.0", "bad"), "unknown"))
+  expect_error(f(x, numerical.policy=policy, backend=tempfile()), "Unsupported numerical.policy")
+ for (policy in c("IAN evaluated-LP 1.0", "IAN evaluated-LP retry-power 0.1"))
+  expect_error(f(x, numerical.policy=policy, backend=tempfile()), "unavailable")
+ expect_error(f(matrix(0, 501, 1), backend=tempfile()), "2 to 500")
+})

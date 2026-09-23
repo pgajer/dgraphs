@@ -84,6 +84,17 @@ template<class Out> void fields(Out& out, const Decision& x) {
 }
 template<class Out> void fields(Out& out, const SolveRecord& x) {
  if(x.number>=0) out.field("number",x.number);
+ if(x.logical_solve>=0) {
+  out.field("logical_solve",x.logical_solve); out.field("attempt",x.attempt);
+  out.field("numerical_policy",x.policy); out.field("solver_tolerance",x.solver_tolerance);
+  out.field("solver_status",x.solver_status); out.field("retry_eligible",x.retry_eligible);
+  if(x.attempt==1) {
+   out.field("solver_units",x.solver_units); out.field("backend_rhs",x.backend_rhs);
+   out.field("backend_primal",x.backend_primal); out.field("backend_dual",x.backend_dual);
+   out.field("backend_slack",x.backend_slack); out.field("backend_objective",x.backend_objective);
+   out.field("backend_res_primal",x.backend_res_primal); out.field("backend_res_dual",x.backend_res_dual);
+  }
+ }
  out.field("canonical_shape",x.A_shape);
  out.field("canonical_soc",Indices{});
  out.field("settings", x.settings);

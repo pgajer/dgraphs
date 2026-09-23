@@ -40,7 +40,7 @@ inline RestartState parse_state(const Json& j) {
     s.edges = j.at("edges").get<Edges>(); s.degrees = j.at("degrees").get<Indices>();
     s.upper = j.at("upper").get<Vector>(); s.last_stats = j.at("last_stats").get<Vector>();
     s.multiplier = j.at("multiplier").get<double>(); s.distance_multiplier = j.at("distance_multiplier").get<double>();
-    s.iteration = integer(j.at("iteration"),0,1999); s.solves = integer(j.at("solves"),1,42000);
+    s.iteration = integer(j.at("iteration"),0,1999); s.solves = integer(j.at("solves"),1,s.policy == retry_power_policy ? 84000 : 42000);
     if (!j.at("cache").is_boolean()) throw std::invalid_argument("invalid_checkpoint_cache");
     s.cache = j.at("cache").get<bool>();
     return s;

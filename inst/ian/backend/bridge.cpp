@@ -19,7 +19,7 @@ struct RFields {
  std::map<std::string,Rcpp::RObject> values;
  bool summary=false;
  template<class T> void field(const char* name,const T& value) {
-   static const std::set<std::string> dense{"A_data","A_indices","A_indptr","A_shape","b","c","upper","active","scales","dual"};
+   static const std::set<std::string> dense{"A_data","A_indices","A_indptr","A_shape","b","c","upper","active","scales","dual","backend_rhs","backend_primal","backend_dual","backend_slack"};
    if(summary && dense.count(name))return;
    values.emplace(name,r_object(value));
  }
@@ -74,9 +74,9 @@ Rcpp::List graph(const ian::Edges& e,const ian::Result& result,const ian::Input&
  return Rcpp::List::create(Rcpp::Named("edges")=edges(e),Rcpp::Named("lengths")=lengths);
 }
 }
-extern "C" SEXP dgraphs_ian_run(SEXP features,SEXP distances,SEXP ids,SEXP participants,SEXP detailed,SEXP max_solves,SEXP fault) {
+extern "C" SEXP dgraphs_ian_run(SEXP features,SEXP distances,SEXP ids,SEXP participants,SEXP detailed,SEXP max_solves,SEXP fault,SEXP policy) {
  BEGIN_RCPP
- ian::Input in;in.features=matrix(features);in.distances=matrix(distances);in.specimen_ids=Rcpp::as<std::vector<std::string>>(ids);in.participant_ids=Rcpp::as<std::vector<std::string>>(participants);
+ ian::Input in;in.policy=Rcpp::as<std::string>(policy);in.features=matrix(features);in.distances=matrix(distances);in.specimen_ids=Rcpp::as<std::vector<std::string>>(ids);in.participant_ids=Rcpp::as<std::vector<std::string>>(participants);
  Sink sink(Rcpp::as<bool>(detailed),Rcpp::as<int>(max_solves));
  std::string injection=Rcpp::as<std::string>(fault);
  sink.inject_interrupt=injection=="interrupt_after_initial";
@@ -95,6 +95,6 @@ extern "C" SEXP dgraphs_ian_run(SEXP features,SEXP distances,SEXP ids,SEXP parti
  END_RCPP
 }
 extern "C" void R_init_dgraphs_ian(DllInfo* dll) {
- static const R_CallMethodDef methods[]={{"dgraphs_ian_run",(DL_FUNC)&dgraphs_ian_run,7},{nullptr,nullptr,0}};
+ static const R_CallMethodDef methods[]={{"dgraphs_ian_run",(DL_FUNC)&dgraphs_ian_run,8},{nullptr,nullptr,0}};
  R_registerRoutines(dll,nullptr,methods,nullptr,nullptr);R_useDynamicSymbols(dll,FALSE);R_forceSymbols(dll,TRUE);
 }

@@ -46,12 +46,18 @@ struct Engine {
         }
     }
     Vec solve(bool parameterized) {
-        auto r =
-            solve_lp(D, edges, upper, C, parameterized, inject == "invalid_solver" && solves == 0);
-        r.record.number = solves++;
-        emit(r.record);
-        require(r.record.accepted, "invalid_solver_result");
-        return r.x;
+        const bool candidate = result.policy == ian::retry_power_policy;
+        const int logical = solves;
+        for (int attempt=0; attempt<(candidate?2:1); ++attempt) {
+            auto r=solve_lp(D,edges,upper,C,parameterized,
+                inject=="invalid_solver" && solves==0,candidate,attempt==0?1e-9:1e-11);
+            r.record.number=solves++;
+            if (candidate) { r.record.logical_solve=logical; r.record.attempt=attempt; r.record.policy=result.policy; }
+            emit(r.record);
+            if(r.record.accepted) return r.x;
+            if(!candidate || attempt==1 || !r.record.retry_eligible) throw std::runtime_error("invalid_solver_result");
+        }
+        throw std::runtime_error("invalid_solver_result");
     }
     Mat kernel(const Vec &s) {
         Mat K = affinity(D2, s, deg);

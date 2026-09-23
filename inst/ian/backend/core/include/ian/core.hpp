@@ -13,6 +13,8 @@ using Indices = std::vector<int>;
 using Edges = std::vector<std::array<int, 2>>;
 inline constexpr int schema_version = 1;
 inline constexpr const char* numerical_policy = "IAN evaluated-LP 1.0";
+inline constexpr const char* retry_power_policy = "IAN evaluated-LP retry-power 0.1";
+inline bool supported_policy(const std::string& p) { return p == numerical_policy || p == retry_power_policy; }
 
 struct Input {
     int version = schema_version;
@@ -115,6 +117,12 @@ struct SolveRecord {
     DualCheck dual_check;
     double seconds;
     int number = -1;
+    std::string solver_status, policy;
+    bool retry_eligible = false;
+    int logical_solve = -1, attempt = 0;
+    double solver_tolerance = 1e-9, solver_units = 1;
+    Vector backend_rhs, backend_primal, backend_dual, backend_slack;
+    double backend_objective = 0, backend_res_primal = 0, backend_res_dual = 0;
 };
 struct Decision {
     double location, dispersion, threshold, raw_threshold, floored_threshold, cap;

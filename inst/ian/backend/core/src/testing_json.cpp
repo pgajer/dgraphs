@@ -23,6 +23,8 @@ std::string fixed_probe(const std::string& text, Observer* observer) {
         return results.dump();
     }
     Result ignored;
+    ignored.policy=input.value("numerical_policy",std::string(numerical_policy));
+    require(supported_policy(ignored.policy),"unsupported_policy");
     Engine e(ignored, observer, "none");
     e.phase = "fixed";
     e.D = input["D1"].get<Mat>();

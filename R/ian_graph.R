@@ -18,6 +18,7 @@
 #'   The actual initial Gabriel graph is always constructed by IAN.
 #' @param diagnostics `"summary"` or `"full"`; full includes dense LP payloads.
 #' @param backend Optional path to the separately built `dgraphs_ian.so` module.
+#' @param numerical.policy Explicit strict baseline or experimental retry-power policy.
 #' @param max.solves Positive integer safety limit; reaching it returns refusal.
 #' @return A list with `complete`, structured `error`, initial Gabriel graph,
 #'   `final_graph` only on full completion, `last_valid_graph` (possibly partial),
@@ -32,9 +33,9 @@
 create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
                              participant.ids = NULL, graph = NULL,
                              diagnostics = c("summary", "full"), backend = NULL,
-                             max.solves = 10000L) {
+                             max.solves = 10000L, numerical.policy = "IAN evaluated-LP 1.0") {
     .ian.adapter(X, distances, specimen.ids, participant.ids, graph,
-                 match.arg(diagnostics), backend, max.solves, "none")
+                 match.arg(diagnostics), backend, max.solves, "none", numerical.policy)
 }
 
 .ian.backend <- local({
@@ -52,7 +53,7 @@ create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
     }
 })
 
-.ian.graph <- function(raw, ids, stage) {
+.ian.graph <- function(raw, ids, stage, policy = "IAN evaluated-LP 1.0") {
     if (is.null(raw)) return(NULL)
     n <- length(ids)
     adj <- rep(list(integer()), n); lens <- rep(list(numeric()), n)
@@ -62,13 +63,14 @@ create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
         lens[[i]] <- c(lens[[i]], raw$lengths[k]); lens[[j]] <- c(lens[[j]], raw$lengths[k])
     }
     out <- dgraph(adj, lens)
-    out$metadata <- list(method = "IAN evaluated-LP 1.0", ian_stage = stage,
+    out$metadata <- list(method = policy, ian_stage = stage,
                          profile_ids = ids, edge_length_units = "input distances")
     out
 }
 
 .ian.adapter <- function(X, distances, specimen.ids, participant.ids, graph,
-                         diagnostics, backend, max.solves, fault) {
+                         diagnostics, backend, max.solves, fault, numerical.policy = "IAN evaluated-LP 1.0") {
+    if (!is.character(numerical.policy) || length(numerical.policy) != 1L || is.na(numerical.policy) || !numerical.policy %in% c("IAN evaluated-LP 1.0", "IAN evaluated-LP retry-power 0.1")) stop("Unsupported numerical.policy.", call. = FALSE)
     if (!is.null(graph)) stop("Supplied initial graphs are unsupported; IAN constructs its Gabriel graph from distances.", call. = FALSE)
     if (!is.matrix(X) || !is.numeric(X) || nrow(X) < 2L || nrow(X) > 500L || ncol(X) < 1L || any(!is.finite(X)))
         stop("X must be a finite numeric matrix with 2 to 500 specimen rows and at least one feature.", call. = FALSE)
@@ -89,11 +91,11 @@ create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
         if (!is.null(labels) && !identical(labels, specimen.ids)) stop("Named distances must match specimen.ids in order.", call. = FALSE)
     storage.mode(distances) <- "double"
     raw <- .Call(.ian.backend(backend), X, distances, specimen.ids, participant.ids,
-                 identical(diagnostics, "full"), as.integer(max.solves), fault)
+                 identical(diagnostics, "full"), as.integer(max.solves), fault, numerical.policy)
     ids <- raw$mapping$profile_ids
-    initial <- .ian.graph(raw$initial, ids, "initial Gabriel")
-    last <- .ian.graph(raw$last, ids, "last valid, possibly partial")
-    final <- if (isTRUE(raw$complete)) .ian.graph(raw$converged, ids, "completed final") else NULL
+    initial <- .ian.graph(raw$initial, ids, "initial Gabriel", raw$backend$numerical_policy)
+    last <- .ian.graph(raw$last, ids, "last valid, possibly partial", raw$backend$numerical_policy)
+    final <- if (isTRUE(raw$complete)) .ian.graph(raw$converged, ids, "completed final", raw$backend$numerical_policy) else NULL
     if (isTRUE(raw$diagnostics$affinity_valid)) dimnames(raw$affinity) <- list(ids, ids)
     raw$diagnostics$trace_index_base <- 0L
     raw$diagnostics$trace_format <- "schema-1 core fields; zero-based indices"

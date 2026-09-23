@@ -32,10 +32,11 @@ ErrorKind classify(const std::string& code) {
 }
 Result execute(const Input& input, Observer* observer, const std::string& fault, const RestartState* saved = nullptr) {
     Result result;
+    result.policy = input.policy;
     detail::Engine engine(result, observer, fault, saved);
     try {
         detail::require(input.version == schema_version, "unsupported_schema");
-        detail::require(input.policy == numerical_policy, "unsupported_policy");
+        detail::require(supported_policy(input.policy), "unsupported_policy");
         detail::require(input.participant_ids.empty() || input.participant_ids.size() == input.specimen_ids.size(),
                         "participant_shape_or_identity");
         for (const auto& id : input.participant_ids)

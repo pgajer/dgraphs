@@ -3,16 +3,18 @@ extern "C" {
 #include <clarabel.h>
 }
 #include "numeric.hpp"
+#include "retry.hpp"
 #include <chrono>
 #include <memory>
 #include "backend_settings.hpp"
 namespace ian::detail {
+inline double constraint_square(double x, bool power) { if (!power) return x*x; volatile double exponent=2.; return std::pow(x,exponent); }
 struct LPResult {
     Vec x, z;
     ian::SolveRecord record;
 };
 inline LPResult solve_lp(const Mat &D, const Edges &edges, const Vec &u, double C,
-                         bool parameterized, bool inject = false) {
+                         bool parameterized, bool inject = false, bool power = false, double tolerance = 1e-9) {
     auto start = std::chrono::steady_clock::now();
     size_t n = u.size(), m = 2 * edges.size() + 2 * n;
     Vec values, b;
@@ -32,11 +34,11 @@ inline LPResult solve_lp(const Mat &D, const Edges &edges, const Vec &u, double 
         double d = D[i][j];
         require(u[i] > 0 && u[j] > 0, "edge_zero_upper");
         if (parameterized) {
-            row(i, j, (-d / u[i]) * C, (-(d * d) / u[i]) * (C * C) + (-d) * C);
+            row(i, j, (-d / u[i]) * C, (-(constraint_square(d, power)) / u[i]) * (constraint_square(C, power)) + (-d) * C);
             row(i, j, (-u[j] / d) * (1 / C), (-u[j]) + (-d) * C);
         } else {
             double w = d * C, inv = 1 / u[i];
-            row(i, j, inv * (-w), (-(w * w)) * inv + (-w));
+            row(i, j, inv * (-w), (-(constraint_square(w, power))) * inv + (-w));
             row(i, j, u[j] * (-1 / w), (-1.) * u[j] + (-w));
         }
     }
@@ -68,16 +70,27 @@ inline LPResult solve_lp(const Mat &D, const Edges &edges, const Vec &u, double 
     settings.direct_solve_method = QDLDL;
     settings.presolve_enable = false;
     settings.input_sparse_dropzeros = false;
-    settings.tol_feas = settings.tol_gap_abs = settings.tol_gap_rel = 1e-9;
+    settings.tol_feas = settings.tol_gap_abs = settings.tol_gap_rel = tolerance;
+    const bool normalized_retry = tolerance < 1e-9;
+    const double alpha = normalized_retry ? *std::max_element(u.begin(), u.end()) : 1.;
+    require(std::isfinite(alpha) && alpha > 0, "invalid_retry_units");
+    Vec rhs = b;
+    if (normalized_retry) for (auto &v : rhs) v /= alpha;
+    for (double v : values) require(std::isfinite(v), "invalid_solver_coefficients");
+    for (double v : rhs) require(std::isfinite(v), "invalid_solver_coefficients");
     const auto settings_snapshot = captured_settings(settings);
     auto cone = ClarabelNonnegativeConeT(m);
     std::unique_ptr<ClarabelDefaultSolver, decltype(&clarabel_DefaultSolver_free)> solver(
-        clarabel_DefaultSolver_new(&P, q.data(), &A, b.data(), 1, &cone, &settings),
+        clarabel_DefaultSolver_new(&P, q.data(), &A, rhs.data(), 1, &cone, &settings),
         clarabel_DefaultSolver_free);
     require(bool(solver), "solver_construction");
     clarabel_DefaultSolver_solve(solver.get());
     auto sol = clarabel_DefaultSolver_solution(solver.get());
     Vec x(sol.x, sol.x + sol.x_length), z(sol.z, sol.z + sol.z_length);
+    const Vec backend_primal = normalized_retry ? x : Vec{};
+    const double backend_objective = sol.obj_val;
+    if (normalized_retry) { for(auto& v:x) v *= alpha; sol.obj_val *= alpha; }
+    require(x.size()==n && z.size()==m, "invalid_solver_dimensions");
     if (inject)
         std::fill(x.begin(), x.end(), 0.);
     bool accepted = sol.status == ClarabelSolved && x.size() == n && z.size() == m &&
@@ -119,6 +132,27 @@ inline LPResult solve_lp(const Mat &D, const Edges &edges, const Vec &u, double 
         sol.iterations, accepted, {maxnormal, maxabsolute, error},
         {stationarity, negative, gap},
         std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count()};
+    const auto classification = classify_return(usable_return(x,z,u,sol.obj_val,n,m),
+        sol.status==ClarabelSolved, sol.status==ClarabelAlmostSolved,
+        error,maxnormal,maxabsolute,stationarity,negative,gap);
+    record.accepted = classification.first;
+    record.retry_eligible = classification.second;
+    record.solver_tolerance = tolerance;
+    switch (sol.status) {
+#define IAN_STATUS(name) case Clarabel##name: record.solver_status=#name; break;
+    IAN_STATUS(Unsolved) IAN_STATUS(Solved) IAN_STATUS(PrimalInfeasible) IAN_STATUS(DualInfeasible)
+    IAN_STATUS(AlmostSolved) IAN_STATUS(AlmostPrimalInfeasible) IAN_STATUS(AlmostDualInfeasible)
+    IAN_STATUS(MaxIterations) IAN_STATUS(MaxTime) IAN_STATUS(NumericalError)
+    IAN_STATUS(InsufficientProgress) IAN_STATUS(CallbackTerminated)
+#undef IAN_STATUS
+    default: record.solver_status="Unknown";
+    }
+    if (normalized_retry) {
+        record.solver_units=alpha; record.backend_rhs=rhs; record.backend_primal=backend_primal;
+        record.backend_dual=z; record.backend_slack=Vec(sol.s,sol.s+sol.s_length);
+        record.backend_objective=backend_objective;
+        record.backend_res_primal=sol.r_prim; record.backend_res_dual=sol.r_dual;
+    }
     return {x, z, record};
 }
 

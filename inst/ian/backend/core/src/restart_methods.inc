@@ -1,5 +1,5 @@
     void restore(const ian::RestartState& s) {
-        require(s.version == 1 && s.policy == ian::numerical_policy &&
+        require(s.version == 1 && s.policy == result.policy &&
             s.source == ian::source_identity() && s.configuration == ian::configuration_identity() &&
             s.input_hash == input_hash, "incompatible_restart");
         const auto& m = result.mapping;
@@ -9,7 +9,7 @@
             s.mapping.participant_ids == m.participant_ids, "invalid_restart");
         require((s.boundary == "pruning" || s.boundary == "graph") && s.cache &&
             s.iteration >= 0 && s.iteration < 2000 && s.solves >= s.iteration + 1 &&
-            s.solves <= (s.iteration + 1) * 21 && s.distance_multiplier == scl &&
+            s.solves <= (s.iteration + 1) * (result.policy == ian::retry_power_policy ? 42 : 21) && s.distance_multiplier == scl &&
             std::isfinite(s.multiplier) && s.multiplier > 0 && s.multiplier <= 1 &&
             s.last_stats.size() == D.size(), "invalid_restart");
         for (double v : s.last_stats) require(std::isfinite(v) && v >= 0, "invalid_restart");
@@ -30,6 +30,7 @@
     void boundary(const std::string& kind) {
         if (!observer) return;
         ian::RestartState s;
+        s.policy = result.policy;
         s.source = ian::source_identity(); s.configuration = ian::configuration_identity();
         s.input_hash = input_hash; s.boundary = kind; s.mapping = result.mapping;
         s.edges = edges; s.degrees = deg; s.upper = upper; s.last_stats = last_stats;

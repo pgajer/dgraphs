@@ -62,6 +62,10 @@ elif mode=='measure':
     b=load(P/('qual-'+interface+'-'+c['name'])/'child/0/result.json')
     for rep in range(4):compare_results(load(child/str(i*4+rep)/'result.json'),b)
    print(label,'all repetitions exact',flush=True)
+ # JSON is a rounded R projection; binary objects are the exact R regression evidence.
+ cmd=[m['rscript'],'--vanilla',str(H/'check_rds.R'),str(P),str(P/'exact-rds-checks')]
+ with (P/'exact-rds-checks.log').open('w') as stream:subprocess.run(cmd,stdout=stream,stderr=subprocess.STDOUT,check=True,timeout=300)
+ ledger['exact_RDS_check_command']=cmd
  ledger['measurement_complete']=True;save()
 elif mode=='checkpoint':
  assert ledger.get('measurement_complete');c=m['cases'][1];engine=P.parent/'stage01-policy/build-v1/engine'

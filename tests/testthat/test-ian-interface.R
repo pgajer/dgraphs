@@ -1,0 +1,12 @@
+test_that("IAN remains internal and validates arguments before backend loading", {
+ expect_false("create.ian.graph" %in% getNamespaceExports("dgraphs"))
+ f <- get("create.ian.graph", asNamespace("dgraphs"))
+ x <- matrix(c(0,1,2,0,1,0),3,2)
+ expect_error(f(x,graph=list()),"Supplied initial graphs")
+ expect_error(f(x,max.solves=1.1),"max.solves")
+ expect_error(f(x,specimen.ids=c("x","x","y")),"unique")
+ expect_error(f(x,distances=matrix(1,3,3)),"zero diagonal")
+ expect_error(f(x,backend=tempfile()),"unavailable")
+ expect_error(f(x,distances=matrix(c(0,1,2,1,0,3,2,4,0),3)),"symmetric")
+ expect_error(f(matrix(NA_real_,3,2)),"finite")
+})

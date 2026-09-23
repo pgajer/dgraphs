@@ -4,7 +4,12 @@
   "numerical_check_scope": "Author saved-trace arithmetic/graph reconstruction; no new optimizer certification",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "21fd32f6a0a7c638d6148e11402f9ab150b243007e541fe2e3596524c08fd6a0"
+    "report_sha256": "21fd32f6a0a7c638d6148e11402f9ab150b243007e541fe2e3596524c08fd6a0",
+    "frozen_submission": {
+      "report_sha256": "21fd32f6a0a7c638d6148e11402f9ab150b243007e541fe2e3596524c08fd6a0",
+      "report_pdf_sha256": "f8618b6ef062495c48cba468ca26eb75ec11a378b33b05e883e48870f2c0aed1",
+      "reason": "Exact three-page visually checked submission; preserved pending independent review"
+    }
   },
   "audit_history": [],
   "consequential_limits": "Three existing helix samples; no new method or confirmatory sample; unchanged reference behavior"

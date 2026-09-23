@@ -250,6 +250,14 @@
         "Continuation stage 5"
       ],
       "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-032",
+      "title": "Why does pruning first disconnect the three helices?",
+      "phase": [
+        "Pruning diagnosis after continuation stage 5"
+      ],
+      "execution": "executed"
     }
   ],
   "historical_source_files": {
@@ -647,7 +655,8 @@
       "IAN-EXP-028",
       "IAN-EXP-029",
       "IAN-EXP-030",
-      "IAN-EXP-031"
+      "IAN-EXP-031",
+      "IAN-EXP-032"
     ]
   }
 }

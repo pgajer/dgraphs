@@ -11,14 +11,16 @@ test_that("IAN remains internal and validates arguments before backend loading",
  expect_error(f(matrix(NA_real_,3,2)),"finite")
 })
 
-test_that("IAN policy and row guards apply before optional backend loading", {
+test_that("IAN policy and minimum-row guards apply before optional backend loading", {
  f <- get("create.ian.graph", asNamespace("dgraphs"))
  x <- matrix(c(0, 1, 2, 0, 1, 0), 3, 2)
  for (policy in list(NA_character_, character(), c("IAN evaluated-LP 1.0", "bad"), "unknown"))
   expect_error(f(x, numerical.policy=policy, backend=tempfile()), "Unsupported numerical.policy")
  for (policy in c("IAN evaluated-LP 1.0", "IAN evaluated-LP retry-power 0.1"))
   expect_error(f(x, numerical.policy=policy, backend=tempfile()), "unavailable")
- expect_error(f(matrix(0, 501, 1), backend=tempfile()), "2 to 500")
+ expect_error(f(matrix(0, 1, 1), backend=tempfile()), "at least 2")
+ for (n in c(501L, 1000L))
+  expect_error(f(matrix(seq_len(n), n, 1), backend=tempfile()), "unavailable")
 })
 
 test_that("connectivity option validates before optional backend loading", {
@@ -29,4 +31,17 @@ test_that("connectivity option validates before optional backend loading", {
  for (value in c(TRUE, FALSE))
   expect_error(f(x, preserve.connectivity = value, backend = tempfile()), "unavailable")
  expect_identical(formals(f)$preserve.connectivity, FALSE)
+})
+
+test_that("IAN dimensions use representation bounds without allocating large arrays", {
+ f <- get(".ian.check.dimensions", asNamespace("dgraphs"))
+ for (n in c(500, 501, 1000, 5000, 10000)) expect_null(f(n, 5))
+ expect_error(f(.Machine$integer.max %/% 2 + 1, 1), "vertex-index")
+ expect_error(f(2, as.double(.Machine$integer.max) + 1), "representation")
+ if (.Machine$sizeof.pointer >= 8L) {
+  expect_null(f(2^26, 1))
+  expect_error(f(2^26 + 1, 1), "representation")
+ }
+ for (n in list(NA_real_, Inf, -1, 2.5, numeric(), c(2, 3)))
+  expect_error(f(n, 1), "nonnegative integers")
 })

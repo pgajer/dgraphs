@@ -6,6 +6,7 @@
 #include <ian/core.hpp>
 #include "core/src/event_fields.hpp"
 #include <map>
+#include "r_dimensions.hpp"
 #include <set>
 #include "core/src/testing.hpp"
 
@@ -31,21 +32,25 @@ struct RFields {
 };
 template<class T> Rcpp::RObject r_object(const T& value) {
  if constexpr(std::is_same_v<T,bool> || std::is_same_v<T,std::string>)return Rcpp::wrap(value);
- else if constexpr(std::is_integral_v<T>)return Rcpp::wrap(static_cast<int>(value));
+ else if constexpr(std::is_integral_v<T>) {
+   if(ian_r::integer_as_double(value))return Rcpp::wrap(static_cast<double>(value));
+   return Rcpp::wrap(static_cast<int>(value));
+ }
  else if constexpr(std::is_floating_point_v<T>) {
    // JSON trace schema previously represented non-finite numbers as null.
    return std::isfinite(value)?Rcpp::RObject(Rcpp::wrap(value)):Rcpp::RObject(R_NilValue);
  } else {RFields out;ian::serialization::fields(out,value);return out.finish();}
 }
 template<class T> Rcpp::RObject r_object(const std::vector<T>& value) {
+ if(value.size()>std::size_t(R_XLEN_T_MAX))Rcpp::stop("IAN vector exceeds the R representation range");
  Rcpp::List out(value.size());for(size_t k=0;k<value.size();++k)out[k]=r_object(value[k]);return out;
 }
 template<class T,std::size_t N> Rcpp::RObject r_object(const std::array<T,N>& value) {
  Rcpp::List out(N);for(size_t k=0;k<N;++k)out[k]=r_object(value[k]);return out;
 }
-Rcpp::IntegerMatrix edges(const ian::Edges& e) {Rcpp::IntegerMatrix out(e.size(),2);for(size_t i=0;i<e.size();i++)for(int j=0;j<2;j++)out(i,j)=e[i][j]+1;return out;}
-Rcpp::NumericMatrix matrix(const ian::Matrix& a) {size_t n=a.size(),p=n?a[0].size():0;Rcpp::NumericMatrix out(n,p);for(size_t i=0;i<n;i++)for(size_t j=0;j<p;j++)out(i,j)=a[i][j];return out;}
-ian::Matrix matrix(SEXP value) {Rcpp::NumericMatrix x(value);ian::Matrix a(x.nrow(),ian::Vector(x.ncol()));for(int i=0;i<x.nrow();i++)for(int j=0;j<x.ncol();j++)a[i][j]=x(i,j);return a;}
+Rcpp::IntegerMatrix edges(const ian::Edges& e) {ian_r::matrix_dimensions(e.size(),2,R_XLEN_T_MAX);Rcpp::IntegerMatrix out(e.size(),2);for(size_t i=0;i<e.size();i++)for(int j=0;j<2;j++)out(i,j)=e[i][j]+1;return out;}
+Rcpp::NumericMatrix matrix(const ian::Matrix& a) {size_t n=a.size(),p=n?a[0].size():0;ian_r::matrix_dimensions(n,p,R_XLEN_T_MAX);Rcpp::NumericMatrix out(n,p);for(size_t i=0;i<n;i++)for(size_t j=0;j<p;j++)out(i,j)=a[i][j];return out;}
+ian::Matrix matrix(SEXP value) {Rcpp::NumericMatrix x(value);ian_r::matrix_dimensions(x.nrow(),x.ncol(),R_XLEN_T_MAX);ian::Matrix a(x.nrow(),ian::Vector(x.ncol()));for(int i=0;i<x.nrow();i++)for(int j=0;j<x.ncol();j++)a[i][j]=x(i,j);return a;}
 Rcpp::IntegerVector indices(const ian::Indices& x) {Rcpp::IntegerVector out=Rcpp::wrap(x);for(auto& v:out)++v;return out;}
 void check_interrupt(void*) {R_CheckUserInterrupt();}
 struct Sink : ian::Observer {
@@ -77,6 +82,10 @@ Rcpp::List graph(const ian::Edges& e,const ian::Result& result,const ian::Input&
 }
 extern "C" SEXP dgraphs_ian_run_v2(SEXP features,SEXP distances,SEXP ids,SEXP participants,SEXP detailed,SEXP max_solves,SEXP fault,SEXP policy,SEXP preserve_connectivity) {
  BEGIN_RCPP
+ Rcpp::NumericMatrix feature_view(features),distance_view(distances);
+ ian_r::input_dimensions(feature_view.nrow(),feature_view.ncol(),R_XLEN_T_MAX);
+ if(distance_view.nrow()!=feature_view.nrow() || distance_view.ncol()!=feature_view.nrow())
+     Rcpp::stop("IAN distance dimensions must match the feature rows");
  ian::Input in;in.preserve_connectivity=Rcpp::as<bool>(preserve_connectivity);in.policy=Rcpp::as<std::string>(policy);in.features=matrix(features);in.distances=matrix(distances);in.specimen_ids=Rcpp::as<std::vector<std::string>>(ids);in.participant_ids=Rcpp::as<std::vector<std::string>>(participants);
  Sink sink(Rcpp::as<bool>(detailed),Rcpp::as<int>(max_solves));
  std::string injection=Rcpp::as<std::string>(fault);

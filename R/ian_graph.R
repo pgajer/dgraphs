@@ -13,7 +13,13 @@
 #' numerical limitations. Input rows are specimens; graph vertices are unique
 #' feature profiles in first-occurrence order.
 #'
-#' @param X Finite numeric specimen-by-feature matrix, at least one column.
+#' @param X Finite numeric specimen-by-feature matrix, at least two rows and one
+#'   column. There is no fixed experimental row cap. Input size must fit R/native
+#'   index representations and available memory. Dense distances and affinities
+#'   require quadratic storage: each n-by-n double matrix uses 8*n*n bytes before
+#'   overhead. Several matrices/copies coexist; this is not a peak-memory estimate.
+#'   Initial Gabriel construction has cubic worst-case cost. Full diagnostics
+#'   retain additional dense data. See the backend guide for tested sizes.
 #' @param distances Optional unsquared distance matrix or `dist`. When absent,
 #'   Euclidean distances are computed with `stats::dist(X)`. Supplied distances
 #'   are used exactly; duplicate feature rows must have identical distance rows.
@@ -99,10 +105,11 @@ create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
     if (!is.logical(preserve.connectivity) || length(preserve.connectivity) != 1L || is.na(preserve.connectivity)) stop("preserve.connectivity must be TRUE or FALSE.", call. = FALSE)
     if (!is.character(numerical.policy) || length(numerical.policy) != 1L || is.na(numerical.policy) || !numerical.policy %in% c("IAN evaluated-LP 1.0", "IAN evaluated-LP retry-power 0.1")) stop("Unsupported numerical.policy.", call. = FALSE)
     if (!is.null(graph)) stop("Supplied initial graphs are unsupported; IAN constructs its Gabriel graph from distances.", call. = FALSE)
-    if (!is.matrix(X) || !is.numeric(X) || nrow(X) < 2L || nrow(X) > 500L || ncol(X) < 1L || any(!is.finite(X)))
-        stop("X must be a finite numeric matrix with 2 to 500 specimen rows and at least one feature.", call. = FALSE)
-    storage.mode(X) <- "double"
+    if (!is.matrix(X) || !is.numeric(X) || nrow(X) < 2L || ncol(X) < 1L || any(!is.finite(X)))
+        stop("X must be a finite numeric matrix with at least 2 specimen rows and at least one feature.", call. = FALSE)
     n <- nrow(X)
+    .ian.check.dimensions(n, ncol(X))
+    storage.mode(X) <- "double"
     if (is.null(specimen.ids)) specimen.ids <- if (is.null(rownames(X))) as.character(seq_len(n)) else rownames(X)
     valid.ids <- function(x) is.character(x) && length(x) == n && !anyNA(x) && all(nzchar(x))
     if (!valid.ids(specimen.ids) || anyDuplicated(specimen.ids)) stop("specimen.ids must be unique nonempty strings, one per row.", call. = FALSE)
@@ -173,4 +180,20 @@ create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
     list(protected.edges = protected, history = history, stop.reason = raw$stop_reason,
          index.base = 1L, iteration.base = 1L,
          scope = "Encountered bridge proposals; pruning conditions were not tested for these proposals.")
+}
+
+# Validate representation sizes before allocating the n-by-n distance matrix.
+# This helper takes dimensions only, so boundary tests need no huge allocation.
+.ian.check.dimensions <- function(rows, columns) {
+    valid <- function(x) is.numeric(x) && length(x) == 1L && is.finite(x) &&
+        x >= 0 && x == trunc(x)
+    if (!valid(rows) || !valid(columns))
+        stop("IAN dimensions must be finite nonnegative integers.", call. = FALSE)
+    if (rows > .Machine$integer.max %/% 2)
+        stop("IAN input dimensions exceed the native vertex-index range.", call. = FALSE)
+    vector.limit <- if (.Machine$sizeof.pointer >= 8L) 2^52 else .Machine$integer.max
+    if (columns > .Machine$integer.max || rows * columns > vector.limit ||
+        rows * rows > vector.limit)
+        stop("IAN matrix dimensions exceed the R/native representation range.", call. = FALSE)
+    invisible(NULL)
 }

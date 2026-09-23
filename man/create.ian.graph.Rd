@@ -18,7 +18,13 @@ create.ian.graph(
 )
 }
 \arguments{
-\item{X}{Finite numeric specimen-by-feature matrix, at least one column.}
+\item{X}{Finite numeric specimen-by-feature matrix, at least two rows and one
+column. There is no fixed experimental row cap. Input size must fit R/native
+index representations and available memory. Dense distances and affinities
+require quadratic storage: each n-by-n double matrix uses 8\emph{n}n bytes before
+overhead. Several matrices/copies coexist; this is not a peak-memory estimate.
+Initial Gabriel construction has cubic worst-case cost. Full diagnostics
+retain additional dense data. See the backend guide for tested sizes.}
 
 \item{distances}{Optional unsquared distance matrix or \code{dist}. When absent,
 Euclidean distances are computed with \code{stats::dist(X)}. Supplied distances

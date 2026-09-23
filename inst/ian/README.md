@@ -40,7 +40,7 @@ Supply X (specimens in rows), optionally exact unsquared distances, unique IDs a
 participant IDs. X defines exact duplicate profiles; distances alone cannot do so.
 Absent distances use R's Euclidean `dist`, which can round differently from older
 Python distance generation. Supplied graphs are rejected. The adapter permits
-2–500 specimen rows; this is a resource guard, not a claim of all-input numerical
+at least two specimen rows; there is no fixed experimental row cap or claim of all-input numerical
 success. Dense distances and affinities require quadratic memory; the initial
 Gabriel construction is cubic in profile count. Summary diagnostics omit dense
 per-solve matrices and vectors; full traces are opt-in and may be large. Full
@@ -62,7 +62,7 @@ The `numerical.policy` argument accepts exactly two strings:
 
 For example, add `numerical.policy="IAN evaluated-LP retry-power 0.1"` to an
 internal function call to request the candidate. It has not been adopted as the
-default. It is selected explicitly for internal qualification after accepted integration and 1,000-profile native/Python studies. R retains its 500-row guard. Matching the system power operation on one host does not promise
+default. It is selected explicitly for internal qualification after accepted integration and 1,000-profile native/Python studies. The R wrapper has no fixed experimental row cap. Matching the system power operation on one host does not promise
 identical arithmetic across platforms.
 
 Both policies use pinned Clarabel 0.11.1, QDLDL, one thread and fresh solver state.  The missing `input_sparse_dropzeros` C header field is repaired against
@@ -138,3 +138,27 @@ in scale and affinity calculations; all unique-profile vertices are retained.
 A numerical refusal still returns no final graph. Native checkpoints bind the
 variant and bridge cache; R checkpoint/resume is still not exposed. Connected
 output does not establish that every connecting edge is biologically useful.
+
+## Input size and resource use
+
+The former 500-specimen rejection is removed. Matrix dimensions must be
+representable by R and the native index types; these are technical bounds, not a
+recommended size or tested capacity. Resources can be exhausted well below them.
+The wrapper checks these dimensions before making distances, and the native
+bridge checks dimensions and exact integer conversion at its interface.
+
+One dense n-by-n double matrix uses 8*n*n bytes excluding overhead: 8 MB at
+1,000 rows, 200 MB at 5,000 and 800 MB at 10,000 (decimal units). Distances,
+squared distances, affinities and conversion copies can coexist. These numbers
+are individual array sizes, not peak memory estimates. Initial Gabriel-graph
+construction has cubic worst-case work; actual time also depends on geometry,
+pruning and solving. Full diagnostics retain extra dense objects; summary remains
+the default. The specimen-level distance matrix is allocated before duplicate
+profiles are collapsed, so original row count matters for memory.
+
+Removing the cap does not certify every larger input. The new larger-input
+qualification is recorded separately in IAN-EXP-034; at this source revision it
+is pending. Previous evidence covers R reference mode through 500 rows and
+connected mode on twelve 200-point examples. Numerical policy, pruning defaults,
+solve budget and interrupt behavior are unchanged. Interrupts are checked at
+engine events and do not preempt a running solver or every initialization loop.

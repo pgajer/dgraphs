@@ -54,3 +54,11 @@ The application sources and stylesheet under inst/shiny/graph-explorer
 were moved from dggraphui on 2026-09-15. They retain their original
 GPL (>= 3) license; see that component's LICENSE. The original author is
 Pawel Gajer. No third-party notices have been removed.
+
+Optional internal IAN backend (inst/ian/backend): IAN by Luciano Dyballa
+(BSD-3-Clause), NumPy-derived ordering/arithmetic (BSD-3-Clause), Clarabel.cpp
+(Apache-2.0), Clarabel.rs 0.11.1 (Apache-2.0), nlohmann JSON (MIT). Full upstream
+notices are retained in that directory and JSON header. The pinned source and
+adapter changes are recorded in backend/provenance.json. The optional build
+uses additional Cargo dependencies with notices in their downloaded crates;
+this source package distributes neither those crates nor a compiled module.

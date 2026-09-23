@@ -7,7 +7,8 @@ E=ROOT/'development/ian-cpp-phase1/phase07e';sys.path.insert(0,str(E));import va
 v.POLICY='IAN evaluated-LP retry-power 0.1'
 load=lambda p:json.loads(Path(p).read_text())
 build,panel,out=map(Path,sys.argv[1:4]);out.mkdir(parents=True,exist_ok=False);prior=load(panel/'ledger.json');assert prior['complete'] and prior['gate']
-ledger=dict(prior_processes=prior.get('prior_processes',[])+prior['processes'],processes=[],checks={},complete=False)
+previous=load(Path(sys.argv[4])/'ledger.json') if len(sys.argv)>4 else None
+ledger=dict(prior_processes=(previous.get('prior_processes',[])+previous['processes']) if previous else prior.get('prior_processes',[])+prior['processes'],processes=[],checks={},complete=False)
 def save():write(out/'ledger.json',ledger)
 def check(name,x):ledger['checks'][name]=bool(x);save();assert x,name
 def execute(name,cmd):
@@ -18,7 +19,7 @@ def execute(name,cmd):
  r=run(cmd,out/name,out.parent,wall_limit=min(900,3600-wall),max_attempts=min(1000,8000-used));ledger['processes'].append(r);save();check(name+' accounting',r['state']=='reaped' and r['reason'] is None);return out/name/'child',r
 try:
  small=['nonuniform_curve','variable_density_patch','nearby_curved_arms','pressmat_hellinger_subset']
- for name in small:
+ for name in ([] if previous else small):
   f=build/'fixtures'/(name+'-strict.json');child,r=execute('strict-'+name,[build/'engine',f,out/('strict-'+name)/'child','--interval','100'])
   check(name+' strict complete',r['exit_code']==0 and load(child/'status.json')['complete'])
   old=Path('/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase03/runs')

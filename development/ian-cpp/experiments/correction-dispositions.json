@@ -120,7 +120,7 @@
     {
       "id": "ABI-01",
       "description": "Native C header and Rust settings layout differ",
-      "disposition": "Intentionally deferred with justification",
+      "disposition": "Corrected and independently verified for maintained pinned macOS arm64 source",
       "affected": [
         "IAN-EXP-015",
         "IAN-EXP-020"
@@ -133,16 +133,24 @@
           "available": true,
           "sha256": "f1c1eb77b2910749cc937fee77763a14243f049a46e8b3e6ba8f726f2ab5b850",
           "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        },
+        {
+          "role": "independent repair acceptance",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md",
+          "available": true,
+          "sha256": "7cfbca7ed21634030f2bdebaab84bdee26d244963de0ecddd4918e82ca96dcdb",
+          "identity_scope": "Bounded current interface repair; historical records retain their original limitations"
         }
       ],
-      "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims.",
+      "consequence": "Maintained pinned interface is accepted on tested macOS arm64; historical affected evidence is unchanged and other-platform runtime remains unqualified.",
       "original_condition": "The tested native C header and Rust settings layout differ; bounded replay is not general interface qualification.",
-      "change_or_deferral_reason": "Deferred to dedicated native-interface qualification because the present studies concern fixed problems and do not establish portability. A prospective in-process layout/settings check with an independent review is required before a broader support claim."
+      "change_or_deferral_reason": "Pinned C/Rust layout repaired and verified in process; complete settings and unchanged numerical behavior independently checked."
     },
     {
       "id": "SETTINGS-01",
       "description": "Old native settings capture incomplete",
-      "disposition": "Intentionally deferred with justification",
+      "disposition": "Corrected and independently verified for maintained pinned macOS arm64 source",
       "affected": [
         "IAN-EXP-015"
       ],
@@ -154,11 +162,19 @@
           "available": true,
           "sha256": "f1c1eb77b2910749cc937fee77763a14243f049a46e8b3e6ba8f726f2ab5b850",
           "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        },
+        {
+          "role": "independent repair acceptance",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md",
+          "available": true,
+          "sha256": "7cfbca7ed21634030f2bdebaab84bdee26d244963de0ecddd4918e82ca96dcdb",
+          "identity_scope": "Bounded current interface repair; historical records retain their original limitations"
         }
       ],
-      "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims.",
+      "consequence": "Maintained pinned interface is accepted on tested macOS arm64; historical affected evidence is unchanged and other-platform runtime remains unqualified.",
       "original_condition": "Some native settings were reconstructed after the original executions, rather than recorded inside each solving process.",
-      "change_or_deferral_reason": "Later no-solve reconstruction supports interpretation on the tested build but cannot recreate missing historical observations. Preserve this limit; collect complete settings prospectively. Old evidence is not relabeled as an in-process capture."
+      "change_or_deferral_reason": "All 39 actual solver settings plus two metadata fields are now captured in process and independently checked. Missing historical observations remain missing; later capture does not rewrite the old evidence."
     },
     {
       "id": "WARN-01",
@@ -175,11 +191,19 @@
           "available": true,
           "sha256": "7793199e2040d0208930ef5fff8d221b842057a1e669d991cbcf2aa7ee2eca68",
           "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+        },
+        {
+          "role": "bounded warning consequence review",
+          "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage02-scale/audit.md",
+          "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage02-scale/audit.md",
+          "available": true,
+          "sha256": "70da880a8a525e130d5afc4270c22deb9ee730e9ec3bc007d0805395caeaeb29",
+          "identity_scope": "Saved-product diagnostics on tested host"
         }
       ],
       "consequence": "No wider qualification/adoption follows; preserve limitation in dependent claims.",
       "original_condition": "Library warnings remained despite accepted bounded external checks.",
-      "change_or_deferral_reason": "Library-level diagnosis is outside the accepted boundary study. Keep warnings visible and require qualification for broader environments; their absence or harmlessness has not been established."
+      "change_or_deferral_reason": "Stage 2 independently checked saved dense-vector products: warnings reproduce while values remain finite and agree with scalar calculations. The low-level library cause and broader-environment consequences remain unresolved."
     },
     {
       "id": "SELECT-01",

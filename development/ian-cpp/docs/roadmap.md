@@ -12,10 +12,10 @@ address findings and request re-review without a new owner prompt.
 |---|---|---|---|
 | A | Feasibility and computational comparisons | 01-02 | Fixed-LP and persistent-client evidence; not full-engine speed claims. |
 | B | Reference behavior and reusable implementation | 03-06B | Bounded fidelity/core/restart historically accepted; typed-message refactor independently accepted for bounded macOS arm64 evidence. |
-| C | Numerical robustness and scale expansion | 07-07K | Historical bounded studies include refusals and near-optimal scale variation. New helix arithmetic agreement is accepted for its bounded scope; the bounded stage-2 panel is permitted after stage-1 acceptance. |
-| D | Performance and platform qualification | Proposed 08-09 | Comprehensive milestones unexecuted; internal adapter independently accepted on macOS arm64; an additional typed R 4.5.2 subset passes. |
+| C | Numerical robustness and scale expansion | 07-07K | Historical bounded studies include refusals and near-optimal scale variation. New helix arithmetic agreement is accepted for its bounded scope; the integrated retry-power option and all seven frozen 1,000-profile native/Python trajectories are independently accepted on the tested Mac. |
+| D | Performance and platform qualification | Proposed 08-09 | Bounded fresh Mac arm64 R-devel/R 4.5.2 package qualification and complete-pipeline performance accepted (IAN-EXP-029/030); other platforms remain unqualified. |
 | E | Controlled scientific application | Proposed 10 | Engine and downstream estimator acceptance must both be specified. |
-| F | Methodological alternatives and benchmarks | Proposed 11 | Can proceed alongside engineering after an explicit bounded authorization. |
+| F | Methodological alternatives and benchmarks | Proposed 11 | Initial nine-dataset geometry/known-mean benchmark accepted with mixed findings (IAN-EXP-031); methodological changes require a separate prospective scope. |
 
 These groups are navigation, not a new execution authorization sequence. Stable
 IAN-EXP identifiers name questions; old phase labels remain aliases. Phase02 has
@@ -42,4 +42,4 @@ The focused helix continuation (IAN-EXP-026) identifies the differing constraint
 square and obtains identical complete native/Python trajectories with an explicit
 system-power convention. The matching multiplication control refuses in both
 interfaces. This is independently accepted bounded evidence, with
-the subsequent stage-1 regression/integration panel also accepted. The coordinator has selected its explicit retry-power option for the bounded stage-2 panel; strict default and platform limits remain.
+the subsequent stage-1 regression/integration panel also accepted. The coordinator selected its explicit retry-power option for the internal qualification studies. All five continuation stages are now accepted, including the frozen scale panel, fresh Mac installations, performance and the mixed scientific benchmark. The strict R default and public-release/platform limits remain. The proposed next scientific work is diagnosis of helix disconnection, not an automatic method change.

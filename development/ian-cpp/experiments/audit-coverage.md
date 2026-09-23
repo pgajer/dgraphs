@@ -1,7 +1,7 @@
 # Audit coverage and outstanding review
 
-Of 26 executed question records, 25 map to independently accepted bounded
-studies across 24 milestones. The helix arithmetic study (IAN-EXP-026), including
+All 26 executed question records map to independently accepted bounded
+studies across 25 milestones. The helix arithmetic study (IAN-EXP-026), including
 its current report and figure, was accepted on 23 September 2026 with no corrective
 findings. The internal dgraphs adapter (IAN-EXP-024) and typed-core refactor
 (IAN-EXP-025) are accepted for bounded implementation evidence on macOS arm64,
@@ -15,9 +15,9 @@ These counts do not imply that every inference, dataset or intended use is valid
 Current review status comes from each audit-summary.json, never a duplicate metadata
 flag. Shared phase02 audit scope is counted once at milestone level.
 
-The other 25 catalogue reports, historical figure reconstructions, aims wording
+The other 24 catalogue reports, historical figure reconstructions, aims wording
 and synthesis have author checks but have not received independent presentation
-review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028, IAN-EXP-029 and IAN-EXP-030 acceptances do not audit the complete catalogue. For every record current_report_review
+review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028, IAN-EXP-029, IAN-EXP-030 and IAN-EXP-031 acceptances do not audit the complete catalogue. For every record current_report_review
 names that limitation and binds the current report hash. Historical audit history
 remains distinct and is not silently carried forward to rewritten prose.
 
@@ -31,10 +31,9 @@ with dispositions for consequential findings. This is feasible verification pend
 review, not evidence known to be missing or authorization for new numerical trials.
 
 Historical limits remain claim-specific: original-expression fidelity fails some
-array comparisons; full-engine performance/portability and biological utility are
-not established; unrestricted scale advancement is gated; the bounded stage-2 panel is now permitted. The correction register keeps
+array comparisons; bounded complete-pipeline performance and Mac installations are now accepted, while broader portability and biological utility remain unestablished. The seven-case 1,000-profile panel is accepted; unrestricted scale expansion remains gated. The correction register keeps
 closed defects distinct from these unresolved scientific and qualification limits.
 
-IAN-EXP-030 adds 110 author-executed calls for complete-pipeline profiling. Its numerical evidence and exact Markdown/PDF are independently accepted, with F1 closed; Stage 5 may begin under the standing authorization.
+IAN-EXP-030 adds 110 author-executed calls for complete-pipeline profiling. Its numerical evidence and exact Markdown/PDF are independently accepted, with F1 closed.
 
-IAN-EXP-031 adds the initial bounded scientific benchmark: nine independent coordinate datasets and 90 outcome/split replicates. Its interpretation and current presentation await independent review. The original broader scientific-benchmark proposal remains a historical proposal, with this narrower executed continuation linked separately.
+IAN-EXP-031 adds the initial bounded scientific benchmark: nine independent coordinate datasets and 90 outcome/split replicates. Its numerical evidence, independent scientific calculations and exact report/PDF and figure are accepted, with no corrective findings. This completes the five-stage sequence; it does not establish scientific superiority. The original broader scientific-benchmark proposal remains a historical proposal, with this narrower executed continuation linked separately.

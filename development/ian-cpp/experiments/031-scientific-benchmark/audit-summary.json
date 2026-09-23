@@ -1,16 +1,27 @@
 {
-  "audit_status": "independent scientific audit pending",
+  "audit_status": "accepted for bounded scientific benchmark; no corrective findings",
   "numerically_checked": true,
-  "numerical_check_scope": "Author checks all 572 full payloads, exact paired scale/dual vectors and analytic/holdout controls; not independent acceptance",
+  "numerical_check_scope": "Independent 18-entry replay, 1144 submitted/fresh full attempt payloads, 45 geometry rows, 2340 tuning losses and 54000 held-out predictions",
   "current_report_review": {
-    "status": "not independently reviewed",
+    "status": "accepted",
     "report_sha256": "c89c9fe930db4ec3ba041dde639bebcea87d371f8bfbfb875531e82072b047fb",
     "frozen_submission": {
       "report_sha256": "c89c9fe930db4ec3ba041dde639bebcea87d371f8bfbfb875531e82072b047fb",
       "report_pdf_sha256": "d24c76bc39ce0495765dc70c1fb7c95fdc91968ba67d7472734985988d51aa10",
       "reason": "Exact visually checked three-page submission; preservation is not acceptance."
-    }
+    },
+    "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage05-science/audit.md",
+    "review_sha256": "083bb63cc988ef6ea4a1d73b9f4b3ee690aad42950cab9f629f87b6047cd9b4b",
+    "report_pdf_sha256": "d24c76bc39ce0495765dc70c1fb7c95fdc91968ba67d7472734985988d51aa10",
+    "scope": "Exact submitted Markdown/PDF and figure accepted; HTML text/links only"
   },
-  "audit_history": [],
-  "consequential_limits": "Nine datasets at n=200, one function per geometry/noise level, transductive access, no biological or general-superiority claim"
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage05-science/audit.md",
+      "review_sha256": "083bb63cc988ef6ea4a1d73b9f4b3ee690aad42950cab9f629f87b6047cd9b4b",
+      "candidate": "24dde13bc3001da1ab9b74c25935e364b65a22e1",
+      "scope": "Nine-dataset scientific benchmark; mixed findings accepted; no corrective findings"
+    }
+  ],
+  "consequential_limits": "Nine datasets at n=200, one function per geometry/noise level, transductive access, graph sparsity not matched; no biological or general-superiority claim"
 }

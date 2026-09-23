@@ -9,7 +9,7 @@
     },
     {
       "id": "DEC-REF",
-      "state": "working implementation reference",
+      "state": "preserved strict baseline and R default; explicit retry-power option selected separately for internal qualification",
       "policy": "IAN evaluated-LP 1.0",
       "basis": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/CONTRACT.md"
     },
@@ -66,19 +66,21 @@
     },
     {
       "id": "DEC-FIVE-STAGE-CONTINUATION",
-      "state": "stages 1, 2 and 3 accepted; all findings closed; stage 4 may begin",
+      "state": "all five bounded stages independently accepted; all corrective and nonblocking findings closed",
       "scope": "Numerical policy, scale, supported platforms, performance, controlled scientific evaluation in that order; resolve findings before advancing",
       "basis": "Owner instruction in this task on 23 September 2026; experiments/analysis-queue.md",
       "candidate_policy": "IAN evaluated-LP retry-power 0.1",
       "candidate_adopted": true,
       "adoption_scope": "Explicit internal qualification option on tested Mac; strict R default retained",
-      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage03-package/audit.md"
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage05-science/audit.md",
+      "remaining_scope": "Further scientific studies and public release require their own scope; this sequence establishes neither general scientific superiority nor production readiness"
     },
     {
       "id": "DEC-SUPPORTED-TARGET",
-      "state": "macOS arm64 initial internal target",
-      "scope": "Qualify actual available R runtimes through fresh builds; Linux, Windows and Intel Mac remain unqualified",
-      "basis": "Recommended macOS-first scope stated during authorized sequence; optional platform preference unanswered"
+      "state": "macOS arm64 R-devel and corrected R 4.5.2 installations accepted for bounded internal use",
+      "scope": "Fresh package/backend builds and actual runtime panel; R limited to 500 rows with no R restart; Linux, Windows and Intel Mac remain unqualified",
+      "basis": "Recommended macOS-first scope stated during authorized sequence; optional platform preference unanswered",
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage03-package/audit.md"
     }
   ]
 }

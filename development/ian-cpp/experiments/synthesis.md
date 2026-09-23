@@ -2,16 +2,14 @@
 
 Audience: the scientific owner and future implementers/reviewers. The project has
 a functioning, recoverable native implementation with substantial bounded reference
-agreement. Its current obstacle is numerical scale selection and larger-trajectory
-compatibility, rather than proof that C++ alone makes the solver faster.
+agreement. All five authorized continuation stages are independently accepted. The central remaining question is scientific usefulness: faithful numerical execution can still produce graphs that lose important global connections.
 
 ## Evidence across questions
 
 The early performance work separates process overhead from solver cost. Native
 benchmark clients use less memory, while persistent runtimes are nearly equal.
 The large historical speed discrepancy is reproducible through representation,
-backend and thread changes in Python. None of this establishes complete-engine
-memory gains. See IAN-EXP-001 through IAN-EXP-003.
+backend and thread changes in Python. Those early studies did not establish complete-engine memory gains; the later complete-pipeline benchmark below supplies separate bounded evidence. See IAN-EXP-001 through IAN-EXP-003.
 
 Small and longer trajectories establish native/evaluated agreement, reusable-core
 behavior and bounded restart correctness. Historical-expression arrays do not
@@ -43,15 +41,14 @@ evidence and its Markdown/PDF presentation.
 
 ## Decisions and limits
 
-Keep the scale ladder gated. Any secondary selection rule is an explicit policy
-change needing fixed-problem tests and later trajectory/pruning comparison.
+The original seven-case 1,000-profile panel is now accepted under the explicit retry-power option on the tested Mac. Unrestricted expansion remains gated. Any secondary selection rule is an explicit policy change needing fixed-problem tests and later trajectory/pruning comparison.
 Do not adopt HiGHS, loosen a status requirement or select favorable rounded
 coefficients merely because a diagnostic succeeds. The internal dgraphs adapter
 now has independent bounded macOS arm64 acceptance, including the pinned C/Rust settings
 layout repair and actual settings capture. Four small reference outputs reproduce
 exactly, and initial/final graphs are returned separately. See
 [IAN-EXP-024](024-internal-dgraphs-adapter/report.md). Broader
-portability remains pending; a separate typed R 4.5.2 seven-case subset passes on the same Mac. Engine acceptance does not resolve downstream estimator
+portability remains limited to tested Mac arm64 installations; Stage 3 independently accepts fresh R-devel and corrected R 4.5.2 builds. Engine acceptance does not resolve downstream estimator
 conditioning, assay matching or biological validity.
 
 ## Figures for discussion
@@ -60,8 +57,7 @@ Use the historical-runtime comparison to explain attribution; the scale-coverage
 matrix to show why completion and acceptance differ; the exact-input/interface
 comparison to isolate the perturbation; and the certified range plot to distinguish
 attained spans from outer bounds. The illustrated selection includes limitations
-and documentary readiness. All are newly reconstructed presentation assets pending
-independent review, based on previously audited evidence. No figure implies new
+and documentary readiness. Those historical reconstructions remain pending independent presentation review, based on previously audited evidence. The newer arithmetic and five continuation reports have separate version-specific acceptance. No figure implies new
 optimization or scientific validation.
 
 ## Typed core follow-up
@@ -85,5 +81,17 @@ original point. All 446 fresh attempts are accounted for, and the four small
 paired controls pass. This explains the specific interface discrepancy on this
 host; it does not prove arithmetic robustness, cross-platform equivalence or
 invariance across all near-optimal scale choices. Independent review accepted this bounded study and its current report/figure with
-no corrective findings. Wider regression and portability qualification precede any
-promotion of this candidate or reopening of the ladder.
+no corrective findings. Subsequent accepted regression/integration and scale-panel studies qualify the explicit candidate internally on this Mac. General perturbation robustness and other-platform runtime remain unqualified.
+
+
+## Completed engineering and scientific continuation
+
+The [policy integration](027-numerical-policy-integration/report.md) and [frozen scale panel](028-scale-panel/report.md) establish agreement under the named retry-power option, retaining strict certificate checks and the strict R default. [Package qualification](029-package-qualification/report.md) covers actual fresh Mac arm64 installations, preserves the earlier linkage failures, and includes the grip API compatibility corrections. The R function remains internal, capped at 500 rows and without an R restart interface.
+
+The [complete-pipeline benchmark](030-full-engine-performance/report.md) measures 110 engine calls. Matched native workers use about 53% less peak memory than Python on this schedule; native median times are lower on all three tested fixtures. These are client-level measurements with documented timer and interface differences, not an isolated C++ language advantage. No optimization patch was justified.
+
+The [scientific benchmark](031-scientific-benchmark/report.md) uses nine independent datasets of 200 points: three squares, three helices and three spheres. It compares graph distances and recovery of a known smooth mean under noisy observations. All 18 native/Python runs agree, but the scientific result is mixed. Every final helix graph has 3–6 connected pieces although its initial Gabriel graph is connected; only 37.5% of point pairs remain connected on average. Local-neighbor recall is nevertheless 96.5%, showing why local accuracy alone is insufficient. Direct affinity smoothing performs poorly on these helices, while other IAN-based and simpler smoothers are competitive in different cases.
+
+The independent auditor reproduced the numerical schedule and separately reconstructed all graph metrics, tuning losses and 54,000 evaluation predictions. This accepts a bounded negative result, not general inferiority or superiority. The graph comparisons use different edge counts, and prediction is evaluated with all coordinates already available. Three draws per geometry, one size and one noise level cannot establish biological utility or performance for future arriving points.
+
+The next proposed diagnostic is to locate the helix splits and the responsible pruning decisions. Any method change needs its own declared success criteria and additional confirmatory coordinate draws. The [project status](analysis-queue.md) keeps this research question separate from public API, scale, platform and application decisions.

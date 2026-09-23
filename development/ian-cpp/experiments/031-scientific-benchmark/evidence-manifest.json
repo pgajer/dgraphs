@@ -32,6 +32,14 @@
       "available": true,
       "sha256": "5452d06bf65edf977f1937beb971d04714b8847509f804a1ac2db328c1e8c013",
       "identity_scope": "Submitted source and saved evidence bytes"
+    },
+    {
+      "role": "independent acceptance",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage05-science/audit.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage05-science/audit.md",
+      "available": true,
+      "sha256": "083bb63cc988ef6ea4a1d73b9f4b3ee690aad42950cab9f629f87b6047cd9b4b",
+      "identity_scope": "Final bounded acceptance and presentation review"
     }
   ],
   "backup": "External backup coverage unknown"

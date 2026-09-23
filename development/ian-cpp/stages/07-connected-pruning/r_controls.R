@@ -21,7 +21,7 @@ e <- tryCatch(dgraphs:::create.ian.graph(x,backend=old,preserve.connectivity=TRU
 stopifnot(inherits(e,'error'),grepl('needs rebuilding',conditionMessage(e)))
 # New native module still accepts the previous eight-argument ABI.
 dll <- dyn.load(backend,local=TRUE);symbol <- getNativeSymbolInfo('dgraphs_ian_run',dll)$address
-ledger$legacy <<- list(state='reserved');save()
+ledger$legacy <- list(state='reserved');save()
 legacy <- .Call(symbol,x,as.matrix(stats::dist(x)),as.character(1:4),character(),TRUE,1500L,'none',policy)
 saveRDS(legacy,file.path(out,'legacy.rds'));lines <- c(lines,vapply(legacy$diagnostics$trace,ian.trace.json,''));ledger$legacy <- list(state='returned',complete=legacy$complete,solves=legacy$diagnostics$solves);save();stopifnot(legacy$complete,is.null(legacy$backend$pruning_policy))
 jsonlite::write_json(list(passed=TRUE,calls=length(ledger),solves=sum(vapply(ledger,function(x)x$solves,0)),old.module.refused=TRUE),file.path(out,'checks.json'),auto_unbox=TRUE,pretty=TRUE)

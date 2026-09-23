@@ -4,7 +4,7 @@
   "numerical_check_scope": "Author comparisons and saved-payload checks; independent audit pending",
   "current_report_review": {
     "status": "not independently reviewed",
-    "report_sha256": "e024177e8807656898c367eedb9a6137ce6594989515a8ba82c0b252fca51527"
+    "report_sha256": "a6716bd47c387ec014a412d0298a3ccca9d5d36b1b061b2b20c94dd37820d3eb"
   },
   "audit_history": [],
   "consequential_limits": "Internal Mac arm64 evidence; other platforms, public export and R above 500 rows unqualified"

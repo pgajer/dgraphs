@@ -5,7 +5,8 @@ H=Path(__file__).resolve().parent;ROOT=H.parents[3];P=Path(sys.argv[1]);B=P/'bui
 sys.path.insert(0,str(H.parent/'01-numerical-policy'));from guard import run,reserve,write
 sys.path.insert(0,str(ROOT/'development/ian-cpp-phase1/phase07e'));import validate as v
 v.POLICY='IAN evaluated-LP retry-power 0.1';load=lambda p:json.loads(Path(p).read_text())
-L=dict(prior=load(P/'ledger.json')['processes'],processes=[],checks={},engine_entries=38,complete=False)
+previous=load(Path(sys.argv[3])/'ledger.json') if len(sys.argv)>3 else None
+L=dict(prior=previous['prior']+previous['processes'] if previous else load(P/'ledger.json')['processes'],processes=[],checks={},engine_entries=previous['engine_entries'] if previous else 38,complete=False)
 def save():write(O/'ledger.json',L)
 def check(k,x):L['checks'][k]=bool(x);save();assert x,k
 
@@ -15,15 +16,17 @@ def execute(name,cmd,entries=1):
  L['engine_entries']+=entries;save();reserve(O/'reservations.json',80,dict(name=name,engine_entries=entries,command=list(map(str,cmd))))
  r=run(cmd,O/name,P,wall_limit=min(900,7200-wall),max_attempts=1500);L['processes'].append(r);save();check(name+' accounting',r['state']=='reaped' and r['reason'] is None);return O/name/'child',r
 try:
- child,r=execute('R-controls',['/Library/Frameworks/R.framework/Resources/bin/Rscript','--vanilla',H/'r_controls.R',P,B/'dgraphs_ian.so',O/'R-controls/child'],6)
- check('R controls passed',r['exit_code']==0 and load(child/'checks.json')['passed'])
+ if not previous:
+  child,r=execute('R-controls',['/Library/Frameworks/R.framework/Resources/bin/Rscript','--vanilla',H/'r_controls.R',P,B/'dgraphs_ian.so',O/'R-controls/child'],6)
+  check('R controls passed',r['exit_code']==0 and load(child/'checks.json')['passed'])
  f=P/'fixtures/helix-6101-connected.json'
- # Select first accepted pruning checkpoint with cached bridges, without tuning outcomes.
+ # This panel only first encounters bridges on its terminating pass. Test ordinary
+ # pruning resume and cache-bearing terminal graph resume separately.
  full=P/'runs/helix-6101/native/child';cps=sorted((full/'checkpoints').glob('checkpoint-*.json'))
- cp=next(p for p in cps if load(p)['payload']['boundary']=='pruning' and load(p)['payload']['pruning']['protected_bridges'])
+ cp=next(p for p in cps if load(p)['payload']['boundary']=='pruning')
  iteration=load(cp)['payload']['iteration'];L['cancellation_iteration']=iteration;save()
  child,r=execute('cancel',[B/'engine',f,O/'cancel/child','--cancel-after',iteration,'--interval','100'])
- check('cancelled after protected pruning',r['exit_code']==3);v.retry_checks(child,O/'cancel-certificates')
+ check('cancelled at pruning boundary',r['exit_code']==3);v.retry_checks(child,O/'cancel-certificates')
  saved=next((child/'checkpoints').glob('checkpoint-*.json'))
  resumed,r=execute('resume',[B/'engine',f,O/'resume/child','--resume',saved])
  check('pruning resume result exact',r['exit_code']==0 and load(resumed/'result.json')==load(full/'result.json'))
@@ -46,7 +49,7 @@ try:
  def bad_count(j):j['payload']['pruning']['protected_bridges'][0]['encounters']+=1
  def bad_history(j):j['payload']['pruning']['history'][-1]['examined']+=1
  for name,mutate in [('mode',remove_mode),('edge',bad_edge),('margin',bad_margin),('encounters',bad_count),('history',bad_history)]:
-  j=load(saved);mutate(j);raw=O/(name+'-raw.json');dest=O/(name+'.json');write(raw,j);subprocess.run([O/'checkpoint_tool',raw,dest],check=True)
+  j=load(graph);mutate(j);raw=O/(name+'-raw.json');dest=O/(name+'.json');write(raw,j);subprocess.run([O/'checkpoint_tool',raw,dest],check=True)
   rejected,r=execute('reject-'+name,[B/'engine',f,O/('reject-'+name)/'child','--resume',dest])
   status=load(rejected/'status.json');check(name+' rejected before solve',r['exit_code']==1 and r['optimizer_calls']==0 and status['error'] in ['invalid_restart','incompatible_restart'])
  old=Path('/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage01-policy')

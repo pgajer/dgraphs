@@ -4,7 +4,7 @@ from pathlib import Path
 HERE=Path(__file__).resolve().parent;REPO=HERE.parents[3]
 sys.path.insert(0,str(REPO/'development/ian-cpp-phase1/phase07e'));import validate as v
 root=Path(sys.argv[1]);load=lambda p:json.loads(Path(p).read_text());sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
-out=root/'final-checks-v1';out.mkdir(exist_ok=False)
+out=root/'final-checks-v2';out.mkdir(exist_ok=False)
 ledgers=[load(root/('numerical-v'+str(n))/'ledger.json') for n in [1,2]]
 processes=sum([j['processes'] for j in ledgers],[])
 assert all(j['complete'] and all(j['checks'].values()) for j in ledgers)
@@ -17,7 +17,7 @@ for num in [1,2]:
   for case in base.iterdir():
    if case.name=='interface':continue
    child=case/'child'
-   if case.name in ['candidate-controls','relocation']:files += sorted(child.glob('*.jsonl'))
+   if case.name in ['candidate-controls','relocation']:files += sorted(p for p in child.glob('*.jsonl') if p.name!='trace.jsonl')
    else:files.append(child/'trace.jsonl')
 # Batched controls also contain a compact aggregate trace; only complete payloads count.
 files += [root/r/'result-checks-v2/strict-duplicates.jsonl' for r in ['rdevel-v2','r45-v2']]

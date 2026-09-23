@@ -1,7 +1,7 @@
 # Audit coverage and outstanding review
 
-Of 27 executed question records, 26 map to independently accepted bounded
-studies across 25 milestones. The helix arithmetic study (IAN-EXP-026), including
+All 27 executed question records map to independently accepted bounded
+studies across 26 milestones. The helix arithmetic study (IAN-EXP-026), including
 its current report and figure, was accepted on 23 September 2026 with no corrective
 findings. The internal dgraphs adapter (IAN-EXP-024) and typed-core refactor
 (IAN-EXP-025) are accepted for bounded implementation evidence on macOS arm64,
@@ -15,9 +15,9 @@ These counts do not imply that every inference, dataset or intended use is valid
 Current review status comes from each audit-summary.json, never a duplicate metadata
 flag. Shared phase02 audit scope is counted once at milestone level.
 
-The other 25 catalogue reports, historical figure reconstructions, aims wording
+The other 24 catalogue reports, historical figure reconstructions, aims wording
 and synthesis have author checks but have not received independent presentation
-review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028, IAN-EXP-029, IAN-EXP-030 and IAN-EXP-031 acceptances do not audit the complete catalogue. For every record current_report_review
+review. The IAN-EXP-023, IAN-EXP-026, IAN-EXP-027, IAN-EXP-028, IAN-EXP-029, IAN-EXP-030, IAN-EXP-031 and IAN-EXP-032 acceptances do not audit the complete catalogue. For every record current_report_review
 names that limitation and binds the current report hash. Historical audit history
 remains distinct and is not silently carried forward to rewritten prose.
 
@@ -38,4 +38,4 @@ IAN-EXP-030 adds 110 author-executed calls for complete-pipeline profiling. Its 
 
 IAN-EXP-031 adds the initial bounded scientific benchmark: nine independent coordinate datasets and 90 outcome/split replicates. Its numerical evidence, independent scientific calculations and exact report/PDF and figure are accepted, with no corrective findings. This completes the five-stage sequence; it does not establish scientific superiority. The original broader scientific-benchmark proposal remains a historical proposal, with this narrower executed continuation linked separately.
 
-IAN-EXP-032 reconstructs the first helix disconnections from saved trajectories with zero new solver calls. Independent diagnostic and presentation review is pending.
+IAN-EXP-032 reconstructs the first helix disconnections from saved trajectories with zero new solver calls. Independent review accepts the diagnosis and exact Markdown/PDF/figure with no corrective findings. The auditor reconstructed both interfaces and all first-cut metrics; no method variant is adopted.

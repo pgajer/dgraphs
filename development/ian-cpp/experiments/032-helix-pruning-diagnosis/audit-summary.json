@@ -1,16 +1,27 @@
 {
-  "audit_status": "independent diagnostic audit pending",
+  "audit_status": "accepted for bounded saved-trajectory diagnosis; no corrective findings",
   "numerically_checked": true,
-  "numerical_check_scope": "Author saved-trace arithmetic/graph reconstruction; no new optimizer certification",
+  "numerical_check_scope": "Independent reconstruction of 250 decisions, 244 batches, 606 removals and 36 metric snapshots across both saved interfaces; zero new optimizer calls",
   "current_report_review": {
-    "status": "not independently reviewed",
+    "status": "accepted",
     "report_sha256": "21fd32f6a0a7c638d6148e11402f9ab150b243007e541fe2e3596524c08fd6a0",
     "frozen_submission": {
       "report_sha256": "21fd32f6a0a7c638d6148e11402f9ab150b243007e541fe2e3596524c08fd6a0",
       "report_pdf_sha256": "f8618b6ef062495c48cba468ca26eb75ec11a378b33b05e883e48870f2c0aed1",
       "reason": "Exact three-page visually checked submission; preserved pending independent review"
-    }
+    },
+    "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-pruning-diagnosis/audit.md",
+    "review_sha256": "fb70cc6b6fdea1107cf9b2f11c2e4c520410e865834cbcdc9906b5d1c916a231",
+    "report_pdf_sha256": "f8618b6ef062495c48cba468ca26eb75ec11a378b33b05e883e48870f2c0aed1",
+    "scope": "Exact submitted report/PDF and figure accepted; HTML text/links only"
   },
-  "audit_history": [],
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-pruning-diagnosis/audit.md",
+      "review_sha256": "fb70cc6b6fdea1107cf9b2f11c2e4c520410e865834cbcdc9906b5d1c916a231",
+      "candidate": "a9453ad48d2aecf3a9d12fadc6baac950880a060",
+      "scope": "Bounded saved-trajectory diagnosis; no corrective findings"
+    }
+  ],
   "consequential_limits": "Three existing helix samples; no new method or confirmatory sample; unchanged reference behavior"
 }

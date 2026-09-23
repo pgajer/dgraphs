@@ -111,3 +111,8 @@ For an isolated installation, set `R_LIBS` to its absolute library directory
 before launching and check `find.package("dgraphs")`. Background jobs inherit
 that library setting. The existing private study/log locations remain valid;
 relocation does not rewrite saved study data or reuse a validation server port.
+
+Metric MDS offers SGD (the default) and SMACOF. The convergence tolerance applies
+only to SMACOF. Saved fit specifications without an optimizer selection use
+SMACOF when rerun, preserving their tolerance setting. New grip calls use its
+dot-delimited API; saved graph fields and existing fitted coordinates are unchanged.

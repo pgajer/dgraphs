@@ -15,8 +15,8 @@ for (k in c(2L,4L)) {
     id <- paste0("k",k); graph <- create.sknn.graph(X,k=k,connect.components=FALSE)
     file <- paste0(id,"-graph.rds"); layoutfile <- paste0(id,"-layout.rds")
     saveRDS(list(adj_list=graph.adjacency(graph),weight_list=graph.lengths(graph)),file.path(root,file),version=2)
-    layout <- grip::grip(adj_list=graph.adjacency(graph),weight_list=graph.lengths(graph),
-                         metric="edge_length",dim=3,seed=17,rounds=40,final_rounds=80)
+    layout <- grip::grip(adj.list=graph.adjacency(graph),weight.list=graph.lengths(graph),
+                         metric="edge_length",dim=3,seed=17,rounds=40,final.rounds=80)
     saveRDS(list(coords=layout,provenance=paste("grip",packageVersion("grip"),"edge_length; seed 17")),
             file.path(root,layoutfile),version=2)
     settings[[id]] <- cbind(base,setting_id=id,graph_family="sknn",k=k,prune_method="none",stage="final")

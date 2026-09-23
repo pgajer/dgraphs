@@ -136,7 +136,7 @@ score_fit <- function(coords,cloud,graph,q=10L) {
 
 default_fit_spec <- function() list(method='isomap',k=10L,seed=5101L,init='spectral',
   epochs=300L,min_dist=.1,spread=1,learning_rate=1,repulsion=1,negative_samples=5L,
-  mds_init='classical',mds_starts=1L,iterations=150L,tolerance=1e-7,
+  mds_backend='sgd',mds_init='classical',mds_starts=1L,iterations=150L,tolerance=1e-7,
   rounds=100L,final_rounds=240L,placement='barycenter',final_mode='fr',
   refine=FALSE,kk_iterations=60L,kk_scale='profiled',stiffness='uniform')
 
@@ -152,17 +152,21 @@ run_fit <- function(cloud,spec,app_root,python='') {
       d<-graph_distances(graph,n);pad3(cmdscale(as.dist(d),k=3))
     } else if(spec$method=='mds') {
       graph_distances(graph,n)
-      fit<-grip::metric.mds(edges=graph$edges,n=n,edge_weights=graph$weights,dim=3,
-        init=spec$mds_init,n_init=as.integer(spec$mds_starts),max_iter=as.integer(spec$iterations),
-        eps=spec$tolerance,seed=as.integer(spec$seed))
+      # Saved specifications from before backend selection used a tolerance.
+      backend <- if (is.null(spec$mds_backend)) 'smacof' else spec$mds_backend
+      args <- list(edges=graph$edges,n=n,edge.weights=graph$weights,dim=3,
+        init=spec$mds_init,n.init=as.integer(spec$mds_starts),max.iter=as.integer(spec$iterations),
+        backend=backend,seed=as.integer(spec$seed))
+      if (backend=='smacof') args$eps <- spec$tolerance
+      fit<-do.call(grip::metric.mds,args)
       metadata<-fit$metadata
       if(metadata$termination %in% c('backend_error','rejected_increase')) stop('Metric MDS terminated: ',metadata$termination)
       fit$coords
     } else if(spec$method=='grip') {
       graph_distances(graph,n)
-      grip::grip(edges=graph$edges,n=n,edge_weights=graph$weights,dim=3,metric='edge_length',
-        rounds=as.integer(spec$rounds),final_rounds=as.integer(spec$final_rounds),
-        placement=spec$placement,final_mode=spec$final_mode,seed=as.integer(spec$seed),disconnected='error')
+      grip::grip(edges=graph$edges,n=n,edge.weights=graph$weights,dim=3,metric='edge_length',
+        rounds=as.integer(spec$rounds),final.rounds=as.integer(spec$final_rounds),
+        placement=spec$placement,final.mode=spec$final_mode,seed=as.integer(spec$seed),disconnected='error')
     } else {
       if(!nzchar(python) || !file.exists(python)) stop('Set GEOMETRY_LAB_PYTHON to a Python executable with umap-learn installed; see README.')
       if(spec$min_dist>spec$spread) stop('UMAP min_dist must not exceed spread.')
@@ -191,16 +195,16 @@ run_fit <- function(cloud,spec,app_root,python='') {
       packages=as.list(versions),backend=if(spec$method=='umap') python else 'R'))
   fit$label<-paste0(fit$label,' · k ',spec$k,' · seed ',spec$seed,
     if(spec$method=='umap') paste0(' · ',spec$init,' · min_dist ',spec$min_dist) else '',
-    if(spec$method=='mds') paste0(' · ',spec$mds_init,' · ',spec$iterations,' iterations') else '')
+    if(spec$method=='mds') paste0(' · ',toupper(metadata$engine),' · ',spec$mds_init,' · ',spec$iterations,' iterations') else '')
   fit$scores<-score_fit(fit$coords,cloud,graph)
   fits<-list(fit)
   if(isTRUE(spec$refine)) {
     # A refinement failure must not discard the completed parent fit.
     refined<-tryCatch({
       start<-proc.time()[['elapsed']]
-      z<-grip::edge.kk(coords=fit$coords,edges=graph$edges,n=n,edge_weights=graph$weights,dim=3,
-        scale_mode=spec$kk_scale,stiffness_method=spec$stiffness,max_iter=as.integer(spec$kk_iterations),
-        seed=as.integer(spec$seed),return_trace=TRUE)
+      z<-grip::edge.kk(coords=fit$coords,edges=graph$edges,n=n,edge.weights=graph$weights,dim=3,
+        scale.mode=spec$kk_scale,stiffness.method=spec$stiffness,max.iter=as.integer(spec$kk_iterations),
+        seed=as.integer(spec$seed),return.trace=TRUE)
       r<-fit;r$id<-paste0(fit$id,'-kk');r$label<-paste(fit$label,'+ edge-KK')
       r$coords<-z$coords;r$metadata<-z$metadata;r$trace<-z$trace;r$parent<-fit$id
       r$seconds<-proc.time()[['elapsed']]-start;r$scores<-score_fit(r$coords,cloud,graph);r

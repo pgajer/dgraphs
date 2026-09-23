@@ -319,7 +319,7 @@ test_that("weighted layout generation uses weighted function and reports unavail
 
     unavailable <- graph_explorer_test_env$dg_generate_weighted_layout(fx$graph_file, tempfile(), weighted_layout_fun = NULL)
     expect_equal(unavailable$status, "unavailable")
-    expect_match(unavailable$message, "grip.layout.weighted", fixed = TRUE)
+    expect_match(unavailable$message, "grip(metric =", fixed = TRUE)
   })
 })
 
@@ -421,7 +421,7 @@ test_that("launcher and saved-project selection work without starting a server",
 test_that("current public GRIP can explicitly generate a missing weighted layout", {
   skip_if_not_installed("grip")
   f <- graph_explorer_test_env$dg_weighted_layout_fun()
-  skip_if(is.null(f), "No supported weighted GRIP interface")
+  expect_true(is.function(f))
   root <- tempfile("dg-weighted-")
   fx <- make_dg_fixture(root, missing_layout = TRUE)
   on.exit(unlink(root, recursive = TRUE), add = TRUE)
@@ -430,6 +430,10 @@ test_that("current public GRIP can explicitly generate a missing weighted layout
   expect_equal(result$status, "ok")
   expect_equal(dim(result$coords), c(10L, 3L))
   expect_true(all(is.finite(result$coords)))
+  graph <- readRDS(fx$graph_file)
+  expected <- grip::grip(adj.list = graph$adj_list, weight.list = graph$weight_list,
+    metric = "edge_length", dim = 3L, rounds = 1L, final.rounds = 1L, seed = 6L)
+  expect_equal(unname(result$coords), unname(expected))
   expect_false(file.exists(fx$layout_file))
 })
 

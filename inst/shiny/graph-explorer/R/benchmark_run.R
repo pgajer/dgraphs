@@ -239,15 +239,12 @@ dg_generated_layout_cache_path <- function(run_id, key) {
 
 dg_weighted_layout_fun <- function() {
   if (!requireNamespace("grip", quietly = TRUE)) return(NULL)
-  # Retain the historical implementation when available, otherwise use the
-  # current public weighted-metric interface. Existing saved layouts never refit.
-  if (exists("grip.layout.weighted", envir = asNamespace("grip"), inherits = FALSE)) {
-    return(get("grip.layout.weighted", envir = asNamespace("grip"), inherits = FALSE))
-  }
+  # The viewer's saved parameter records keep their existing spelling.
+  # Translate at the boundary to the current public grip interface.
   f <- getExportedValue("grip", "grip")
-  if (!"metric" %in% names(formals(f))) return(NULL)
-  function(adj_list, weight_list, ...) {
-    f(adj_list = adj_list, weight_list = weight_list, metric = "edge_length", ...)
+  function(adj_list, weight_list, final_rounds, ...) {
+    f(adj.list = adj_list, weight.list = weight_list,
+      final.rounds = final_rounds, metric = "edge_length", ...)
   }
 }
 
@@ -257,7 +254,7 @@ dg_generate_weighted_layout <- function(graph_asset_path, output_path, params = 
     return(list(status = graph$status, message = graph$message %||% "Graph asset unavailable."))
   }
   if (!is.function(weighted_layout_fun)) {
-    return(list(status = "unavailable", message = "Package `grip` with `grip(metric = \"edge_length\")` or legacy `grip.layout.weighted()` is required."))
+    return(list(status = "unavailable", message = "Package `grip` with `grip(metric = \"edge_length\")` is required."))
   }
   params_use <- list(dim = 3L, rounds = 8L, final_rounds = 12L, seed = 6L)
   if (is.list(params) && length(params) > 0L) {

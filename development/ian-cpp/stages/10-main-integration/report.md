@@ -1,6 +1,6 @@
 # Main integration qualification
 
-The merged candidate preserves the accepted IAN results, main's current embedding defaults, and the six pending sKNN distance-input files. Worker qualification is complete; independent review is pending. Main has not yet been committed, merged or pushed.
+The merged candidate preserves the accepted IAN results, main's current embedding defaults, and the six pending sKNN distance-input files. Worker qualification and independent pre-merge review are complete. The history-preserving local merge is recorded below; remote verification is recorded in the completion receipt.
 
 ## What was combined and tested
 
@@ -22,4 +22,14 @@ The first targeted test command failed after its 50 distance-input assertions be
 
 Private evidence is in `/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/main-integration-qualification`: `environment.json`, per-runtime `commands.json` and logs, fresh libraries/backend build records, `numerical-v1/ledger.json`, individual results/traces/certificates, and `integration-summary.json`. The original main snapshot, patch, exact pending files, orchestration scripts and factual handoff are in the sibling `main-integration` directory. The package archive SHA256 is `864c23870646d201d8071482eff042048a41c04d3df7fb7ed5143ca2fe33383a`.
 
-The six pending files' original authorship and validation history are unknown; this qualification supplies fresh tests. Other platforms, online backend dependency acquisition, 5,000-profile runs, R resume and scientific superiority remain unverified. No shared installation, release or CRAN submission is included. Independent review and final repository/remote reconciliation remain necessary before the authorized merge and push.
+The six pending files' original authorship and validation history are unknown; this qualification supplies fresh tests. Other platforms, online backend dependency acquisition, 5,000-profile runs, R resume and scientific superiority remain unverified. No shared installation, release or CRAN submission is included. Final remote publication is a separate recorded operation; the owner authorized the merge and push.
+
+## Independent acceptance and integration
+
+The [independent audit](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-main-integration/audit.md) accepts candidate `bffeaf3` with no corrective findings. It rebuilt both Mac installations, replayed all 56 calls and 1,594 attempts, recalculated all 504 full certificates, checked every summary/settings record and reproduced all 56 submitted R objects and 36 traces under the declared exclusions. Each runtime also passed 42 independent distance-graph/MST cases and two numerical-range cases, producing 128 sKNN graphs. The audit manifest SHA256 is `5eccfd415417145840157050d22937165d13cc25aa328f894e17a4cd07198077`.
+
+[GitHub run 35945636777](https://github.com/pgajer/dgraphs/actions/runs/35945636777) passed Linux release/development/old-release R and Windows release. Each job passed 3,662 assertions, with three optional-package skips, zero errors and zero warnings. Notes remain. These static package checks do not qualify the optional native IAN backend on those platforms.
+
+After rechecking main and all six pending file hashes, commit `89abeb1` preserved those original files. Merge `e8bb004` integrated the reviewed candidate without rewriting history. Its tree is exactly the independently simulated and reviewed tree `e2e8032307166057d805fe083272ea25e05cd7f6`; both checkouts were clean. A preliminary merge-script check stopped before any Git mutation because whitespace stripping misread the first porcelain status row. Correcting that parser required no repository-source change; the original script and failure explanation remain in the private evidence.
+
+This closing documentation and its regenerated catalogue are the only changes after the audited candidate. The [completion receipt](/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/main-integration/completion.md) records the final local and remote commit identities. The next research study remains the prospective comparison of connectivity-preserving IAN, reference IAN and simpler graphs.

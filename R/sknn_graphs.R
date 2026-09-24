@@ -7,6 +7,18 @@
 #' nearest neighbors of `j`.
 #'
 #' @details
+#' With `input.type = "distances"`, supplied distances determine exact neighbor
+#' rankings, every edge length, and component/global MST repair. Distance input
+#' must be finite, nonnegative, square and symmetric, with a zero diagonal.
+#' Symmetry and diagonal tolerance is `1e-12 * max(1, max(X))`; accepted
+#' asymmetry is averaged and the diagonal set to zero. Row and column names,
+#' if present, must be identical and unique. Off-diagonal zeros are allowed.
+#' Triangle inequality is not tested, so symmetric dissimilarities are accepted.
+#' Ties are resolved by increasing vertex index, excluding self explicitly.
+#' ANN search/repair and pruning are unsupported for distance input and error.
+#' The series constructor validates distances and ranks neighbors once, through
+#' its largest requested `k`. Full lifecycle stages use these same distances.
+#'
 #' With no nearest-neighbor ties, the sKNN edge rule is equivalent to
 #' \deqn{d_{ij} \le \max(\sigma_i, \sigma_j),}
 #' where \eqn{\sigma_i} is the distance from point \eqn{i} to its `k`-th
@@ -43,7 +55,10 @@
 #' search domain and removes long edges whose shortest alternative path is
 #' within the configured geodesic-ratio threshold.
 #'
-#' @param X Numeric matrix or data frame with observations in rows.
+#' @param X Numeric observation matrix/data frame, or a symmetric numeric distance
+#'   matrix or `dist` object when `input.type = "distances"`.
+#' @param input.type Input interpretation. Defaults to `"observations"` for
+#'   backward compatibility; symmetry never triggers automatic detection.
 #' @param k Integer scalar. Number of non-self nearest neighbors.
 #' @param prune.edges Logical scalar. If `TRUE`, apply experimental local
 #'   geometric edge pruning before optional MST connectivity repair.
@@ -126,7 +141,22 @@ create.sknn.graph <- function(X,
                               graph.detail = c("full", "minimal"),
                               bridge.k = NULL,
                               bridge.k.max = NULL,
-                              bridge.growth = 2) {
+                              bridge.growth = 2,
+                              input.type = c("observations", "distances")) {
+    input.type <- match.arg(input.type)
+    if (identical(input.type, "distances")) {
+        D <- .validate.sknn.distances(X)
+        return(.create.sknn.distance.graph(
+            D, k, prune.edges = prune.edges, prune.method = prune.method,
+            with.pruned.edge.stats = with.pruned.edge.stats,
+            connect.components = connect.components, connect.method = connect.method,
+            edge.weight = edge.weight, neighbor.method = neighbor.method,
+            ann.eps = ann.eps, knn.index = knn.index, graph.detail = graph.detail,
+            bridge.k = bridge.k, bridge.k.max = bridge.k.max, bridge.growth = bridge.growth,
+            prune.tau = prune.tau, prune.local.k = prune.local.k,
+            max.path.edge.ratio.deviation.thld = max.path.edge.ratio.deviation.thld,
+            path.edge.ratio.percentile = path.edge.ratio.percentile))
+    }
     if (!(is.matrix(X) || is.data.frame(X))) {
         stop("'X' must be a matrix or data frame.", call. = FALSE)
     }
@@ -479,16 +509,19 @@ create.sknn.graph <- function(X,
 #'
 #' @description
 #' Constructs symmetric k-nearest neighbor graphs for several values of `k`
-#' while performing one bundled ANN search at the largest requested value. The
+#' while performing one bundled ANN search for observations, or one exact
+#' ranking of supplied distances, at the largest requested value. The
 #' ordered non-self neighbor matrix is sliced for each graph, so lower-k graphs
 #' use exactly the same neighbor ranking as the largest graph.
 #'
-#' @param X Numeric matrix or data frame with observations in rows.
+#' @param X Numeric observation matrix/data frame, or a symmetric numeric distance
+#'   matrix or `dist` object when `input.type = "distances"`.
+#' @param input.type Input interpretation. Defaults to `"observations"` for
+#'   backward compatibility; symmetry never triggers automatic detection.
 #' @param k.values Strictly increasing integer vector of neighborhood sizes, each between 1 and n - 1.
 #' @param ... Named arguments forwarded to [create.sknn.graph()]. The `k` and
 #'   `knn.index` arguments cannot be supplied. `neighbor.method` must be
-#'   `"ann"` if supplied.
-#' @param k.values Optional non-empty vector of distinct integer `k` values.
+#'   `"ann"` for observations or `"exact"` for distances if supplied.
 #'
 #' @return A list of class `"sknn_graphs"` with components `graphs`, a named
 #'   list of `"sknn_graph"` objects, and `k_statistics`, a data frame of edge
@@ -508,7 +541,29 @@ create.sknn.graph <- function(X,
 #' @seealso [create.sknn.graph()]
 #'
 #' @export
-create.sknn.graphs <- function(X, k.values, ...) {
+create.sknn.graphs <- function(X, k.values, ..., input.type = c("observations", "distances")) {
+    input.type <- match.arg(input.type)
+    if (identical(input.type, "distances")) {
+        D <- .validate.sknn.distances(X)
+        k.values <- .validate.k.values(k.values, nrow(D))
+        args <- list(...)
+        if (length(args) && (is.null(names(args)) || any(!nzchar(names(args)))))
+            stop("All arguments in '...' must be named.", call. = FALSE)
+        if (any(c("k", "knn.index", "kmin", "kmax", "cached.index") %in% names(args)))
+            stop("Use k.values; neighbor rankings are computed internally.", call. = FALSE)
+        ranked <- .sknn.distance.rankings(D, max(k.values))
+        graphs <- lapply(k.values, function(k) do.call(.create.sknn.distance.graph,
+            c(list(D = D, k = k, cached.index = ranked), args)))
+        names(graphs) <- as.character(k.values)
+        out <- list(graphs = graphs,
+                    k_statistics = .rknn.graphs.k.statistics(graphs, k.values))
+        attr(out, "k.values") <- k.values
+        attr(out, "n_vertices") <- nrow(D)
+        attr(out, "graph_rule") <- "symmetric.knn"
+        attr(out, "input.type") <- "distances"
+        class(out) <- c("sknn_graphs", "list")
+        return(out)
+    }
     X <- .validate.numeric.data.matrix(X)
     n <- nrow(X)
     k.values <- .validate.k.values(k.values, n)

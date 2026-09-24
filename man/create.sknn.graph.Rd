@@ -23,11 +23,13 @@ create.sknn.graph(
   graph.detail = c("full", "minimal"),
   bridge.k = NULL,
   bridge.k.max = NULL,
-  bridge.growth = 2
+  bridge.growth = 2,
+  input.type = c("observations", "distances")
 )
 }
 \arguments{
-\item{X}{Numeric matrix or data frame with observations in rows.}
+\item{X}{Numeric observation matrix/data frame, or a symmetric numeric distance
+matrix or \code{dist} object when \code{input.type = "distances"}.}
 
 \item{k}{Integer scalar. Number of non-self nearest neighbors.}
 
@@ -97,6 +99,9 @@ neighbors to use before exact fallback. Defaults to
 
 \item{bridge.growth}{Numeric scalar greater than 1. Multiplicative growth
 factor for bridge candidate neighborhoods.}
+
+\item{input.type}{Input interpretation. Defaults to \code{"observations"} for
+backward compatibility; symmetry never triggers automatic detection.}
 }
 \value{
 A \code{dgraph} object. Use \code{\link[=graph.adjacency]{graph.adjacency()}}, \code{\link[=graph.lengths]{graph.lengths()}},
@@ -110,6 +115,18 @@ data matrix. An edge between vertices \code{i} and \code{j} is present when eith
 nearest neighbors of \code{j}.
 }
 \details{
+With \code{input.type = "distances"}, supplied distances determine exact neighbor
+rankings, every edge length, and component/global MST repair. Distance input
+must be finite, nonnegative, square and symmetric, with a zero diagonal.
+Symmetry and diagonal tolerance is \code{1e-12 * max(1, max(X))}; accepted
+asymmetry is averaged and the diagonal set to zero. Row and column names,
+if present, must be identical and unique. Off-diagonal zeros are allowed.
+Triangle inequality is not tested, so symmetric dissimilarities are accepted.
+Ties are resolved by increasing vertex index, excluding self explicitly.
+ANN search/repair and pruning are unsupported for distance input and error.
+The series constructor validates distances and ranks neighbors once, through
+its largest requested \code{k}. Full lifecycle stages use these same distances.
+
 With no nearest-neighbor ties, the sKNN edge rule is equivalent to
 \deqn{d_{ij} \le \max(\sigma_i, \sigma_j),}
 where \eqn{\sigma_i} is the distance from point \eqn{i} to its \code{k}-th

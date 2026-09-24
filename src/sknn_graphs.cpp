@@ -663,8 +663,8 @@ extern "C" SEXP S_create_sknn_graph(SEXP s_X,
         Rf_error("connect_method must be 0 (component.mst), 1 (global.mst), or 2 (component.mst.ann).");
     }
     const int neighbor_method = Rf_asInteger(s_neighbor_method);
-    if (neighbor_method < 0 || neighbor_method > 1) {
-        Rf_error("neighbor_method must be 0 (exact) or 1 (ann).");
+    if (neighbor_method < 0 || neighbor_method > 2) {
+        Rf_error("neighbor_method must be 0 (exact), 1 (ann), or 2 (supplied distances).");
     }
     const double ann_eps = Rf_asReal(s_ann_eps);
     if (!std::isfinite(ann_eps) || ann_eps < 0.0) {
@@ -700,7 +700,12 @@ extern "C" SEXP S_create_sknn_graph(SEXP s_X,
     const double* X = REAL(s_X);
     std::vector<double> D;
     std::vector<std::vector<int>> nn;
-    if (neighbor_method == 0) {
+    if (neighbor_method == 2) {
+        if (p != n || connect_method == 2 || prune_edges)
+            Rf_error("Distance input must be square and cannot use ANN repair or pruning.");
+        D.assign(X, X + static_cast<size_t>(n) * n);
+        nn = knn_sets_from_precomputed(s_knn_index, n, k);
+    } else if (neighbor_method == 0) {
         D = pairwise_distances(X, n, p);
         nn = knn_sets_from_dist(D, n, k);
     } else {
@@ -901,7 +906,7 @@ extern "C" SEXP S_create_sknn_graph(SEXP s_X,
     UNPROTECT(1);
 
     SET_VECTOR_ELT(result, 17, Rf_ScalarInteger(static_cast<int>(added_edges.size())));
-    SET_VECTOR_ELT(result, 18, Rf_mkString(neighbor_method == 0 ? "exact" : "ann"));
+    SET_VECTOR_ELT(result, 18, Rf_mkString(neighbor_method == 1 ? "ann" : "exact"));
     SET_VECTOR_ELT(result, 19, Rf_ScalarReal(ann_eps));
     SET_VECTOR_ELT(result, 20, Rf_mkString(bridge_method.c_str()));
     SET_VECTOR_ELT(result, 21, Rf_ScalarInteger(bridge_k));

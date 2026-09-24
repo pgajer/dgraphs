@@ -4,16 +4,25 @@
 \alias{create.sknn.graphs}
 \title{Compute a Series of Symmetric k-Nearest Neighbor Graphs}
 \usage{
-create.sknn.graphs(X, k.values, ...)
+create.sknn.graphs(
+  X,
+  k.values,
+  ...,
+  input.type = c("observations", "distances")
+)
 }
 \arguments{
-\item{X}{Numeric matrix or data frame with observations in rows.}
+\item{X}{Numeric observation matrix/data frame, or a symmetric numeric distance
+matrix or \code{dist} object when \code{input.type = "distances"}.}
 
-\item{k.values}{Optional non-empty vector of distinct integer \code{k} values.}
+\item{k.values}{Strictly increasing integer vector of neighborhood sizes, each between 1 and n - 1.}
 
 \item{...}{Named arguments forwarded to \code{\link[=create.sknn.graph]{create.sknn.graph()}}. The \code{k} and
 \code{knn.index} arguments cannot be supplied. \code{neighbor.method} must be
-\code{"ann"} if supplied.}
+\code{"ann"} for observations or \code{"exact"} for distances if supplied.}
+
+\item{input.type}{Input interpretation. Defaults to \code{"observations"} for
+backward compatibility; symmetry never triggers automatic detection.}
 }
 \value{
 A list of class \code{"sknn_graphs"} with components \code{graphs}, a named
@@ -23,7 +32,8 @@ vertices.
 }
 \description{
 Constructs symmetric k-nearest neighbor graphs for several values of \code{k}
-while performing one bundled ANN search at the largest requested value. The
+while performing one bundled ANN search for observations, or one exact
+ranking of supplied distances, at the largest requested value. The
 ordered non-self neighbor matrix is sliced for each graph, so lower-k graphs
 use exactly the same neighbor ranking as the largest graph.
 }

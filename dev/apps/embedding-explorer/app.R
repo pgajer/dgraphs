@@ -45,9 +45,11 @@ ui <- fluidPage(theme=bs_theme(version=5,base_font='system-ui',primary='#087e8b'
         tags$details(tags$summary('UMAP optimization'),numericInput('learning_rate','Learning rate',1,min=.01,max=10,step=.1),
           numericInput('repulsion','Repulsion strength',1,min=.01,max=10,step=.1),numericInput('negative_samples','Negative samples',5,min=1,max=50,step=1)),
         div(class='help','Exact neighbors plus self: UMAP n_neighbors = k + 1. min_dist shapes packing; it is not a hard lower distance bound.')),
-      conditionalPanel("input.method === 'mds'",selectInput('mds_init','Initial layout',c('Classical MDS'='classical','Random'='random')),
+      conditionalPanel("input.method === 'mds'",
+        selectInput('mds_backend','Optimizer',c('SGD'='sgd','SMACOF'='smacof')),selectInput('mds_init','Initial layout',c('Classical MDS'='classical','Random'='random')),
         div(class='inline-inputs',numericInput('mds_starts','Starts',1,min=1,max=5,step=1),numericInput('iterations','Iterations',150,min=10,max=1000,step=10)),
-        numericInput('tolerance','Convergence tolerance',1e-7,min=1e-12,max=.01)),
+        conditionalPanel("input.mds_backend === 'smacof'",
+          numericInput('tolerance','Convergence tolerance',1e-7,min=1e-12,max=.01))),
       conditionalPanel("input.method === 'grip'",selectInput('placement','Insertion layout',c('Barycenter'='barycenter','Circle'='circle')),
         div(class='inline-inputs',numericInput('rounds','Initial rounds',100,min=10,max=1000,step=10),numericInput('final_rounds','Final rounds',240,min=10,max=2000,step=20)),
         selectInput('final_mode','Final force model',c('FR'='fr','KK + repulsion'='kk_repulse'))),
@@ -187,7 +189,7 @@ server <- function(input,output,session) {
   }))
   fit_spec<-function() {
     s<-default_fit_spec();s$method<-input$method;s$k<-input$k;s$seed<-input$layout_seed;s$init<-input$umap_init
-    for(nm in c('epochs','min_dist','spread','learning_rate','repulsion','negative_samples','mds_init','mds_starts',
+    for(nm in c('epochs','min_dist','spread','learning_rate','repulsion','negative_samples','mds_backend','mds_init','mds_starts',
       'iterations','tolerance','rounds','final_rounds','placement','final_mode','refine','kk_iterations','kk_scale','stiffness')) s[[nm]]<-input[[nm]]
     for(nm in c('epochs','negative_samples','mds_starts','iterations','rounds','final_rounds','kk_iterations'))
       scalar_number(s[[nm]],nm,1,2000,TRUE)

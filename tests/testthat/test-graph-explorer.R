@@ -480,6 +480,10 @@ test_that("current public GRIP can explicitly generate a missing weighted layout
   expect_equal(result$status, "ok")
   expect_equal(dim(result$coords), c(10L, 3L))
   expect_true(all(is.finite(result$coords)))
+  graph <- readRDS(fx$graph_file)
+  expected <- grip::grip(adj.list = graph$adj_list, weight.list = graph$weight_list,
+    metric = "edge_length", dim = 3L, rounds = 1L, final.rounds = 1L, seed = 6L)
+  expect_equal(unname(result$coords), unname(expected))
   expect_false(file.exists(fx$layout_file))
 })
 

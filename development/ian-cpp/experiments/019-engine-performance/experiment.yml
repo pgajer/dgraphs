@@ -1,0 +1,34 @@
+{
+  "id": "IAN-EXP-019",
+  "title": "Where can complete-engine time and memory be reduced safely?",
+  "phase_aliases": [
+    "08"
+  ],
+  "programme_group": "D",
+  "aims": [
+    "IA2",
+    "IA3"
+  ],
+  "execution_status": "proposal; unexecuted",
+  "outcome": "not tested",
+  "documentation_worker": "IAN implementer/coordinator",
+  "dependencies": [
+    {
+      "id": "IAN-EXP-018",
+      "type": "motivation"
+    },
+    {
+      "id": "IAN-EXP-003",
+      "type": "motivation"
+    }
+  ],
+  "source_paths": [
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/coordinator/ROADMAP.md"
+  ],
+  "figure_paths": [],
+  "missing_figure_reason": "No new numerical study was executed; a result figure would imply evidence that does not exist.",
+  "audit_status_source": "audit-summary.json",
+  "numerical_check_source": "audit-summary.json",
+  "issues_source": "../correction-dispositions.json",
+  "evidence_source": "evidence-manifest.json"
+}

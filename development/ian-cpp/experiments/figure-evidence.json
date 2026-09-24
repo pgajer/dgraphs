@@ -1,0 +1,171 @@
+{
+  "purpose": "Curated aggregate evidence for figure reconstruction; no optimization or raw profile data",
+  "export_date": "2026-09-18",
+  "figures": [
+    {
+      "id": "runtime",
+      "record": "IAN-EXP-002",
+      "title": "Historical and controlled Python timings",
+      "kind": "bars",
+      "data": [
+        {
+          "label": "Historical observation",
+          "seconds": 415.053,
+          "iterations": 133
+        },
+        {
+          "label": "Reconstructed original / faer, 16 threads",
+          "seconds": 372.09,
+          "iterations": 133
+        },
+        {
+          "label": "Original expression / QDLDL, 1 thread",
+          "seconds": 17.118,
+          "iterations": 133
+        },
+        {
+          "label": "Evaluated LP / QDLDL, 1 thread",
+          "seconds": 5.739,
+          "iterations": 45
+        }
+      ],
+      "sources": [
+        {
+          "path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/REPORT.md",
+          "sha256": "cb8c1cd422bbeab5c93f28d6b6c54ee513dfb03bf09c5e1687256d5b1f608753"
+        }
+      ],
+      "caption": "One historical observation and three selected controlled Python diagnostics of the same final-retuning state (4,841 profiles); seconds per solve. Labels distinguish constraint representation, linear-system backend and threads. These single observations have no sampling error bars. The actual historical backend/thread state was not recorded; the reconstruction is separate evidence. The large difference cannot be attributed to C++."
+    },
+    {
+      "id": "trajectory",
+      "record": "IAN-EXP-009",
+      "title": "Helix completion across changing conditions",
+      "kind": "matrix",
+      "data": [
+        [
+          "07",
+          "500",
+          "Baseline",
+          "Both refuse"
+        ],
+        [
+          "07C",
+          "500",
+          "Stricter retry",
+          "Both refuse later"
+        ],
+        [
+          "07D",
+          "500",
+          "Normalized retry",
+          "2 prunes; then refuse"
+        ],
+        [
+          "07E",
+          "500",
+          "Broader eligibility",
+          "Both complete; 42 prunes"
+        ],
+        [
+          "07F",
+          "1,000",
+          "07E candidate policy",
+          "Native refuses; Python completes"
+        ]
+      ],
+      "sources": [
+        {
+          "path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07/REPORT.md",
+          "sha256": "f34aeb31c3542ffd5e8a0c493c03d0de1efa5f52afbaab12bf4fc97280e85509"
+        },
+        {
+          "path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/REPORT.md",
+          "sha256": "2dacde22d662221bdee23898932853f0fd1ba35b407f0ee8f88033871c863fa2"
+        },
+        {
+          "path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/REPORT.md",
+          "sha256": "b43f6f311e2f4525033172c7e63f6bc4cbf80f9204381759daaa1aab4ab74f87"
+        },
+        {
+          "path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/REPORT.md",
+          "sha256": "9c56ff8ad4ebebe0a9a236457588eba321eaa50ab74a34beabd75b75a68709f9"
+        },
+        {
+          "path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07f/REPORT.md",
+          "sha256": "ebe27f4c48c9f02ac10cde05a381a18364054c30778cfbe0348376e029345367"
+        }
+      ],
+      "caption": "Complete-trajectory helix studies under separately declared numerical policies. Rows are sequential studies, not independent replications or a randomized comparison. The 500-profile example eventually completes in both evaluated implementations, with 42 pruning steps. At 1,000 profiles the native path refuses before pruning while Python completes with 47 steps. These outcomes do not establish general historical-expression equivalence or permit larger runs."
+    },
+    {
+      "id": "interface",
+      "record": "IAN-EXP-015",
+      "title": "Exact input determines the observed outcome",
+      "kind": "interface",
+      "data": [
+        {
+          "interface": "native",
+          "input": "native",
+          "status": "AlmostSolved",
+          "iterations": 18
+        },
+        {
+          "interface": "python",
+          "input": "python",
+          "status": "Solved",
+          "iterations": 27
+        },
+        {
+          "interface": "python",
+          "input": "native",
+          "status": "AlmostSolved",
+          "iterations": 18
+        },
+        {
+          "interface": "native",
+          "input": "python",
+          "status": "Solved",
+          "iterations": 27
+        }
+      ],
+      "sources": [
+        {
+          "path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase07g/results-v2.json",
+          "sha256": "672ead89ef199f772964feaaab97dd92c06737917d1c25c37c81c01b26f2d518"
+        }
+      ],
+      "caption": "Two exact saved terminal problems crossed with native and Python interfaces, with two executions per cell (eight solves). Both interfaces reproduce the same arrays and histories for the same input. The native-generated input returns AlmostSolved in 18 iterations; the Python-generated input returns Solved in 27. A one-unit-in-the-last-place coefficient difference is associated with this switch on the tested builds. Native settings captured after execution are a documented provenance limitation; this is not a universal interface-equivalence proof."
+    },
+    {
+      "id": "ranges",
+      "record": "IAN-EXP-017",
+      "title": "Certified bounds on the scale span",
+      "kind": "ranges",
+      "data": [
+        {
+          "allowance": 1.1050225396604444e-08,
+          "attained": 0.3343531246951809,
+          "upper": 0.4389019308703285
+        },
+        {
+          "allowance": 1.0010461222128582e-06,
+          "attained": 0.3343531246951894,
+          "upper": 38.31696158911418
+        },
+        {
+          "allowance": 0.00010000110146512553,
+          "attained": 0.334353124696226,
+          "upper": 1863.0551528608821
+        }
+      ],
+      "sources": [
+        {
+          "path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase07i/saved-span.json",
+          "sha256": "a13f41286853d129389e9cd0512af762fb35c4327680151e83e51430ec178da6"
+        }
+      ],
+      "caption": "Coordinate 717 (the 718th scale) of one fixed Python-generated 1,000-variable problem. For each guaranteed original-objective allowance T\u2212L, the line joins an attained lower bound on the feasible scale span to a certified outer upper bound; the horizontal scale is logarithmic. These are deterministic bounds, not confidence intervals. The attained span combines separately repaired saved points with fresh repairs; all six raw range endpoints fail exact feasibility. Wider outer bounds are not demonstrated attainable widths, and no claim of multiple exact optima follows."
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.20)
+project(ian_fixed_replay LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+add_executable(ian_fixed_replay replay.cpp)
+target_include_directories(ian_fixed_replay PRIVATE ${CLARABEL_SOURCE}/include ${JSON_INCLUDE})
+target_link_libraries(ian_fixed_replay PRIVATE ${CLARABEL_LIBRARY})
+target_compile_options(ian_fixed_replay PRIVATE -Wall -Wextra -Wpedantic -ffp-contract=off)

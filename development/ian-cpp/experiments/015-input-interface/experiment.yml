@@ -1,0 +1,32 @@
+{
+  "id": "IAN-EXP-015",
+  "title": "Does the terminal outcome follow the input or the interface?",
+  "phase_aliases": [
+    "07G"
+  ],
+  "programme_group": "C",
+  "aims": [
+    "IA1",
+    "IA4"
+  ],
+  "execution_status": "executed",
+  "outcome": "input sensitivity",
+  "documentation_worker": "IAN implementer/coordinator",
+  "dependencies": [
+    {
+      "id": "IAN-EXP-014",
+      "type": "consumed output"
+    }
+  ],
+  "source_paths": [
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/REPORT.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/PLAN.md"
+  ],
+  "figure_paths": [
+    "../build/assets/interface.png"
+  ],
+  "audit_status_source": "audit-summary.json",
+  "numerical_check_source": "audit-summary.json",
+  "issues_source": "../correction-dispositions.json",
+  "evidence_source": "evidence-manifest.json"
+}

@@ -1,0 +1,32 @@
+{
+  "audit_status": "accepted for bounded historical evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "5d882d32eb3c6b5cc452955182eff0063f176ac5a63e0633984e70a6892ee3cb",
+    "review": null
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-6b/audit.md",
+      "review_sha256": "ca96f7bf1efedc01c607b703bee7c8685014f8e597276c52322ffd91976e2e26",
+      "candidate": "e31f3f20692e738c6c4ca9c56f8a9f26518c4216",
+      "scope": "Original bounded milestone; this question is an indexed part of that scope."
+    },
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7/audit.md",
+      "review_sha256": "a6addcc7b49923ceb6f2552415aadd9c9d9b512ec4cadc337741d3c98a18c3d2",
+      "scope": "Later independent closure of the nonblocking correction recorded in the shared issue register; not a new audit of this report."
+    }
+  ],
+  "consequential_limits": "Initial resource problems and their versioned correction remain preserved. No mid-retuning restart, power-loss durability or cross-build/platform migration is established. A roadmap documentation comment was closed in the next milestone.",
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "d763064e7af43c524a9c9eeb56add6fd99a6c9f0a3432d6b895b04cf2020b572",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
+}

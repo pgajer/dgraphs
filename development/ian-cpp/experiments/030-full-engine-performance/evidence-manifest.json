@@ -1,0 +1,30 @@
+{
+  "id": "IAN-EXP-030",
+  "files": [
+    {
+      "role": "performance study evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/04-performance/PLAN.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/04-performance/PLAN.md",
+      "available": true,
+      "sha256": "81e5d8d534f720ffd7f486991b2b2de30cd578335ae832a3b09d1aac310713a6",
+      "identity_scope": "Submitted source and saved evidence bytes"
+    },
+    {
+      "role": "performance study evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage04-performance/summary.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage04-performance/summary.json",
+      "available": true,
+      "sha256": "3c33685efeef7b3d35aaccb6f96fbf2bf2d405800f5d56945e097c68070e9e9f",
+      "identity_scope": "Submitted source and saved evidence bytes"
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage04-performance/audit.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage04-performance/audit.md",
+      "available": true,
+      "sha256": "f476a9a73a3a83970b4c8bbc536fee42f100963d044bf997cc6ffbe8907c89a1",
+      "identity_scope": "Bounded acceptance with F1 closed"
+    }
+  ],
+  "backup": "External backup coverage unknown"
+}

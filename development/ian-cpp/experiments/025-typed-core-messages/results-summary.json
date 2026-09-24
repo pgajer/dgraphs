@@ -1,0 +1,19 @@
+{
+  "calls": 26,
+  "attempts": 127,
+  "interface_checks": 133,
+  "interface_exact": true,
+  "full_traces_exact": true,
+  "serialized_trace": {
+    "events": 58,
+    "exact": true
+  },
+  "fixed_decision_controls": 6,
+  "package_expectations": 53,
+  "independent_review": "pending",
+  "provenance": {
+    "source": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/typed-core/evidence/summary.json",
+    "sha256": "8d00e618595821e674eb03999b7c6d41653a7750b8dc1ac1bc21c3a38545e5db",
+    "operation": "Maintained snapshot; rendering performs no optimization"
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "id": "IAN-EXP-024",
+  "discovered_on": "2026-09-23",
+  "candidate_revision": "9fbabc6a5d36098f896936cd79e8f7a963ec363c",
+  "package_execution_source_revision": "4876a8545bc5d60f98eb99f3e1d53f6c8b91faa2",
+  "files": [
+    {
+      "role": "adapter source report",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/worktree/dev/ian/REPORT.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/worktree/dev/ian/REPORT.md",
+      "available": true,
+      "sha256": "78b3a4a02d76f3a06fd5b33a7b9eb5e67df16a917da3568de159e1bf675768e4",
+      "identity_scope": "Current bytes; final-source-state.json binds execution and final source revisions separately."
+    },
+    {
+      "role": "prescribed qualification contract",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/worktree/dev/ian/CONTRACT.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/worktree/dev/ian/CONTRACT.md",
+      "available": true,
+      "sha256": "57274b50560df42e5ef4b408f21a8bc3703659f6111ca06e4b6f78277a01466a",
+      "identity_scope": "Current bytes; final-source-state.json binds execution and final source revisions separately."
+    },
+    {
+      "role": "author qualification summary",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/evidence/summary.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/evidence/summary.json",
+      "available": true,
+      "sha256": "1f90c5b1dbcb228525c5391cd421119fcd95f63904e3448002cda96a1c11b5b9",
+      "identity_scope": "Current bytes; final-source-state.json binds execution and final source revisions separately."
+    },
+    {
+      "role": "complete evidence manifest",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/evidence/manifest.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/evidence/manifest.json",
+      "available": true,
+      "sha256": "f6bc8ede66364fa5275c92ce74990155929d49500b7f0b49cd41cf1f1e00517e",
+      "identity_scope": "Current bytes; final-source-state.json binds execution and final source revisions separately."
+    },
+    {
+      "role": "source and installed identities",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/evidence/final-source-state.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/evidence/final-source-state.json",
+      "available": true,
+      "sha256": "5903521c5a65fac812ed1f1afe4d144a492a9406a5399b3077a5b242099e9fd0",
+      "identity_scope": "Current bytes; final-source-state.json binds execution and final source revisions separately."
+    },
+    {
+      "role": "reference provenance",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/evidence/reference-identities.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/evidence/reference-identities.json",
+      "available": true,
+      "sha256": "94316dcaf5d585ecd84f8d96fba1d682297d2a27bb15c0d00e308bf35988b05d",
+      "identity_scope": "Current bytes; final-source-state.json binds execution and final source revisions separately."
+    },
+    {
+      "role": "reference preservation check",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/evidence/preservation-check.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/evidence/preservation-check.json",
+      "available": true,
+      "sha256": "5057fca9f4270d8c6a14cacd923fb5f907b5f2c10cbcc3c2b527de585504478b",
+      "identity_scope": "Current bytes; final-source-state.json binds execution and final source revisions separately."
+    },
+    {
+      "role": "private operational handoff",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/implementer-handoff.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/adapter/implementer-handoff.md",
+      "available": true,
+      "sha256": "5a98c87d408da4337209b9301dfbbc2701c54966e6e419d157c9c9a2b58c1191",
+      "identity_scope": "Current bytes; final-source-state.json binds execution and final source revisions separately."
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md",
+      "available": true,
+      "sha256": "7cfbca7ed21634030f2bdebaab84bdee26d244963de0ecddd4918e82ca96dcdb",
+      "identity_scope": "Independent audit, limited to its explicitly stated candidate and platform scope"
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/PLAN.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/PLAN.md",
+      "available": true,
+      "sha256": "7fae77dfb0de1dfe564fd3b328337efe6d4ca443d344af2373e49230d72fd15d",
+      "identity_scope": "Independent audit, limited to its explicitly stated candidate and platform scope"
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit-manifest.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit-manifest.json",
+      "available": true,
+      "sha256": "22e224f74c872c67f425141dc9bacde4874f987ba253f13e100771fba8290f11",
+      "identity_scope": "Independent audit, limited to its explicitly stated candidate and platform scope"
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/final-checks.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/final-checks.json",
+      "available": true,
+      "sha256": "1cafc944af75e1e2eb612d1aaefabadcbc25fe8b4495b5ef1f0fa9aba8ac1d3d",
+      "identity_scope": "Independent audit, limited to its explicitly stated candidate and platform scope"
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/preservation-after.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/preservation-after.json",
+      "available": true,
+      "sha256": "4d790a07886e29a9bab0fb683144bd0bc21b705e43a62904fb6c3968385c51b4",
+      "identity_scope": "Independent audit, limited to its explicitly stated candidate and platform scope"
+    }
+  ],
+  "backup": "No independently verified backup location"
+}

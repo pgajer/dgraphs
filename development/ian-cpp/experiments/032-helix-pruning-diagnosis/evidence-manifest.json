@@ -1,0 +1,38 @@
+{
+  "id": "IAN-EXP-032",
+  "files": [
+    {
+      "role": "diagnostic source/evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/06-pruning-diagnosis/PLAN.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/06-pruning-diagnosis/PLAN.md",
+      "available": true,
+      "sha256": "30e5820929ca467b8879159ece98bab1dae9c5796a4e207a318b779705f27434",
+      "identity_scope": "Current submitted bytes; saved trajectories bound by provenance"
+    },
+    {
+      "role": "diagnostic source/evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning-diagnosis/analysis-v2/summary.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning-diagnosis/analysis-v2/summary.json",
+      "available": true,
+      "sha256": "bc48f5efcef5ae9530a4f55442451098bd9d5961862e90c7cff324d361320d89",
+      "identity_scope": "Current submitted bytes; saved trajectories bound by provenance"
+    },
+    {
+      "role": "diagnostic source/evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning-diagnosis/analysis-v2/provenance.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning-diagnosis/analysis-v2/provenance.json",
+      "available": true,
+      "sha256": "428ae6067aabc04ba4594927933a89ab591eec722083ddf77b81a5028585593c",
+      "identity_scope": "Current submitted bytes; saved trajectories bound by provenance"
+    },
+    {
+      "role": "independent acceptance",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-pruning-diagnosis/audit.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-pruning-diagnosis/audit.md",
+      "available": true,
+      "sha256": "fb70cc6b6fdea1107cf9b2f11c2e4c520410e865834cbcdc9906b5d1c916a231",
+      "identity_scope": "Final bounded diagnosis and exact presentation acceptance"
+    }
+  ],
+  "backup": "External backup coverage unknown"
+}

@@ -1,0 +1,31 @@
+{
+  "id": "IAN-EXP-012",
+  "title": "Can a change of variable units repair the remaining certificate failure?",
+  "phase_aliases": [
+    "07D"
+  ],
+  "programme_group": "C",
+  "aims": [
+    "IA1",
+    "IA4"
+  ],
+  "execution_status": "executed",
+  "outcome": "partial recovery",
+  "documentation_worker": "IAN implementer/coordinator",
+  "dependencies": [
+    {
+      "id": "IAN-EXP-011",
+      "type": "consumed output"
+    }
+  ],
+  "source_paths": [
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/REPORT.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/PLAN.md"
+  ],
+  "figure_paths": [],
+  "missing_figure_reason": "This record summarizes fixed-problem or trajectory diagnostic checks. The frozen report and evidence manifest retain the detailed tables/traces; no additional standalone plot is needed for this question.",
+  "audit_status_source": "audit-summary.json",
+  "numerical_check_source": "audit-summary.json",
+  "issues_source": "../correction-dispositions.json",
+  "evidence_source": "evidence-manifest.json"
+}

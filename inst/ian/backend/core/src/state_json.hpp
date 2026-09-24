@@ -1,0 +1,60 @@
+#pragma once
+#include "json_adapter.hpp"
+#include "digest.hpp"
+#include <climits>
+namespace ian::io {
+inline int integer(const Json& v, int minimum = 0, int maximum = INT_MAX) {
+    if (!v.is_number_integer() || v < minimum || v > maximum)
+        throw std::invalid_argument("invalid_checkpoint_integer");
+    return v.get<int>();
+}
+inline void integers(const Json& v) {
+    if (!v.is_array()) throw std::invalid_argument("invalid_checkpoint_array");
+    for (const auto& x : v) integer(x);
+}
+inline Json state_json(const RestartState& s) {
+    auto m = mapping_json(s.mapping); m["participant_ids"] = s.mapping.participant_ids;
+    Json out{{"version",s.version},{"policy",s.policy},{"source",s.source},
+        {"configuration",s.configuration},{"input_hash",s.input_hash},{"boundary",s.boundary},
+        {"mapping",m},{"edges",s.edges},{"degrees",s.degrees},{"upper",s.upper},
+        {"last_stats",s.last_stats},{"multiplier",s.multiplier},{"distance_multiplier",s.distance_multiplier},
+        {"iteration",s.iteration},{"solves",s.solves},{"cache",s.cache}};
+    if(s.preserve_connectivity) {out["pruning_policy"]=connected_pruning_policy;out["pruning"]=object_json(s.pruning);}
+    return out;
+}
+inline RestartState parse_state(const Json& j) {
+    RestartState s;
+    s.version = integer(j.at("version"),1,1);
+    s.policy = j.at("policy").get<std::string>(); s.source = j.at("source").get<std::string>();
+    s.configuration = j.at("configuration").get<std::string>(); s.input_hash = j.at("input_hash").get<std::string>();
+    s.boundary = j.at("boundary").get<std::string>();
+    const auto& m = j.at("mapping");
+    integers(m.at("representatives")); integers(m.at("member_to_profile")); integers(j.at("degrees"));
+    if (!j.at("edges").is_array()) throw std::invalid_argument("invalid_checkpoint_edges");
+    for (const auto& e : j.at("edges")) {
+        integers(e); if (e.size() != 2) throw std::invalid_argument("invalid_checkpoint_edges");
+    }
+    s.mapping.representatives = m.at("representatives").get<Indices>();
+    s.mapping.member_to_profile = m.at("member_to_profile").get<Indices>();
+    s.mapping.specimen_ids = m.at("specimen_ids").get<std::vector<std::string>>();
+    s.mapping.profile_ids = m.at("profile_ids").get<std::vector<std::string>>();
+    s.mapping.participant_ids = m.at("participant_ids").get<std::vector<std::string>>();
+    s.edges = j.at("edges").get<Edges>(); s.degrees = j.at("degrees").get<Indices>();
+    s.upper = j.at("upper").get<Vector>(); s.last_stats = j.at("last_stats").get<Vector>();
+    s.multiplier = j.at("multiplier").get<double>(); s.distance_multiplier = j.at("distance_multiplier").get<double>();
+    s.iteration = integer(j.at("iteration"),0,1999); s.solves = integer(j.at("solves"),1,s.policy == retry_power_policy ? 84000 : 42000);
+    if (!j.at("cache").is_boolean()) throw std::invalid_argument("invalid_checkpoint_cache");
+    s.cache = j.at("cache").get<bool>();
+    if(j.contains("pruning_policy")) {
+        if(j.at("pruning_policy")!=connected_pruning_policy)throw std::invalid_argument("invalid_pruning_policy");
+        s.preserve_connectivity=true;const auto& p=j.at("pruning");s.pruning.stop_reason=p.at("stop_reason").get<std::string>();
+        if(!p.at("protected_bridges").is_array() || !p.at("history").is_array())throw std::invalid_argument("invalid_checkpoint_array");
+        for(const auto& b:p.at("protected_bridges")) {
+            integers(b.at("edge"));if(b.at("edge").size()!=2)throw std::invalid_argument("invalid_checkpoint_edges");
+            s.pruning.protected_bridges.push_back({b.at("edge").get<std::array<int,2>>(),integer(b.at("trigger")),integer(b.at("first_iteration")),integer(b.at("last_iteration")),integer(b.at("encounters"),1),b.at("statistic").get<double>(),b.at("threshold").get<double>(),b.at("margin").get<double>()});
+        }
+        for(const auto& h:p.at("history"))s.pruning.history.push_back({integer(h.at("iteration")),integer(h.at("statistical_candidates")),integer(h.at("allowance"),1),integer(h.at("examined")),integer(h.at("bridge_skips")),integer(h.at("bridge_checks")),integer(h.at("cached_skips")),integer(h.at("condition_rejections")),integer(h.at("endpoint_conflicts")),integer(h.at("removed"))});
+    } else if(j.contains("pruning"))throw std::invalid_argument("invalid_pruning_policy");
+    return s;
+}
+}

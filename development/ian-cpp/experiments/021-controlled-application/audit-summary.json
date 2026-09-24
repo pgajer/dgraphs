@@ -1,0 +1,18 @@
+{
+  "audit_status": "not examined; proposal",
+  "numerically_checked": false,
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "7582fbe679d5d7ea4dd91cbeca76c235166bfef151129919b96aa8bf0f34ed69",
+    "review": null
+  },
+  "audit_history": [],
+  "consequential_limits": "Engine acceptance and estimator acceptance are separate. No new cohort access, production replacement or full fit is authorized here.",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "fb1178d01f24d67d3f2197a6ef5791cd756b3040c70c67ada496da43cd5da72c",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
+}

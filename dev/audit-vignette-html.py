@@ -23,7 +23,7 @@ class Page(HTMLParser):
             self.assets.append(attrs["src"])
 
 root = Path(sys.argv[1] if len(sys.argv) > 1 else "build/validation/vignettes")
-expected = ["function-guide.html", "synthetic-geometry.html", "data-derived-graph-workflow.html"]
+expected = ["function-guide.html", "synthetic-geometry.html", "data-derived-graph-workflow.html", "ian-graphs.html"]
 pages = {name: Page(root / name) for name in expected}
 checked = 0
 for name, page in pages.items():

@@ -1,0 +1,32 @@
+{
+  "audit_status": "accepted for bounded historical evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "228a1a7cc237015a49962452526f04eff68e57209e5e3c998b9b315dbd6a115f",
+    "review": null
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-1/audit.md",
+      "review_sha256": "397f4a31452eeb1e1fd93428b96be69bad39e024d632c1c9fd69692c3b9e560b",
+      "candidate": "1bcf77afb766fbb945595ce8c3326211bcfe0433",
+      "scope": "Original bounded milestone; this question is an indexed part of that scope."
+    },
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-2/audit.md",
+      "review_sha256": "88fcb48b4f46f9c9fd5e4a832a722aeb322b674fc4eeb246526f411ab14e2a28",
+      "scope": "Later independent closure of the nonblocking correction recorded in the shared issue register; not a new audit of this report."
+    }
+  ],
+  "consequential_limits": "The two gap-observation events are byte-identical. These are fixed-LP client measurements, not full-engine performance, independent biological replicates or a cohort fit.",
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "c3d337181e88b75d83838eb469e40a3a43b1483691bde3aa38792e2c48f45441",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
+}

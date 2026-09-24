@@ -1,0 +1,7 @@
+a <- commandArgs(TRUE)
+.libPaths(c(a[1], .libPaths()))
+library(dgraphs)
+stopifnot(normalizePath(find.package('dgraphs')) == normalizePath(file.path(a[1], 'dgraphs')))
+backend <- build.ian.backend(a[2], python = a[3], cargo = a[4], rustc = a[5], offline = TRUE)
+stopifnot(file.exists(backend))
+saveRDS(list(backend=backend,package=find.package('dgraphs'),session=sessionInfo()),paste0(a[2],'-R-result.rds'))

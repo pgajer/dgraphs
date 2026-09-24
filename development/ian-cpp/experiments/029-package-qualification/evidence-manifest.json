@@ -1,0 +1,30 @@
+{
+  "id": "IAN-EXP-029",
+  "files": [
+    {
+      "role": "package qualification evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/03-package-qualification/PLAN.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/03-package-qualification/PLAN.md",
+      "available": true,
+      "sha256": "9e18463906526ff4227fe7b060c4de62a881f30fdb7ef820d184899254dcb189",
+      "identity_scope": "Submission source and evidence bytes"
+    },
+    {
+      "role": "package qualification evidence",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage03-package/summary.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage03-package/summary.json",
+      "available": true,
+      "sha256": "56182496fc4f025c58e67b9e4027a9920d87272f24c0fb93aa168e506b8a0c71",
+      "identity_scope": "Submission source and evidence bytes"
+    },
+    {
+      "role": "independent audit",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage03-package/audit.md",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage03-package/audit.md",
+      "available": true,
+      "sha256": "6a6afff687bc20702d01af8b51357a54b3d5c31d076a2348e9b9ec88c1f47c12",
+      "identity_scope": "Bounded acceptance including separate correction dispositions"
+    }
+  ],
+  "backup": "External backup coverage unknown"
+}

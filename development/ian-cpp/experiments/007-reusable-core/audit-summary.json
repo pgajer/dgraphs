@@ -1,0 +1,32 @@
+{
+  "audit_status": "accepted for bounded historical evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "61312474733016482e030420a89a993e73c68b99c77f5d5088eba8a757a2c01b",
+    "review": null
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-6a/audit.md",
+      "review_sha256": "46bf2b8d669cd66058d94d2d20b2fd70b767a22634d151b76175490296de0b00",
+      "scope": "Initial parser finding F1; not accepted until correction."
+    },
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-6a-f1/audit.md",
+      "review_sha256": "43b8e58b794fee4a5427453a5230564100f543a3f172299adc791c1a537bbcd5",
+      "candidate": "e098461c803926bdbe7888f4f37c7a1607c0e948",
+      "scope": "Original bounded milestone; this question is an indexed part of that scope."
+    }
+  ],
+  "consequential_limits": "The first candidate was not accepted until F1 was independently closed. This is single-platform interface feasibility, not portable release qualification, resumability or demonstrated memory improvement.",
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "81ce3e4223883f49ba2de2ec8e48d02148a6d4503ecfc92557683cfbfbc94d6e",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
+}

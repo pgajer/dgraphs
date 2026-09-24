@@ -1,0 +1,35 @@
+{
+  "id": "IAN-EXP-011",
+  "title": "Does one stricter retry repair complete trajectories?",
+  "phase_aliases": [
+    "07C"
+  ],
+  "programme_group": "C",
+  "aims": [
+    "IA1",
+    "IA4"
+  ],
+  "execution_status": "executed",
+  "outcome": "negative recovery result",
+  "documentation_worker": "IAN implementer/coordinator",
+  "dependencies": [
+    {
+      "id": "IAN-EXP-010",
+      "type": "motivation"
+    },
+    {
+      "id": "IAN-EXP-008",
+      "type": "shared infrastructure"
+    }
+  ],
+  "source_paths": [
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/REPORT.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/PLAN.md"
+  ],
+  "figure_paths": [],
+  "missing_figure_reason": "This record summarizes fixed-problem or trajectory diagnostic checks. The frozen report and evidence manifest retain the detailed tables/traces; no additional standalone plot is needed for this question.",
+  "audit_status_source": "audit-summary.json",
+  "numerical_check_source": "audit-summary.json",
+  "issues_source": "../correction-dispositions.json",
+  "evidence_source": "evidence-manifest.json"
+}

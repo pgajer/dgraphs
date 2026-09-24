@@ -29,6 +29,7 @@ then consult the [complete catalog](#function-catalog).
 | Your question | Entry point | Choice that matters |
 |---|---|---|
 | Which nearby observations should be linked? | `create.mknn.graph()` or `create.sknn.graph()` | Mutual neighbors require agreement; symmetric neighbors accept either direction. |
+| Can I adapt a Gabriel graph while retaining connectivity? | `create.ian.graph()` | Build the optional IAN backend first; inspect completion, graphs and affinity diagnostics. |
 | How should support adapt to sampling density? | `create.rknn.graph()` or `create.cknn.graph()` | Fixed radius, local radius rules, or a geometric mean of local scales. |
 | Should overlapping neighborhoods define edges? | [`create.single.iknn.graph()`](#help-create.single.iknn.graph) | Intersection graphs can connect points that are not direct nearest neighbors. |
 | How sensitive is my graph to neighborhood size? | Plural constructors such as `create.sknn.graphs()` | Inspect a parameter sequence and its component counts. |
@@ -395,7 +396,7 @@ public functions to call directly.
 
 ## Function catalog
 
-The catalog covers all 112 explicit public exports exactly once;
+The catalog covers all 114 explicit public exports exactly once;
 44 registered S3 methods are described separately through object workflows.
 Internal helpers and development applications are not public entry points.
 Links open the exact help included with this build, offline.
@@ -410,6 +411,8 @@ release or development installation.
 
 | Function | Purpose |
 |---|---|
+| [`create.ian.graph()`](#help-create.ian.graph) | Adapt local scales and prune a Gabriel graph, preserving connectivity by default; requires the optional backend. |
+| [`build.ian.backend()`](#help-build.ian.backend) | Build the optional pinned IAN module on macOS arm64 and return its path. |
 | [`create.mknn.graph()`](#help-create.mknn.graph) | Build a mutual Euclidean nearest-neighbor graph, with optional pruning and repair. |
 | [`create.mknn.graphs()`](#help-create.mknn.graphs) | Build mutual-neighbor graphs across a range of neighborhood sizes. |
 | [`create.sknn.graph()`](#help-create.sknn.graph) | Build a symmetric Euclidean nearest-neighbor graph, with optional pruning and repair. |

@@ -1,0 +1,5 @@
+# Amendment 2: require the checked-size optional module
+
+The corrected 28-process panel completed successfully before this amendment. A zero-engine-call probe showed that the new wrapper could still load the older connectivity module. Require a new registered `dgraphs_ian_run_v3` entry point so the updated wrapper cannot bypass the new native representation checks. Preserve the old eight- and nine-argument entry points as forwarding aliases. No numerical, graph, or conversion arithmetic changes.
+
+Build and install version 3 privately, repeat package checks, run the supplemental panel with this version, and add two legacy-entry controls plus one 1,000-profile connected helix native/R pair. Compare their final objects and solve histories; the complete corrected version-2 seven-geometry panel remains the full-trace numerical qualification. Test old-module refusal before core execution. The maximum schedule is 78 engine entries including both preserved 28-process panels, within the existing 80-entry ceiling; all other limits remain unchanged.

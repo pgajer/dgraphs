@@ -1,0 +1,23 @@
+{
+  "audit_status": "accepted for bounded saved-state pruning comparison",
+  "numerically_checked": true,
+  "numerical_check_scope": "Fresh ten-case native/Python replay and independent certificates, geometry, volume, ranking and removal checks; zero optimization.",
+  "current_report_review": {
+    "status": "accepted",
+    "report_sha256": "57bfbdc03cfe763f7a8e7018e4971f344ce9e47257ceae6923608420fa329bb6",
+    "report_pdf_sha256": "bba2a51ccfb83cbf173cd38ac7bf37255698905dcd658ab8bcf45a4ed3e6998f",
+    "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7j/audit.md",
+    "review_sha256": "97fcb6d32ccb099904b4d387a181b6fb8d67430b4f7d023c61300e5248b03a46",
+    "scope": "Markdown and inspected two-page PDF accepted; HTML content/links checked, browser appearance unverified due local-file URL restriction. Frozen pending labels describe submission state."
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7j/audit.md",
+      "review_sha256": "97fcb6d32ccb099904b4d387a181b6fb8d67430b4f7d023c61300e5248b03a46",
+      "candidate": "7d34d7570ad119bb6898c66ca966979ba064cac7",
+      "scope": "Bounded numerical evidence and exact Markdown/PDF presentation; no corrective findings."
+    }
+  ],
+  "consequential_limits": "Two rounded witness endpoints at an intermediate retuning state; no full-trajectory or objective-band invariance claim.",
+  "findings_register": "../correction-dispositions.json"
+}

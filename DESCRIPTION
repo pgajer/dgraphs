@@ -25,7 +25,8 @@ Authors@R: c(
     )
 Description: Constructs data-derived graphs from numerical observations using
     mutual, shared-neighbor, intersection, geodesic, radius, adaptive-radius,
-    and minimum-spanning-tree completion methods. Provides graph conversion,
+    minimum-spanning-tree completion, and optional iterated adaptive neighborhood
+    methods. Provides graph conversion,
     pruning, diagnostics, spectral embedding, endpoint detection, and path
     utilities, with reproducible synthetic geometries and point sampling for
     graph and embedding experiments. The implemented graph constructions include methods described by

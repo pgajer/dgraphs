@@ -1,0 +1,34 @@
+{
+  "id": "IAN-EXP-032",
+  "title": "Why does pruning first disconnect the three helices?",
+  "phase_aliases": [
+    "Pruning diagnosis after continuation stage 5"
+  ],
+  "programme_group": "F",
+  "aims": [
+    "IA1",
+    "IA4",
+    "IA5"
+  ],
+  "execution_status": "executed",
+  "outcome": "Independently accepted diagnosis: ordinary pruning deletes bridges after all three helices become accurate consecutive-point chains",
+  "documentation_worker": "IAN implementer/coordinator",
+  "dependencies": [
+    {
+      "id": "IAN-EXP-031",
+      "type": "accepted saved scientific benchmark trajectories"
+    }
+  ],
+  "source_paths": [
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/06-pruning-diagnosis/PLAN.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning-diagnosis/analysis-v2/summary.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/pruning-diagnosis/analysis-v2/provenance.json"
+  ],
+  "figure_paths": [
+    "build/pruning.png"
+  ],
+  "audit_status_source": "audit-summary.json",
+  "numerical_check_source": "audit-summary.json",
+  "issues_source": "../correction-dispositions.json",
+  "evidence_source": "evidence-manifest.json"
+}

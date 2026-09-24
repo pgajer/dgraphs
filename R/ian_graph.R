@@ -1,0 +1,237 @@
+#' Construct an Iterated Adaptive Neighborhood Graph
+#'
+#' Construct the initial Gabriel graph, adapt local scales and prune edges,
+#' returning graphs, affinities and diagnostics. By default, proposed bridge
+#' edges are protected so that pruning retains connectivity, and the audited
+#' retry-power numerical policy permits one checked retry after an eligible
+#' solver rejection. These are explicit variants of reference IAN.
+#'
+#' Build the optional module once with [build.ian.backend()] and pass its returned
+#' path as `backend`. The supported build target is macOS arm64. The function
+#' itself does not compile code, download dependencies or launch an external
+#' solver. See `system.file("ian", "README.md", package = "dgraphs")` for the
+#' numerical contract, setup requirements and bounded qualification.
+#'
+#' Input rows are specimens; graph vertices are unique feature profiles in
+#' first-occurrence order. Always check `complete` before using `final_graph`.
+#' Invalid R arguments or an unavailable backend raise an R error. Numerical
+#' refusal and interruption during engine execution return an incomplete result
+#' with the available diagnostics. Memory exhaustion or process termination is
+#' not a recoverable-result guarantee.
+#'
+#' @param X Finite numeric specimen-by-feature matrix, at least two rows and one
+#'   column. There is no fixed experimental row cap. Input size must fit R/native
+#'   index representations and available memory. Dense distances and affinities
+#'   require quadratic storage: each n-by-n double matrix uses `8*n*n` bytes before
+#'   overhead. Several matrices/copies coexist; this is not a peak-memory estimate.
+#'   Initial Gabriel construction has cubic worst-case cost. Full diagnostics
+#'   retain additional dense data. See the backend guide for tested sizes.
+#' @param distances Optional unsquared distance matrix or `dist`. When absent,
+#'   Euclidean distances are computed with `stats::dist(X)`. Supplied distances
+#'   are used exactly; duplicate feature rows must have identical distance rows.
+#'   Coordinates are always required to define duplicate profiles. Row/column
+#'   order must match X; named distances must match specimen IDs.
+#' @param specimen.ids Unique nonempty IDs; defaults to row names or row numbers.
+#' @param participant.ids Optional specimen-level nonempty IDs, possibly repeated.
+#' @param graph Reserved supplied-graph argument; currently must be `NULL`.
+#'   The actual initial Gabriel graph is always constructed by IAN.
+#' @param diagnostics `"summary"` or `"full"`; full includes dense LP payloads.
+#' @param backend Optional path to the separately built `dgraphs_ian.so` module.
+#' @param numerical.policy Exactly `"IAN evaluated-LP 1.0"` (strict, without retries) or
+#'   `"IAN evaluated-LP retry-power 0.1"` (default: one eligible checked retry).
+#' @param preserve.connectivity Logical scalar, default `TRUE`. Use `FALSE` for
+#'   reference pruning, which may disconnect the graph.
+#'   With `TRUE`, cache encountered bridges and skip them before testing each
+#'   proposed edge's pruning eligibility. Check noncached edges in the current
+#'   graph after preceding deletions. Skips do not consume the deletion allowance.
+#'   All vertices are retained. An initially disconnected graph returns refusal.
+#'   This explicit variant does not change the numerical solver policy.
+#' @param max.solves Positive integer safety limit; reaching it returns refusal.
+#' @return A list with `complete`, structured `error`, initial Gabriel graph,
+#'   `final_graph` only on full completion, `last_valid_graph` (possibly partial),
+#'   profile mapping, local scales and an affinity matrix distinct from metric
+#'   edge lengths. Graph indices and mappings are one-based. Full traces retain
+#'   original zero-based core indices and declare this in diagnostics. Summary diagnostics
+#'   include per-solve status, acceptance, settings, residuals and iteration counts.
+#'   Refusal and interruption return incomplete structured results; invalid R
+#'   arguments error before native execution. Interrupts are checked at engine
+#'   events; they do not interrupt an active solver call. In connectivity mode,
+#'   `diagnostics$connectivity` contains `protected.edges` (one-based profile
+#'   rows and IDs, first/last encounter iteration, count and first statistic),
+#'   per-iteration `history`, and `stop.reason`. Iterations in this summary are
+#'   one-based. Protected edges are encountered proposals, not necessarily edges
+#'   that would pass the pruning criteria. Full traces also include every edge
+#'   proposal and whether eligibility was tested. A complete pass with no
+#'   deletion stops, including when statistical candidates remain protected.
+#'   Partial results retain available protection diagnostics; `final_graph`
+#'   remains `NULL` if later optimization or affinity construction fails.
+#' @details The default numerical policy is `IAN evaluated-LP retry-power 0.1`.
+#'   A rejected original return remains rejected. Its single eligible retry must
+#'   itself pass strict solver success and the unchanged original-unit checks.
+#'   `numerical.policy="IAN evaluated-LP 1.0"` together with
+#'   `preserve.connectivity=FALSE` selects the previous strict/reference behavior.
+#'   This public default adoption changes neither policy's implementation.
+#'
+#'   The returned top-level fields are `complete`, `error`, `initial_graph`,
+#'   `final_graph`, `last_valid_graph`, `mapping`, `scales`, `affinity`,
+#'   `diagnostics` and `backend`. Graphs are [dgraph()] objects with metric edge
+#'   lengths in input distance units; affinity values are separate similarities.
+#'   Mapping contains one-based `representatives` and `member_to_profile`, plus
+#'   specimen, profile and participant IDs. Repeated participant IDs do not merge
+#'   specimens. Error information contains `kind`, `code` and `message`.
+#'   `diagnostics$solver_history` retains both accepted and rejected attempts.
+#'   Backend information identifies the selected policies, source and settings.
+#'   Checkpoint/resume is not exposed through this R interface.
+#' @examples
+#' # Set this variable to the path returned by build.ian.backend().
+#' backend <- Sys.getenv("DGRAPHS_IAN_BACKEND")
+#' if (nzchar(backend) && file.exists(backend)) {
+#'   X <- rbind(c(0, 0), c(1, 0), c(2, 0), c(0, 0))
+#'   fit <- create.ian.graph(X, backend = backend,
+#'       specimen.ids = c("alpha", "beta", "gamma", "delta"))
+#'   stopifnot(fit$complete)
+#'   graph.edges(fit$initial_graph)
+#'   graph.edges(fit$final_graph)
+#'   fit$mapping$member_to_profile # Four specimens, three unique profiles.
+#'   fit$diagnostics$connectivity$protected.edges
+#' }
+#' @seealso [build.ian.backend()]
+#' @export
+create.ian.graph <- function(X, distances = NULL, specimen.ids = NULL,
+                             participant.ids = NULL, graph = NULL,
+                             diagnostics = c("summary", "full"), backend = NULL,
+                             max.solves = 10000L, numerical.policy = "IAN evaluated-LP retry-power 0.1",
+                             preserve.connectivity = TRUE) {
+    .ian.adapter(X, distances, specimen.ids, participant.ids, graph,
+                 match.arg(diagnostics), backend, max.solves, "none", numerical.policy, preserve.connectivity)
+}
+
+.ian.backend <- local({
+    cache <- new.env(parent = emptyenv())
+    function(path) {
+        if (is.null(path)) path <- system.file("ian", "native", "dgraphs_ian.so", package = "dgraphs")
+        if (!is.character(path) || length(path) != 1L || is.na(path) || !nzchar(path) || !file.exists(path))
+            stop("IAN optional backend is unavailable. Run build.ian.backend() and pass its returned path as backend; see the installed ian/README.md.", call. = FALSE)
+        path <- normalizePath(path, mustWork = TRUE)
+        if (!exists(path, cache, inherits = FALSE)) {
+            dll <- dyn.load(path, local = TRUE)
+            run <- tryCatch(getNativeSymbolInfo("dgraphs_ian_run_v3", dll)$address,
+                error = function(e) stop("IAN backend needs rebuilding for the checked-size interface; use build.ian.backend() in a new build directory.", call. = FALSE))
+            assign(path, list(dll = dll, run = run), cache)
+        }
+        get(path, cache, inherits = FALSE)$run
+    }
+})
+
+.ian.graph <- function(raw, ids, stage, policy = "IAN evaluated-LP 1.0") {
+    if (is.null(raw)) return(NULL)
+    n <- length(ids)
+    adj <- rep(list(integer()), n); lens <- rep(list(numeric()), n)
+    for (k in seq_len(nrow(raw$edges))) {
+        i <- raw$edges[k, 1L]; j <- raw$edges[k, 2L]
+        adj[[i]] <- c(adj[[i]], j); adj[[j]] <- c(adj[[j]], i)
+        lens[[i]] <- c(lens[[i]], raw$lengths[k]); lens[[j]] <- c(lens[[j]], raw$lengths[k])
+    }
+    out <- dgraph(adj, lens)
+    out$metadata <- list(method = policy, ian_stage = stage,
+                         profile_ids = ids, edge_length_units = "input distances")
+    out
+}
+
+.ian.adapter <- function(X, distances, specimen.ids, participant.ids, graph,
+                         diagnostics, backend, max.solves, fault, numerical.policy = "IAN evaluated-LP 1.0", preserve.connectivity = FALSE) {
+    if (!is.logical(preserve.connectivity) || length(preserve.connectivity) != 1L || is.na(preserve.connectivity)) stop("preserve.connectivity must be TRUE or FALSE.", call. = FALSE)
+    if (!is.character(numerical.policy) || length(numerical.policy) != 1L || is.na(numerical.policy) || !numerical.policy %in% c("IAN evaluated-LP 1.0", "IAN evaluated-LP retry-power 0.1")) stop("Unsupported numerical.policy.", call. = FALSE)
+    if (!is.null(graph)) stop("Supplied initial graphs are unsupported; IAN constructs its Gabriel graph from distances.", call. = FALSE)
+    if (!is.matrix(X) || !is.numeric(X) || nrow(X) < 2L || ncol(X) < 1L || any(!is.finite(X)))
+        stop("X must be a finite numeric matrix with at least 2 specimen rows and at least one feature.", call. = FALSE)
+    n <- nrow(X)
+    .ian.check.dimensions(n, ncol(X))
+    storage.mode(X) <- "double"
+    if (is.null(specimen.ids)) specimen.ids <- if (is.null(rownames(X))) as.character(seq_len(n)) else rownames(X)
+    valid.ids <- function(x) is.character(x) && length(x) == n && !anyNA(x) && all(nzchar(x))
+    if (!valid.ids(specimen.ids) || anyDuplicated(specimen.ids)) stop("specimen.ids must be unique nonempty strings, one per row.", call. = FALSE)
+    if (is.null(participant.ids)) participant.ids <- character()
+    if (length(participant.ids) && !valid.ids(participant.ids)) stop("participant.ids must be nonempty strings, one per specimen.", call. = FALSE)
+    if (!is.numeric(max.solves) || length(max.solves) != 1L || !is.finite(max.solves) || max.solves < 1 || max.solves != trunc(max.solves) || max.solves > 10000)
+        stop("max.solves must be an integer from 1 to 10000.", call. = FALSE)
+    input.mode <- if (is.null(distances)) "Euclidean distances computed in R" else "supplied unsquared distances"
+    if (is.null(distances)) distances <- as.matrix(stats::dist(X)) else if (inherits(distances, "dist")) distances <- as.matrix(distances)
+    if (!is.matrix(distances) || !is.numeric(distances) || !identical(dim(distances), c(n, n)) || any(!is.finite(distances)) || any(distances < 0) || any(diag(distances) != 0) || !all(distances == t(distances)))
+        stop("distances must be a finite, nonnegative, exactly symmetric n by n matrix with zero diagonal.", call. = FALSE)
+    if (input.mode == "supplied unsquared distances") for (labels in dimnames(distances))
+        if (!is.null(labels) && !identical(labels, specimen.ids)) stop("Named distances must match specimen.ids in order.", call. = FALSE)
+    storage.mode(distances) <- "double"
+    native_run <- .ian.backend(backend)
+    raw <- .Call(native_run, X, distances, specimen.ids, participant.ids,
+                 identical(diagnostics, "full"), as.integer(max.solves), fault, numerical.policy, preserve.connectivity)
+    ids <- raw$mapping$profile_ids
+    initial <- .ian.graph(raw$initial, ids, "initial Gabriel", raw$backend$numerical_policy)
+    last <- .ian.graph(raw$last, ids, "last valid, possibly partial", raw$backend$numerical_policy)
+    final <- if (isTRUE(raw$complete)) .ian.graph(raw$converged, ids, "completed final", raw$backend$numerical_policy) else NULL
+    if (isTRUE(raw$diagnostics$affinity_valid)) dimnames(raw$affinity) <- list(ids, ids)
+    if (preserve.connectivity) {
+        raw$diagnostics$connectivity <- .ian.connectivity(raw$diagnostics$connectivity, ids)
+        for (stage in c("initial", "last", "final")) {
+            value <- get(stage)
+            if (!is.null(value)) {
+                value$metadata$pruning_policy <- raw$backend$pruning_policy
+                assign(stage, value)
+            }
+        }
+    }
+    raw$diagnostics$trace_index_base <- 0L
+    raw$diagnostics$trace_format <- "schema-1 core fields; zero-based indices"
+    raw$diagnostics$input_mode <- input.mode
+    raw$diagnostics$requested_max_solves <- as.integer(max.solves)
+    list(complete = raw$complete, error = raw$error, initial_graph = initial,
+         final_graph = final, last_valid_graph = last, mapping = raw$mapping,
+         scales = stats::setNames(raw$scales, if (length(raw$scales)) ids else character()),
+         affinity = if (isTRUE(raw$diagnostics$affinity_valid)) raw$affinity else NULL,
+         diagnostics = raw$diagnostics, backend = raw$backend)
+}
+
+# Direct projection of the typed diagnostic result; no JSON message round-trip.
+.ian.connectivity <- function(raw, ids) {
+    rows <- lapply(raw$protected_bridges, function(b) {
+        edge <- as.integer(unlist(b$edge)) + 1L
+        data.frame(from = edge[1L], to = edge[2L], from.id = ids[edge[1L]],
+                   to.id = ids[edge[2L]], trigger = b$trigger + 1L,
+                   first.iteration = b$first_iteration + 1L,
+                   last.iteration = b$last_iteration + 1L, encounters = b$encounters,
+                   statistic = b$statistic, threshold = b$threshold, margin = b$margin)
+    })
+    protected <- if (length(rows)) do.call(rbind, rows) else data.frame(
+        from = integer(), to = integer(), from.id = character(), to.id = character(),
+        trigger = integer(), first.iteration = integer(), last.iteration = integer(),
+        encounters = integer(), statistic = numeric(), threshold = numeric(), margin = numeric())
+    rows <- lapply(raw$history, function(h) {
+        names(h) <- gsub("_", ".", names(h), fixed = TRUE)
+        h$iteration <- h$iteration + 1L
+        as.data.frame(h)
+    })
+    history <- if (length(rows)) do.call(rbind, rows) else data.frame(
+        iteration = integer(), statistical.candidates = integer(), allowance = integer(),
+        examined = integer(), bridge.skips = integer(), bridge.checks = integer(),
+        cached.skips = integer(), condition.rejections = integer(),
+        endpoint.conflicts = integer(), removed = integer())
+    list(protected.edges = protected, history = history, stop.reason = raw$stop_reason,
+         index.base = 1L, iteration.base = 1L,
+         scope = "Encountered bridge proposals; pruning conditions were not tested for these proposals.")
+}
+
+# Validate representation sizes before allocating the n-by-n distance matrix.
+# This helper takes dimensions only, so boundary tests need no huge allocation.
+.ian.check.dimensions <- function(rows, columns) {
+    valid <- function(x) is.numeric(x) && length(x) == 1L && is.finite(x) &&
+        x >= 0 && x == trunc(x)
+    if (!valid(rows) || !valid(columns))
+        stop("IAN dimensions must be finite nonnegative integers.", call. = FALSE)
+    if (rows > .Machine$integer.max %/% 2)
+        stop("IAN input dimensions exceed the native vertex-index range.", call. = FALSE)
+    vector.limit <- if (.Machine$sizeof.pointer >= 8L) 2^52 else .Machine$integer.max
+    if (columns > .Machine$integer.max || rows * columns > vector.limit ||
+        rows * rows > vector.limit)
+        stop("IAN matrix dimensions exceed the R/native representation range.", call. = FALSE)
+    invisible(NULL)
+}

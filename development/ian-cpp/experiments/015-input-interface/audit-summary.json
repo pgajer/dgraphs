@@ -1,0 +1,32 @@
+{
+  "audit_status": "accepted for bounded historical evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "e6ee729f64fc3efba66e4dd6e5c1d5efba696a307c3f043d86d603f0c727c04f",
+    "review": null
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7g/audit.md",
+      "review_sha256": "f1c1eb77b2910749cc937fee77763a14243f049a46e8b3e6ba8f726f2ab5b850",
+      "candidate": "d124f56a4c99580da6f2bafe4cabcac33fed8112",
+      "scope": "Original bounded milestone; this question is an indexed part of that scope."
+    },
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7h/audit.md",
+      "review_sha256": "46fe410c40dddee888a0abea9ec6648db5b7654e5e2bbb3ba8d28771577066a9",
+      "scope": "Later independent closure of the nonblocking correction recorded in the shared issue register; not a new audit of this report."
+    }
+  ],
+  "consequential_limits": "Native settings capture was incomplete and later reconstructed without solving. Audit N1 found a final-process supervisor race; eight numerical audit outputs exist but only seven complete process records. Phase07H closes N1 prospectively.",
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "f85c9de6478ee25f61f1607c51d7cbb0a893a20440d1347933745cdc7f9e03f1",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
+}

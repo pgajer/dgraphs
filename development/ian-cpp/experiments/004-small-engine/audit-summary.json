@@ -1,0 +1,27 @@
+{
+  "audit_status": "accepted for bounded historical evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "63c4a657863a1861ec255cc518094036da98f17dce595eeb2a9209faf38c7de6",
+    "review": null
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-3/audit.md",
+      "review_sha256": "229f48b2278e4dfc17233810627704bd7c1e0939dda1fb059685af0698cf3a88",
+      "candidate": "7d030ff669be9e4a090ec75829c6477c25a7091c",
+      "scope": "Original bounded milestone; this question is an indexed part of that scope."
+    }
+  ],
+  "consequential_limits": "Three examples never prune; the PreSSMat example prunes only four times. This establishes a connected small engine, not general equivalence or meaningful long-history coverage.",
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "773203d7b812f0bb4d2d00f0cf11e711a0061d06e32063029327fb30546b1630",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
+}

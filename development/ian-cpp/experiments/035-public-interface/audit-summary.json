@@ -1,0 +1,53 @@
+{
+  "audit_status": "Accepted for the public IAN interface in the two qualified Mac arm64 R environments; F1, F2 and N1 closed; no open findings",
+  "numerically_checked": true,
+  "numerical_check_scope": "Independent fresh 56-entry/1594-attempt replay; 504 full certificates, 1090 summaries, all 56 R objects and 36 traces; both fresh package installations/builds qualified",
+  "current_report_review": {
+    "status": "accepted",
+    "report_sha256": "e051bf62479f950d9ab47a528c774fd9dbb5ac8e700167deb476415b0a348351",
+    "scope": "Exact N1-corrected report/PDF and bounded public interface independently accepted; all findings closed; browser appearance unverified",
+    "frozen_submission": {
+      "report_sha256": "e051bf62479f950d9ab47a528c774fd9dbb5ac8e700167deb476415b0a348351",
+      "report_pdf_sha256": "efe3a2f0c067928c777a4d8a85034de00404396ad27573763a40b6151b80bd05",
+      "reason": "N1 report-only budget metadata clarification; both pages author-inspected; earlier versions preserved"
+    },
+    "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit.md",
+    "review_sha256": "c33bd318fd9c9421cc04cece2ef89cc75afedfe0d85f50cf858755c3bd05af06",
+    "report_pdf_sha256": "efe3a2f0c067928c777a4d8a85034de00404396ad27573763a40b6151b80bd05"
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit.md",
+      "review_sha256": "c33bd318fd9c9421cc04cece2ef89cc75afedfe0d85f50cf858755c3bd05af06",
+      "candidate": "fa58fe0a7ea1abb2f1a415b77d0692f2c4ff1980",
+      "scope": "Owner-authorized public exports and default selection; private source-archive installs and fresh offline Rust/native backend builds under R-devel and corrected R 4.5.2 on Mac arm64."
+    }
+  ],
+  "consequential_limits": "Two Mac arm64 R installations; offline builds; no shared installation, merge, CRAN release or scientific benefit claim",
+  "presentation_history": [
+    {
+      "status": "not independently reviewed",
+      "report_sha256": "d9a87cfb3e73bb526d356410693dcae563c1df1d8b69dd0bbdd3856af3718eb3",
+      "scope": "Original submission; subsequent independent finding F1 recorded before final disposition",
+      "frozen_submission": {
+        "report_sha256": "d9a87cfb3e73bb526d356410693dcae563c1df1d8b69dd0bbdd3856af3718eb3",
+        "report_pdf_sha256": "a57573090418b88f85cf6b0745b67485d2266155433e1939dcd46950fba5ef8d",
+        "reason": "Two-page author-inspected submission preserved for independent review"
+      },
+      "preserved_report": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/submission-report.md",
+      "preserved_pdf": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface/submission-report.pdf"
+    },
+    {
+      "status": "not independently reviewed",
+      "report_sha256": "cd62a21172427420f309612be70146ada4851cab98552bc59832e3c8eb989060",
+      "scope": "F1 corrected submission before N1 clarification of requested solve-budget metadata exclusion",
+      "frozen_submission": {
+        "report_sha256": "cd62a21172427420f309612be70146ada4851cab98552bc59832e3c8eb989060",
+        "report_pdf_sha256": "a7e35c3c0bcb0ca3d18398af75bab89788ff1cadfeb80b0b4c1fa477d9557f6d",
+        "reason": "F1 corrected two-page submission visually inspected; original pair preserved separately"
+      },
+      "preserved_report": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface-f1/submission-report.md",
+      "preserved_pdf": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/public-interface-f1/submission-report.pdf"
+    }
+  ]
+}

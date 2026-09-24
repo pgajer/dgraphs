@@ -1,0 +1,18 @@
+{
+  "audit_status": "not examined; proposal",
+  "numerically_checked": false,
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "ef46e0d5ce045f32fc8aa0c811b02064d6ed7a6cf161789d1456320fa84a6b73",
+    "review": null
+  },
+  "audit_history": [],
+  "consequential_limits": "These are future method studies, not established biological validity or a requirement for a realistic microbiome simulator.",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "88709abd542d9146cf13c5946a00bb5ff912f252785d559a025467cffe1332bb",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
+}

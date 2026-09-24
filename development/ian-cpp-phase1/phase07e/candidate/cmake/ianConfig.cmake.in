@@ -1,0 +1,6 @@
+@PACKAGE_INIT@
+if(NOT TARGET ian::backend)
+  add_library(ian::backend SHARED IMPORTED)
+  set_target_properties(ian::backend PROPERTIES IMPORTED_LOCATION "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_LIBDIR@/@BACKEND_NAME@")
+endif()
+include("${CMAKE_CURRENT_LIST_DIR}/ianTargets.cmake")

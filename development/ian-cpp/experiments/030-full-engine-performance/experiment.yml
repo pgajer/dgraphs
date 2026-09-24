@@ -1,0 +1,39 @@
+{
+  "id": "IAN-EXP-030",
+  "title": "What does a complete IAN run cost in a persistent process?",
+  "phase_aliases": [
+    "Continuation stage 4"
+  ],
+  "programme_group": "D",
+  "aims": [
+    "IA1",
+    "IA3"
+  ],
+  "execution_status": "executed",
+  "outcome": "Native pipeline speed/memory advantage reproduced; exact R validation corrected and accepted",
+  "documentation_worker": "IAN implementer/coordinator",
+  "dependencies": [
+    {
+      "id": "IAN-EXP-029",
+      "type": "accepted Mac package"
+    },
+    {
+      "id": "IAN-EXP-027",
+      "type": "accepted numerical policy"
+    },
+    {
+      "id": "IAN-EXP-028",
+      "type": "accepted frozen quadform"
+    }
+  ],
+  "source_paths": [
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/04-performance/PLAN.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage04-performance/summary.json"
+  ],
+  "figure_paths": [],
+  "missing_figure_reason": "Three-fixture timings and resource results are presented in a compact table.",
+  "audit_status_source": "audit-summary.json",
+  "numerical_check_source": "audit-summary.json",
+  "issues_source": "../correction-dispositions.json",
+  "evidence_source": "evidence-manifest.json"
+}

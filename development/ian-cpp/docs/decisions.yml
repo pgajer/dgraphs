@@ -1,0 +1,102 @@
+{
+  "as_of": "2026-09-23",
+  "decisions": [
+    {
+      "id": "DEC-ORG",
+      "state": "authorized",
+      "scope": "Three-stage organization only; preserve historical evidence; no numerical experiments",
+      "basis": "User instruction in current task, 18 September 2026"
+    },
+    {
+      "id": "DEC-REF",
+      "state": "preserved strict baseline and R default; explicit retry-power option selected separately for internal qualification",
+      "policy": "IAN evaluated-LP 1.0",
+      "basis": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/CONTRACT.md"
+    },
+    {
+      "id": "DEC-SCALE",
+      "state": "frozen seven-case 1,000-profile native/Python panel accepted; larger expansion remains gated",
+      "scope": "Further full-trajectory scale ladder, including prepared quadforms",
+      "basis": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage02-scale/audit.md"
+    },
+    {
+      "id": "DEC-POLICY",
+      "state": "explicit retry-power option selected for internal qualification; strict default retained",
+      "scope": "IAN evaluated-LP retry-power 0.1 on tested Mac; alternative LP and secondary scale selection remain unadopted",
+      "basis": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage01-policy/audit.md"
+    },
+    {
+      "id": "DEC-PRUNE-REPLAY",
+      "state": "independently accepted for bounded saved-state comparison",
+      "scope": "Zero-solver saved-state comparison of the two existing certified scale vectors; no larger trajectory or new policy",
+      "basis": "User instruction in current task, 23 September 2026; IAN-EXP-023",
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7j/audit.md"
+    },
+    {
+      "id": "DEC-INTERNAL-ADAPTER",
+      "state": "independently accepted for bounded macOS arm64 implementation scope",
+      "scope": "Internal unexported dgraphs adapter returning initial Gabriel graph, completed final graph and diagnostics; public export and comprehensive portability excluded",
+      "basis": "User instruction in current task, 23 September 2026; IAN-EXP-024",
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md",
+      "presentation_review": "maintained catalogue report not independently reviewed",
+      "broader_platforms": "Linux, Windows and macOS x86_64 runtime unqualified"
+    },
+    {
+      "id": "DEC-TYPED-CORE",
+      "state": "independently accepted for bounded macOS arm64 implementation scope",
+      "scope": "Typed internal messages and direct R diagnostics; unchanged numerical policy; preserved persistence formats",
+      "basis": "User instruction 23 September 2026; IAN-EXP-025",
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-adapter-layout/audit.md",
+      "presentation_review": "maintained catalogue report not independently reviewed",
+      "broader_platforms": "Linux, Windows and macOS x86_64 runtime unqualified"
+    },
+    {
+      "id": "DEC-HELIX-ARITHMETIC",
+      "state": "independently accepted bounded study; no corrective findings",
+      "scope": "Exact arithmetic origin, preserved convergence histories, two explicit square rules and full native/Python helix plus four small controls; no policy adoption or ladder expansion",
+      "basis": "User four-point continuation authorization 23 September 2026; IAN-EXP-026",
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-7k/audit.md",
+      "policy_adopted": false
+    },
+    {
+      "id": "DEC-AUDIT-STANDING",
+      "state": "authorized",
+      "scope": "Initiate independent IAN audits, address corrective findings and request re-review without new owner prompts",
+      "basis": "User instruction 23 September 2026; docs/audit-coordination.md"
+    },
+    {
+      "id": "DEC-FIVE-STAGE-CONTINUATION",
+      "state": "all five bounded stages independently accepted; all corrective and nonblocking findings closed",
+      "scope": "Numerical policy, scale, supported platforms, performance, controlled scientific evaluation in that order; resolve findings before advancing",
+      "basis": "Owner instruction in this task on 23 September 2026; experiments/analysis-queue.md",
+      "candidate_policy": "IAN evaluated-LP retry-power 0.1",
+      "candidate_adopted": true,
+      "adoption_scope": "Explicit internal qualification option on tested Mac; strict R default retained",
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage05-science/audit.md",
+      "remaining_scope": "Further scientific studies and public release require their own scope; this sequence establishes neither general scientific superiority nor production readiness"
+    },
+    {
+      "id": "DEC-SUPPORTED-TARGET",
+      "state": "macOS arm64 R-devel and corrected R 4.5.2 installations accepted for bounded internal use",
+      "scope": "Fresh package/backend builds and actual runtime panel; R limited to 500 rows with no R restart; Linux, Windows and Intel Mac remain unqualified",
+      "basis": "Recommended macOS-first scope stated during authorized sequence; optional platform preference unanswered",
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-stage03-package/audit.md"
+    },
+    {
+      "id": "DEC-PRUNING-DIAGNOSIS",
+      "state": "accepted bounded saved-trajectory diagnosis; no corrective findings",
+      "scope": "Three Stage 5 helices, both saved interfaces; zero optimizer calls; no pruning variant adopted",
+      "basis": "Owner request on 23 September 2026",
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-pruning-diagnosis/audit.md"
+    },
+    {
+      "id": "DEC-PUBLIC-INTERFACE",
+      "state": "independently accepted; F1, F2 and N1 closed",
+      "scope": "Export create.ian.graph and build.ian.backend; connected/retry-power defaults; explicit strict/reference alternatives; no shared installation or public release",
+      "basis": "Owner instruction 23 September 2026; IAN-EXP-035",
+      "next_research": "Prospective scientific comparison of connectivity-preserving IAN; no new scientific runs in the interface milestone",
+      "independent_audit": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/auditor/review-public-interface/audit.md",
+      "candidate": "fa58fe0a7ea1abb2f1a415b77d0692f2c4ff1980"
+    }
+  ]
+}

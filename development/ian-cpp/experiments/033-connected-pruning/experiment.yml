@@ -1,0 +1,44 @@
+{
+  "id": "IAN-EXP-033",
+  "title": "Can candidate-first bridge protection preserve connected IAN graphs?",
+  "phase_aliases": [
+    "Connectivity-preserving pruning"
+  ],
+  "programme_group": "F",
+  "aims": [
+    "IA1",
+    "IA2",
+    "IA4"
+  ],
+  "execution_status": "executed",
+  "outcome": "Independently accepted: twelve connected native/R trajectories and useful R diagnostics; F1 and C1 closed",
+  "documentation_worker": "IAN implementer/coordinator",
+  "dependencies": [
+    {
+      "id": "IAN-EXP-032",
+      "type": "accepted diagnosis motivating the explicit variant"
+    },
+    {
+      "id": "IAN-EXP-031",
+      "type": "fixed coordinate panel and original reference trajectories"
+    }
+  ],
+  "source_paths": [
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/07-connected-pruning/PLAN.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/fixtures.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/build-v2/manifest.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/ledger.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/guard-checks-v1/summary.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/rds-checks-v1/summary.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/supplement-v1/ledger.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/supplement-v2/ledger.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/check/dgraphs.Rcheck/00check.log",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/connected-pruning/targeted-tests.log"
+  ],
+  "figure_paths": [],
+  "missing_figure_reason": "The results table compares all twelve final graph sizes and connectedness; no new geometry or prediction claim is made.",
+  "audit_status_source": "audit-summary.json",
+  "numerical_check_source": "audit-summary.json",
+  "issues_source": "../correction-dispositions.json",
+  "evidence_source": "evidence-manifest.json"
+}

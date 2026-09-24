@@ -1,0 +1,5 @@
+# Read-only investigation of the Python matrix-product warnings
+
+The six paired scale trajectories complete and pass independent scalar certificate checks, but every Python stderr contains divide-by-zero, overflow and invalid-value warnings at the dual-certificate expression. This warrants a read-only diagnostic before the stage report. No solver call, trajectory rerun, warning suppression in the reference, input change or tolerance change is included.
+
+For every saved Python solve, reconstruct the three products used in that expression (sparse transpose times dual, objective coefficients times scales, and right-hand side times dual). Record warnings separately by operation, finite inputs/results and agreement with scalar math.fsum calculations. Repeat the two dense scalar products with NumPy dot and elementwise product plus sum, retaining each warning and difference. Record runtime and linked numerical-library configuration. Preserve original stderr. This can localize reproducible warnings and test their numerical consequence; it may not establish the low-level hardware/library cause or reproduce process-state-dependent warnings.

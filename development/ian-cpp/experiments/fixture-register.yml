@@ -1,0 +1,38 @@
+{
+  "scope": "Entry points to frozen fixture families; not a duplicate specimen registry",
+  "fixtures": [
+    {
+      "role": "fixture manifest",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/fixtures-v1/manifest.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/fixtures-v1/manifest.json",
+      "available": true,
+      "sha256": "6b2211842dd0ffc33b8622638217072fb681b8548b3c7ad1319f497ce9bfb79a",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "fixture manifest",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase02/fixtures-v2/manifest.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase02/fixtures-v2/manifest.json",
+      "available": true,
+      "sha256": "fd257a3a6d328fc03fc3c611af7911cebb2b61c6f83449ef00a681bf1a82bcfc",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "fixture manifest",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase07f/fixtures-v1/manifest.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase07f/fixtures-v1/manifest.json",
+      "available": true,
+      "sha256": "2efdfcf1192666aa2c23ae1883b95d25901dbb7f70b816c4bc45736ed40b8e90",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    },
+    {
+      "role": "fixture manifest",
+      "declared_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase07i/fixtures-manifest.json",
+      "resolved_path": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/worker/phase07i/fixtures-manifest.json",
+      "available": true,
+      "sha256": "6a9db92a93c5090dc14618c524dbc66da5af236d30106c724c3adea9a736c997",
+      "identity_scope": "Current file bytes; historical execution identity comes from referenced manifest/review, not this hash."
+    }
+  ],
+  "note": "Other phase fixtures are reached through their evidence manifests; IDs/measurements remain private."
+}

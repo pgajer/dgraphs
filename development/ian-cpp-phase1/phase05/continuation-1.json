@@ -1,0 +1,8 @@
+{
+  "comparisons": ["known_256_center/historical"],
+  "runs": [],
+  "continue_historical_array_class": true,
+  "diagnosis": "The saved Hellinger-256 center state reproduces the phase04 original/evaluated scale discrepancy under identical projected coefficients. All primal/dual checks pass and all discrete fields agree. This is the previously documented representation-sensitive array failure, not a new native defect. Continue the predetermined cases while retaining this and any subsequent historical array-only failures. Native disagreement, discrete disagreement, failed raw validity, changed coefficients or failed endpoint comparisons still pause the driver.",
+  "evidence": "worker/phase05/probes-v1/comparisons/known_256_center/historical/comparison.json",
+  "changes": "Driver continuation classification and event-type lookup for endpoint units only. No solver, algorithm, input or tolerance change. No already executed solve is rerun."
+}

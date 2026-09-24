@@ -1,0 +1,42 @@
+{
+  "id": "IAN-EXP-031",
+  "title": "Do numerically valid IAN graphs improve geometry and smooth-signal recovery?",
+  "phase_aliases": [
+    "Continuation stage 5"
+  ],
+  "programme_group": "F",
+  "aims": [
+    "IA1",
+    "IA5"
+  ],
+  "execution_status": "executed",
+  "outcome": "Independently accepted bounded mixed study: exact reference agreement, but no general scientific advantage; helix disconnection and affinity-support limits",
+  "documentation_worker": "IAN implementer/coordinator",
+  "dependencies": [
+    {
+      "id": "IAN-EXP-030",
+      "type": "accepted preceding engineering gate"
+    },
+    {
+      "id": "IAN-EXP-027",
+      "type": "accepted numerical policy"
+    },
+    {
+      "id": "IAN-EXP-022",
+      "type": "initial bounded realization of the broader scientific-benchmark proposal"
+    }
+  ],
+  "source_paths": [
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp/stages/05-scientific-benchmark/PLAN.md",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage05-science/manifest.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage05-science/analysis-v1/summary.json",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage05-science/final-checks.json"
+  ],
+  "figure_paths": [
+    "build/benchmark.png"
+  ],
+  "audit_status_source": "audit-summary.json",
+  "numerical_check_source": "audit-summary.json",
+  "issues_source": "../correction-dispositions.json",
+  "evidence_source": "evidence-manifest.json"
+}

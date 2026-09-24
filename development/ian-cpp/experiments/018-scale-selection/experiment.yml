@@ -1,0 +1,29 @@
+{
+  "id": "IAN-EXP-018",
+  "title": "Can an explicit secondary rule stabilize scale selection?",
+  "phase_aliases": [
+    "07 next"
+  ],
+  "programme_group": "C",
+  "aims": [
+    "IA4"
+  ],
+  "execution_status": "proposal; unexecuted",
+  "outcome": "not tested",
+  "documentation_worker": "IAN implementer/coordinator",
+  "dependencies": [
+    {
+      "id": "IAN-EXP-017",
+      "type": "motivation"
+    }
+  ],
+  "source_paths": [
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/coordinator/ROADMAP.md"
+  ],
+  "figure_paths": [],
+  "missing_figure_reason": "No new numerical study was executed; a result figure would imply evidence that does not exist.",
+  "audit_status_source": "audit-summary.json",
+  "numerical_check_source": "audit-summary.json",
+  "issues_source": "../correction-dispositions.json",
+  "evidence_source": "evidence-manifest.json"
+}

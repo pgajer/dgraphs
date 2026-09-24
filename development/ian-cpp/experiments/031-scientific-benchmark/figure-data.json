@@ -1,0 +1,928 @@
+{
+  "geometry": [
+    {
+      "dataset": "square-6101",
+      "geometry": "square",
+      "seed": 6101,
+      "method": "Gabriel",
+      "edges": 358,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.13309346947683096,
+      "bounded_distance_loss": 0.13309346947683096,
+      "neighbor_recall": 0.9195000000000002
+    },
+    {
+      "dataset": "square-6101",
+      "geometry": "square",
+      "seed": 6101,
+      "method": "knn_5",
+      "edges": 600,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.17780034478232684,
+      "bounded_distance_loss": 0.1763740847454224,
+      "neighbor_recall": 0.914
+    },
+    {
+      "dataset": "square-6101",
+      "geometry": "square",
+      "seed": 6101,
+      "method": "knn_10",
+      "edges": 1156,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.056099407133110915,
+      "bounded_distance_loss": 0.056099407133110915,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "square-6101",
+      "geometry": "square",
+      "seed": 6101,
+      "method": "knn_20",
+      "edges": 2293,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.015858354790100195,
+      "bounded_distance_loss": 0.015858354790100195,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "square-6101",
+      "geometry": "square",
+      "seed": 6101,
+      "method": "IAN",
+      "edges": 350,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.15484644638095488,
+      "bounded_distance_loss": 0.1546417039326811,
+      "neighbor_recall": 0.9195000000000002
+    },
+    {
+      "dataset": "square-6102",
+      "geometry": "square",
+      "seed": 6102,
+      "method": "Gabriel",
+      "edges": 365,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.1413441525973671,
+      "bounded_distance_loss": 0.1413441525973671,
+      "neighbor_recall": 0.9165000000000002
+    },
+    {
+      "dataset": "square-6102",
+      "geometry": "square",
+      "seed": 6102,
+      "method": "knn_5",
+      "edges": 596,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.2409623480744588,
+      "bounded_distance_loss": 0.22734371731403386,
+      "neighbor_recall": 0.894
+    },
+    {
+      "dataset": "square-6102",
+      "geometry": "square",
+      "seed": 6102,
+      "method": "knn_10",
+      "edges": 1150,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.05236347370090122,
+      "bounded_distance_loss": 0.05236347370090122,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "square-6102",
+      "geometry": "square",
+      "seed": 6102,
+      "method": "knn_20",
+      "edges": 2312,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.012120683816531024,
+      "bounded_distance_loss": 0.012120683816531024,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "square-6102",
+      "geometry": "square",
+      "seed": 6102,
+      "method": "IAN",
+      "edges": 359,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.15408762282619617,
+      "bounded_distance_loss": 0.15399654670012536,
+      "neighbor_recall": 0.9180000000000001
+    },
+    {
+      "dataset": "square-6103",
+      "geometry": "square",
+      "seed": 6103,
+      "method": "Gabriel",
+      "edges": 360,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.13423420325332036,
+      "bounded_distance_loss": 0.13423420325332036,
+      "neighbor_recall": 0.9305000000000001
+    },
+    {
+      "dataset": "square-6103",
+      "geometry": "square",
+      "seed": 6103,
+      "method": "knn_5",
+      "edges": 602,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.18852595193571844,
+      "bounded_distance_loss": 0.1862597772891922,
+      "neighbor_recall": 0.9085000000000002
+    },
+    {
+      "dataset": "square-6103",
+      "geometry": "square",
+      "seed": 6103,
+      "method": "knn_10",
+      "edges": 1163,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.06324599441539772,
+      "bounded_distance_loss": 0.0631464554295049,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "square-6103",
+      "geometry": "square",
+      "seed": 6103,
+      "method": "knn_20",
+      "edges": 2316,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.014428421483549666,
+      "bounded_distance_loss": 0.014428421483549666,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "square-6103",
+      "geometry": "square",
+      "seed": 6103,
+      "method": "IAN",
+      "edges": 355,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.14200202088337524,
+      "bounded_distance_loss": 0.14200202088337524,
+      "neighbor_recall": 0.9315000000000001
+    },
+    {
+      "dataset": "helix-6101",
+      "geometry": "helix",
+      "seed": 6101,
+      "method": "Gabriel",
+      "edges": 296,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.308893806957078,
+      "bounded_distance_loss": 0.308893806957078,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "helix-6101",
+      "geometry": "helix",
+      "seed": 6101,
+      "method": "knn_5",
+      "edges": 591,
+      "components": 4,
+      "finite_pair_fraction": 0.3731155778894472,
+      "finite_mean_relative_error": 0.0017945344374863288,
+      "bounded_distance_loss": 0.6275539908642379,
+      "neighbor_recall": 0.987
+    },
+    {
+      "dataset": "helix-6101",
+      "geometry": "helix",
+      "seed": 6101,
+      "method": "knn_10",
+      "edges": 1138,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.005673987197248397,
+      "bounded_distance_loss": 0.005673987197248397,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "helix-6101",
+      "geometry": "helix",
+      "seed": 6101,
+      "method": "knn_20",
+      "edges": 2205,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.209233150346817,
+      "bounded_distance_loss": 0.209233150346817,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "helix-6101",
+      "geometry": "helix",
+      "seed": 6101,
+      "method": "IAN",
+      "edges": 194,
+      "components": 6,
+      "finite_pair_fraction": 0.2877889447236181,
+      "finite_mean_relative_error": 0.0005241204075051662,
+      "bounded_distance_loss": 0.712361891335366,
+      "neighbor_recall": 0.9434999999999999
+    },
+    {
+      "dataset": "helix-6102",
+      "geometry": "helix",
+      "seed": 6102,
+      "method": "Gabriel",
+      "edges": 300,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.3161224777316519,
+      "bounded_distance_loss": 0.3161224777316519,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "helix-6102",
+      "geometry": "helix",
+      "seed": 6102,
+      "method": "knn_5",
+      "edges": 578,
+      "components": 2,
+      "finite_pair_fraction": 0.5175879396984925,
+      "finite_mean_relative_error": 0.0020266469440205115,
+      "bounded_distance_loss": 0.48346102831775933,
+      "neighbor_recall": 0.9965
+    },
+    {
+      "dataset": "helix-6102",
+      "geometry": "helix",
+      "seed": 6102,
+      "method": "knn_10",
+      "edges": 1126,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.006545666791518628,
+      "bounded_distance_loss": 0.006545666791518628,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "helix-6102",
+      "geometry": "helix",
+      "seed": 6102,
+      "method": "knn_20",
+      "edges": 2268,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.2616140169493323,
+      "bounded_distance_loss": 0.2616140169493323,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "helix-6102",
+      "geometry": "helix",
+      "seed": 6102,
+      "method": "IAN",
+      "edges": 197,
+      "components": 3,
+      "finite_pair_fraction": 0.43778894472361807,
+      "finite_mean_relative_error": 0.0007754164204008752,
+      "bounded_distance_loss": 0.5625505240127906,
+      "neighbor_recall": 0.9765
+    },
+    {
+      "dataset": "helix-6103",
+      "geometry": "helix",
+      "seed": 6103,
+      "method": "Gabriel",
+      "edges": 295,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.3303574850673615,
+      "bounded_distance_loss": 0.3303574850673615,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "helix-6103",
+      "geometry": "helix",
+      "seed": 6103,
+      "method": "knn_5",
+      "edges": 580,
+      "components": 2,
+      "finite_pair_fraction": 0.4975376884422111,
+      "finite_mean_relative_error": 0.0017388045071783252,
+      "bounded_distance_loss": 0.5033274323329433,
+      "neighbor_recall": 0.9944999999999999
+    },
+    {
+      "dataset": "helix-6103",
+      "geometry": "helix",
+      "seed": 6103,
+      "method": "knn_10",
+      "edges": 1129,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.006225230617767725,
+      "bounded_distance_loss": 0.006225230617767725,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "helix-6103",
+      "geometry": "helix",
+      "seed": 6103,
+      "method": "knn_20",
+      "edges": 2200,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.21645282199795418,
+      "bounded_distance_loss": 0.21645282199795418,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "helix-6103",
+      "geometry": "helix",
+      "seed": 6103,
+      "method": "IAN",
+      "edges": 197,
+      "components": 3,
+      "finite_pair_fraction": 0.3995477386934673,
+      "finite_mean_relative_error": 0.0007733616003671183,
+      "bounded_distance_loss": 0.6007612561851519,
+      "neighbor_recall": 0.975
+    },
+    {
+      "dataset": "sphere-6101",
+      "geometry": "sphere",
+      "seed": 6101,
+      "method": "Gabriel",
+      "edges": 415,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.11193700200055946,
+      "bounded_distance_loss": 0.11193700200055946,
+      "neighbor_recall": 0.9180000000000001
+    },
+    {
+      "dataset": "sphere-6101",
+      "geometry": "sphere",
+      "seed": 6101,
+      "method": "knn_5",
+      "edges": 591,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.18289374715269105,
+      "bounded_distance_loss": 0.1756126370734557,
+      "neighbor_recall": 0.9015000000000001
+    },
+    {
+      "dataset": "sphere-6101",
+      "geometry": "sphere",
+      "seed": 6101,
+      "method": "knn_10",
+      "edges": 1128,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.04202067452810428,
+      "bounded_distance_loss": 0.04201641403577125,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "sphere-6101",
+      "geometry": "sphere",
+      "seed": 6101,
+      "method": "knn_20",
+      "edges": 2162,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.011942321769348646,
+      "bounded_distance_loss": 0.011942321769348646,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "sphere-6101",
+      "geometry": "sphere",
+      "seed": 6101,
+      "method": "IAN",
+      "edges": 412,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.11613565827360676,
+      "bounded_distance_loss": 0.11613366884780141,
+      "neighbor_recall": 0.9175000000000001
+    },
+    {
+      "dataset": "sphere-6102",
+      "geometry": "sphere",
+      "seed": 6102,
+      "method": "Gabriel",
+      "edges": 397,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.11947720404714783,
+      "bounded_distance_loss": 0.11947720404714783,
+      "neighbor_recall": 0.9195000000000002
+    },
+    {
+      "dataset": "sphere-6102",
+      "geometry": "sphere",
+      "seed": 6102,
+      "method": "knn_5",
+      "edges": 587,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.16790520407053533,
+      "bounded_distance_loss": 0.16624298572329502,
+      "neighbor_recall": 0.8865000000000001
+    },
+    {
+      "dataset": "sphere-6102",
+      "geometry": "sphere",
+      "seed": 6102,
+      "method": "knn_10",
+      "edges": 1125,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.038773340370927875,
+      "bounded_distance_loss": 0.038773340370927875,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "sphere-6102",
+      "geometry": "sphere",
+      "seed": 6102,
+      "method": "knn_20",
+      "edges": 2175,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.010908324768971757,
+      "bounded_distance_loss": 0.010908324768971757,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "sphere-6102",
+      "geometry": "sphere",
+      "seed": 6102,
+      "method": "IAN",
+      "edges": 395,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.12106748945230046,
+      "bounded_distance_loss": 0.12106555135286029,
+      "neighbor_recall": 0.9200000000000002
+    },
+    {
+      "dataset": "sphere-6103",
+      "geometry": "sphere",
+      "seed": 6103,
+      "method": "Gabriel",
+      "edges": 391,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.11427255309346869,
+      "bounded_distance_loss": 0.11427255309346869,
+      "neighbor_recall": 0.9125000000000001
+    },
+    {
+      "dataset": "sphere-6103",
+      "geometry": "sphere",
+      "seed": 6103,
+      "method": "knn_5",
+      "edges": 602,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.14703773484885985,
+      "bounded_distance_loss": 0.1447114161711987,
+      "neighbor_recall": 0.9010000000000002
+    },
+    {
+      "dataset": "sphere-6103",
+      "geometry": "sphere",
+      "seed": 6103,
+      "method": "knn_10",
+      "edges": 1155,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.039562424652221435,
+      "bounded_distance_loss": 0.039562424652221435,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "sphere-6103",
+      "geometry": "sphere",
+      "seed": 6103,
+      "method": "knn_20",
+      "edges": 2238,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.01096897899047044,
+      "bounded_distance_loss": 0.01096897899047044,
+      "neighbor_recall": 1.0
+    },
+    {
+      "dataset": "sphere-6103",
+      "geometry": "sphere",
+      "seed": 6103,
+      "method": "IAN",
+      "edges": 383,
+      "components": 1,
+      "finite_pair_fraction": 1.0,
+      "finite_mean_relative_error": 0.1259814182718268,
+      "bounded_distance_loss": 0.12584602770810024,
+      "neighbor_recall": 0.9100000000000001
+    }
+  ],
+  "means": [
+    {
+      "dataset": "square-6101",
+      "geometry": "square",
+      "method": "IAN_affinity",
+      "mean_squared_error": 0.04040391021689075,
+      "fallback_fraction": 0.013
+    },
+    {
+      "dataset": "square-6101",
+      "geometry": "square",
+      "method": "IAN_distance_kernel",
+      "mean_squared_error": 0.03938261305406214,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "square-6101",
+      "geometry": "square",
+      "method": "euclidean_kernel",
+      "mean_squared_error": 0.03898518236188805,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "square-6101",
+      "geometry": "square",
+      "method": "euclidean_knn",
+      "mean_squared_error": 0.04451922415105035,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "square-6101",
+      "geometry": "square",
+      "method": "oracle_kernel",
+      "mean_squared_error": 0.03898518236188805,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "square-6101",
+      "geometry": "square",
+      "method": "training_mean",
+      "mean_squared_error": 0.2310945562969171,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "square-6102",
+      "geometry": "square",
+      "method": "IAN_affinity",
+      "mean_squared_error": 0.04656251689272351,
+      "fallback_fraction": 0.015
+    },
+    {
+      "dataset": "square-6102",
+      "geometry": "square",
+      "method": "IAN_distance_kernel",
+      "mean_squared_error": 0.0442959799561408,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "square-6102",
+      "geometry": "square",
+      "method": "euclidean_kernel",
+      "mean_squared_error": 0.04321775230984866,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "square-6102",
+      "geometry": "square",
+      "method": "euclidean_knn",
+      "mean_squared_error": 0.048128849305082363,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "square-6102",
+      "geometry": "square",
+      "method": "oracle_kernel",
+      "mean_squared_error": 0.04321775230984866,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "square-6102",
+      "geometry": "square",
+      "method": "training_mean",
+      "mean_squared_error": 0.2811994180626188,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "square-6103",
+      "geometry": "square",
+      "method": "IAN_affinity",
+      "mean_squared_error": 0.05164828729982727,
+      "fallback_fraction": 0.018
+    },
+    {
+      "dataset": "square-6103",
+      "geometry": "square",
+      "method": "IAN_distance_kernel",
+      "mean_squared_error": 0.04795280256479021,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "square-6103",
+      "geometry": "square",
+      "method": "euclidean_kernel",
+      "mean_squared_error": 0.04756502690032716,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "square-6103",
+      "geometry": "square",
+      "method": "euclidean_knn",
+      "mean_squared_error": 0.05396871926226306,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "square-6103",
+      "geometry": "square",
+      "method": "oracle_kernel",
+      "mean_squared_error": 0.04756502690032716,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "square-6103",
+      "geometry": "square",
+      "method": "training_mean",
+      "mean_squared_error": 0.2555341506816341,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "helix-6101",
+      "geometry": "helix",
+      "method": "IAN_affinity",
+      "mean_squared_error": 0.1413802865021976,
+      "fallback_fraction": 0.252
+    },
+    {
+      "dataset": "helix-6101",
+      "geometry": "helix",
+      "method": "IAN_distance_kernel",
+      "mean_squared_error": 0.03115436719799679,
+      "fallback_fraction": 0.026
+    },
+    {
+      "dataset": "helix-6101",
+      "geometry": "helix",
+      "method": "euclidean_kernel",
+      "mean_squared_error": 0.015810327162769314,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "helix-6101",
+      "geometry": "helix",
+      "method": "euclidean_knn",
+      "mean_squared_error": 0.02074164412141833,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "helix-6101",
+      "geometry": "helix",
+      "method": "oracle_kernel",
+      "mean_squared_error": 0.012425732503836367,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "helix-6101",
+      "geometry": "helix",
+      "method": "training_mean",
+      "mean_squared_error": 0.4284803161644898,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "helix-6102",
+      "geometry": "helix",
+      "method": "IAN_affinity",
+      "mean_squared_error": 0.13543013384754649,
+      "fallback_fraction": 0.23
+    },
+    {
+      "dataset": "helix-6102",
+      "geometry": "helix",
+      "method": "IAN_distance_kernel",
+      "mean_squared_error": 0.012574920262444148,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "helix-6102",
+      "geometry": "helix",
+      "method": "euclidean_kernel",
+      "mean_squared_error": 0.01371404162596348,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "helix-6102",
+      "geometry": "helix",
+      "method": "euclidean_knn",
+      "mean_squared_error": 0.02657068265466374,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "helix-6102",
+      "geometry": "helix",
+      "method": "oracle_kernel",
+      "mean_squared_error": 0.012831745313308019,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "helix-6102",
+      "geometry": "helix",
+      "method": "training_mean",
+      "mean_squared_error": 0.45033978391500423,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "helix-6103",
+      "geometry": "helix",
+      "method": "IAN_affinity",
+      "mean_squared_error": 0.11865179908777443,
+      "fallback_fraction": 0.239
+    },
+    {
+      "dataset": "helix-6103",
+      "geometry": "helix",
+      "method": "IAN_distance_kernel",
+      "mean_squared_error": 0.017707659494755314,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "helix-6103",
+      "geometry": "helix",
+      "method": "euclidean_kernel",
+      "mean_squared_error": 0.017130657966172105,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "helix-6103",
+      "geometry": "helix",
+      "method": "euclidean_knn",
+      "mean_squared_error": 0.018362806298654253,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "helix-6103",
+      "geometry": "helix",
+      "method": "oracle_kernel",
+      "mean_squared_error": 0.014615589371069637,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "helix-6103",
+      "geometry": "helix",
+      "method": "training_mean",
+      "mean_squared_error": 0.40997442508210147,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6101",
+      "geometry": "sphere",
+      "method": "IAN_affinity",
+      "mean_squared_error": 0.03461925837187814,
+      "fallback_fraction": 0.005
+    },
+    {
+      "dataset": "sphere-6101",
+      "geometry": "sphere",
+      "method": "IAN_distance_kernel",
+      "mean_squared_error": 0.030026252807029762,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6101",
+      "geometry": "sphere",
+      "method": "euclidean_kernel",
+      "mean_squared_error": 0.03249377124004088,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6101",
+      "geometry": "sphere",
+      "method": "euclidean_knn",
+      "mean_squared_error": 0.03661550193159516,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6101",
+      "geometry": "sphere",
+      "method": "oracle_kernel",
+      "mean_squared_error": 0.030163112225949064,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6101",
+      "geometry": "sphere",
+      "method": "training_mean",
+      "mean_squared_error": 0.37378424632703183,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6102",
+      "geometry": "sphere",
+      "method": "IAN_affinity",
+      "mean_squared_error": 0.031075771032468374,
+      "fallback_fraction": 0.004
+    },
+    {
+      "dataset": "sphere-6102",
+      "geometry": "sphere",
+      "method": "IAN_distance_kernel",
+      "mean_squared_error": 0.024144093013469668,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6102",
+      "geometry": "sphere",
+      "method": "euclidean_kernel",
+      "mean_squared_error": 0.023984586673355582,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6102",
+      "geometry": "sphere",
+      "method": "euclidean_knn",
+      "mean_squared_error": 0.031071906372178715,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6102",
+      "geometry": "sphere",
+      "method": "oracle_kernel",
+      "mean_squared_error": 0.023380565717248464,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6102",
+      "geometry": "sphere",
+      "method": "training_mean",
+      "mean_squared_error": 0.3579347961511615,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6103",
+      "geometry": "sphere",
+      "method": "IAN_affinity",
+      "mean_squared_error": 0.036831301661162275,
+      "fallback_fraction": 0.005
+    },
+    {
+      "dataset": "sphere-6103",
+      "geometry": "sphere",
+      "method": "IAN_distance_kernel",
+      "mean_squared_error": 0.030854244871740932,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6103",
+      "geometry": "sphere",
+      "method": "euclidean_kernel",
+      "mean_squared_error": 0.02883310866822164,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6103",
+      "geometry": "sphere",
+      "method": "euclidean_knn",
+      "mean_squared_error": 0.0339928899602559,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6103",
+      "geometry": "sphere",
+      "method": "oracle_kernel",
+      "mean_squared_error": 0.028070950355731643,
+      "fallback_fraction": 0.0
+    },
+    {
+      "dataset": "sphere-6103",
+      "geometry": "sphere",
+      "method": "training_mean",
+      "mean_squared_error": 0.3618371261902816,
+      "fallback_fraction": 0.0
+    }
+  ],
+  "sources": {
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage05-science/analysis-v1/geometry-rows.json": "69a6b2acd123788f4b68717d302eb8a9e77bb7bc4899c71d0054b8d1e7e208ba",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-23/stage05-science/analysis-v1/dataset-means.json": "a928250c44f0383bf69624ad66e386f7443c237c00c5185baf140561b7d1ed8b"
+  }
+}

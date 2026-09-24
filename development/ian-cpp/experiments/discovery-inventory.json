@@ -1,0 +1,689 @@
+{
+  "scope": "Only development/ian-cpp-phase1, its worker evidence and review-1 through review-7i plus named correction reviews; no claim of exhaustive discovery across ZB.",
+  "as_of": "2026-09-18",
+  "base": "51ae9378bdfeba4128f1b9de5e1b91b8463100f8",
+  "records": [
+    {
+      "id": "IAN-EXP-001",
+      "title": "Can native replay reproduce saved scale optimizations?",
+      "phase": [
+        "01"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-002",
+      "title": "What explains the historical versus replay runtime discrepancy?",
+      "phase": [
+        "02"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-003",
+      "title": "Does native execution improve repeated-solve costs?",
+      "phase": [
+        "02"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-004",
+      "title": "Does a small complete engine reproduce the reference decisions?",
+      "phase": [
+        "03"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-005",
+      "title": "Does agreement persist through longer pruning and retuning histories?",
+      "phase": [
+        "04"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-006",
+      "title": "Do formulation differences change decisions near numerical thresholds?",
+      "phase": [
+        "05"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-007",
+      "title": "Can the engine become a reusable core without changing behavior?",
+      "phase": [
+        "06A"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-008",
+      "title": "Can interrupted runs resume without changing their results?",
+      "phase": [
+        "06B"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-009",
+      "title": "Does implementation agreement persist at 500 profiles?",
+      "phase": [
+        "07"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-010",
+      "title": "Why does solver success coexist with IAN rejection?",
+      "phase": [
+        "07B"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-011",
+      "title": "Does one stricter retry repair complete trajectories?",
+      "phase": [
+        "07C"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-012",
+      "title": "Can a change of variable units repair the remaining certificate failure?",
+      "phase": [
+        "07D"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-013",
+      "title": "Can broader retry eligibility complete the helix without relaxing acceptance?",
+      "phase": [
+        "07E"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-014",
+      "title": "Does the tested retry policy remain compatible at 1,000 profiles?",
+      "phase": [
+        "07F"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-015",
+      "title": "Does the terminal outcome follow the input or the interface?",
+      "phase": [
+        "07G"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-016",
+      "title": "Does dual simplex produce stable and compatible scales on these problems?",
+      "phase": [
+        "07H"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-017",
+      "title": "How strongly does the objective determine the disputed scale?",
+      "phase": [
+        "07I"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-018",
+      "title": "Can an explicit secondary rule stabilize scale selection?",
+      "phase": [
+        "07 next"
+      ],
+      "execution": "proposal; unexecuted"
+    },
+    {
+      "id": "IAN-EXP-019",
+      "title": "Where can complete-engine time and memory be reduced safely?",
+      "phase": [
+        "08"
+      ],
+      "execution": "proposal; unexecuted"
+    },
+    {
+      "id": "IAN-EXP-020",
+      "title": "Which platforms and R interfaces can be qualified?",
+      "phase": [
+        "09"
+      ],
+      "execution": "proposal; unexecuted"
+    },
+    {
+      "id": "IAN-EXP-021",
+      "title": "Can accepted IAN outputs support a bounded scientific application?",
+      "phase": [
+        "10"
+      ],
+      "execution": "proposal; unexecuted"
+    },
+    {
+      "id": "IAN-EXP-022",
+      "title": "Does IAN improve declared geometric and conditional-mean tasks?",
+      "phase": [
+        "11"
+      ],
+      "execution": "proposal; unexecuted"
+    },
+    {
+      "id": "IAN-EXP-023",
+      "title": "Do certified scale differences change pruning at the saved graph?",
+      "phase": [
+        "07J"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-024",
+      "title": "Can an internal dgraphs adapter preserve results and expose useful graph stages?",
+      "phase": [
+        "Internal adapter 1"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-025",
+      "title": "Can typed C++ messages preserve IAN behavior?",
+      "phase": [
+        "Typed core refactor"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-026",
+      "title": "Why did native IAN stop on the helix while Python completed?",
+      "phase": [
+        "07K"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-027",
+      "title": "Can the qualified retry and arithmetic rules be integrated into the typed IAN core?",
+      "phase": [
+        "Continuation stage 1"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-028",
+      "title": "Does the qualified engine agree across the remaining 1,000-profile geometries?",
+      "phase": [
+        "Continuation stage 2"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-029",
+      "title": "Can the internal R adapter be built and used from a fresh package installation?",
+      "phase": [
+        "Continuation stage 3"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-030",
+      "title": "What does a complete IAN run cost in a persistent process?",
+      "phase": [
+        "Continuation stage 4"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-031",
+      "title": "Do numerically valid IAN graphs improve geometry and smooth-signal recovery?",
+      "phase": [
+        "Continuation stage 5"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-032",
+      "title": "Why does pruning first disconnect the three helices?",
+      "phase": [
+        "Pruning diagnosis after continuation stage 5"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-033",
+      "title": "Can candidate-first bridge protection preserve connected IAN graphs?",
+      "phase": [
+        "Connectivity-preserving pruning"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-034",
+      "title": "Can the internal R adapter safely remove its fixed 500-row restriction?",
+      "phase": [
+        "R size qualification"
+      ],
+      "execution": "executed"
+    },
+    {
+      "id": "IAN-EXP-035",
+      "title": "Can IAN become a supported public dgraphs interface on the qualified Mac environments?",
+      "phase": [
+        "Public R interface"
+      ],
+      "execution": "executed"
+    }
+  ],
+  "historical_source_files": {
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/.gitignore": "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/ARCHITECTURE.md": "85e1c22f216e2769a682d50303eaffe9f63a43fec0170abd8292b31ba0721785",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/CMakeLists.txt": "10e0f81a5c5942668db6b21dfa85148b5dd052619b9d25a658598379899cf397",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/DEPENDENCIES.md": "3d53e92c8c352f1097ee28bdd0750add6f8b8e283613fc1b6a63bab2953b593d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/PLAN.md": "5a39adaffd3233d62ca5a138726607566c4dbe43019427d639532a20ef54f4cc",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/README.md": "40b3d155f8d69736d52b36febf0804c3f71a08a9039ca51bd9842b2d008f2f60",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/REPORT.md": "6d9847aca8cb1caa07c8fcca653cfe46b376f4022104a930267c62cbf81e6ccd",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/__pycache__/common.cpython-312.pyc": "72726a86a3d6a7648d48daaa2910f83ad16eeb3a255ee6698e74a4d66b963586",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/clarabel-wrapper.Cargo.lock": "0eb11824346aa41cff24c29574383a6ed6ad604d687d47440b32cd31ae4844c7",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/common.py": "144c17de746d782bd44b15bd6d0f22ad9be124c5269f9c939e7efa266db715ed",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/coordinator/ROADMAP.md": "6bd84903b0ea85bdc53280738e9d924c0a4e87b32482e7d0e56296d6e988662e",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/export_cases.py": "771e8e7bb4780828eb41e5a3fef5e9d2cb4453be16f7c58ed5a339e5520ebb11",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/AUDIT-RESPONSE.md": "6a287a139229621f58f2587a0507db4368f39a2e7cbd9e67a403644e015d48d7",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/CMakeLists.txt": "c94c41f22052b0ecfb64bbe74b2e8bb15e403c95e5c3b6db4aa1881643322b71",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/FIDELITY.md": "065a79b4dbeb075dfc608f96eeaf4242749c47f0fa1b115502a4a396851c5744",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/PLAN.md": "e79f0537f1071b64a3f338b0d78866dfd354dda3d431119db609d3048aedfd28",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/README.md": "55e0eeabf417255cc844b009bf26f9172a29f2f0f78be67a93895fe370b7662c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/REPORT.md": "cb8c1cd422bbeab5c93f28d6b6c54ee513dfb03bf09c5e1687256d5b1f608753",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/__pycache__/prepare.cpython-312.pyc": "2b622557f6a2b35707fdfe4a9773abdfbe73628156990c1d3aacd4c414532368",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/__pycache__/supervise.cpython-312.pyc": "46276acf0bff814927c72559ab559b7b4f996c0d647bb38fa5471b76759f06b3",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/__pycache__/validate_outputs.cpython-312.pyc": "80a2e9e9e73c32cc07c76d03697e6bf946ad6ad194cf86b355fd7ecc83cb19f6",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/diagnostic.py": "12354946ead6d936201866b1536d37ec0714c61e64e8d8efd8e15c915fb73a1e",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/finalize_evidence.py": "18a6f8d673f0fd86bb4c56b0497f777630b56730d64c42df2d6978f71f4641d4",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/prepare.py": "9d893eed34be33f7f8020c2d08cb6fc4171e9e7501631c69c716057a1edaeee6",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/run_diagnostics.py": "9345ffa08cea5f766c234c9e9a501fa050ca895df2e42c4ffba10af4cfd8e68c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/run_sequences.py": "7501c183305763128f3eb22d8c52ecdf01a42b8bbb8073399832b52aa3d61491",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/sequence.cpp": "017e7c274784deb95e12c9f148b256c3d533b59909d68f672744e41150436806",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/sequence_python.py": "1353094fc348e152abca57a814ea3724865e00cc615a53ed0bb134446fefaf48",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/smoke.py": "50b237c53f569fedca6cee7aafe5a9856c1c575f89d14b9b385ebae2fde882f5",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/summarize.py": "36d8dfc0ddac6fe6e34afed3495ac260800ebbfa2f417d473135db348ab7663b",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/supervise.py": "c49e121d170fdcc6e7eb959b62c280b0d8602ffd7052d8f632e14c304cc1e4ee",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase02/validate_outputs.py": "d487cfc6e64927e3c7d5ced9eac07f204fdb3e01c9ad4f407c7e0119dd267b8a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/CMakeLists.txt": "8c7d109b7f005a988defba960afcafafc9d87654b2c185320039e71550f10170",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/IAN-LICENSE.txt": "93d57c91a8a44472409c307ea18fca0fb53442c7e06c25d13a2cbc8d14b158f7",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/NUMPY-LICENSE.txt": "01fb016849aa427edb1bbbbd55f91c26ca6cadb32a5b20e7f000655dd05b0760",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/PLAN.md": "ca0367e92ca0d73db1d28a8a9e462b8103415c4ebce29f023ccc883e9afb2a39",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/README.md": "b16cb06f6e9849b10038bc01fb11887735b5ba5cf7d15761a9b02b021207465d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/REPORT.md": "5fa4fa1224eec092bc472e2a7d196268815f626062b245e8d76d3fee7f814b38",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/compare.py": "002c2d8eae1fb8308980a70798aeb13c1fec4467d631af690fa72cbacd690f23",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/config.json": "f4565bb7268c303008637f7990d1d539f0a52dc47ce8a2e59657d3b28fcae4ed",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/engine.cpp": "bb6a4d598ef990fd6e3ffa58efc5a1e123a545ab47cf1b54c5fc75d781d82195",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/failures.py": "a954367f001aee57673053c919be5219dce8ff7b9fcefb6b725fc6a0d222a1b3",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/finalize.py": "11b0fdcd1df7bd670f3a5b8bc3e963dbc8311676f3cc0b6fc660980a078a537d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/fixtures.py": "6e5b889e4e028234e35179e55b59d5694f3ca7c4428226afdfc88a8017016315",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/numeric.hpp": "7fa9bf354973416a9471e3c8c40bc4e21d14e89a1911309de2a372e7342a9a5a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/reference.py": "3f0485831c98b2f8f8cfa8c6250e1e28351c05bb4ce2aa9405e9f16d9449a255",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/run_case.py": "feb3887cc2afa612f5a6a088a131de3f0b80b5547e952a5ef335efd5473c6745",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/run_stages.py": "dfbb02c676e5db185a517b419b831480eb1a22beaf6952f9691087cd21f05949",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/solver.hpp": "b62bb65826ea681186b09cc42a0452cfbe2e61b21b2124e6f741046ae65b5475",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/stages.py": "93132ab6db50fa69452fbfa76297810af5e0c8baa25fa5bf7a2794e7bdabde65",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/summarize.py": "9fb56156f66e5a7b98cc018e1985189ea58f4cc2a6c9823e91ab6711da8d9961",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/supplement.py": "0ab3ad37ac70897a4d4f08a83cd1b5d071b66357fec9a86a7d8e8235b9016fe6",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/test_comparator.py": "5b5140c02110c46808155edd09876f91ee06d10ab1a41da1c7c07bb581247d3a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase03/verify_native.py": "89bb705d268e8a50d8ab5577ccc48db9d2cea2f22eb1d1e3f2d0e411fc0cfd9d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/.clang-format": "48780bbfeed6cbb1178ed6355d689e27745c5a94afd0beb7ef3aa9f4fe97fd2d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/CMakeLists.txt": "e1ba4d4e1a5d680ca29ffa76458fee7d405c17d7f269c210be19a9cc33be4858",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/IAN-LICENSE.txt": "93d57c91a8a44472409c307ea18fca0fb53442c7e06c25d13a2cbc8d14b158f7",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/NUMPY-LICENSE.txt": "01fb016849aa427edb1bbbbd55f91c26ca6cadb32a5b20e7f000655dd05b0760",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/PLAN.md": "7da32d025fb7eac98f5fd8e9c4c45cb500e10c619ccfaacb8c9902acf0a9c532",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/README.md": "547d3ba62db81d0c2b6832bceedd2c7f75aed8d73f056a0286a41118773cb335",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/REPORT.md": "97091eb2c54b8b4b0f7dfa11bc49c8fe5af5c3dbd67644c83acafae88bffe79e",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/analyze.py": "0ebfb1febd65847be1c40ae36b7d7cfc6d52b129cf1223574dbb2d38a58f0d5b",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/checkpoint.hpp": "7fbf64b5584977ca840710b42dd6df31a491c892993514886fc978022480c7e2",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/config.json": "f4565bb7268c303008637f7990d1d539f0a52dc47ce8a2e59657d3b28fcae4ed",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/continue_selected.py": "68ee9f9dbd19b54a3f0fcbd2660a33f1f800de623252fcb7a70871162bfb39e8",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/diagnose.py": "b89249dd7817988ade7ebee90d3ef4e8efddf8b37575cdb9bf011f5589be4597",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/engine.cpp": "6d2a9a8a7934dea4aa63fbef81177ef6e877c63b6d9f46c073e336f61fde47b4",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/engine.hpp": "1ddd90fc5bb9815ed6637f24fcc95c7e97cf7e8ecc025904f943d3a1918f6a79",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/finalize.py": "525e19da060c2c0d34d0c1a42fb03f25c6c3237e7497a397856ca46302740cfd",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/fixtures.py": "372adc46eff72db716622f80606d07180b6d310b371289af45aec9f1a3c1230c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/input.hpp": "dbeb06885f998c5a05b5bb2247d895f7a9a6edcb91746d280a519fd9b28c8ea1",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/numeric.hpp": "52c259bf6402ef236dfcd3d98c15e6450889af5391f76409742b1495bcb42d8c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/refactor_check.py": "84d481f3092dbc817f35cb3d2bca733f627de1ce2fcd763893db2dcf61c665fb",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/regress.py": "d94fa8471a2a772fc03c405ce1aed30dfb798240ec74033098f0f10c6cf88184",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/search.py": "edb61e3ff5d096e8c66da711c50eeef25df03c2942c363fdb17ed757c4847ce9",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/selected.py": "16f0e3d04415074667253cd55a3704bff4fccc19361abaa54bc71e2a49f4ea3e",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/solver.hpp": "1ea8345fafddc92d90951c5bc6ac6b0596a620ba034aff0805c4f01db4be4f0f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/stages.hpp": "6156ddad714e7326d82ebe536a50c0e4edaa69a19b1cb9e6403e03a1c8d64bdb",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase04/support.py": "eb51726abffa6c54054fd6a22e9c0459c90fc5ac7a59b165aaaa3847541f7338",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/CMakeLists.txt": "8b5745edefd1d36a695bac6f22a2fca9677370297a34f61d00740b9b680485a9",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/CONTRACT.md": "4aa1036a4e5898c9c1f1fe664e38d3604ef37909d494b246040cbc5b16fd97e9",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/PLAN.md": "e7c66894ae4898f3b9703bdc10f67f6b08631f3f6ca4ec3b467c5664a510d2cf",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/README.md": "193d7682f2532136f4e113246f8a44f40bf50164e1380932903e91fcdb8afc2a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/REPORT.md": "b438b2ce5fb8a4380b1102ba86b0610fd616898356bcf949385b4217852776b8",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/analyze.py": "059f5f155fe02b096c11bf98c1a728628099cae7e4563d92da94308ec49a43cc",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/calibrate.py": "7754b8c6554683943e4bfc8255610e993ff1792550b033e980483786cfc4215b",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/continuation-1.json": "057a61c094a404cef65de8edd013482a530901cacc0a784a77de619711fe459a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/finalize.py": "5fdc44a043d0af593f92a98186ee18d211aeb918ac8ae51a7ecced07ee5b0b83",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/fixtures.py": "3cf0b8787f7c7ee7daaaf6bd3d7d968b9f287f5c5aeadeee2b6d5ee0cd6c4720",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/launch.py": "d8a93be84b4d5f7a57f330969290621fb21b78b96dfc1a634243039cf4f0036c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/probe.cpp": "c0edd61ee484938f06edb648d167147a831ac1653fd6b5311be1f6e16505f511",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/reference_probe.py": "36d45e9327efd94bb5dff6e4667fc61bd298c77670447db510b3586f8bdf88d7",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase05/study.py": "fbf3a43cb1bd9e91ce8ac1db8f3e2f2325b464cba8f0802fd52c13a5eda8501d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/AUDIT-F1.md": "186f19133d2cc3006c679f91f26e3a2fb1f93d0b2876d35b03bef72c33892258",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/BUILD-NOTES.md": "c91825da532f812cb517e74c4228ca88e27624d16c3831df69ef4a4970756aef",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/CMakeLists.txt": "67b128fd6d2330d44c6835079e6509ba936322ee3add42d4c6cf6d8ad9b2db7c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/IAN-LICENSE.txt": "93d57c91a8a44472409c307ea18fca0fb53442c7e06c25d13a2cbc8d14b158f7",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/NUMPY-LICENSE.txt": "01fb016849aa427edb1bbbbd55f91c26ca6cadb32a5b20e7f000655dd05b0760",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/PLAN.md": "00a53342da38413088e2972d234b4d405214d41b1b4deb3c7b40c65937531610",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/README.md": "84038e5d7417fa3e6f16075714ef53ec2b9ac1a9f7c9de965b1ac48790e2a75c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/REPORT.md": "af5164775f6020c6849def5d5c7563ce2680847dce0bd56947af13de877a52dd",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/SCHEMAS.md": "2817f7dfad0e9fe5c24d92bfea80cd634ace32266f98fa8bd8400a61ce7d7818",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/analyze.py": "04c3b943ffb34a798e5751c20bf1073b4ebf771efd4e244f9835b8ec6dd24a0b",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/clean_build.py": "acb6b1c03451a64a268b978554a1bdd2ecf0fc65359cff19cd065ce257fbb0eb",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/cmake/ianConfig.cmake.in": "d0ebd9282d7f4959bec76342d3698127effdfae0d81a176341f7e7d64b1c29f1",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/config.json": "f4565bb7268c303008637f7990d1d539f0a52dc47ce8a2e59657d3b28fcae4ed",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/extract.py": "ae3477fe00db30867f2572d019361d890562e6ce3dba10fc92f7e3292964dce4",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/feasibility.py": "fd034964675492ddaf8f61083d8e77160b5475e2cbf5f4868f8dd73922b9b11e",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/finalize.py": "7eab3531d98513a84bdcd9a91b9d994a5aee37506276c4106ebc5bdffce030e5",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/finalize_schema_correction.py": "3020ca64a9820adb4acb066c1b87670f75a7f0c5b009d62b6f33fd6ef7a68977",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/include/ian/core.hpp": "707f4570115c76cbc6001464c53a04639e3a6c919a79ae105fef58cce37164f6",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/regress.py": "adc1d0d99cce8e2008e8c7d2d77b47ef9a126b24e62e1906fe10e48fa6a6c536",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/schema_regression.py": "26eb135f58070d4e033ea17393f8b9946500b3269506bea1f4d99d648d8da29e",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/src/checkpoint.hpp": "cb5b662dd899c35304994d6ae6091c390598d9f64359a019888cfb4b52500c7a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/src/cli.cpp": "87709369a5dddb0cddd0f8255be8fe973af2a13c31705a56ae03b2062c567bb7",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/src/core.cpp": "96e1108f117d272cfb47243e2d24eee5218448f560beab2aea0d372bbf8ae925",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/src/engine.hpp": "23418eddf819a6365295bffa7ae9ccb8551e3f1dfff1d5dff539bd768e0ce5a3",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/src/input.hpp": "96f1e3ebfc468dd52cbd4bdec8474d5f52dc4913f687abea6781dfb7cf7ee8d6",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/src/json_adapter.hpp": "56683f97d1325fe2cb67739ff0f1f93df2645f8c1e26c9208d15db377a2f3f1f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/src/numeric.hpp": "1daed4e8324d88751eb4e2ccbaed7eb26d5ae5b365e483caa00b6fb8baf517a9",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/src/r_bridge.cpp": "b9d61d406511a4e76b988e03f21c19618c6b267412ec33ce08a71665bbdc0f0c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/src/solver.hpp": "ec01672fcdd9f5311efba8af914ecb6fef6b427cdb9ee85dc929752bf9d0555c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/src/stages.hpp": "72fbe5cc0ce17aa98a84afbd0887b12f27724ab72a6f9d0beb4bb6f86f7d3608",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/src/testing.hpp": "2adf96c169a78a6939f669cfd9bf760c11e4152a27db79ec838d58bf2b76ac13",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/tests/consumer/CMakeLists.txt": "4cf7289cee33e32d0a42c87712a506d4a18c611740ebf1db526f9b99d28028c0",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/tests/consumer/main.cpp": "63e60e28d4bf3bbec9fba47a348a70ae680cc35aa4f3ad144213d468c641f2ce",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/tests/probe.cpp": "2ab604fbaf7244e9a2b82488f357106dae825c7ff9c0327634cbf264dff30c64",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06a/tests/r_smoke.R": "273530a79dd002dfe0f6c15ffb19d07814dce24185be88db375fdbb5f79589ca",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/AMENDMENT-1.md": "8925945830ea6946983ee68d2ef693d7ccb260f246bc10efd8167308950f08de",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/CMakeLists.txt": "48af973f759248ea9a95ac3d9853e16d525f9ef7ef665e5d85b30468451202e0",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/IAN-LICENSE.txt": "93d57c91a8a44472409c307ea18fca0fb53442c7e06c25d13a2cbc8d14b158f7",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/NUMPY-LICENSE.txt": "01fb016849aa427edb1bbbbd55f91c26ca6cadb32a5b20e7f000655dd05b0760",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/PLAN.md": "4fb2ad0c00ddf35664e288c71fe0e43d614b2a88176f4e9e34bf2f2bc8cb02e3",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/README.md": "d70622186d4bb4001dc6a7b6d28d399591baaa14b8e066c50f2155d9c8fb04bd",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/REPORT.md": "117299c38c9617c00c470142995b7384b9b1d26ccfda77127e5e1bb4f64fe1f4",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/SCHEMA.md": "862ebd07496fefe04d433e6d400fe851d1ebff4a0e99fd8ab86720f44d5a10fc",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/analyze.py": "21c5efd737352be541b70d55077c39f13ec925494e9c825903feae0f6d53c7df",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/cmake/ianConfig.cmake.in": "d0ebd9282d7f4959bec76342d3698127effdfae0d81a176341f7e7d64b1c29f1",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/config.json": "f4565bb7268c303008637f7990d1d539f0a52dc47ce8a2e59657d3b28fcae4ed",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/extract.py": "6654531a746ca38371dab09111292f8d8257753d0ae8063790f330ea7660c59d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/finalize.py": "c96891e27d969e1f72088390691103856689f5f485b639d085195cc9b27d18a5",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/include/ian/core.hpp": "e4756ebe4c5447e686ba9759a4db94115a7a92edf4bcf2f56d88b199b54f1652",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/periodic_tests.py": "720d737e4d4e8dc24e90fef8234d532a27906e83d8b8234bae458a95efdf8a4d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/recovery_tests.py": "8dfa2564407dd9d8ee12b03362951cb79e979464417bb08c8492f417d5a45817",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/checkpoint.hpp": "cb5b662dd899c35304994d6ae6091c390598d9f64359a019888cfb4b52500c7a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/cli.cpp": "6bdd8aa85a86c6d1f23084df3bd282889a2c82f77436e6c44d915947c8221ea6",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/core.cpp": "7ef29efca81484eeb9ae8c0a821029319d4807471fc5dae67e2f297624548135",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/digest.hpp": "94a8a7cf356c4f7580588c281aa3d9ebdfb4f604068383cf13102fdd40c11c4f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/engine.hpp": "913515d7542cb9c744acd5275e53f12252101c1dbf5c405b82be6a95196bbce0",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/files.hpp": "295187c779d1eaef9f86d201adf477c6be61ad738f7f431fa57ef79b32009c03",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/input.hpp": "96f1e3ebfc468dd52cbd4bdec8474d5f52dc4913f687abea6781dfb7cf7ee8d6",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/json_adapter.hpp": "56683f97d1325fe2cb67739ff0f1f93df2645f8c1e26c9208d15db377a2f3f1f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/numeric.hpp": "1daed4e8324d88751eb4e2ccbaed7eb26d5ae5b365e483caa00b6fb8baf517a9",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/r_bridge.cpp": "b9d61d406511a4e76b988e03f21c19618c6b267412ec33ce08a71665bbdc0f0c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/restart_methods.inc": "3321372f9da3352031270fb41fdbbc5a77ee7e2500a10810a447a9b5eeead395",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/solver.hpp": "ec01672fcdd9f5311efba8af914ecb6fef6b427cdb9ee85dc929752bf9d0555c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/stages.hpp": "72fbe5cc0ce17aa98a84afbd0887b12f27724ab72a6f9d0beb4bb6f86f7d3608",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/state_json.hpp": "31483e6ef6a8c36de0a5279e4b17bb764abc564fdec75681dac5c572367b28f4",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/store.hpp": "768486f6b54a260489b373266c9aa264ca96f3ac0cf23ef70aab65adb82dd21f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/src/testing.hpp": "2adf96c169a78a6939f669cfd9bf760c11e4152a27db79ec838d58bf2b76ac13",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/tests/checkpoint_tool.cpp": "7cb1a4d9038b6b1292b260d4f8f036fe22bbf8f7712bc7cd08be0ee5d2710635",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase06b/tests/probe.cpp": "2ab604fbaf7244e9a2b82488f357106dae825c7ff9c0327634cbf264dff30c64",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07/AMENDMENT-1.md": "aca6aef75ad5f1fd55448a7d38fea6f90e224c55f53591516b57a21d3c4c61f8",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07/PLAN.md": "70bcf7192bcf0b0d8788f21bc97a6527c520c589fd57944d256e6a1b9dc5fe2b",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07/README.md": "3514a679944c6e5a88d629ec2bbc3add96c790dd2c43bde282fa5a00a502f407",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07/REPORT.md": "f34aeb31c3542ffd5e8a0c493c03d0de1efa5f52afbaab12bf4fc97280e85509",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07/analyze.py": "71ba22cbbf5c8e5af88dfef66aae02f32c0a499a821c08cae59e64b00c2d7bf2",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07/checks.py": "1cea799785c668df3d8e163263f15ecdfe8d934336568f06612786785eef243b",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07/diagnose.py": "2989cd2e133d9d811d0ba21cf3efa873b1bb0e4855438f5e621e517d299c469e",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07/finalize.py": "db3ba59fd6ad555760038513c4a91667960fdffd7ba20e0ca3d8d0b4839f0e1b",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07/fixtures.py": "bc7bf1fa1eb8c12569b44ab0d160aadb1a9f53bf922e961cfdb306f8d3a23b99",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07/guard.py": "e052237ebb45a54e71ed5c84f3f20c5ce9ad4327f85a69c55ae84a89bcffe25a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07/run.py": "84d9c2be61aed552cfe715665ebc485f7c790a03456d30703b2edb02a7ed94c6",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07/test_harness.py": "00bda271fb08c665519a2a336063c63f5249ffe254051cd6049cb35dec54d8b7",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/PLAN.md": "238ed2e1b0e63be214340ece22703da9e9329171460c681cca5457f944708a6c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/README.md": "68497cef07c9fa34216f6c0133fd50324961db7ebabc1fedb98495e1cedba8dd",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/REPORT.md": "ec214f22a6e5e04b211bb4ef532beb94ed1ae12ecf01c2590d5060ac0dc6290e",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/analyze.py": "9c524f8b1eda12f47b37dcf534a24371d43303f635e7b6317db2b77f3cd11cf7",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/common.py": "4180f47a0925be25a0244e0220b09a5ed46f706dc9e0439993f6bd7b19d5276c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/feasible_witness.py": "2310c79746713b4c2e27890de97e7ce273af74356c7061b5a5a4141edb608251",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/finalize.py": "9752772717c579faac8a10a0532b79f6f645041b5b72152adcefef334414ea4c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/prepare.py": "2de57bb4cc69dfe570c593e0d1e0a19c07eb6be46b0b505c2d3e2a7cf04448be",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/replay.py": "6af9ab2a18a6996895fc40c450c2cd12916969949aa4731a5df042523a646370",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/run.py": "286170f0afc90e50cb624648b7f1818db6552dd4ae259e0810fd9f1b351c43c1",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07b/test_checks.py": "b108950a5781106b2d76b615b6134db52b116eb81f78a42702f2c6fa62f1dc6f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/AMENDMENT-1.md": "38dd6f9132410370dfc7ef62ca9cac437a9e35a4c744d0f90c3be10619b76ecc",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/CMakeLists.txt": "72e782305aa6117d868751daa943440ee6e1c973f72c5418edc4feb25c3733dc",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/IAN-LICENSE.txt": "93d57c91a8a44472409c307ea18fca0fb53442c7e06c25d13a2cbc8d14b158f7",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/NUMPY-LICENSE.txt": "01fb016849aa427edb1bbbbd55f91c26ca6cadb32a5b20e7f000655dd05b0760",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/PLAN.md": "558785e945ca067bc0b39713b8618395d933d5b31c5b5ccc9015daec4d2124fc",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/README.md": "a004044fc17ff1e477399a43405980d3b884560f3bd043e45af75c5ae4122429",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/REPORT.md": "2dacde22d662221bdee23898932853f0fd1ba35b407f0ee8f88033871c863fa2",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/analyze.py": "2af800f8c5bf6ea71181d6a01b6e7801b779f1e2d4647e04ded0db9df27acf56",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/checks.py": "7fc84e1809b9977174d70dbcfa2ea672844fcd495e48e2fac897bd49cc92758d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/cmake/ianConfig.cmake.in": "d0ebd9282d7f4959bec76342d3698127effdfae0d81a176341f7e7d64b1c29f1",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/config.json": "b2a2cf0bd4e3af59636aae034204ef20c684f90ae26d18591b6d3559ff1d0a49",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/extract.py": "eebc6076198ccbdb56a95efa6410079eb972eda84d80e3a317b40ba78e762cba",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/finalize.py": "1200c850f9156e5cebfc7e6543e03a6ee0be6f8db90a378c30b96563ee0c901f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/guard.py": "e052237ebb45a54e71ed5c84f3f20c5ce9ad4327f85a69c55ae84a89bcffe25a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/include/ian/core.hpp": "410a08e472ba20eb323b2034875c6d1854ea270e986e4e24b9d517b7c3144c92",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/operational.py": "88eba36b8966d90b43efa665f5d3db0177ddc7627d3d40d0deb977c8d962e527",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/prepare.py": "959793a8b22a804a88bdde842034559e011101fd368f488f1eb4069f28f277e1",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/provenance.py": "ff14318e2cf0a540135c849b676915ba4d69c9a3acc14567d2ef47fadb747378",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/reference.py": "7ecaadeb6443d35e707fd2a741132b3109120139e0aa34871fe3c6829a13b262",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/reference_probe.py": "3bbd3a4e42eec0433e07955cc79f98a50d86a6c42b6d9b2980f332b8b9df2dc1",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/run.py": "3b6668d1a5b1dc709c51f1b3d5fe53677b456af096fb507e4a4e81bf23155c3f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/checkpoint.hpp": "cb5b662dd899c35304994d6ae6091c390598d9f64359a019888cfb4b52500c7a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/cli.cpp": "52f10802d47d664b17770db59310e53bb350735a2c6e2e4a6e7b4d00180df807",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/core.cpp": "be2a877ba686912aafe0aad0c14e34f8d65768719d67a677d099f244020c11cc",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/digest.hpp": "94a8a7cf356c4f7580588c281aa3d9ebdfb4f604068383cf13102fdd40c11c4f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/engine.hpp": "db2f72baaa7a829a4e9b6484674aae9190e4e5f4552d1b27f5c3110cfe6c2aff",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/files.hpp": "d78147c4edc3d0318793e5e0dad22449d27abf053e4cb31fd9db6e2d2fec8261",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/input.hpp": "96f1e3ebfc468dd52cbd4bdec8474d5f52dc4913f687abea6781dfb7cf7ee8d6",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/json_adapter.hpp": "3097de60c5e9f3564559b512161a9a24125d71b420e0f39be0e527c389d8d9fe",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/numeric.hpp": "1daed4e8324d88751eb4e2ccbaed7eb26d5ae5b365e483caa00b6fb8baf517a9",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/r_bridge.cpp": "b9d61d406511a4e76b988e03f21c19618c6b267412ec33ce08a71665bbdc0f0c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/restart_methods.inc": "f98f7481227c8de1e61ba7935b0bac263f8770aa91573260cc3e5fe13b6d56b0",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/retry.hpp": "96b663b4b02103ffa61f0c3eb2341a4581bc2873972c5db1b614421321b2796c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/solver.hpp": "801c5e48b5cf8e470337d04f0317d030f5b3004d019ae81599e305108a02853a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/stages.hpp": "72fbe5cc0ce17aa98a84afbd0887b12f27724ab72a6f9d0beb4bb6f86f7d3608",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/state_json.hpp": "fc84891901e702f45f347cb9694c6fc46706437fb2dbcf9eed2c29a522ad5d8f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/store.hpp": "768486f6b54a260489b373266c9aa264ca96f3ac0cf23ef70aab65adb82dd21f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/src/testing.hpp": "2adf96c169a78a6939f669cfd9bf760c11e4152a27db79ec838d58bf2b76ac13",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/test_checks.py": "ecbd529c1ffa7005b5a931aacf8363db0873176f57399b37adfcb27a9c4410a0",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/tests/checkpoint_tool.cpp": "7cb1a4d9038b6b1292b260d4f8f036fe22bbf8f7712bc7cd08be0ee5d2710635",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/tests/probe.cpp": "2ab604fbaf7244e9a2b82488f357106dae825c7ff9c0327634cbf264dff30c64",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/tests/retry_tests.cpp": "d6f18f2f646d26d52b783dcaea9d8aa1714f0960a3e6e67be2ee9a5d32735e8a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/validate.py": "b84f595301d95caf9604da88faa567750f95ad0ef72e873f9d9966bd10056b28",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07c/verify_derivation.py": "c4df2031037d5bd2473eeeb0cb50ae6553a7d204eeff97595c9802e60e287d0d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/AMENDMENT-1.md": "9f037b2dc3d7ecaafba61c21b9c285c1ff489462a107e9953b1a3f39b64403c8",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/PLAN.md": "735c2f64e15ec78d3bfcc9b0fe930a594c601fd7e333d2543c49f4a74a1fd228",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/README.md": "9d8e42fc48661a21ad7157ed640e1d8a196c0fa3c283e9a654e4967d0f9b84a3",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/REPORT.md": "b43f6f311e2f4525033172c7e63f6bc4cbf80f9204381759daaa1aab4ab74f87",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/analyze.py": "2e4b854c3a7f9397380c5643ac7ca491c00e64ba8e0fbd97ae603eb9d3a6cd48",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/CMakeLists.txt": "72e782305aa6117d868751daa943440ee6e1c973f72c5418edc4feb25c3733dc",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/IAN-LICENSE.txt": "93d57c91a8a44472409c307ea18fca0fb53442c7e06c25d13a2cbc8d14b158f7",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/NUMPY-LICENSE.txt": "01fb016849aa427edb1bbbbd55f91c26ca6cadb32a5b20e7f000655dd05b0760",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/cmake/ianConfig.cmake.in": "d0ebd9282d7f4959bec76342d3698127effdfae0d81a176341f7e7d64b1c29f1",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/config.json": "e99906812798b25f39a6dd94034a8b68a2f4d91d59677deb58ef3bf9452898df",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/include/ian/core.hpp": "00f97211851b272e317c1a7e79c6023026d134cc6fd4136c14050e45f72c4cd4",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/reference.py": "c8f1b9758143d8a112912cd916ea2b2bd154420163a7f2216da17f738053e235",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/reference_probe.py": "3bbd3a4e42eec0433e07955cc79f98a50d86a6c42b6d9b2980f332b8b9df2dc1",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/checkpoint.hpp": "cb5b662dd899c35304994d6ae6091c390598d9f64359a019888cfb4b52500c7a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/cli.cpp": "52f10802d47d664b17770db59310e53bb350735a2c6e2e4a6e7b4d00180df807",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/core.cpp": "be2a877ba686912aafe0aad0c14e34f8d65768719d67a677d099f244020c11cc",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/digest.hpp": "94a8a7cf356c4f7580588c281aa3d9ebdfb4f604068383cf13102fdd40c11c4f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/engine.hpp": "db2f72baaa7a829a4e9b6484674aae9190e4e5f4552d1b27f5c3110cfe6c2aff",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/files.hpp": "d78147c4edc3d0318793e5e0dad22449d27abf053e4cb31fd9db6e2d2fec8261",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/input.hpp": "96f1e3ebfc468dd52cbd4bdec8474d5f52dc4913f687abea6781dfb7cf7ee8d6",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/json_adapter.hpp": "3097de60c5e9f3564559b512161a9a24125d71b420e0f39be0e527c389d8d9fe",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/numeric.hpp": "1daed4e8324d88751eb4e2ccbaed7eb26d5ae5b365e483caa00b6fb8baf517a9",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/r_bridge.cpp": "b9d61d406511a4e76b988e03f21c19618c6b267412ec33ce08a71665bbdc0f0c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/restart_methods.inc": "f98f7481227c8de1e61ba7935b0bac263f8770aa91573260cc3e5fe13b6d56b0",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/retry.hpp": "96b663b4b02103ffa61f0c3eb2341a4581bc2873972c5db1b614421321b2796c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/solver.hpp": "f39966bd628cb08ebca012154bc04bbcfa0c3e9017ee86a62aec03520c7878fa",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/stages.hpp": "72fbe5cc0ce17aa98a84afbd0887b12f27724ab72a6f9d0beb4bb6f86f7d3608",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/state_json.hpp": "fc84891901e702f45f347cb9694c6fc46706437fb2dbcf9eed2c29a522ad5d8f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/store.hpp": "768486f6b54a260489b373266c9aa264ca96f3ac0cf23ef70aab65adb82dd21f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/src/testing.hpp": "2adf96c169a78a6939f669cfd9bf760c11e4152a27db79ec838d58bf2b76ac13",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/tests/checkpoint_tool.cpp": "7cb1a4d9038b6b1292b260d4f8f036fe22bbf8f7712bc7cd08be0ee5d2710635",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/tests/probe.cpp": "2ab604fbaf7244e9a2b82488f357106dae825c7ff9c0327634cbf264dff30c64",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/candidate/tests/retry_tests.cpp": "d6f18f2f646d26d52b783dcaea9d8aa1714f0960a3e6e67be2ee9a5d32735e8a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/derive.py": "42c585f927e22e98c64ed4618412c880daf5f35694436b779de621a09fedffbf",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/diagnose.py": "ce14a0ab4c95ec9f33b11270375ffaae68548f47072f5f0f6163f04ced607b4c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/finalize.py": "0f82873bac601ffe0324fc69599a30fc8edfd1f3978d9dedeaf5dfdcda780af8",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/operational.py": "56ed3dced9b925cbb292bed22bf0eb2e7cff8a23bad17fd121521e20c7346d25",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/prepare.py": "02c972f1c46d70749662d4a15db1470c2aa188adbacd97bb2e496ca2b913dfa7",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/prepare_engine.py": "4d380fcc676b66de85da0572e003dd90b5cb442bd58dbbcb46769686256ca3fa",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/replay.py": "d8ad8abec4add7fef98871d05fbc30a47a488bc220470d35c70b2a3b0ceba3ff",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/support.py": "d235bb5a780976793ddc8b167cd4fdcde274d369243db4f97783f0ebdf3d3e4c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/test_checks.py": "0ceb8700821a3b876c92841a8760f2f5618396c84c09d008538a78dcd194e55d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/test_trace.py": "61f6bb77540ce2716f9d4a5465e220fb85711ac8c471d4873fc461cfdb83bc14",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/trajectory.py": "570f7bd366c4b1ea3caf673b70c34774606388fcb368d7e30ac3caf5b22109cd",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/validate.py": "f6dd006df770fd83dce9fe3843c6303580ba1f90491d6ab6f4c9e4b089e101b1",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07d/verify_derivation.py": "a0a21142e5f898a3d5653c2ac50211c751801ead6f6d756a1af45c4095d28748",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/PLAN.md": "0ec68b0a2091f0f6e14fbb8ebda5b559feeab2c63f61c8db4dcf122b4230af43",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/README.md": "3153a748981a09f28a69ed1ddeaab9ec0801aa47751918961a83d0ccb96dd4c9",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/REGRESSION_COLLECTION.md": "71cc8b50bffc76c2f17eb80258b8a7d5804881fe9cdaf706647a50da61dbaf25",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/REPORT.md": "9c56ff8ad4ebebe0a9a236457588eba321eaa50ab74a34beabd75b75a68709f9",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/analyze.py": "485b14455c30aade3015026f0f971965af4a33a42064a8e25488f95eefb354b8",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/CMakeLists.txt": "72e782305aa6117d868751daa943440ee6e1c973f72c5418edc4feb25c3733dc",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/IAN-LICENSE.txt": "93d57c91a8a44472409c307ea18fca0fb53442c7e06c25d13a2cbc8d14b158f7",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/NUMPY-LICENSE.txt": "01fb016849aa427edb1bbbbd55f91c26ca6cadb32a5b20e7f000655dd05b0760",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/cmake/ianConfig.cmake.in": "d0ebd9282d7f4959bec76342d3698127effdfae0d81a176341f7e7d64b1c29f1",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/config.json": "39379ac41a7463be45b73b01bbde72e22d7703a8b42cf1366ae267fb9048d5bb",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/include/ian/core.hpp": "193b03efe3755681624e8270076fa27f6fccdcd3e4bc016dc1426988274e3fce",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/reference.py": "9e6acf27cc3f8050aa247a49567fd9e16484c90e0dfdd381e41fb74e0af0a67f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/reference_probe.py": "3bbd3a4e42eec0433e07955cc79f98a50d86a6c42b6d9b2980f332b8b9df2dc1",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/retry_policy.py": "9d1e639e6c8af615cc3d661c14fc51cb65254545350e38f9d6f71f1ce3716851",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/checkpoint.hpp": "cb5b662dd899c35304994d6ae6091c390598d9f64359a019888cfb4b52500c7a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/cli.cpp": "52f10802d47d664b17770db59310e53bb350735a2c6e2e4a6e7b4d00180df807",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/core.cpp": "be2a877ba686912aafe0aad0c14e34f8d65768719d67a677d099f244020c11cc",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/digest.hpp": "94a8a7cf356c4f7580588c281aa3d9ebdfb4f604068383cf13102fdd40c11c4f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/engine.hpp": "db2f72baaa7a829a4e9b6484674aae9190e4e5f4552d1b27f5c3110cfe6c2aff",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/files.hpp": "d78147c4edc3d0318793e5e0dad22449d27abf053e4cb31fd9db6e2d2fec8261",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/input.hpp": "96f1e3ebfc468dd52cbd4bdec8474d5f52dc4913f687abea6781dfb7cf7ee8d6",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/json_adapter.hpp": "3097de60c5e9f3564559b512161a9a24125d71b420e0f39be0e527c389d8d9fe",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/numeric.hpp": "1daed4e8324d88751eb4e2ccbaed7eb26d5ae5b365e483caa00b6fb8baf517a9",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/r_bridge.cpp": "b9d61d406511a4e76b988e03f21c19618c6b267412ec33ce08a71665bbdc0f0c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/restart_methods.inc": "f98f7481227c8de1e61ba7935b0bac263f8770aa91573260cc3e5fe13b6d56b0",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/retry.hpp": "56e9c9c6c63908a9bc9096efb7e2d71bf814e7fd341a680b408d56ea30d8d3cb",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/solver.hpp": "b14c20fe87bf480fcb503bc0208fa48d2f9817d7efd05bb26741de1b034270b5",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/stages.hpp": "72fbe5cc0ce17aa98a84afbd0887b12f27724ab72a6f9d0beb4bb6f86f7d3608",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/state_json.hpp": "fc84891901e702f45f347cb9694c6fc46706437fb2dbcf9eed2c29a522ad5d8f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/store.hpp": "768486f6b54a260489b373266c9aa264ca96f3ac0cf23ef70aab65adb82dd21f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/src/testing.hpp": "2adf96c169a78a6939f669cfd9bf760c11e4152a27db79ec838d58bf2b76ac13",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/tests/checkpoint_tool.cpp": "7cb1a4d9038b6b1292b260d4f8f036fe22bbf8f7712bc7cd08be0ee5d2710635",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/tests/probe.cpp": "2ab604fbaf7244e9a2b82488f357106dae825c7ff9c0327634cbf264dff30c64",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/candidate/tests/retry_tests.cpp": "acd6e3934d31dad38131d261437104723dc6685f104e0f45a20768f184d4c3cb",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/derive.py": "adb0b26ed7fab822ca7182888046feb71b0676ffd9d2dab12c632df6137f42b0",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/diagnose.py": "f573b9534aa832d81b65e2ef02113c532bd7365c2ee255a270f51f93c965961d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/finalize.py": "473cdf4d2feca80ceb8a60731dfc7a96de398dd800ab1302e958f286578807ef",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/operational.py": "22d078e65df8e1c665f05e59c8a38059dce25d1c4b4b1c3256d5d86421640612",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/prepare.py": "bb73b522bcb5c1157037a629b735c09b98a11d8a23cebb99691ccd83438234ca",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/prepare_engine.py": "aa80bccdffacf76743e9216b29636f3594bf8a23f9e759ce99c18473ad402c02",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/replay.py": "d8ad8abec4add7fef98871d05fbc30a47a488bc220470d35c70b2a3b0ceba3ff",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/support.py": "37bfe2f383bb1bc9a9312a2280729e41f818c89b75c2adf0c1953d0e88af859d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/test_checks.py": "0ceb8700821a3b876c92841a8760f2f5618396c84c09d008538a78dcd194e55d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/test_eligibility.py": "60cea1e54633824f8524e963d617c7cd35f8b59e6c492b147b04ff381a1977a2",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/test_trace.py": "2d8492644b2f1ee05aa406f9fe018b9e48c0e18e0f06e1963d433852c1703ff6",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/trajectory.py": "01f27c0dd67dfcc9cfe057b56897694336fb79c5d5bc969737b90f67350c650e",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/validate.py": "ee9a07d288b39894793968929d2928cb93ceae4b261e0661f0f2d9dd99c6c8a9",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07e/verify_derivation.py": "ad45f2240981b98cc9dc31b06cf2dd0cda4b818ef847550817aa6aad49bb6fc0",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07f/PLAN.md": "19ef9d5182cf36b7bdb69e24f2504859c3a4c6cc0bebc3d22cbb3c6b04ba0cb9",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07f/README.md": "a486cdbc3b43778047b400d2745b1547dfd979670e344eac5db0c054abf2f893",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07f/REPORT.md": "ebe27f4c48c9f02ac10cde05a381a18364054c30778cfbe0348376e029345367",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07f/analyze.py": "9464d76549b55b69b216d42fdf54cd7845dc7d0c5fc6aedf71720fa9e21fdce1",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07f/difference.py": "2b0449be6797b9a03f14c5adf99c61c875f3df2a0a15c1026404c4545389dbfc",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07f/finalize.py": "2d58b3765e0f2f05065e91805914828b37584178b976ea129d8bc946bc541d93",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07f/preflight.py": "a706bf4cc2ee2a5ad3a46204b7496d71082429004bc0e476e72a157e8d9aa80e",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07f/prepare.py": "33a96dafb51abd8525d23f8b3648ec76fe2a0424f3e8123794b383b111dd8de5",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07f/quadforms.R": "e8aab381954a4e56652aa509c8a9d6bfe52fb151891611cf4a7088427fa5b07c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07f/run.py": "1490740d97e062f636c218e56ca56b88b84e99436d2c4d83f08b72f9cc795837",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07f/support.py": "934e929d706517915e7be1e8168dad2bd55b424bfa2b864002266bb5ed34df1d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07f/validate.py": "db3e60748d91e602af293bb908783a2b31b8e23f77e8b291a22229a62dde7d59",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/CMakeLists.txt": "2a990146051197e4d952958052a3c6da5131c96be741c8aac3994dd916b6fa51",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/PLAN.md": "b4084d04cdef6b4b3a06bb591a2d7a3f867ccca419107e898973891665091d8a",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/README.md": "68df5368a22106f9027d146f68699e893643c837cbbb929d118abfc070c65530",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/REPORT.md": "ca34d76079c0cdc0fe8315acfee12822ea23b7df32bb6c88393c47fc8aecbbec",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/analyze.py": "dd755c99025ce5f7eb72c0054d4b241c5f378df19abce961e2ce7321dd9e3d3c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/execute.py": "c0ee51d32ceb23d5eaeb1cf109371cf7dcf0beb4fc96b674ab859600137e79c2",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/finalize.py": "63328e231888a011b8bd192b28a67d1fdeef29479ae6bd49ad1fa7ecfadd681c",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/prepare.py": "dc1f701cf230b87e6d31ef09db8660fc9a7c8b135943b4cf2e8d9a6d4ad60df5",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/python_replay.py": "0a087fe0176f8e3ecd8423e93abc10432d1637e57b2bfda944ac602afbd70b51",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/replay.cpp": "f1cefdf305638d0c4cfad39488321b763b986fbfd338fc1693df9189cad01074",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/settings.inc": "eb44e285389aaafa9d3d1b7776f98571a65a3bee67bac90f1890af693702ce29",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/settings_probe.cpp": "792a2ad27b1f8c68ace6c917d75bd5a7882af5dd839e05995d72500896325141",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/supplement.py": "8a46670b817863d0dc004a89fca68f55c41a9a45b59a645f981026f006d0ed2b",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07g/support.py": "ca72e8b314960b39b39c69426af28f6b34a82ce639e16bf863e8fa8ff6885a03",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07h/PLAN.md": "60a94f74936fe462fe64edb88f8c06eb7463cb6e19bf981623e89608d4438c5b",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07h/README.md": "c2a9a902a29088aebe92e3734117c0494c3e9d2ea621d29381919da869a89ae3",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07h/REPORT.md": "766d84087781c6ec161d7e08df7121156bdd4d98691cf110ecb796e57ffd0e0b",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07h/analyze.py": "6efa268ecc4e984e154c5d0895a7fa29b6b1f48fd9606ed6e4eb28ebc5785d11",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07h/execute.py": "991a20429b71ddb3311b652185fac5f83ca2132d5aa71b88b58180bbccc4fc1d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07h/finalize.py": "db37bbaa04577c8436616d29c04243bf5ff86b9f67e080e0b01942c1e5656856",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07h/oneshot_guard.py": "16dbc267d79228e97c33001643814f9977a322fe8c0ca8503f97ab64e7d9bd8d",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07h/prepare.py": "27e121c147d9ac170bcd29a88308f8380e0e97e0d9abfca280c0fee5a356ece8",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07h/replay.py": "29b261c55a4db128cd44f1419a4db2198b81efeb7ed9923ce14b7f7052a6c759",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07h/support.py": "020a95884d2f5847b98deb647b0da356208a648bd73e63681655a67b9c194e35",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07h/test_guard.py": "c6b6a6fd77fd37211b8d346cc6236110757039de552a988b16cfc99b50733a92",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/PLAN.md": "8134c47ed28af8d806f4c929d447ff230d572d62ec67182a12830063adce166f",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/README.md": "52e39fa3405afff0be2776508eaa77b0c84a7784f09801b93a9bd869a575e0bb",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/REPORT.md": "c81d937ed334e54035869b857d8419e6a59216d8bc2a722f4e39b40e64bc12ae",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/analyze.py": "4c8c2436bf826042c4bf63fc40aaff18392ddce674ebec56bf498198d6097a79",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/exact.py": "8038c004614a1c74af6e726080e7fd20d631b3088e9b97e3faf5494dea245845",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/execute.py": "f9e5a642a8f644fe02899869e1c9a4b99d7c5f720dae4564cc3c1c4456d50251",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/finalize.py": "83ca68e2858544090a0851af1343d99c5933177fc33c79299af221f5aa62f375",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/prepare.py": "e2c75be7aef085b779122b9242b1eed753f38c694a6c2e9ad9be5141d1213cc0",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/replay.py": "6c24ac6c51b78f4be66471d0430550cf673c07366a0128149d94d6de22d81e3b",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/saved_span.py": "36363ad173bf2829246430f2586cf6b0e6c305f3eb481a6dc18354315ce3bba4",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/phase07i/support.py": "020a95884d2f5847b98deb647b0da356208a648bd73e63681655a67b9c194e35",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/provenance.py": "a3f095514036bc562d5b092ab0860ce3c7c226f46327fc7eff13cae619dfcc19",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/python_replay.py": "3288f3136536b49305942f5beed812f95012430a58c52aa967026b491677e3cb",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/replay.cpp": "b9119d8f20a680e2794b26c2806d51340ed8f4ac1c75e0ec7f00d348fc9af81b",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/requirements-lock.txt": "aefa3b4fe37054f4187a6a276e7c2c28e22cb16dd40ce6bb17adf10e82105bee",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/requirements.txt": "2bf82da06aeb0290ea40224580f353308a1f6823f8cf3bbfca922c40fddc1a37",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/run_benchmark.py": "ff4930d44418f8bf90ddaa6f10e4cae5849dab899a077964e95608aad50d6b7e",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/summarize.py": "dbba50142c4566d259a078b4a820d8f9f4162600c11d783a5826b67f9bbf29f6",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/test_validation.py": "636af14ccffcbf1f36e27118e3c783aa80414753404f0893491c9a50b484d16b",
+    "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/implementation-worktree/development/ian-cpp-phase1/verify_submission.py": "b4343b24162ffe8c5bd0a869310c9b7c168ae686c3b8550ec982b47bf057758e"
+  },
+  "private_root": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17",
+  "subsequent_extension": {
+    "as_of": "2026-09-23",
+    "scope": "Owner-authorized subsequent studies and audit-gated continuation stages; original discovery boundary retained.",
+    "new_records": [
+      "IAN-EXP-023",
+      "IAN-EXP-024",
+      "IAN-EXP-025",
+      "IAN-EXP-026",
+      "IAN-EXP-027",
+      "IAN-EXP-028",
+      "IAN-EXP-029",
+      "IAN-EXP-030",
+      "IAN-EXP-031",
+      "IAN-EXP-032",
+      "IAN-EXP-033",
+      "IAN-EXP-034",
+      "IAN-EXP-035"
+    ]
+  }
+}

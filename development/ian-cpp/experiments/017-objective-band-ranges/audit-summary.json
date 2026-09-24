@@ -1,0 +1,27 @@
+{
+  "audit_status": "accepted for bounded historical evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "61e7e57ce2c802ff6ed4037c0cd49848fde5ecf76437fb55a2d1b284ec2bade2",
+    "review": null
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-7i/audit.md",
+      "review_sha256": "59acd3bf19ef990acb1ce96656f078a841d90ba02a0e99f73f7075df2dfdd7ca",
+      "candidate": "51ae9378bdfeba4128f1b9de5e1b91b8463100f8",
+      "scope": "Original bounded milestone; this question is an indexed part of that scope."
+    }
+  ],
+  "consequential_limits": "The full extrema remain unresolved. A near-optimal range is not proof of multiple exact optima. Repairs of fresh endpoints collapse almost to the baseline; the historical-witness result must not be attributed to successful raw endpoint solves.",
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "b6d1c792887ff425226a9a5b72f88b3913c1319f67923883d65af57447280ac2",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
+}

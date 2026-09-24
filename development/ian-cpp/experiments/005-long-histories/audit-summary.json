@@ -1,0 +1,27 @@
+{
+  "audit_status": "accepted for bounded historical evidence",
+  "numerically_checked": true,
+  "numerical_check_scope": "Checks specified in the linked original audit; not every new catalogue sentence or figure.",
+  "current_report_review": {
+    "status": "not independently reviewed",
+    "report_sha256": "20efe2245b00e6306dfab85de7c6b720a6f3c939d725dcb77153782cd883b71d",
+    "review": null
+  },
+  "audit_history": [
+    {
+      "review": "/Users/pgajer/.codex/private/ZB/ian-cpp/2026-09-17/auditor/review-4/audit.md",
+      "review_sha256": "f593bd6a0e84b5398f3e01e6d4259e01c594e678ee8d0c037a174773bb8dade0",
+      "candidate": "df4dcb271369d65302fdf62ce6b7e6c4a13fbb32",
+      "scope": "Original bounded milestone; this question is an indexed part of that scope."
+    }
+  ],
+  "consequential_limits": "Selection favors coverage, not representative performance. The subsets overlap and are not independent biological replication. Equal final decisions do not erase failed intermediate-array comparisons.",
+  "findings_register": "../correction-dispositions.json",
+  "presentation_revision_history": [
+    {
+      "report_sha256": "35cffd7fdc14c7d9fe7f637d166195c5988ddb73578fbd4870fd937d7c841158",
+      "status": "unreviewed first catalogue draft",
+      "change": "Shortened repeated explanations for readability; numerical findings unchanged."
+    }
+  ]
+}

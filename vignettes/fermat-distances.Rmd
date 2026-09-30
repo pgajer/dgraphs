@@ -152,6 +152,191 @@ Increasing `k` to `n - 1` always restores the complete graph, at quadratic
 storage cost. Merely observing no change between two smaller `k` values does
 not certify equivalence to the reference.
 
+## Two noisy arms with diffuse background points
+
+The circle illustrates a change in distance. Two arms ask a different question:
+when does density make a path follow populated structures instead of crossing
+between them? We use two perpendicular segments of length one, with 80 samples
+per arm. Radial coordinates are uniform on `[0,1]`; transverse displacements
+are independent absolute Gaussian draws with scale 0.005. There is no supplied
+junction vertex. Background points are uniform in the unit square, not placed
+on translated rows and not assigned to an arm.
+
+We compare 20 and 120 background points. The smaller set is contained in the
+larger, and all arm observations and endpoint identities stay fixed. The seed,
+width, background levels and endpoint-selection rule were fixed before inspecting
+paths. This is the first seed of a separate 12-seed exploratory comparison at
+three widths (0.005, 0.02, 0.05) and three background counts (20, 60, 120), not
+a seed selected for its appearance.
+
+The installed teaching helper below contains the generator, deterministic pair
+selection, geometric scoring and plotting code. It is a script, not an exported
+package API. Its source can be inspected at the path returned by `system.file()`.
+
+```{r arm-data}
+source(system.file("examples", "fermat-two-arms.R", package = "dgraphs"))
+arm.examples <- lapply(c(20L, 120L), function(count) {
+  fermat.two.arms(seed = 6101L, width = 0.005, background = count)
+})
+arm.routes <- lapply(arm.examples, function(sample) {
+  lapply(1:3, function(p) fermat.arm.paths(sample, p))
+})
+```
+
+We evaluate ten arm-endpoint pairs away from the junction and up to twelve
+background pairs from the first twenty background points. Background endpoints
+must lie more than 0.08 from either axis and have different nearest axes. Pairs
+are ranked by closeness to targets `(0.65,0.18)` and `(0.18,0.65)`, before any
+path calculation. Only the first pair of each kind is plotted; the distance
+checks below use every evaluated pair. The background endpoints' distances to
+the nearest arm are shown here, in units where an arm has length one.
+
+```{r arm-endpoints}
+sample <- arm.examples[[1]]
+ends <- sample$background.pairs[1, ]
+knitr::kable(data.frame(Endpoint = c("Start", "End"),
+                       x = sample$X[ends,1], y = sample$X[ends,2],
+                       Distance_to_arm = apply(sample$X[ends,,drop=FALSE],1,min)),
+             digits = 3)
+```
+
+For each polygonal path `gamma`, the junction indicator is
+\(J=\mathbf{1}\{\min_{z\in\gamma}\|z\|\leq0.1\}\).
+This checks the whole path, not only its vertices. Let
+\(T=([0,1]\times[0,0.05])\cup([0,0.05]\times[0,1])\).
+Arm coverage is
+\(A=\operatorname{length}(\gamma\cap T)/\operatorname{length}(\gamma)\),
+using Euclidean segment length, not the powered cost. The score is between zero
+and one. Higher coverage means more travel near the arms; neither score is a
+universal measure of correctness. Segment intersections with the two rectangles
+are computed exactly up to floating-point arithmetic.
+
+Blue points are arm observations, gray crosses are diffuse background, black
+circles are endpoints, and red lines are minimizing paths. Shading marks `T`;
+the dashed quarter-circle marks the junction disk. All panels use observed
+coordinates and complete-graph powered Euclidean costs.
+
+```{r arm-paths, fig.height=5.5, fig.cap="Paths between arm observations. Rows contain 20 and 120 background points; columns show powers 1, 2 and 3. The arm sample and endpoints are fixed across panels.", fig.alt="Six two-arm panels show complete-graph paths between fixed arm endpoints, comparing two nested background levels and three powers."}
+old <- par(mfrow = c(2,3), mar = c(3,3,2,0.5))
+for (s in 1:2) for (p in 1:3) {
+  fermat.plot.arm.path(arm.examples[[s]], arm.routes[[s]][[p]]$paths[[1]],
+                      paste(arm.examples[[s]]$background, "background; p =", p))
+}
+par(old)
+```
+
+```{r background-paths, fig.height=5.5, fig.cap="Paths between background observations near different arms, with the same samples and visual encodings. Endpoints are fixed and are not assigned generating-arm labels.", fig.alt="Six panels show paths between two fixed diffuse background observations near different arms, with 20 or 120 background points and powers 1, 2 and 3."}
+old <- par(mfrow = c(2,3), mar = c(3,3,2,0.5))
+for (s in 1:2) for (p in 1:3) {
+  index <- nrow(arm.examples[[s]]$arm.pairs) + 1L
+  fermat.plot.arm.path(arm.examples[[s]], arm.routes[[s]][[p]]$paths[[index]],
+                      paste(arm.examples[[s]]$background, "background; p =", p))
+}
+par(old)
+```
+
+The next table describes the twelve displayed paths. Junction entry is a yes/no
+indicator, and arm coverage is a percentage of the entire path's Euclidean
+length, including its endpoint attachments. Thus background paths can follow
+the arms between attachments without reaching 100% coverage.
+
+```{r arm-scores}
+shown <- do.call(rbind, lapply(1:2, function(s) do.call(rbind,lapply(1:3,function(p) {
+  scores <- arm.routes[[s]][[p]]$scores[c(1,11),]
+  data.frame(Background=arm.examples[[s]]$background, Power=p,
+             Endpoints=scores$type, Junction=ifelse(scores$junction==1,"Yes","No"),
+             Arm_coverage_percent=100*scores$arm.fraction)
+}))))
+knitr::kable(shown, digits=1)
+```
+
+These plots separate density preference from obligatory attachment. Adding
+background creates potential travel routes between the arms. Such a route is
+not automatically an estimator error: the background is part of the sampled
+support. In particular, a finite density-sensitive distance need not take
+nearby background points to an arm and back.
+
+We also check the same endpoint pairs with symmetric kNN restrictions. Agreement
+means absolute error at most `1e-10 * max(1, complete distance)`. The table gives
+percent agreement over the selected pairs, separately for `k=8` and `k=16`;
+nonfinite distances count as disagreements. The unreachable count sums across
+both restrictions. Each igraph path cost is independently checked against the
+package's complete-graph calculation.
+
+```{r arm-restriction-check}
+arm.agreement <- list()
+for (s in 1:2) for (p in 1:3) {
+  result <- arm.routes[[s]][[p]]
+  vertices <- sort(unique(as.vector(result$pairs)))
+  index <- cbind(match(result$pairs[,1],vertices),match(result$pairs[,2],vertices))
+  full <- fermat.distances(points=arm.examples[[s]]$X,p=p,vertices=vertices)[index]
+  stopifnot(max(abs(full-result$scores$cost)) < 1e-10)
+  restricted <- lapply(c(8,16),function(k) {
+    fermat.distances(points=arm.examples[[s]]$X,p=p,vertices=vertices,
+                     graph.type="sknn",k=k)[index]
+  })
+  agree <- vapply(restricted,function(d) {
+    stopifnot(all(d >= full-1e-10))
+    100*mean(is.finite(d) & abs(d-full)<=1e-10*pmax(1,full))
+  },0)
+  arm.agreement[[length(arm.agreement)+1L]] <- data.frame(
+    Background=arm.examples[[s]]$background, Power=p, Pairs=length(full),
+    Agreement_k8_percent=agree[1], Agreement_k16_percent=agree[2],
+    Unreachable=sum(!is.finite(unlist(restricted))))
+}
+knitr::kable(do.call(rbind,arm.agreement),digits=1)
+```
+
+Any equivalence shown here applies to these selected pairs only. The circle
+comparison above checks all pairs. A connected graph or an attractive path
+plot does not certify that a restriction preserves Fermat distances.
+
+### How much does the first seed conceal?
+
+The displayed pair follows the arms at powers 2 and 3 under both background
+levels. To show its limits, the next calculation repeats power 2 over the
+predeclared twelve seeds, at the narrowest and broadest arm widths and both
+background levels. Each seed contributes its mean over ten arm pairs or twelve
+background pairs; endpoint pairs are not treated as independent replicates.
+The table gives means and 95% percentile bootstrap intervals from 2,000 seed
+resamples. Width is the pre-folding Gaussian scale; both path scores are
+percentages. Degenerate intervals do not imply certainty for future samples.
+
+```{r arm-seed-summary}
+seed.scores <- list()
+for (seed in 6101:6112) for (width in c(0.005,0.05)) for (count in c(20L,120L)) {
+  sample <- fermat.two.arms(seed, width, count)
+  scores <- fermat.arm.paths(sample, p=2)$scores
+  means <- aggregate(scores[c("junction","arm.fraction")],list(Endpoints=scores$type),mean)
+  means$Seed <- seed; means$Width <- width; means$Background <- count
+  seed.scores[[length(seed.scores)+1L]] <- means
+}
+seed.scores <- do.call(rbind,seed.scores)
+set.seed(8201)
+mean.interval <- function(x) {
+  boot <- replicate(2000,mean(sample(x,replace=TRUE)))
+  sprintf("%.1f (%.1f–%.1f)",100*mean(x),
+          100*quantile(boot,.025),100*quantile(boot,.975))
+}
+seed.summary <- do.call(rbind,lapply(split(seed.scores,
+  interaction(seed.scores[c("Width","Background","Endpoints")],drop=TRUE)),function(d) {
+    data.frame(d[1,c("Width","Background","Endpoints")],
+               Junction_percent=mean.interval(d$junction),
+               Arm_coverage_percent=mean.interval(d$arm.fraction))
+}))
+rownames(seed.summary) <- NULL
+knitr::kable(seed.summary)
+```
+
+For narrow arms, every tested arm-to-arm path at power 2 visits the junction,
+whereas background-to-background visits average only 45.1% with 20 background
+points and 22.2% with 120. Wider arms weaken junction routing further. The
+fixed width-0.05 coverage rectangles contain less of the broad clouds, so
+falling coverage alone is not evidence of additional shortcuts.
+
+The first-seed distance-agreement table likewise establishes only what was
+checked in that realization. It is not a guarantee for subsequent datasets.
+
 ## What the theory does and does not establish
 
 Groisman, Jonckheere and Sapienza define the unrooted complete-graph estimator

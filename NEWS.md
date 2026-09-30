@@ -1,5 +1,8 @@
 # dgraphs (development version)
 
+* Extend the Fermat vignette with noisy arms and nested diffuse background,
+  geometric path diagnostics and complete-versus-kNN distance checks.
+
 * Add `fermat.distances()` with a complete Euclidean graph reference, explicit
   symmetric-kNN or supplied-graph restrictions, and optional rooted output.
   Add a noisy-circle vignette comparing restricted distances to the reference.

@@ -1,5 +1,9 @@
 # dgraphs (development version)
 
+* Add `fermat.distances()` with a complete Euclidean graph reference, explicit
+  symmetric-kNN or supplied-graph restrictions, and optional rooted output.
+  Add a noisy-circle vignette comparing restricted distances to the reference.
+
 * Export `create.ian.graph()` with connectivity preservation and the audited
   retry-power numerical policy as defaults. Retain explicit strict/reference
   options, initial/final graphs, profile mapping and diagnostics; no fixed row cap.

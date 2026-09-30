@@ -1,0 +1,191 @@
+---
+title: "Density-sensitive paths with Fermat distances"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Density-sensitive paths with Fermat distances}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 5)
+library(dgraphs)
+```
+
+## The estimator and its graph restriction
+
+The sample Fermat distance between observed points minimizes the sum of
+powered Euclidean step lengths over **all sequences of observed points**:
+
+\[
+D_p(i,j)=\min_{\pi:i\leadsto j}\sum_{(a,b)\in\pi}\|x_a-x_b\|^p.
+\]
+
+`fermat.distances(points = X, p = 2)` computes this complete-graph reference.
+It does not first remove long edges. For `p > 1`, several short steps can cost
+less than a single long step. This favors densely sampled routes without
+explicitly fitting a density estimate. For `p = 1`, the complete-graph answer
+is Euclidean distance, not distance around a circle.
+
+The default result is the unrooted sum. `rooted = TRUE` takes its `1/p` power:
+this changes reported distances but not minimizing paths. Neither option
+applies sample-size normalization or estimates a limiting constant.
+
+```{r small-example}
+X <- matrix(c(0, 1, 2), ncol = 1)
+fermat.distances(points = X, p = 2)
+```
+
+The distance from 0 to 2 is 2: the two unit steps cost less than the direct
+step, which costs 4.
+
+Two explicit restrictions are also available:
+
+```{r restrictions}
+fermat.distances(points = X, graph.type = "sknn", k = 1, p = 2)
+graph <- create.sknn.graph(X, k = 1, neighbor.method = "exact",
+                          prune.edges = FALSE, connect.components = FALSE)
+fermat.distances(graph, p = 2)
+```
+
+Coordinate kNN construction uses union symmetrization: either endpoint may
+select an edge. Supplied graphs use their stored lengths as base lengths before
+powering. With the same retained weights, restricting edges cannot decrease
+the distance. Missing routes return `Inf`; no connectivity repair is implicit.
+Use `vertices = c(i, j)` for a selected submatrix; paths still use other vertices.
+
+## Noisy circles with different sampling densities
+
+We generate 100 observations around a unit circle with radial Gaussian noise
+of standard deviation 0.04. One example has uniform angular sampling; the
+other places half the observations near angle zero. Both retain a uniform
+angular component. These are fixed illustrations, not a simulation study or a
+proof of geometric recovery. Radial noise changes the sampled geometry from
+an exact circle; circle arc length is therefore not a universal truth target.
+
+```{r circle-data}
+set.seed(4101)
+n <- 100
+angles <- list(
+  Uniform = sort(runif(n, 0, 2*pi)),
+  Concentrated = sort(c(runif(n/2, 0, 2*pi),
+                        rnorm(n/2, 0, 0.4) %% (2*pi)))
+)
+radial.noise <- rnorm(n, 0, 0.04)
+circles <- lapply(angles, function(theta) {
+  cbind((1 + radial.noise)*cos(theta), (1 + radial.noise)*sin(theta))
+})
+powers <- c(1, 2, 3)
+reference <- lapply(circles, function(X) {
+  lapply(powers, function(p) fermat.distances(points = X, p = p))
+})
+```
+
+To visualize the minimizing routes, the next chunk uses igraph on the same
+complete graph and powered Euclidean weights. It checks each plotted path's
+cost against `fermat.distances()`. Black points mark the selected endpoints;
+red segments show a shortest path. Tied minimizers may have different shapes.
+Notice how the preferred route changes with the power and sampling pattern;
+a dense route need not be the shortest circular arc.
+
+```{r paths, fig.height=5.5, fig.cap="Complete-graph shortest paths at powers 1, 2 and 3. Rows show uniform and concentrated angular sampling; axes are the observed Cartesian coordinates.", fig.alt="Six circle panels compare complete-graph paths for three powers and two angular sampling distributions. Endpoints are black, observations gray, and minimizing paths red."}
+old <- par(mfrow = c(2, 3), mar = c(3, 3, 2, 0.5))
+for (s in seq_along(circles)) {
+  X <- circles[[s]]
+  ends <- c(which.min(rowSums(sweep(X, 2, c(1,0), "-")^2)),
+            which.min(rowSums(sweep(X, 2, c(-1,0), "-")^2)))
+  g <- igraph::make_full_graph(n, directed = FALSE)
+  e <- igraph::as_edgelist(g, names = FALSE)
+  eu <- as.matrix(dist(X))
+  for (j in seq_along(powers)) {
+    p <- powers[j]
+    weights <- eu[e]^p
+    path <- as.integer(igraph::shortest_paths(g, from = ends[1], to = ends[2],
+                                             weights = weights)$vpath[[1]])
+    cost <- sum(eu[cbind(head(path, -1), tail(path, -1))]^p)
+    stopifnot(isTRUE(all.equal(cost, reference[[s]][[j]][ends[1],ends[2]])))
+    plot(X, asp = 1, pch = 16, cex = 0.5, col = "gray60",
+         xlab = "x", ylab = "y", main = paste(names(circles)[s], "p =", p))
+    lines(X[path, , drop = FALSE], col = "firebrick", lwd = 2)
+    points(X[ends, ], pch = 16, cex = 1.1)
+  }
+}
+par(old)
+```
+
+## Does a sparse graph give the same distances?
+
+For each circle and power, compare symmetric kNN restrictions at `k = 4, 8, 16`
+against **all unordered pairs** of the complete reference. The table reports
+unreachable pairs separately. Relative error is measured only for finite
+restricted distances; it does not hide disconnections. Numerical agreement
+uses tolerance `1e-10 * max(1, reference distance)`.
+
+```{r comparison}
+rows <- list()
+for (s in seq_along(circles)) for (j in seq_along(powers)) {
+  full <- reference[[s]][[j]]
+  use <- upper.tri(full)
+  for (k in c(4, 8, 16)) {
+    restricted <- fermat.distances(points = circles[[s]], p = powers[j],
+                                   graph.type = "sknn", k = k)
+    finite <- use & is.finite(restricted)
+    stopifnot(all(restricted[use] >= full[use] - 1e-10))
+    agree <- is.finite(restricted[use]) &
+      abs(restricted[use] - full[use]) <= 1e-10*pmax(1, full[use])
+    rows[[length(rows)+1L]] <- data.frame(
+      Sampling = names(circles)[s], p = powers[j], k = k,
+      Unreachable = sum(use & !is.finite(restricted)),
+      Agreement_percent = 100*mean(agree),
+      Max_relative_error = if (any(finite))
+        max(abs(restricted[finite] - full[finite])/full[finite]) else NA_real_
+    )
+  }
+}
+knitr::kable(do.call(rbind, rows), digits = 4)
+```
+
+Agreement in this table establishes equivalence only for these finite samples,
+powers and neighborhood sizes. In particular, the `p = 1` rows demonstrate
+that circle-following kNN distances can differ from the Euclidean reference.
+Increasing `k` to `n - 1` always restores the complete graph, at quadratic
+storage cost. Merely observing no change between two smaller `k` values does
+not certify equivalence to the reference.
+
+## What the theory does and does not establish
+
+Groisman, Jonckheere and Sapienza define the unrooted complete-graph estimator
+and establish a normalized continuum limit under their sampling assumptions.
+They also define directed nearest-neighbor restrictions and prove a
+high-probability equality with the unrestricted estimator when `k` exceeds
+a bound of the form `c1 * log(n / epsilon) + c2`, under the stated hypotheses
+(Definitions 2.1 and 2.11, Proposition 2.12). This does not select a certified
+finite-sample `k` for these noisy examples.
+
+Union-symmetric kNN contains the directed edges, so equality for the directed
+restriction implies equality for the union restriction by inclusion of paths.
+Arbitrary pruning, mutual-neighbor intersections and other supplied graphs
+need separate justification. A rooted output is a transformation of the
+unrooted estimator and must be interpreted with its corresponding scaling.
+
+This example tests graph restriction directly rather than assuming it is
+harmless. Further assessment should use multiple sample sizes and seeds, and
+should distinguish recovering ordinary geometry from deliberately changing
+distances through sampling density. Neither a visually appealing path nor a
+connected graph establishes the continuum theorem's assumptions.
+
+Complete-graph construction and all-pairs output both require quadratic
+storage. Both coordinate modes currently evaluate all Euclidean pairs; kNN
+restriction reduces the stored graph, not that neighbor-search work. Start
+with small reference examples. Positive lengths that overflow or underflow
+to zero after powering are rejected; rescale the coordinates if necessary.
+
+## References
+
+Groisman, P., Jonckheere, M. and Sapienza, F. (2022).
+*Nonhomogeneous Euclidean first-passage percolation and distance learning.*
+Bernoulli 28(1), 255--276. [Published paper](https://doi.org/10.3150/21-BEJ1341)
+and [preprint with definitions and propositions](https://arxiv.org/html/1810.09398v2).
+
+For ordinary graph distances and graph construction, see
+[Constructing and Diagnosing Data-Derived Graphs](data-derived-graph-workflow.html).

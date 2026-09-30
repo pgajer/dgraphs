@@ -39,6 +39,9 @@ then consult the [complete catalog](#function-catalog).
 | Do I need coordinates for a graph? | `graph.embedding()` or `graph.spectral.embedding()` | A visualization layout and a spectral representation serve different purposes. |
 | How can I generate points with known geometry? | [`sample.synthetic.geometry()`](#help-sample.synthetic.geometry) | Pair a geometry with a compatible sampling specification. |
 
+For powered path costs and complete-versus-restricted comparisons, read
+[Density-sensitive paths with Fermat distances](fermat-distances.html).
+
 ## A first graph
 
 Use a finite numeric matrix with observations in rows. This example samples a
@@ -396,7 +399,7 @@ public functions to call directly.
 
 ## Function catalog
 
-The catalog covers all 114 explicit public exports exactly once;
+The catalog covers all 115 explicit public exports exactly once;
 44 registered S3 methods are described separately through object workflows.
 Internal helpers and development applications are not public entry points.
 Links open the exact help included with this build, offline.
@@ -465,6 +468,7 @@ release or development installation.
 
 | Function | Purpose |
 |---|---|
+| [`fermat.distances()`](#help-fermat.distances) | Compute complete-graph sample Fermat distances or explicit graph-restricted alternatives. |
 | [`graph.geodesic.distances()`](#help-graph.geodesic.distances) | Compute shortest-path distances for a supported graph object and stage. |
 | [`compute.graph.distance()`](#help-compute.graph.distance) | Compute a weighted shortest-path distance between two vertices. |
 | [`compute.graph.diameter()`](#help-compute.graph.diameter) | Compute a weighted graph diameter. |

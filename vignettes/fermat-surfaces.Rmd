@@ -172,3 +172,47 @@ three-dimensional embedding measure straight chords, so geometric recovery of th
 original surface is not implied by a good distance fit. In particular, exact
 helix arc lengths embed on a straight line. See the grip companion for the full
 embedding comparison and additional overlays.
+
+
+## Chord lengths before and after scaling
+
+At p=1, complete-graph Fermat distances equal ambient Euclidean chord lengths.
+A 3D MDS fit can therefore reproduce the sampled shape without reproducing its
+intrinsic distances. The earlier distance score fits a global scale; it is not
+the discrepancy of the original chord lengths.
+
+For each of the same evaluated pairs, write $c_r$ for the chord and $g_r$ for
+the intrinsic reference. The following table reports $E(c,g;1)$ and
+$E(c,g;a)$ with $a=\sum c_rg_r/\sum c_r^2$, together with the median and maximum
+ratio $g_r/c_r$. Errors are dimensionless and zero means agreement. The ratio
+is one for equal lengths; 1.3 means the geodesic is 30% longer than its chord.
+These are the original 80 pairs for seed 4101, not all sample pairs.
+
+```{r chord-audit,echo=FALSE}
+chord.audit <- do.call(rbind,lapply(results,function(r) {
+ ij<-r$reference$pairs; g<-r$reference$distances
+ c<-sqrt(rowSums((r$sample$predictors[ij[,1],]-r$sample$predictors[ij[,2],])^2))
+ ok<-is.finite(g)&g>0&c>0; g<-g[ok];c<-c[ok];a<-sum(c*g)/sum(c^2)
+ data.frame(Example=r$sample$shape,Pairs=length(g),Scale=a,
+ Raw.error=sqrt(sum((c-g)^2)/sum(g^2)),Scaled.error=sqrt(sum((a*c-g)^2)/sum(g^2)),
+ Median.ratio=median(g/c),Maximum.ratio=max(g/c))
+}))
+knitr::kable(chord.audit,digits=4)
+```
+
+Scaling reduces chord underestimation on these patches, but does not make chords
+intrinsic distances. Larger discrepancies remain for individual endpoint pairs.
+On the helix, accurately preserving arc lengths unfolds the curve into a line;
+matching the original coil is a different objective.
+
+Independent solver checks are attempts, not guaranteed successes. Candidate
+lengths and close agreement where both solvers succeed do not certify global
+minimality. The table below makes the successful comparison count explicit.
+
+```{r reference-success,echo=FALSE}
+knitr::kable(do.call(rbind,lapply(results,function(r) {
+ v<-r$reference$check.distances
+ data.frame(Example=r$sample$shape,Attempted=length(v),Finite=sum(is.finite(v)),
+ Failed=sum(!is.finite(v)),Check=if(r$sample$shape=='helix')'Analytic identity' else 'Second solver')
+})))
+```

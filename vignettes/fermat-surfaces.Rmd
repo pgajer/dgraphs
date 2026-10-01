@@ -245,3 +245,50 @@ knitr::kable(do.call(rbind,lapply(1:4,function(p){
 
 The second table compares scaled Fermat-distance errors under each reference.
 It uses identical targets and endpoint pairs, isolating reference-method effects.
+
+## Follow-up: sampling density, intermediate powers and stronger curvature
+
+A separate distance-only experiment varied total sample size from 150 to 2,400,
+with five repetitions, on paraboloids and saddles with coefficients 1, 2 and 4,
+and an area-uniform Swiss roll. It reused the existing quadform area sampler.
+For each surface, 64 fixed sampled endpoints supplied 500 calibration pairs and
+1,000 different evaluation pairs. Additional path-support points varied across
+repetitions and were nested across sample sizes. All observations could be used
+by the complete-graph paths; this was not a landmark approximation.
+
+Errors below are percentages: the square root of the ratio of summed squared
+distance residuals to summed squared reference distances. Each method's single
+multiplicative scale was fitted on calibration pairs only. Values are means over
+five repetitions conditional on the fixed endpoints; they are new measurements,
+not replacements for the original 150-point fits above. No MDS error enters them.
+
+| Surface | Power p | Error at n=150 (%) | Error at n=2,400 (%) | Ambient error (%) |
+|---|---:|---:|---:|---:|
+| Paraboloid, coefficient 1 | 1.25 | 3.73 | 1.82 | 8.51 |
+| Paraboloid, coefficient 1 | 2 | 11.72 | 5.67 | 8.51 |
+| Saddle, coefficient 1 | 1.25 | 4.55 | 1.75 | 8.74 |
+| Saddle, coefficient 1 | 2 | 14.27 | 5.58 | 8.74 |
+| Saddle, coefficient 4 | 1.5 | 14.82 | 2.55 | 28.32 |
+| Swiss roll | 3 | 42.33 | 7.70 | 55.84 |
+
+Ambient error is constant because the endpoints are fixed. These results expose
+both a sample-size effect and a limitation of the original integer-only power
+grid: p=1.25 already beats ambient chords on the new mild-surface samples at
+n=150. Larger powers are needed to suppress shortcuts on the rolled surface.
+The displayed powers illustrate these effects; they are not universal tuning
+recommendations.
+
+Ordinary Euclidean kNN graph distances were more accurate on these uniform
+examples at the larger sample size. For k=20 and n=2,400, errors were 0.62%,
+0.49% and 0.35% on the mild paraboloid, mild saddle and Swiss roll. This separates
+recovering ordinary geodesics from deliberately imposing a density-weighted
+geometry.
+
+References used best-of-six on quadforms and analytic distances on the roll,
+with Clairaut sensitivity checks on every paraboloid pair. For the steepest
+paraboloid, p=1.25 at n=2,400 had 4.82% error against best-of-six but 2.05% against
+Clairaut. Reference-method disagreement therefore matters for this harder
+surface. Increasing the quadform coefficient changes its curvature profile and
+area; it does not multiply curvature uniformly over the patch. The complete
+experiment, pair definitions, coverage and uncertainty are recorded in the
+research experiment `fermat_density_curvature_01_oct_2026`.

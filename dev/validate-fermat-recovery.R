@@ -43,3 +43,24 @@ for(i in seq_len(nrow(p$transfer_summary))) {
            abs(x$se-sd(q$nrmse)/sqrt(5))<1e-12)
 }
 cat('Verified power selection, all out-of-fold aggregates, and 255 transfer summaries.\n')
+
+# Validate display assets independently of the frozen distance benchmark.
+views <- readRDS('inst/extdata/fermat-density-curvature/surface-views.rds')
+source('inst/doc-tools/fermat-surface-views.R')
+stopifnot(length(views)==7L)
+for(id in names(views)) {
+ X<-views[[id]]$X;mesh<-fermat_surface_mesh(id)
+ stopifnot(identical(dim(X),c(300L,3L)),all(is.finite(X)),
+  identical(views[[id]]$endpoints,1:64),all(is.finite(mesh$X)),
+  ncol(mesh$triangles)==3L,min(mesh$triangles)>=1,max(mesh$triangles)<=nrow(mesh$X))
+ if(id!='swiss_roll') {
+  a<-as.numeric(sub('.*_a','',id));sign<-if(startsWith(id,'saddle'))-1 else 1
+  for(Y in list(X,mesh$X))stopifnot(max(rowSums(Y[,1:2]^2))<=1+1e-12,
+   max(abs(Y[,3]-a*(Y[,1]^2+sign*Y[,2]^2)))<1e-12)
+ } else for(Y in list(X,mesh$X)) {
+  t<-sqrt(Y[,1]^2+Y[,3]^2)
+  stopifnot(all(t>=1.5*pi-1e-12 & t<=4.5*pi+1e-12),all(Y[,2]>=0 & Y[,2]<=20),
+   max(abs(Y[,1]-t*cos(t)))<1e-10,max(abs(Y[,3]-t*sin(t)))<1e-10)
+ }
+}
+cat('Verified seven original 300-point surface views and their display meshes.\n')

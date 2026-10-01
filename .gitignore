@@ -48,3 +48,5 @@ audit_artifacts/
 
 # Frozen, synthetic evidence shipped with the Fermat recovery article.
 !inst/extdata/fermat-density-curvature/benchmark.rds
+
+!inst/extdata/fermat-density-curvature/surface-views.rds

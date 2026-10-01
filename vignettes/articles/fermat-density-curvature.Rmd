@@ -152,6 +152,45 @@ Uniform draws in the rectangle with coordinates $(s,h)$ give area-uniform
 samples. Its exact intrinsic distance is
 $g_{ij}=\sqrt{(s_i-s_j)^2+(h_i-h_j)^2}$.
 
+### Interactive surface views
+
+The ivue view below complements Figure 1 and also shows the Swiss roll. Choose
+a surface, drag to rotate, and scroll to zoom; **Reset view** restores its
+initial camera. Orange points are the 64 fixed endpoints, and blue points are
+236 additional observations from the original first sampling repetition at
+$n=300$. These are saved area-uniform samples, not newly generated points.
+The translucent mesh is a drawing approximation of the target surface.
+
+These are target coordinates, not metric-MDS embeddings. Equal data-unit scales
+preserve their geometry, and common viewing bounds within each quadform family
+allow comparison of the three coefficients. The mesh resolution affects only
+the display; it is not used to estimate distances or reference geodesics.
+
+```{r interactive-surfaces,echo=FALSE}
+have.ivue <- !identical(Sys.getenv('DGRAPHS_STATIC_VIGNETTES'),'true') &&
+ requireNamespace('ivue',quietly=TRUE) && requireNamespace('rgl',quietly=TRUE) &&
+ requireNamespace('htmlwidgets',quietly=TRUE) && requireNamespace('htmltools',quietly=TRUE) &&
+ all(c('plot3D.plain','layer3D.callback','layer3D.axes','camera.zup') %in% getNamespaceExports('ivue')) &&
+ 'limits' %in% names(formals(ivue::plot3D.plain))
+if(have.ivue) {
+ options(rgl.useNULL=TRUE)
+ helper <- '../../inst/doc-tools/fermat-surface-views.R'
+ if(!file.exists(helper)) helper <- system.file('doc-tools','fermat-surface-views.R',package='dgraphs',mustWork=TRUE)
+ source(helper,local=TRUE)
+ surface_views <- readRDS(file.path(dirname(bundle),'surface-views.rds'))
+ fermat_surface_gallery(surface_views)
+} else {
+ cat('Interactive views require ivue and rgl when building this article. Figure 1 remains available above.')
+}
+```
+
+The built HTML needs a WebGL-capable browser, with no running R or Shiny session.
+To rebuild it interactively, install [ivue](https://github.com/pgajer/ivue) and
+its rgl backend. Setting `DGRAPHS_STATIC_VIGNETTES=true` retains a static-only
+build. The original benchmark tables and numerical results are unchanged.
+
+### Sampling and distance comparisons
+
 Each surface has 64 fixed sampled endpoints. Of the 2,016 unordered endpoint
 pairs, 500 are assigned to scale calibration and 1,000 different pairs to
 assessment. Pairs may share endpoints. Five independent pools of additional
@@ -347,7 +386,7 @@ the scale was fitted on the other 400 pairs:
 $$
 \widehat c_{r,p,-j}=
 \frac{\sum_{q\in\mathcal C\setminus F_j}D_{r,p,q}g_q}
-     {\sum_{q\in\mathcal C\setminus F_j}D_{r,p,q}^{,2}},
+     {\sum_{q\in\mathcal C\setminus F_j}D_{r,p,q}^{2}},
 \qquad
 E_{r,p}^{\mathrm{CV}}=
 \sqrt{\frac{\sum_{j=1}^{5}\sum_{q\in F_j}
@@ -530,7 +569,11 @@ nrow(benchmark$power_tuning$transfer_metrics)  # 1,275 follow-up records
 benchmark$provenance
 ```
 
-It contains condition-level errors and coverage, summaries, reference comparisons,
+The companion `surface-views.rds` contains only the seven saved 300-point
+coordinate sets used in the interactive display; `surface-views-provenance.R`
+records their source checksums and sampling repetition.
+
+The benchmark snapshot contains condition-level errors and coverage, summaries, reference comparisons,
 the saddle sensitivity diagnostic, the power-selection fold scores and transfer
 results, and provenance. All data are synthetic.
 The companion `provenance.R` records source-file checksums and the research

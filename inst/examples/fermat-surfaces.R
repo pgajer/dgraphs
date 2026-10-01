@@ -121,18 +121,29 @@ fermat.surface.experiment <- function(sample, reference, powers=1:4, ks=3:10) {
        layouts=layouts,matrices=matrices,graphs=graphs,geodesic_baseline=baseline)
 }
 
-# Orthogonal similarity alignment is only for display; scores use original fits.
-fermat.surface.align <- function(Y,X) {
-  yc <- scale(Y,scale=FALSE); xc <- scale(X,scale=FALSE)
-  sv <- svd(crossprod(yc,xc)); R <- sv$u %*% t(sv$v)
-  a <- sum(sv$d)/sum(yc^2)
-  sweep(a*yc%*%R,2,colMeans(X),'+')
+# Similarity Procrustes: minimize ||X - (s Y R + t)||_F over s >= 0,
+# orthogonal R (reflection allowed), and translation t. Rows are matched samples.
+# Display only: preserve original fits and all intrinsic-distance scores.
+fermat.surface.align <- function(Y, X, return.fit = FALSE) {
+  Y <- as.matrix(Y); X <- as.matrix(X)
+  stopifnot(identical(dim(Y), dim(X)), nrow(Y) > 0L,
+            all(is.finite(Y)), all(is.finite(X)))
+  yc <- sweep(Y, 2, colMeans(Y), '-')
+  xc <- sweep(X, 2, colMeans(X), '-')
+  sv <- svd(crossprod(yc, xc)); R <- sv$u %*% t(sv$v)
+  a <- if (sum(yc^2) > 0) sum(sv$d) / sum(yc^2) else 0
+  aligned <- sweep(a * yc %*% R, 2, colMeans(X), '+')
+  fit <- list(coords = aligned, rotation = R, scale = a,
+    translation = colMeans(X) - as.vector(a * colMeans(Y) %*% R),
+    rmse = sqrt(mean(rowSums((aligned - X)^2))))
+  if (return.fit) fit else fit$coords
 }
 
 fermat.surface.overlay <- function(result,p=2L,k=0L,max.edges=1800L) {
   z <- result$layouts[[paste0('p',p,'_k',k)]]; ids<-z$ids
   X <- result$sample$predictors[ids,,drop=FALSE]
-  Y <- fermat.surface.align(z$coords,X)
+  alignment <- fermat.surface.align(z$coords,X,return.fit=TRUE)
+  Y <- alignment$coords
   fig <- plotly::plot_ly()
   if(result$sample$shape!='helix') {
     v <- seq(-1,1,length.out=45); uv<-as.matrix(expand.grid(v,v))
@@ -158,7 +169,9 @@ fermat.surface.overlay <- function(result,p=2L,k=0L,max.edges=1800L) {
     marker=list(size=2,color='#777777'),name='Observed surface samples',inherit=FALSE)
   fig<-plotly::add_trace(fig,x=Y[,1],y=Y[,2],z=Y[,3],type='scatter3d',mode='markers',
     marker=list(size=3,color=result$sample$latent[ids,1],colorscale='Viridis',showscale=FALSE),
-    text=paste('Sample',ids),name='MDS embedding',inherit=FALSE)
-  plotly::layout(fig,title=paste(result$sample$shape,'p =',p,if(k==0)'complete targets' else paste('k =',k)),
-    scene=list(aspectmode='data'),legend=list(orientation='h'),margin=list(t=45,b=20,l=0,r=0))
+    text=paste('Sample',ids),name='Procrustes-aligned MDS',inherit=FALSE)
+  plotly::layout(fig,title=list(text=paste0(
+    paste(result$sample$shape,'p =',p,if(k==0)'complete targets' else paste('k =',k)),
+    sprintf('<br><sup>Procrustes: translation, rotation/reflection, uniform scale; RMS residual %.3g</sup>', alignment$rmse)),font=list(size=14)),
+    scene=list(aspectmode='data'),legend=list(orientation='h'),margin=list(t=75,b=20,l=0,r=0))
 }

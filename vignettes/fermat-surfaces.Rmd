@@ -104,7 +104,8 @@ If a retained component contains no reference pair, its geodesic error is undefi
 and omitted from the corresponding curve.
 
 ```{r shared, include=FALSE}
-source(system.file('examples','fermat-surfaces.R',package='dgraphs'))
+source(Sys.getenv('FERMAT_SURFACE_HELPER',
+  unset=system.file('examples','fermat-surfaces.R',package='dgraphs')))
 cache.root <- Sys.getenv('FERMAT_SURFACE_RESULTS')
 results <- lapply(c('paraboloid','saddle','helix'),function(shape) {
   path <- file.path(cache.root,paste0(shape,'_4101.rds'))
@@ -161,8 +162,10 @@ leave far fewer samples even when its within-component distance error is small.
 
 The following view uses dense-target SGD metric MDS from grip. The gray patch is
 the underlying surface; colored points are the embedding after one global
-similarity alignment for display, and thin blue segments are supporting path
-edges. Gray points identify the original observations. Similarity alignment uses
+least-squares similarity Procrustes alignment for display, and thin blue segments are supporting path
+edges. Gray points identify the original observations. Plot titles report the root mean
+squared Euclidean alignment residual per retained sample, in target-coordinate
+units; zero means exact overlap. Similarity alignment uses
 translation, rotation/reflection and uniform scale, not a deformation of the fit.
 
 ```{r overlay, echo=FALSE}

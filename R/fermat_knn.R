@@ -33,7 +33,7 @@
 #'
 #' @return `fermat.knn()` returns a list with n-by-k matrices `index` (1-based
 #'   neighbor indices) and `distance` (in nondecreasing order), excluding self.
-#'   `create.fermat.knn.graph()` returns a `dgraph` formed by the union of these
+#'   `create.fermat.sknn.graph()` returns a `dgraph` formed by the union of these
 #'   directed selections. Its lengths are Fermat distances, not powered direct
 #'   Euclidean edges. Vertex degrees can exceed k; components are not repaired.
 #'   Use [graph.geodesic.distances()] to sum stored lengths, rather than applying
@@ -45,7 +45,7 @@
 #' @examples
 #' X <- cbind(c(0, 1, 2, 4), 0)
 #' fermat.knn(X, k = 2, p = 2)
-#' graph <- create.fermat.knn.graph(X, k = 2)
+#' graph <- create.fermat.sknn.graph(X, k = 2)
 #' graph.edges(graph)
 #' @export
 fermat.knn <- function(points, k, p = 2, rooted = FALSE,
@@ -104,7 +104,7 @@ fermat.knn <- function(points, k, p = 2, rooted = FALSE,
 
 #' @rdname fermat.knn
 #' @export
-create.fermat.knn.graph <- function(points, k, p = 2, rooted = FALSE,
+create.fermat.sknn.graph <- function(points, k, p = 2, rooted = FALSE,
                                    algorithm = "kd_tree") {
     neighbors <- fermat.knn(points, k, p, rooted, algorithm)
     .fermat.knn.graph(neighbors, rownames(as.matrix(points)), k, p, rooted, algorithm)

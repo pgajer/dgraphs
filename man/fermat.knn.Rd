@@ -2,12 +2,12 @@
 % Please edit documentation in R/fermat_knn.R
 \name{fermat.knn}
 \alias{fermat.knn}
-\alias{create.fermat.knn.graph}
+\alias{create.fermat.sknn.graph}
 \title{Find Exact Sample Fermat Nearest Neighbors}
 \usage{
 fermat.knn(points, k, p = 2, rooted = FALSE, algorithm = "kd_tree")
 
-create.fermat.knn.graph(
+create.fermat.sknn.graph(
   points,
   k,
   p = 2,
@@ -30,7 +30,7 @@ create.fermat.knn.graph(
 \value{
 \code{fermat.knn()} returns a list with n-by-k matrices \code{index} (1-based
 neighbor indices) and \code{distance} (in nondecreasing order), excluding self.
-\code{create.fermat.knn.graph()} returns a \code{dgraph} formed by the union of these
+\code{create.fermat.sknn.graph()} returns a \code{dgraph} formed by the union of these
 directed selections. Its lengths are Fermat distances, not powered direct
 Euclidean edges. Vertex degrees can exceed k; components are not repaired.
 Use \code{\link[=graph.geodesic.distances]{graph.geodesic.distances()}} to sum stored lengths, rather than applying
@@ -65,7 +65,7 @@ complete-graph edge for numeric-range validation.
 \examples{
 X <- cbind(c(0, 1, 2, 4), 0)
 fermat.knn(X, k = 2, p = 2)
-graph <- create.fermat.knn.graph(X, k = 2)
+graph <- create.fermat.sknn.graph(X, k = 2)
 graph.edges(graph)
 }
 \references{

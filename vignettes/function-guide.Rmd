@@ -469,7 +469,7 @@ release or development installation.
 | Function | Purpose |
 |---|---|
 | [`fermat.knn()`](#help-fermat.knn) | Find exact complete-graph Fermat nearest neighbors. |
-| [`create.fermat.knn.graph()`](#help-create.fermat.knn.graph) | Union-symmetrize exact Fermat neighbor selections. |
+| [`create.fermat.sknn.graph()`](#help-create.fermat.sknn.graph) | Union-symmetrize exact Fermat neighbor selections. |
 | [`fermat.distances()`](#help-fermat.distances) | Compute complete-graph sample Fermat distances or explicit graph-restricted alternatives. |
 | [`graph.geodesic.distances()`](#help-graph.geodesic.distances) | Compute shortest-path distances for a supported graph object and stage. |
 | [`compute.graph.distance()`](#help-compute.graph.distance) | Compute a weighted shortest-path distance between two vertices. |

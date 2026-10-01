@@ -31,7 +31,7 @@ test_that("rooting, algorithms, names, and graph union are correct", {
     expect_equal(b$index, a$index)
     expect_equal(b$distance, sqrt(a$distance))
     expect_equal(rownames(a$index), rownames(x))
-    g <- create.fermat.knn.graph(x, 5)
+    g <- create.fermat.sknn.graph(x, 5)
     e <- graph.edges(g)
     ref <- reference.neighbors(x, 5, 2)$d
     expect_equal(e$length, unname(ref[cbind(e$from, e$to)]), tolerance=1e-11)
@@ -40,7 +40,7 @@ test_that("rooting, algorithms, names, and graph union are correct", {
     expect_true(all(lengths(graph.adjacency(g)) >= 5))
     expect_equal(graph.order(g), 20L)
     expect_equal(names(graph.adjacency(g)), rownames(x))
-    z <- create.fermat.knn.graph(matrix(0, 8, 2), 3)
+    z <- create.fermat.sknn.graph(matrix(0, 8, 2), 3)
     expect_true(all(graph.edges(z)$length == 0))
 })
 

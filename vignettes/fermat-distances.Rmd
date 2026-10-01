@@ -446,7 +446,7 @@ other observations, while the paper includes the source in its count.
 set.seed(193)
 neighbor.points <- matrix(runif(120), 60, 2)
 neighbors <- fermat.knn(neighbor.points, k = 6, p = 2)
-neighbor.graph <- create.fermat.knn.graph(neighbor.points, k = 6, p = 2)
+neighbor.graph <- create.fermat.sknn.graph(neighbor.points, k = 6, p = 2)
 reference <- fermat.distances(points = neighbor.points, p = 2)
 selected <- cbind(rep(seq_len(nrow(neighbor.points)), 6),
                   as.vector(neighbors$index))

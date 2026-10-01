@@ -1,5 +1,10 @@
 # dgraphs (development version)
 
+- Added `fermat.knn()` and `create.fermat.knn.graph()` for exact complete-graph
+  Fermat nearest neighbors using Euclidean pruning and truncated Dijkstra.
+  Union graph lengths are path distances; global distance preservation and
+  connectivity are not assumed.
+
 - Added an exact implicit complete-graph backend to `fermat.distances()`, with
   source-to-all and rectangular queries, a workspace estimate guard, and a
   teaching example supplying exact Fermat constraints to sparse metric MDS.

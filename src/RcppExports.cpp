@@ -26,6 +26,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fermat_knn_cpp
+Rcpp::List fermat_knn_cpp(Rcpp::IntegerMatrix index, Rcpp::NumericMatrix weight);
+RcppExport SEXP _dgraphs_fermat_knn_cpp(SEXP indexSEXP, SEXP weightSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type index(indexSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type weight(weightSEXP);
+    rcpp_result_gen = Rcpp::wrap(fermat_knn_cpp(index, weight));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_quadform_geodesics_method
 Rcpp::List rcpp_quadform_geodesics_method(Rcpp::NumericMatrix A, Rcpp::NumericVector from, Rcpp::NumericVector to, Rcpp::List domain, std::string method, Rcpp::List control);
 RcppExport SEXP _dgraphs_rcpp_quadform_geodesics_method(SEXP ASEXP, SEXP fromSEXP, SEXP toSEXP, SEXP domainSEXP, SEXP methodSEXP, SEXP controlSEXP) {

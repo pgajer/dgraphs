@@ -63,6 +63,8 @@ reference:
     contents:
       - graph.geodesic.distances
       - fermat.distances
+      - fermat.knn
+      - create.fermat.knn.graph
       - compute.graph.distance
       - compute.graph.diameter
       - get.shortest.path

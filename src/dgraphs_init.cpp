@@ -29,6 +29,7 @@ struct r_call_boundary<Function> {
 
 extern "C" {
 
+SEXP _dgraphs_fermat_knn_cpp(SEXP, SEXP);
 SEXP _dgraphs_fermat_implicit_cpp(SEXP, SEXP, SEXP, SEXP, SEXP);
 
 SEXP _dgraphs_rcpp_quadform_geodesics_solver(SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -194,6 +195,7 @@ SEXP S_wgraph_prune_long_edges(SEXP s_adj_list,
                                SEXP s_verbose);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_dgraphs_fermat_knn_cpp", (DL_FUNC) &r_call_boundary<_dgraphs_fermat_knn_cpp>::call, 2},
     {"_dgraphs_fermat_implicit_cpp", (DL_FUNC) &r_call_boundary<_dgraphs_fermat_implicit_cpp>::call, 5},
     {"_dgraphs_rcpp_quadform_geodesics_solver", (DL_FUNC) &r_call_boundary<_dgraphs_rcpp_quadform_geodesics_solver>::call, 5},
     {"_dgraphs_rcpp_quadform_geodesics_reference_uniforms", (DL_FUNC) &r_call_boundary<_dgraphs_rcpp_quadform_geodesics_reference_uniforms>::call, 2},

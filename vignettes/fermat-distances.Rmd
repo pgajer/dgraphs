@@ -424,10 +424,47 @@ distances through sampling density. Neither a visually appealing path nor a
 connected graph establishes the continuum theorem's assumptions.
 
 The explicit complete-graph backend and all-pairs output require quadratic
-storage. The implicit backend avoids adjacency storage. Both coordinate graph
+storage. The implicit backend avoids adjacency storage. Both `fermat.distances()` coordinate graph
 constructions still evaluate all Euclidean pairs; kNN restriction reduces the
 stored graph, not that neighbor-search work. Start with small reference examples. Positive lengths that overflow or underflow
 to zero after powering are rejected; rescale the coordinates if necessary.
+
+## Exact nearest neighbors without all-pairs distances
+
+When the desired output is a neighborhood graph, `fermat.knn()` finds each
+observation's nearest neighbors in the complete-graph Fermat distance. It caches
+exact Euclidean neighbor lists and uses truncated Dijkstra searches. This is a
+separate operation from asking `fermat.distances(graph.type = "sknn")` for a
+matrix of arbitrary pairwise distances.
+
+McKenzie and Damelin's Lemma 5.6 justifies pruning for these local queries:
+the neighbor distances are those of the complete graph. It does not assert that
+the resulting sparse graph preserves every pairwise distance. Our `k` counts
+other observations, while the paper includes the source in its count.
+
+```{r exact-fermat-neighbors}
+set.seed(193)
+neighbor.points <- matrix(runif(120), 60, 2)
+neighbors <- fermat.knn(neighbor.points, k = 6, p = 2)
+neighbor.graph <- create.fermat.knn.graph(neighbor.points, k = 6, p = 2)
+reference <- fermat.distances(points = neighbor.points, p = 2)
+selected <- cbind(rep(seq_len(nrow(neighbor.points)), 6),
+                  as.vector(neighbors$index))
+stopifnot(max(abs(as.vector(neighbors$distance) - reference[selected])) < 1e-10)
+```
+
+The graph takes the union of directed selections: an edge remains if either
+endpoint selected the other. Its stored lengths are the computed Fermat
+distances. Do not power those lengths again when calculating graph geodesics.
+Union symmetrization can give a vertex more than `k` neighbors; connectivity is
+not forced. Equal-distance ties at the cutoff may produce different valid
+neighbor selections. Coincident observations remain separate vertices.
+
+Candidate storage grows as `n * k`. Once candidates are available, binary-heap
+path searches cost approximately `n * k^2 * log(k + 1)`. Exact Euclidean search
+can still be expensive in high dimensions. The search offers exact k-d tree
+and brute-force options; neither uses approximate neighbors. Pivot-to-all
+queries still use the separate implicit backend.
 
 ## References
 
@@ -438,3 +475,6 @@ and [preprint with definitions and propositions](https://arxiv.org/html/1810.093
 
 For ordinary graph distances and graph construction, see
 [Constructing and Diagnosing Data-Derived Graphs](data-derived-graph-workflow.html).
+
+McKenzie, D. and Damelin, S. (2019). *Power Weighted Shortest Paths for
+Clustering Euclidean Data.* [Preprint, section 5](https://arxiv.org/abs/1905.13345).

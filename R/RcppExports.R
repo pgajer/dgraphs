@@ -5,6 +5,10 @@ fermat_implicit_cpp <- function(x, p, sources, targets, budget) {
     .Call(`_dgraphs_fermat_implicit_cpp`, x, p, sources, targets, budget)
 }
 
+fermat_knn_cpp <- function(index, weight) {
+    .Call(`_dgraphs_fermat_knn_cpp`, index, weight)
+}
+
 #' @keywords internal
 #' @noRd
 rcpp_quadform_geodesics_method <- function(A, from, to, domain, method, control) {

@@ -9,6 +9,7 @@ CXX_STD = CXX17
 OBJECTS = \
 	RcppExports.o \
 	fermat_implicit.o \
+	fermat_knn.o \
 	quadform_geodesics_solver.o \
 	quadform_geodesics_solver_rcpp.o \
 	quadform_geodesics_methods.o \

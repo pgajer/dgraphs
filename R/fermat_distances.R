@@ -79,6 +79,11 @@
 #'   `sources` is supplied, in requested order. Unreachable
 #'   pairs are `Inf`. Zero-length edges are retained; duplicate points have zero
 #'   distance. Point row names or graph adjacency names label the matrix.
+#'   With `return.graph = TRUE`, return a list containing `distances` (this
+#'   matrix), `graph` (a `dgraph` with powered base edge lengths), and `metadata`.
+#'   Metadata records `sources`, `targets`, `coverage` (`all_pairs` or
+#'   `requested_pairs`), `p`, `rooted`, `edge.weight.type`, and the backend used.
+#'   Graph distances are unrooted even when the returned matrix is rooted.
 #' @references Groisman, P., Jonckheere, M. and Sapienza, F. (2022).
 #'   Nonhomogeneous Euclidean first-passage percolation and distance learning.
 #'   Bernoulli, 28(1), 255--276. \doi{10.3150/21-BEJ1341}.

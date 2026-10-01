@@ -1,5 +1,9 @@
 # dgraphs (development version)
 
+- `fermat.distances(return.graph = TRUE)` now returns the union of selected
+  shortest-path edges with powered base lengths and source/target coverage
+  metadata, while preserving the default distance-matrix return.
+
 - Added `fermat.knn()` and `create.fermat.sknn.graph()` for exact complete-graph
   Fermat nearest neighbors using Euclidean pruning and truncated Dijkstra.
   Union graph lengths are path distances; global distance preservation and

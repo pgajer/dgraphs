@@ -69,6 +69,11 @@ Numeric square distance matrix, or a source-by-target matrix when
 \code{sources} is supplied, in requested order. Unreachable
 pairs are \code{Inf}. Zero-length edges are retained; duplicate points have zero
 distance. Point row names or graph adjacency names label the matrix.
+With \code{return.graph = TRUE}, return a list containing \code{distances} (this
+matrix), \code{graph} (a \code{dgraph} with powered base edge lengths), and \code{metadata}.
+Metadata records \code{sources}, \code{targets}, \code{coverage} (\code{all_pairs} or
+\code{requested_pairs}), \code{p}, \code{rooted}, \code{edge.weight.type}, and the backend used.
+Graph distances are unrooted even when the returned matrix is rooted.
 }
 \description{
 Minimize sums of powered edge lengths. Coordinate input defaults to the

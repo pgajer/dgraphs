@@ -18,7 +18,7 @@ fermat.surface.sample <- function(shape = c('paraboloid', 'saddle', 'helix'),
 }
 
 # Numerical references concern sampled endpoint pairs, not an all-pairs truth.
-fermat.surface.reference <- function(sample, n.pairs = 80L) {
+fermat.surface.reference <- function(sample, n.pairs = 1000L) {
   X <- sample$predictors; n <- nrow(X)
   set.seed(sample$seed + 700L)
   pairs <- t(utils::combn(n, 2L))
@@ -30,19 +30,20 @@ fermat.surface.reference <- function(sample, n.pairs = 80L) {
   }
   A <- sample$geometry.spec$parameters$forms[[1L]]
   domain <- list(kind='ball',center=c(0,0),radius=1)
-  method <- if (sample$shape=='paraboloid') 'paraboloid_clairaut' else 'geodesic_shooting'
-  calculate <- function(pp, method, control=list())
-    dgraphs:::quadform_geodesics(A, sample$latent[pp[,1],,drop=FALSE],
-      sample$latent[pp[,2],,drop=FALSE], domain, method=method, control=control)
-  q <- calculate(pairs,method)
-  check.index <- seq_len(min(12L,nrow(pairs)))
-  # A distinct numerical method checks a fixed subset; agreement is not proof.
-  qc <- calculate(pairs[check.index,,drop=FALSE],
-    if (sample$shape=='paraboloid') 'geodesic_shooting' else 'geodesic_collocation',
-    list(ode_tolerance=1e-8,endpoint_tolerance=1e-10,path_tolerance=1e-9))
-  list(pairs=pairs,distances=q$summary$length,status=q$summary$status,
-       method=method,check.distances=qc$summary$length,check.index=check.index,
-       summary=q$summary,check.summary=qc$summary)
+  # Six searches per pair, default 64 rounds per search; retain failed statuses.
+  solved <- lapply(seq_len(nrow(pairs)),function(j)
+    dgraphs:::quadform_geodesics(A, sample$latent[pairs[j,1],],
+      sample$latent[pairs[j,2],], domain, method='best_of_six',
+      control=list(seed=sample$seed*10000+j)))
+  sm <- do.call(rbind,lapply(solved,`[[`,'summary')); sm$pair <- seq_len(nrow(pairs))
+  check.index <- if(sample$shape=='paraboloid') seq_len(nrow(pairs)) else integer()
+  qc <- if(length(check.index)) dgraphs:::quadform_geodesics(A,
+    sample$latent[pairs[,1],,drop=FALSE],sample$latent[pairs[,2],,drop=FALSE],
+    domain,method='paraboloid_clairaut') else NULL
+  list(pairs=pairs,distances=sm$length,status=sm$status,method='best_of_six',
+       check.distances=if(is.null(qc))numeric() else qc$summary$length,
+       check.index=check.index,summary=sm,check.summary=qc$summary,
+       check.method=if(length(check.index))'paraboloid_clairaut' else 'none')
 }
 
 fermat.surface.score <- function(estimate, reference, rescale=TRUE) {

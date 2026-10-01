@@ -45,3 +45,8 @@ preview-guides:
 
 check: build
 	cd build && R_TIDYCMD="$${R_TIDYCMD:-$$(command -v tidy)}" R_PROFILE_USER="$(CURDIR)/dev/check-profile.R" R CMD check --as-cran $(PKGNAME)_$(VERSION).tar.gz
+
+.PHONY: preview-fermat-recovery
+preview-fermat-recovery:
+	Rscript --vanilla dev/validate-fermat-recovery.R
+	Rscript --vanilla dev/preview-fermat-recovery.R

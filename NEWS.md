@@ -1,5 +1,9 @@
 # dgraphs (development version)
 
+- Added an article on Fermat distance recovery across sample size and curvature,
+  with compact executable examples, a frozen synthetic benchmark, and separate
+  reproduction scripts for the numerical reference searches.
+
 - `fermat.distances(return.graph = TRUE)` now returns the union of selected
   shortest-path edges with powered base lengths and source/target coverage
   metadata, while preserving the default distance-matrix return.

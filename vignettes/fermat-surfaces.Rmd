@@ -248,6 +248,8 @@ It uses identical targets and endpoint pairs, isolating reference-method effects
 
 ## Follow-up: sampling density, intermediate powers and stronger curvature
 
+The dedicated package article [Fermat distances: sampling density, curvature, and geodesic recovery](https://pgajer.github.io/dgraphs/articles/fermat-density-curvature.html) develops this comparison with the full sample-size curves, coverage, and reference-solver checks.
+
 A separate distance-only experiment varied total sample size from 150 to 2,400,
 with five repetitions, on paraboloids and saddles with coefficients 1, 2 and 4,
 and an area-uniform Swiss roll. It reused the existing quadform area sampler.

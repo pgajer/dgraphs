@@ -17,6 +17,7 @@ articles:
       - function-guide
       - fermat-distances
       - fermat-surfaces
+      - articles/fermat-density-curvature
       - ian-graphs
       - data-derived-graph-workflow
       - synthetic-geometry

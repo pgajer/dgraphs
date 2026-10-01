@@ -1,0 +1,382 @@
+---
+title: "Fermat distances: sampling density, curvature, and geodesic recovery"
+output:
+  rmarkdown::html_document:
+    toc: true
+    toc_float: true
+    self_contained: true
+    math_method: mathml
+---
+
+```{r setup,include=FALSE}
+knitr::opts_chunk$set(collapse=TRUE,comment='#>',message=FALSE,warning=FALSE,
+                     out.width='100%',fig.align='center')
+# Prefer this checkout's snapshot when rendering the maintained source.
+bundle <- '../../inst/extdata/fermat-density-curvature/benchmark.rds'
+if(!file.exists(bundle)) bundle <- system.file('extdata','fermat-density-curvature',
+                                              'benchmark.rds',package='dgraphs',mustWork=TRUE)
+b <- readRDS(bundle); m <- b$metrics; s <- b$summary
+surface_names <- c(paraboloid_a1='Paraboloid, $a=1$',paraboloid_a2='Paraboloid, $a=2$',
+ paraboloid_a4='Paraboloid, $a=4$',saddle_a1='Saddle, $a=1$',saddle_a2='Saddle, $a=2$',
+ saddle_a4='Saddle, $a=4$',swiss_roll='Swiss roll')
+figure <- function(name) knitr::include_graphics(paste0('figures/fermat-density-curvature/',name,'.png'))
+```
+
+Fermat distances can improve on ambient straight-line distances, but the useful
+power depends on geometry and sampling density. This article examines that
+interaction before any embedding into two or three dimensions. It compares
+complete-graph Fermat distances, ambient chords, and ordinary Euclidean
+nearest-neighbor graph distances on area-uniform quadratic surfaces and a Swiss roll.
+
+The main findings are:
+
+- Intermediate powers matter: a grid containing only integer powers can miss
+  substantial improvements already at small sample sizes.
+- Denser samples improve many higher-power estimates, but no tested power is
+  best across all surfaces.
+- Ordinary Euclidean kNN shortest paths are more accurate at the largest sample
+  size on these uniformly sampled examples. Density-sensitive geometry and
+  recovery of ordinary surface geodesics are different objectives.
+- Numerical reference error matters on the steepest paraboloid.
+
+This complements [Fermat distances and their supporting graphs on surfaces](https://pgajer.github.io/dgraphs/articles/fermat-surfaces.html)
+and the [Fermat distance introduction](https://pgajer.github.io/dgraphs/articles/fermat-distances.html).
+The benchmark results were completed on `r b$provenance$completion$completed`;
+this reading copy was built on `r format(Sys.time(),tz='America/New_York',usetz=TRUE)`.
+Rendering runs only the small examples below and reads the frozen benchmark.
+It does not rerun the numerical reference searches.
+
+## What distance is being estimated?
+
+For observations $X_1,\ldots,X_n\in\mathbb R^3$, the unrooted Fermat distance is
+
+$$
+D_p(i,j)=\min_{\pi:i\leadsto j}
+        \sum_{(u,v)\in\pi}\lVert X_u-X_v\rVert_2^p,\qquad p\geq1.
+$$
+
+The minimum ranges over paths through any observed points, including the direct
+edge. At $p=1$, the triangle inequality gives $D_1(i,j)=\lVert X_i-X_j\rVert_2$:
+adding intermediate observations cannot shorten the ambient chord. For $p>1$,
+several short steps can cost less than a long step. More intermediate points can
+therefore change both the preferred route and its cost. The units are length to
+power $p$; this article takes no $p$-th root.
+
+A surface geodesic measures length along the underlying surface. We compare
+Fermat distances to that intrinsic reference after fitting one multiplicative
+scale. These are finite-sample experiments, not a proof of asymptotic convergence
+or an estimate of its rate.
+
+## A compact example using the existing area sampler
+
+Consider the saddle $(u,v,a(u^2-v^2))$ over $u^2+v^2\leq1$. For a quadratic form
+matrix $A$, the surface-area element is $\sqrt{1+\lVert2A(u,v)^T\rVert_2^2}$.
+Uniform draws in the parameter disk are therefore not uniform on the surface.
+Use the existing dgraphs sampler:
+
+```{r small-sample}
+library(dgraphs)
+A <- diag(c(2,-2))
+geometry <- synthetic.quadform(2L,3L,forms=list(A))
+sampling <- synthetic.sampling.quadform.lab('disk',extent=1,mode='area')
+sample <- sample.synthetic.geometry(geometry,sampling,n=300L,seed=62117L)
+X <- sample$predictors
+endpoints <- 1:12
+D150 <- fermat.distances(points=X[1:150,],p=1.25,backend='implicit',
+                        sources=endpoints,targets=endpoints,rooted=FALSE)
+D300 <- fermat.distances(points=X,p=1.25,backend='implicit',
+                        sources=endpoints,targets=endpoints,rooted=FALSE)
+stopifnot(all(D300 <= D150 + 1e-10))
+```
+
+Only the requested endpoint distances are returned, but paths may use every
+observation in the supplied matrix. This is an exact restriction of the queries,
+not a landmark restriction of the paths. The check illustrates that unrooted
+Fermat distances cannot increase when the available path vertices expand.
+These small teaching observations are separate from the frozen benchmark below.
+
+For the ordinary neighborhood baseline, construct a union-symmetric graph:
+an edge exists if either endpoint selects the other among its $k$ nearest
+neighbors. Its weights remain Euclidean lengths, without a Fermat power.
+
+```{r small-graph}
+graph <- create.sknn.graph(X,k=10,neighbor.method='exact',
+                          connect.components=FALSE)
+edges <- graph.edges(graph)
+ig <- igraph::graph_from_data_frame(edges[,1:2],directed=FALSE,
+                                  vertices=data.frame(name=seq_len(nrow(X))))
+Dknn <- igraph::distances(ig,v=endpoints,to=endpoints,weights=edges$length)
+igraph::components(ig)$no
+```
+
+If the graph is disconnected, some entries can be infinite. This study records
+that limitation rather than adding repair edges. This is an **ordinary Euclidean
+kNN graph**, distinct from `create.fermat.sknn.graph()`, which selects neighbors
+using Fermat distances.
+
+## The seven-surface benchmark
+
+The quadratic surfaces are
+
+$$
+S_a^+(u,v)=(u,v,a(u^2+v^2)),\qquad
+S_a^-(u,v)=(u,v,a(u^2-v^2)),\qquad u^2+v^2\leq1,
+$$
+
+with $a\in\{1,2,4\}$. Principal curvature magnitudes at the origin are $2a$.
+Increasing $a$ also changes the surface area and curvature away from the origin;
+it does not uniformly multiply curvature everywhere. Both patches have area
+
+$$
+A(a)=\frac{\pi}{6a^2}\left[(1+4a^2)^{3/2}-1\right].
+$$
+
+```{r surfaces,echo=FALSE,fig.alt='Paraboloid and saddle patches at three coefficients, with a common vertical range within each family.'}
+figure('surfaces')
+```
+
+**Figure 1.** The six quadratic patches. A common vertical range within each
+family makes the increased bending and height visible.
+
+The seventh surface is $(t\cos t,h,t\sin t)$, where
+$1.5\pi\leq t\leq4.5\pi$ and $0\leq h\leq20$. Its arc coordinate is
+
+$$
+s(t)=\frac12\left[t\sqrt{1+t^2}+\operatorname{asinh}(t)\right].
+$$
+
+Uniform draws in the rectangle with coordinates $(s,h)$ give area-uniform
+samples. Its exact intrinsic distance is
+$g_{ij}=\sqrt{(s_i-s_j)^2+(h_i-h_j)^2}$.
+
+Each surface has 64 fixed sampled endpoints. Of the 2,016 unordered endpoint
+pairs, 500 are assigned to scale calibration and 1,000 different pairs to
+assessment. Pairs may share endpoints. Five independent pools of additional
+observations give nested total sample sizes
+$n\in\{150,300,600,1200,2400\}$, always including the same 64 endpoints.
+All observations may support paths. Repetitions measure variation from the added
+path vertices, conditional on one endpoint set per surface.
+
+The power grid is $p\in\{1,1.25,1.5,1.75,2,3,4\}$. Ordinary kNN graphs use
+$k\in\{5,10,20,40\}$ and the prespecified rule $k=\lceil2\log n\rceil$.
+The logarithm in that rule is natural.
+
+Quadform references use `quadform_geodesics(method="best_of_six")` with
+64 search rounds, 16 initial edges, 32 candidate draws and a 257-vertex limit.
+Paraboloid pairs also use `method="paraboloid_clairaut"`. This is currently an
+internal dgraphs research interface, accessed by the reproduction scripts;
+it is not presented as a stable exported API. Best-of-six returns finite-search
+candidate paths, not certified globally shortest geodesics.
+
+All **2,100 distance conditions** and **10,500 main reference pairs** completed.
+There were no failed main reference pairs. Four ordinary kNN conditions were
+disconnected, all at $k=5$; 238 evaluation-pair occurrences were unreachable
+across those conditions. These counts are retained in the saved evidence.
+
+## Compare distance structure on a separate pair set
+
+For calibration pairs $C$, evaluation pairs $T$, estimates $D_q$, and reference
+lengths $g_q$, fit the scale and evaluate the normalized error:
+
+$$
+\widehat b=\frac{\sum_{q\in C}D_qg_q}{\sum_{q\in C}D_q^2},\qquad
+E_T=\sqrt{\frac{\sum_{q\in T}(\widehat bD_q-g_q)^2}
+                      {\sum_{q\in T}g_q^2}}.
+$$
+
+Zero means proportional agreement with the reference. Plots show $100E_T$ as a
+percentage. Raw errors with $\widehat b=1$ are saved too; they answer a different
+question because powered lengths have different units.
+
+Unreachable graph pairs are excluded from their finite-distance score, and
+coverage is reported. Scale fitting likewise uses only finite calibration pairs.
+Paired differences use ambient scores on the same reachable
+evaluation pairs. A small error with incomplete coverage does not demonstrate
+recovery of the entire surface.
+
+```{r coverage,echo=FALSE}
+q <- subset(m,family=='euclidean_knn')
+coverage <- do.call(rbind,lapply(split(q,q$policy),function(x)
+ data.frame(Rule=x$policy[1],Minimum.coverage=100*min(x$test_pairs/x$requested_test),
+            Disconnected=sum(x$components>1))))
+knitr::kable(coverage,row.names=FALSE,digits=1,
+ col.names=c('$k$ rule','Minimum evaluation coverage (%)','Disconnected conditions'))
+```
+
+**Table 1.** Coverage over all surfaces, repetitions and sample sizes.
+“Adaptive” denotes the fixed logarithmic rule above. A disconnected component
+may contain no evaluated endpoints, so connectivity and pair coverage are
+reported separately.
+
+## Intermediate powers and denser samples
+
+```{r paraboloid,echo=FALSE,fig.alt='Fermat distance errors across sample sizes on three paraboloids; intermediate powers outperform ambient chords.'}
+figure('paraboloid_fermat')
+```
+
+**Figure 2.** Paraboloid errors against best-of-six references. Thin lines are
+individual repetitions; bold lines are means. Shading gives pointwise 95%
+Student-$t$ intervals with four degrees of freedom. The horizontal axis is
+logarithmic. All intervals here and below are conditional on the fixed endpoints
+and references, not simultaneous over the tested grid, and omit solver uncertainty.
+
+At $a=1$, $p=1.25$ already improves on ambient chords at $n=150$: mean error is
+3.73% versus 8.51%. For $p=2$, error falls from 11.72% to 5.67% as the sample
+increases to 2,400. Thus both the choice of power and the availability of
+intermediate observations matter. On these three paraboloids, $p=1.25$ is the
+best tested complete power throughout the sample-size grid.
+
+```{r saddle,echo=FALSE,fig.alt='Fermat distance errors on three saddles, showing the benefit of a larger intermediate power on the strongest saddle.'}
+figure('saddle_fermat')
+```
+
+**Figure 3.** The same comparison on saddles. On the strongest saddle at
+$n=2400$, $p=1.5$ has 2.55% error versus 28.32% for ambient and 11.99% for
+$p=1.25$. A power useful on a mild patch need not be sufficient on a more
+strongly bent patch.
+
+```{r roll,echo=FALSE,fig.alt='Swiss-roll errors across sample sizes: larger Fermat powers suppress shortcuts more effectively than powers close to one.'}
+figure('swiss_roll_fermat')
+```
+
+**Figure 4.** Swiss-roll errors against exact intrinsic lengths. Ambient error
+is 55.84%; at $n=2400$, $p=3$ achieves 7.70%, whereas $p=1.25$ still has 51.99%.
+The best tested power changes from $p=4$ at $n=150$ to $p=3$ at $n=2400$.
+
+```{r winners,echo=FALSE}
+z <- subset(s,n==2400 & family=='complete' & p>1)
+w <- do.call(rbind,lapply(split(z,z$id),function(x)x[which.min(x$mean),]))
+knitr::kable(data.frame(Surface=unname(surface_names[w$id]),Power=w$p,
+ Fermat=100*w$mean,Ambient=100*w$ambient,Wins=w$wins),row.names=FALSE,digits=2,
+ col.names=c('Surface','Best tested $p$','Fermat error (%)','Ambient error (%)','Wins out of 5'))
+```
+
+**Table 2.** Descriptive minima over the tested powers at $n=2400$. Errors are
+means over five repetitions; wins count paired repetitions with lower error than
+ambient. These powers were identified using the displayed evaluation scores,
+so this table is not an independent assessment of a tuned selection procedure.
+The finer power search proposed at $n=300$ has not been run in this benchmark.
+
+## How much do ambient chords underestimate surface lengths?
+
+```{r ratios,echo=FALSE,fig.alt='Geodesic-to-chord ratios on seven surfaces, with a logarithmic ratio axis and a long Swiss-roll tail.'}
+figure('chord_distortion')
+```
+
+**Figure 5.** Distributions of $R_q=g_q/c_q$ on the 1,000 evaluation pairs per
+surface, where $c_q$ is the ambient chord. One denotes equality. The axis has
+$\log_2$ spacing but is labeled in ratio units; two means twice the chord length.
+Violin widths show density on the log-ratio scale, with medians and quartiles
+inside. Shared endpoints make these descriptive pair distributions.
+
+The rolled surface exposes very large shortcuts. Quadform coefficients change
+the distribution too, but need not increase every pair's distortion: curvature
+varies spatially, and area-uniform sampling puts more mass in steeper regions.
+
+## Ordinary kNN distances are a strong baseline
+
+```{r knn,echo=FALSE,fig.alt='Euclidean symmetric kNN errors on paraboloids, saddles and the Swiss roll, with ambient baselines and conditional intervals.'}
+figure(c('paraboloid_knn','saddle_knn','swiss_roll_knn'))
+```
+
+**Figure 6.** Ordinary Euclidean kNN errors on paraboloids (top), saddles
+(middle) and the Swiss roll (bottom). Thin lines are repetitions; bold means
+and error bars use conditional 95% $t$ intervals. Intervals can extend below
+zero, although errors cannot. The dashed ambient baseline uses all evaluation
+pairs; consult Table 1 before comparing it with a restricted finite-pair score.
+
+At $n=2400$, $k=20$ is more accurate than every tested complete Fermat power on
+each of the seven examples. Its errors on the mild paraboloid, mild saddle and
+Swiss roll are 0.62%, 0.49% and 0.35%. Larger neighborhoods are not automatically
+better: on the roll, $k=40$ has 13.03% error, consistent with shortcut edges.
+Connectivity alone is not a test of geodesic accuracy.
+
+These findings concern ordinary geodesic recovery under uniform sampling.
+They do not settle whether density-sensitive distances are useful on nonuniform
+biological data, where the desired geometry itself may depend on density.
+
+## Reference accuracy can change the apparent error floor
+
+```{r clairaut,echo=FALSE,fig.alt='Paraboloid errors using Clairaut references, showing reduced apparent error on the strongest patch.'}
+figure('paraboloid_clairaut')
+```
+
+**Figure 7.** The paraboloid comparison using Clairaut lengths. Observations,
+pairs and estimated distances are identical to Figure 2; only the reference
+and its fitted calibration scale change.
+
+For $a=4$, the $p=1.25$ error at $n=2400$ changes from 4.82% against best-of-six
+to 2.05% against Clairaut. The $k=20$ error changes from 4.24% to 0.60%.
+Some apparent estimator error is therefore reference-method disagreement.
+The original best-of-six results remain part of the evidence.
+
+A separate saddle diagnostic increased search rounds from 64 to 256 on 50
+regularly spaced pair indices per saddle, selected without inspecting errors.
+The largest relative length reduction over those 150 pairs was 0.137%.
+This supports stability for those pairs and budgets, but does not certify global
+minimality or remove reference uncertainty elsewhere.
+
+## Paired improvements over ambient distances
+
+```{r paired,echo=FALSE,fig.alt='Paired Fermat-minus-ambient errors at 2,400 observations, showing replicate differences and conditional intervals.'}
+figure('paired_difference')
+```
+
+**Figure 8.** Scaled error minus ambient error at $n=2400$, in percentage
+points. Negative values favor Fermat. Black points are individual repetitions;
+blue means and intervals show conditional 95% $t$ intervals. Paired comparisons
+hold the endpoint set and added sample pool fixed within each repetition.
+
+## Reproduce the evidence without slowing article builds
+
+The installed snapshot can be inspected directly:
+
+```{r read-snapshot,eval=FALSE}
+path <- system.file('extdata','fermat-density-curvature','benchmark.rds',
+                    package='dgraphs',mustWork=TRUE)
+benchmark <- readRDS(path)
+nrow(benchmark$metrics)       # 2,100 condition-level records
+nrow(benchmark$references)    # 10,500 main reference pairs
+benchmark$provenance
+```
+
+It contains condition-level errors and coverage, summaries, reference comparisons,
+the saddle sensitivity diagnostic, and provenance. All data are synthetic.
+The companion `provenance.R` records source-file checksums and the research
+revision from which the snapshot and figures were imported. The full research
+experiment is named `fermat_density_curvature_01_oct_2026`.
+
+To reproduce the expensive calculations, copy the installed scripts to a
+writable directory:
+
+```{r copy-workflow,eval=FALSE}
+src <- system.file('examples','fermat-density-curvature',package='dgraphs',
+                   mustWork=TRUE)
+work <- file.path(tempdir(),'fermat-recovery-reproduction')
+dir.create(work,showWarnings=FALSE)
+file.copy(list.files(src,full.names=TRUE),work,overwrite=FALSE)
+```
+
+From that directory run the following commands. This is intentionally separate
+from rendering the article. It requires dgraphs, igraph and jsonlite; use one
+worker on platforms without forked multiprocessing.
+
+```sh
+Rscript --vanilla prepare.R
+Rscript --vanilla references.R 1
+Rscript --vanilla distances.R 1
+Rscript --vanilla reference_sensitivity.R
+Rscript --vanilla evaluate.R
+Rscript --vanilla validate.R
+```
+
+Reference searches can be expensive. Completed chunks are reused; use a new
+working directory when changing the design. The scripts use an internal numerical
+reference interface, so retain the recorded package versions and source revision
+when interpreting differences between reruns. The packaged snapshot remains the
+fixed evidence for this article.
+
+The practical conclusion is to compare useful intermediate powers, sample sizes,
+and an ordinary neighborhood-graph baseline before attributing a result to Fermat
+geometry. Keep distance-estimation error separate from embedding distortion, and
+show reference uncertainty when it can change the comparison.

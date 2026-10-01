@@ -45,3 +45,6 @@ audit_artifacts/
 
 /inst/ian/backend-sources.zip
 /inst/ian/backend-source-manifest.json
+
+# Frozen, synthetic evidence shipped with the Fermat recovery article.
+!inst/extdata/fermat-density-curvature/benchmark.rds

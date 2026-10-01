@@ -16,7 +16,8 @@ fermat.distances(
   backend = "explicit",
   sources = NULL,
   targets = NULL,
-  max.workspace.bytes = 512 * 1024^2
+  max.workspace.bytes = 512 * 1024^2,
+  return.graph = FALSE
 )
 }
 \arguments{
@@ -57,6 +58,11 @@ all observations. Row and column order follow \code{sources} and \code{targets}.
 \item{max.workspace.bytes}{Positive finite workspace allowance for the
 implicit backend (default 512 MiB). The estimate includes coordinates,
 output and linear native scratch, not total R process memory or R copies.}
+
+\item{return.graph}{Logical scalar; return distances together with the union
+of selected shortest-path edges and coverage metadata. Defaults to \code{FALSE}.
+Complete coordinate input uses the implicit implementation for this option,
+even when \code{backend = "explicit"} is left at its default.}
 }
 \value{
 Numeric square distance matrix, or a source-by-target matrix when
@@ -97,6 +103,16 @@ Overflow, positive powered lengths underflowing to zero, and a conservative
 upper bound on simple-path cost exceeding the numeric range cause errors;
 rescale base lengths before retrying. Multiplying lengths by \code{a > 0}
 multiplies unrooted distances by \code{a^p} (rooted distances by \code{a}).
+
+With \code{return.graph = TRUE}, one deterministic shortest-path tree is selected
+per source (ties need not include every minimizing path). Only paths to the
+requested targets contribute edges. The returned graph retains all input
+vertices, including unused isolated vertices. Its edge lengths are powered
+base lengths even when the returned distances are rooted. Thus graph
+geodesics reproduce the unrooted requested distances. With all sources and
+targets it preserves every pair; a subset guarantees only the requested
+pairs. The union need not be sparse. The implicit workspace estimate includes
+a conservative allowance for the predecessor-edge union when requested.
 }
 \examples{
 X <- matrix(c(0, 1, 2), ncol = 1)

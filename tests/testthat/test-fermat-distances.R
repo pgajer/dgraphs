@@ -119,3 +119,38 @@ test_that('teaching constraints use complete Fermat targets, including local pai
     expect_equal(cst$targets[cst$pairs[,1]==1 & cst$pairs[,2]==3],2)
     expect_error(fermat.mds.constraints(matrix(c(0,0,1),ncol=1),3,k=1),'duplicate')
 })
+
+test_that("selected Fermat path graphs preserve requested distances", {
+    set.seed(173)
+    X <- rbind(matrix(runif(24),12,2),c(0,0),c(0,0))
+    rownames(X) <- paste0("sample",seq_len(nrow(X)))
+    for (p in c(1,2,3,4)) {
+        result <- fermat.distances(points=X,p=p,backend="implicit",return.graph=TRUE)
+        expect_equal(result$distances,fermat.distances(points=X,p=p),tolerance=1e-12)
+        expect_equal(graph.geodesic.distances(result$graph), result$distances,tolerance=1e-12)
+        expect_identical(result$metadata$coverage,"all_pairs")
+        partial <- fermat.distances(points=X,p=p,backend="implicit",
+            sources=c(14,1),targets=c(5,13),rooted=TRUE,return.graph=TRUE)
+        expect_equal(graph.geodesic.distances(partial$graph)[c(14,1),c(5,13)],
+            partial$distances^p,tolerance=1e-12)
+        expect_identical(partial$metadata$coverage,"requested_pairs")
+        expect_equal(partial,fermat.distances(points=X,p=p,backend="implicit",
+            sources=c(14,1),targets=c(5,13),rooted=TRUE,return.graph=TRUE))
+    }
+    empty <- fermat.distances(points=X,backend="implicit",sources=integer(),return.graph=TRUE)
+    expect_equal(dim(empty$distances),c(0L,14L))
+    expect_equal(length(graph.adjacency(empty$graph)),14)
+    expect_true(all(lengths(graph.adjacency(empty$graph))==0))
+    singleton <- fermat.distances(points=matrix(0,1,1),return.graph=TRUE)
+    expect_equal(singleton$distances,matrix(0,1,1))
+    expect_error(fermat.distances(points=X,return.graph=NA),"return.graph")
+})
+
+test_that("graph-restricted path union retains unreachable pairs", {
+    g <- dgraph(list(2L,c(1L,3L),2L,integer()),list(0,c(0,2),2,numeric()))
+    result <- fermat.distances(g,return.graph=TRUE)
+    expect_equal(result$distances,fermat.distances(g))
+    expect_equal(graph.geodesic.distances(result$graph),result$distances)
+    expect_equal(fermat.distances(g,vertices=integer(),return.graph=TRUE)$distances,
+        matrix(numeric(),0,0))
+})

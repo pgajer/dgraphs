@@ -33,6 +33,11 @@
 #'   implicit backend (default 512 MiB). The estimate includes coordinates,
 #'   output and linear native scratch, not total R process memory or R copies.
 #'
+#' @param return.graph Logical scalar; return distances together with the union
+#'   of selected shortest-path edges and coverage metadata. Defaults to `FALSE`.
+#'   Complete coordinate input uses the implicit implementation for this option,
+#'   even when `backend = "explicit"` is left at its default.
+#'
 #' @details For base lengths \eqn{l_e}, the unrooted result is
 #'   \eqn{\min_\pi \sum_{e\in\pi} l_e^p}. At `p = 1`, complete-graph coordinate
 #'   distances are Euclidean; restricted distances are ordinary graph distances.
@@ -60,6 +65,16 @@
 #'   rescale base lengths before retrying. Multiplying lengths by `a > 0`
 #'   multiplies unrooted distances by `a^p` (rooted distances by `a`).
 #'
+#'   With `return.graph = TRUE`, one deterministic shortest-path tree is selected
+#'   per source (ties need not include every minimizing path). Only paths to the
+#'   requested targets contribute edges. The returned graph retains all input
+#'   vertices, including unused isolated vertices. Its edge lengths are powered
+#'   base lengths even when the returned distances are rooted. Thus graph
+#'   geodesics reproduce the unrooted requested distances. With all sources and
+#'   targets it preserves every pair; a subset guarantees only the requested
+#'   pairs. The union need not be sparse. The implicit workspace estimate includes
+#'   a conservative allowance for the predecessor-edge union when requested.
+#'
 #' @return Numeric square distance matrix, or a source-by-target matrix when
 #'   `sources` is supplied, in requested order. Unreachable
 #'   pairs are `Inf`. Zero-length edges are retained; duplicate points have zero
@@ -82,7 +97,10 @@ fermat.distances <- function(graph = NULL, p = 2, rooted = FALSE,
                              vertices = NULL, stage = "final", points = NULL,
                              graph.type = NULL, k = NULL,
                              backend = "explicit", sources = NULL, targets = NULL,
-                             max.workspace.bytes = 512 * 1024^2) {
+                             max.workspace.bytes = 512 * 1024^2,
+                             return.graph = FALSE) {
+    if (!is.logical(return.graph) || length(return.graph) != 1L || is.na(return.graph))
+        stop("return.graph must be TRUE or FALSE.", call. = FALSE)
     backend.supplied <- !missing(backend)
     backend <- .graph.choice(backend, c("explicit", "implicit"), "backend")
     if ((!is.null(sources) || !is.null(targets)) && backend != "implicit")
@@ -124,7 +142,7 @@ fermat.distances <- function(graph = NULL, p = 2, rooted = FALSE,
         n <- nrow(points)
         if (graph.type != "complete" && backend.supplied)
             stop("backend requires complete coordinate input.", call. = FALSE)
-        if (graph.type == "complete" && backend == "implicit") {
+        if (graph.type == "complete" && (backend == "implicit" || return.graph)) {
             if (!is.null(k)) stop("'k' is only accepted for graph.type = 'sknn'.", call. = FALSE)
             if (!is.numeric(max.workspace.bytes) || length(max.workspace.bytes) != 1L ||
                 !is.finite(max.workspace.bytes) || max.workspace.bytes <= 0)
@@ -142,9 +160,12 @@ fermat.distances <- function(graph = NULL, p = 2, rooted = FALSE,
                 sources <- ids(sources, "sources")
                 targets <- if (is.null(targets)) seq_len(n) else ids(targets, "targets")
             }
-            out <- fermat_implicit_cpp(points, p, sources, targets, max.workspace.bytes)
+            native <- fermat_implicit_cpp(points, p, sources, targets, max.workspace.bytes, return.graph)
+            out <- native$distances
             if (rooted) out <- out^(1/p)
             if (!is.null(labels)) dimnames(out) <- list(labels[sources], labels[targets])
+            if (return.graph) return(.fermat.graph.result(out, native$edges,
+                native$weights, n, labels, sources, targets, p, rooted, "implicit"))
             return(out)
         }
         if (graph.type == "sknn") {
@@ -181,9 +202,46 @@ fermat.distances <- function(graph = NULL, p = 2, rooted = FALSE,
             stop("Potential path-cost overflow; rescale base lengths.", call. = FALSE)
         w
     })
+    if (return.graph) {
+        g <- as_igraph(dgraph(adj, powered))
+        edge.ids <- integer()
+        for (v in vertices) {
+            paths <- suppressWarnings(igraph::shortest_paths(g, from=v, to=vertices,
+                weights=igraph::E(g)$length, output="epath", algorithm="dijkstra"))
+            edge.ids <- union(edge.ids, unlist(lapply(paths$epath, as.integer), use.names=FALSE))
+        }
+        all.edges <- igraph::as_edgelist(g, names=FALSE)
+        out <- if (length(vertices)) .graph.distance.matrix(adj, powered, vertices) else matrix(numeric(),0,0)
+        if (rooted) out <- out^(1/p)
+        if (!is.null(labels)) dimnames(out) <- list(labels[vertices], labels[vertices])
+        return(.fermat.graph.result(out, all.edges[edge.ids,,drop=FALSE],
+            igraph::E(g)$length[edge.ids], n, labels, as.integer(vertices),
+            as.integer(vertices), p, rooted, "explicit"))
+    }
     if (!length(vertices)) return(matrix(numeric(), 0L, 0L))
     out <- .graph.distance.matrix(adj, powered, vertices)
     if (rooted) out <- out^(1 / p)
     if (!is.null(labels)) dimnames(out) <- list(labels[vertices], labels[vertices])
     out
+}
+
+# Construct a dgraph without dropping isolated observations or zero edges.
+.fermat.graph.result <- function(distances, edges, weights, n, labels,
+                                 sources, targets, p, rooted, backend) {
+    adj <- replicate(n, integer(), simplify=FALSE)
+    lens <- replicate(n, numeric(), simplify=FALSE)
+    if (nrow(edges)) {
+        from <- c(edges[,1], edges[,2]); to <- c(edges[,2], edges[,1])
+        values <- rep(weights, 2L)
+        groups <- split(seq_along(from), factor(from, levels=seq_len(n)))
+        for (i in seq_len(n)) {
+            ix <- groups[[i]]; ix <- ix[order(to[ix])]
+            adj[[i]] <- as.integer(to[ix]); lens[[i]] <- values[ix]
+        }
+    }
+    names(adj) <- labels
+    list(distances=distances, graph=dgraph(adj, lens), metadata=list(
+        sources=sources, targets=targets,
+        coverage=if (length(sources)==n && length(targets)==n) "all_pairs" else "requested_pairs",
+        p=p, rooted=rooted, edge.weight.type="powered_base_lengths", backend=backend))
 }

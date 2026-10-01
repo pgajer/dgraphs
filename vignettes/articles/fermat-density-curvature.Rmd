@@ -15,7 +15,7 @@ knitr::opts_chunk$set(collapse=TRUE,comment='#>',message=FALSE,warning=FALSE,
 bundle <- '../../inst/extdata/fermat-density-curvature/benchmark.rds'
 if(!file.exists(bundle)) bundle <- system.file('extdata','fermat-density-curvature',
                                               'benchmark.rds',package='dgraphs',mustWork=TRUE)
-b <- readRDS(bundle); m <- b$metrics; s <- b$summary
+b <- readRDS(bundle); m <- b$metrics; s <- b$summary; power_data <- b$power_tuning
 surface_names <- c(paraboloid_a1='Paraboloid, $a=1$',paraboloid_a2='Paraboloid, $a=2$',
  paraboloid_a4='Paraboloid, $a=4$',saddle_a1='Saddle, $a=1$',saddle_a2='Saddle, $a=2$',
  saddle_a4='Saddle, $a=4$',swiss_roll='Swiss roll')
@@ -37,11 +37,14 @@ The main findings are:
 - Ordinary Euclidean kNN shortest paths are more accurate at the largest sample
   size on these uniformly sampled examples. Density-sensitive geometry and
   recovery of ordinary surface geodesics are different objectives.
+- Calibration-only tuning at 300 points yields useful powers across sample sizes,
+  but does not identify a power that remains optimal as sampling grows denser.
 - Numerical reference error matters on the steepest paraboloid.
 
 This complements [Fermat distances and their supporting graphs on surfaces](https://pgajer.github.io/dgraphs/articles/fermat-surfaces.html)
 and the [Fermat distance introduction](https://pgajer.github.io/dgraphs/articles/fermat-distances.html).
 The benchmark results were completed on `r b$provenance$completion$completed`;
+power-selection results were completed on `r power_data$completion$completed`;
 this reading copy was built on `r format(Sys.time(),tz='America/New_York',usetz=TRUE)`.
 Rendering runs only the small examples below and reads the frozen benchmark.
 It does not rerun the numerical reference searches.
@@ -255,7 +258,8 @@ knitr::kable(data.frame(Surface=unname(surface_names[w$id]),Power=w$p,
 means over five repetitions; wins count paired repetitions with lower error than
 ambient. These powers were identified using the displayed evaluation scores,
 so this table is not an independent assessment of a tuned selection procedure.
-The finer power search proposed at $n=300$ has not been run in this benchmark.
+A separate calibration-only power search at $n=300$ and transfer to the other
+sample sizes is reported below, after the original fixed-grid comparisons.
 
 ## How much do ambient chords underestimate surface lengths?
 
@@ -327,6 +331,190 @@ points. Negative values favor Fermat. Black points are individual repetitions;
 blue means and intervals show conditional 95% $t$ intervals. Paired comparisons
 hold the endpoint set and added sample pool fixed within each repetition.
 
+## Selecting a power at 300 observations and transferring it
+
+This separate follow-up tunes each of the six quadforms at $n=300$, then keeps
+that power fixed at $n\in\{150,300,600,1200,2400\}$. It reuses the original
+area-uniform samples, fixed endpoints, five repetitions, and numerical reference
+lengths. No surface samples or reference geodesics were recomputed. The Swiss
+roll is outside this tuning experiment; its original results above are unchanged.
+
+For each surface, the 500 calibration pairs were randomly assigned to five
+fixed folds of 100 pairs. The same folds were used for every power, repetition,
+and reference method. For repetition $r$, power $p$, and validation fold $F_j$,
+the scale was fitted on the other 400 pairs:
+
+$$
+\widehat c_{r,p,-j}=
+\frac{\sum_{q\in\mathcal C\setminus F_j}D_{r,p,q}g_q}
+     {\sum_{q\in\mathcal C\setminus F_j}D_{r,p,q}^{,2}},
+\qquad
+E_{r,p}^{\mathrm{CV}}=
+\sqrt{\frac{\sum_{j=1}^{5}\sum_{q\in F_j}
+(\widehat c_{r,p,-j}D_{r,p,q}-g_q)^2}
+{\sum_{q\in\mathcal C}g_q^2}}.
+$$
+
+Here $\mathcal C$ is the calibration-pair set, $D_{r,p,q}$ the unrooted
+complete-graph Fermat distance, and $g_q$ the reference geodesic length.
+Selection minimizes $\overline E_p^{\mathrm{CV}}=\frac15\sum_{r=1}^{5}
+E_{r,p}^{\mathrm{CV}}$. Pooling the out-of-fold squared residuals before taking
+the square root gives each pair its contribution to the same normalized error;
+we do not average five differently normalized fold scores.
+
+The coarse grid has spacing $0.025$ on $[1,1.5]$ for all paraboloids and the
+coefficient-one saddle, and on $[1,2]$ for the two stronger saddles. The best
+coarse power is refined over its $\pm0.025$ neighborhood in steps of $0.005$,
+clipped to the search interval. The reported choice is the **best power found
+at this resolution**, not a continuous optimum. The ambient baseline $p=1$
+participated in selection. Exact ties would favor the smaller power; none of
+the nine selected powers lies on a search boundary.
+
+All nine choices were saved before evaluation: six using best-of-six references
+and three independent paraboloid selections using Clairaut references. The
+follow-up completed 301 surface/reference/power combinations, each with five
+repetitions and five folds (7,525 fold scores), and 1,275 transfer comparison
+records. Every transfer record uses all 500 calibration and 1,000 evaluation
+pairs. No distance condition failed or was excluded. The number of records
+includes baseline comparisons and scoring each paraboloid selection against
+both reference methods; it is not a count of distinct distance searches.
+
+```{r power-full,echo=FALSE,fig.alt='Full cross-validation curves for all six quadforms, including ambient power one and the selected interior minima.'}
+figure('power_tuning_full')
+```
+
+**Figure 9.** Full tuning curves at $n=300$ using best-of-six references.
+Thin lines show the five repetitions; blue curves show their mean and pale
+bands pointwise conditional 95% $t$ intervals. Red diamonds and dotted lines
+mark the selected power. Panels use different horizontal ranges because the
+two stronger saddles were searched through $p=2$; vertical ranges also differ.
+All coarse and refined grid points are included. Smaller error is better.
+
+```{r power-near,echo=FALSE,fig.alt='Enlarged neighborhoods of each tuning minimum, displaying relative excess error and a one-percent threshold.'}
+figure('power_tuning_near')
+```
+
+**Figure 10.** Neighborhoods within $0.030$ of the selected power. The
+horizontal coordinate is $p-p_{\mathrm{chosen}}$; the vertical coordinate is
+$100(\overline E_p^{\mathrm{CV}}/\overline E_{p_{\mathrm{chosen}}}^{\mathrm{CV}}-1)$,
+the percentage increase relative to the minimum mean error. The dashed line
+marks a 1% relative increase. Bands use paired differences between each candidate and the selected power
+within each repetition, with pointwise conditional 95% $t$ intervals divided by
+the observed minimum mean error. They are not confidence intervals for the
+optimum's location. Dots are evaluated powers and lines only connect them.
+
+```{r power-choices,echo=FALSE}
+x<-subset(power_data$selection,reference=='best_of_six')
+z<-subset(power_data$transfer_summary,reference=='best_of_six' & method=='selected_best_of_six')
+at_n<-function(n)z$mean[match(paste(x$id,n),paste(z$id,z$n))]
+knitr::kable(data.frame(Surface=surface_names[x$id],`Selected $p$`=sprintf('%.3f',x$p),
+ `Within 1% of minimum`=sprintf('%.3f–%.3f',x$near_min,x$near_max),
+ `Test error, $n=300$ (%)`=round(100*at_n(300),2),
+ `Test error, $n=2400$ (%)`=round(100*at_n(2400),2),check.names=FALSE),row.names=FALSE)
+```
+
+**Table 3.** Best powers using best-of-six references, a descriptive
+near-minimum range, and mean held-out errors after refitting scale on all
+calibration pairs. The range contains the smallest and largest **tested** powers
+with mean cross-validation error no more than 1% above its minimum; it is not a
+confidence interval and does not classify untested powers. The 1% threshold is
+relative to the minimum error, not one percentage point of distance error.
+The minima span two to eight qualifying grid points. Their breadth varies with
+the surface, so the third decimal place records search resolution rather than
+certainty about a uniquely preferred power.
+
+```{r power-transfer,echo=FALSE,fig.alt='Frozen selected-power error across five sample sizes, with ambient, fixed powers, and ordinary Euclidean neighborhood-graph comparisons.'}
+figure('power_transfer')
+```
+
+**Figure 11.** Transfer of the power selected at $n=300$ to the five
+sample sizes, scored against best-of-six references. Scale is refitted on the
+500 calibration pairs at each size and repetition; the 1,000 evaluation pairs
+are unchanged. Ambient chords, fixed powers $1.25$ and $2$, and ordinary
+Euclidean symmetric-kNN shortest paths with $k=20$ provide comparisons. Thin
+lines show repetitions; thicker lines and points show means, with pointwise
+conditional 95% $t$ intervals. The sample-size axis is logarithmic and panel
+vertical ranges differ. All displayed neighborhood graphs are connected.
+
+The selected powers improve on ambient chords on all six surfaces at every
+sample size, in all five repetitions. Their mean errors decrease as the sample
+size increases. At $n=2400$, errors range from 1.00% on the mild saddle to 4.78%
+on the steepest paraboloid against best-of-six references. This supports useful
+transfer, but does not mean that selection at $n=300$ remains optimal at every size.
+
+```{r power-difference,echo=FALSE,fig.alt='Paired selected-power minus fixed power 1.25 errors, showing a reversal on the intermediate saddle as sample size increases.'}
+figure('power_transfer_difference')
+```
+
+**Figure 12.** Selected-power error minus fixed-$p=1.25$ error on the
+same evaluation pairs and sample pools, in percentage points. Negative values
+favor the selected power. Thin lines show the five paired differences; blue
+means and pointwise conditional 95% $t$ intervals summarize them.
+
+For example, on the intermediate saddle the selected $p=1.335$ has 3.95% error
+at $n=300$, versus 5.91% for $p=1.25$. At $n=2400$ the ordering reverses:
+2.00% versus 1.58%. On the strongest saddle, transferred $p=1.680$ reaches
+3.25%, whereas the original grid's $p=1.5$ reaches 2.55%. Selection at one
+sample size therefore identifies a useful finite-sample choice, not a universal
+power. Ordinary Euclidean $k=20$ graph distances remain more accurate at
+$n=2400$ than these selected complete-graph Fermat distances on all six examples.
+
+### Clairaut sensitivity on the paraboloids
+
+```{r power-clairaut-tuning,echo=FALSE,fig.alt='Paraboloid cross-validation curves against best-of-six and Clairaut references, with separate selected powers.'}
+figure('power_clairaut_tuning')
+```
+
+**Figure 13.** The same paraboloid distance estimates, calibration
+folds and repetitions scored against the two reference methods. Each method
+fits its own scales and selects its own power. Thin lines show repetitions,
+thicker curves their means, and symbols their selected powers. The strongest
+paraboloid shows the largest shift in selected power and apparent error floor.
+
+```{r power-clairaut-table,echo=FALSE}
+x<-subset(power_data$selection,reference=='clairaut')
+a<-subset(power_data$selection,reference=='best_of_six')
+z<-subset(power_data$transfer_summary,reference=='clairaut' & n==2400)
+value<-function(method) {q<-z[z$method==method,];round(100*q$mean[match(x$id,q$id)],2)}
+knitr::kable(data.frame(Surface=surface_names[x$id],
+ `Best-of-six $p$`=sprintf('%.3f',a$p[match(x$id,a$id)]),
+ `Clairaut $p$`=sprintf('%.3f',x$p),
+ `Best-of-six choice error (%)`=value('selected_best_of_six'),
+ `Clairaut choice error (%)`=value('selected_clairaut'),check.names=FALSE),row.names=FALSE)
+```
+
+**Table 4.** Separate paraboloid choices. Both error columns use
+Clairaut reference lengths at $n=2400$, with scales refitted against Clairaut;
+only the selected power differs. This separates the effect of power selection
+from the effect of changing the scoring reference.
+
+```{r power-clairaut-transfer,echo=FALSE,fig.alt='Sample-size transfer curves scored against Clairaut, comparing powers selected with each reference and the unchanged baselines.'}
+figure('power_clairaut_transfer')
+```
+
+**Figure 14.** Paraboloid transfer scored against Clairaut
+references. Red curves use Clairaut-selected powers, blue curves the powers
+selected with best-of-six. All methods refit scale against Clairaut at every
+size. Means, repetitions and pointwise conditional intervals have the same
+meaning as in Figure 11.
+
+Clairaut selects $p=1.130,1.190,1.210$ for the three paraboloids, compared with
+$1.135,1.200,1.240$ under best-of-six. On the steepest paraboloid, the
+Clairaut-selected power has 1.77% error at $n=2400$ against Clairaut; the
+best-of-six-selected power scores 1.98% against that same reference and 4.78%
+against best-of-six. Reference disagreement has a larger effect on the apparent
+error floor than this modest change of power.
+
+The split protects the 1,000 evaluation pairs from this power-selection rule,
+but those pairs have already been examined in the earlier exploratory study.
+They are not a newly collected confirmatory test set. Calibration and evaluation
+pairs also share endpoints, and all five repetitions share the same 64 endpoints
+on each surface. Intervals are conditional on these endpoints and the selected
+power; they do not include uncertainty from repeating selection, choosing new
+endpoints, or numerical reference error. The experiment transfers the power,
+not the scale, and does not establish a population-wide optimum.
+
+
 ## Reproduce the evidence without slowing article builds
 
 The installed snapshot can be inspected directly:
@@ -337,11 +525,14 @@ path <- system.file('extdata','fermat-density-curvature','benchmark.rds',
 benchmark <- readRDS(path)
 nrow(benchmark$metrics)       # 2,100 condition-level records
 nrow(benchmark$references)    # 10,500 main reference pairs
+benchmark$power_tuning$selection
+nrow(benchmark$power_tuning$transfer_metrics)  # 1,275 follow-up records
 benchmark$provenance
 ```
 
 It contains condition-level errors and coverage, summaries, reference comparisons,
-the saddle sensitivity diagnostic, and provenance. All data are synthetic.
+the saddle sensitivity diagnostic, the power-selection fold scores and transfer
+results, and provenance. All data are synthetic.
 The companion `provenance.R` records source-file checksums and the research
 revision from which the snapshot and figures were imported. The full research
 experiment is named `fermat_density_curvature_01_oct_2026`.
@@ -368,6 +559,9 @@ Rscript --vanilla distances.R 1
 Rscript --vanilla reference_sensitivity.R
 Rscript --vanilla evaluate.R
 Rscript --vanilla validate.R
+Rscript --vanilla power_tuning.R 1
+Rscript --vanilla power_transfer.R 1
+Rscript --vanilla power_validate.R
 ```
 
 Reference searches can be expensive. Completed chunks are reused; use a new
@@ -375,6 +569,11 @@ working directory when changing the design. The scripts use an internal numerica
 reference interface, so retain the recorded package versions and source revision
 when interpreting differences between reruns. The packaged snapshot remains the
 fixed evidence for this article.
+
+The follow-up tuning script refuses to overwrite a frozen selection. Its recorded
+checksum is checked again during evaluation. The additional `power_summarize.R`
+script regenerates follow-up figures using ggplot2; article builds read saved
+figures and do not repeat power selection.
 
 The practical conclusion is to compare useful intermediate powers, sample sizes,
 and an ordinary neighborhood-graph baseline before attributing a result to Fermat

@@ -149,7 +149,8 @@ fermat.surface.overlay <- function(result,p=2L,k=0L,max.edges=1800L) {
     v <- seq(-1,1,length.out=45); uv<-as.matrix(expand.grid(v,v))
     co <- if(result$sample$shape=='paraboloid') c(1,0,1) else c(1,0,-1)
     xyz <- dgraphs::embed.quadform.surface(uv,co)
-    zz <- matrix(xyz[,3],length(v)); zz[outer(v^2,v^2,'+')>1] <- NA
+    # expand.grid varies x fastest; Plotly requires z[row y, column x].
+    zz <- t(matrix(xyz[,3],length(v))); zz[outer(v^2,v^2,'+')>1] <- NA
     fig <- plotly::add_surface(fig,x=v,y=v,z=zz,opacity=.2,showscale=FALSE,
       colorscale=list(c(0,'#999999'),c(1,'#999999')),name='Reference surface',inherit=FALSE)
   } else {

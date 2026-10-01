@@ -21,6 +21,18 @@
 #' @param k Required for `graph.type = "sknn"`, with `1 <= k < n`.
 #'   Not accepted for complete or supplied graphs.
 #'
+#' @param backend Complete-graph coordinate backend: `"explicit"` (the
+#'   default reference) or `"implicit"` (evaluate edges on demand without
+#'   storing adjacency). Explicitly supplied only for complete coordinate input.
+#' @param sources Optional unique source indices for rectangular queries with
+#'   `backend = "implicit"`. For pivot-to-all distances, supply the pivot ids.
+#'   Cannot accompany `vertices`; every point remains a possible transit vertex.
+#' @param targets Optional unique target indices with `sources`; defaults to
+#'   all observations. Row and column order follow `sources` and `targets`.
+#' @param max.workspace.bytes Positive finite workspace allowance for the
+#'   implicit backend (default 512 MiB). The estimate includes coordinates,
+#'   output and linear native scratch, not total R process memory or R copies.
+#'
 #' @details For base lengths \eqn{l_e}, the unrooted result is
 #'   \eqn{\min_\pi \sum_{e\in\pi} l_e^p}. At `p = 1`, complete-graph coordinate
 #'   distances are Euclidean; restricted distances are ordinary graph distances.
@@ -35,17 +47,21 @@
 #'   fixed `k`, pruned graphs, or arbitrary supplied lengths. This function
 #'   applies neither sample-size normalization nor an estimated limit constant.
 #'
-#'   Both coordinate constructions evaluate all Euclidean pairs. The complete
-#'   graph stores quadratic adjacency; all-pairs output is also quadratic.
-#'   Selected-vertex queries reduce output and shortest-path work, but not
-#'   complete-graph construction. This reference implementation is intended for
-#'   manageable datasets. Distances are computed in floating-point arithmetic.
+#'   Both coordinate constructions evaluate all Euclidean pairs. Explicit
+#'   complete graphs store quadratic adjacency. The implicit backend uses dense
+#'   Dijkstra searches with linear scratch and no graph restriction: with h
+#'   sources, n observations and d coordinates its worst-case time is O(h*n^2*d).
+#'   A global numeric-range check takes O(n^2*d) time. Pivot-to-all output uses
+#'   O(h*n) storage; full all-pairs output is still quadratic. Select pivots
+#'   outside this function; no automatic pivot sampling or distance approximation
+#'   is performed. Distances are computed in floating-point arithmetic.
 #'   Overflow, positive powered lengths underflowing to zero, and a conservative
 #'   upper bound on simple-path cost exceeding the numeric range cause errors;
 #'   rescale base lengths before retrying. Multiplying lengths by `a > 0`
 #'   multiplies unrooted distances by `a^p` (rooted distances by `a`).
 #'
-#' @return Numeric square distance matrix in requested vertex order. Unreachable
+#' @return Numeric square distance matrix, or a source-by-target matrix when
+#'   `sources` is supplied, in requested order. Unreachable
 #'   pairs are `Inf`. Zero-length edges are retained; duplicate points have zero
 #'   distance. Point row names or graph adjacency names label the matrix.
 #' @references Groisman, P., Jonckheere, M. and Sapienza, F. (2022).
@@ -64,7 +80,19 @@
 #' @export
 fermat.distances <- function(graph = NULL, p = 2, rooted = FALSE,
                              vertices = NULL, stage = "final", points = NULL,
-                             graph.type = NULL, k = NULL) {
+                             graph.type = NULL, k = NULL,
+                             backend = "explicit", sources = NULL, targets = NULL,
+                             max.workspace.bytes = 512 * 1024^2) {
+    backend.supplied <- !missing(backend)
+    backend <- .graph.choice(backend, c("explicit", "implicit"), "backend")
+    if ((!is.null(sources) || !is.null(targets)) && backend != "implicit")
+        stop("sources and targets require backend = 'implicit'.", call. = FALSE)
+    if (!is.null(targets) && is.null(sources))
+        stop("targets requires sources.", call. = FALSE)
+    if (!is.null(vertices) && !is.null(sources))
+        stop("sources cannot accompany vertices.", call. = FALSE)
+    if (!missing(max.workspace.bytes) && backend != "implicit")
+        stop("max.workspace.bytes requires backend = 'implicit'.", call. = FALSE)
     if (!is.numeric(p) || length(p) != 1L || !is.finite(p) || p < 1)
         stop("'p' must be a finite numeric scalar at least one.", call. = FALSE)
     if (!is.logical(rooted) || length(rooted) != 1L || is.na(rooted))
@@ -73,6 +101,8 @@ fermat.distances <- function(graph = NULL, p = 2, rooted = FALSE,
         stop("Supply exactly one of 'graph' and 'points'.", call. = FALSE)
     labels <- NULL
     if (!is.null(graph)) {
+        if (backend.supplied || !is.null(sources))
+            stop("backend and sources require complete coordinate input.", call. = FALSE)
         if (!is.null(graph.type) || !is.null(k))
             stop("Construction arguments graph.type and k cannot accompany 'graph'.", call. = FALSE)
         adj <- graph.adjacency(graph, stage)
@@ -92,6 +122,31 @@ fermat.distances <- function(graph = NULL, p = 2, rooted = FALSE,
         if (is.null(graph.type)) graph.type <- "complete"
         graph.type <- .graph.choice(graph.type, c("complete", "sknn"), "graph.type")
         n <- nrow(points)
+        if (graph.type != "complete" && backend.supplied)
+            stop("backend requires complete coordinate input.", call. = FALSE)
+        if (graph.type == "complete" && backend == "implicit") {
+            if (!is.null(k)) stop("'k' is only accepted for graph.type = 'sknn'.", call. = FALSE)
+            if (!is.numeric(max.workspace.bytes) || length(max.workspace.bytes) != 1L ||
+                !is.finite(max.workspace.bytes) || max.workspace.bytes <= 0)
+                stop("max.workspace.bytes must be positive and finite.", call. = FALSE)
+            ids <- function(x, name) {
+                if (!is.numeric(x) || !is.null(dim(x)) || any(!is.finite(x)) ||
+                    any(x != floor(x)) || any(x < 1 | x > n) || anyDuplicated(x))
+                    stop(name, " must contain unique, valid 1-based integer indices.", call. = FALSE)
+                as.integer(x)
+            }
+            if (is.null(sources)) {
+                sources <- if (is.null(vertices)) seq_len(n) else ids(vertices, "vertices")
+                targets <- sources
+            } else {
+                sources <- ids(sources, "sources")
+                targets <- if (is.null(targets)) seq_len(n) else ids(targets, "targets")
+            }
+            out <- fermat_implicit_cpp(points, p, sources, targets, max.workspace.bytes)
+            if (rooted) out <- out^(1/p)
+            if (!is.null(labels)) dimnames(out) <- list(labels[sources], labels[targets])
+            return(out)
+        }
         if (graph.type == "sknn") {
             k <- .graph.integer(k, "k", 1)
             if (k >= n) stop("'k' must be less than the number of points.", call. = FALSE)

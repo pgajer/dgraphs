@@ -1,5 +1,10 @@
 # dgraphs (development version)
 
+- Added an exact implicit complete-graph backend to `fermat.distances()`, with
+  source-to-all and rectangular queries, a workspace estimate guard, and a
+  teaching example supplying exact Fermat constraints to sparse metric MDS.
+
+
 * Extend the Fermat vignette with noisy arms and nested diffuse background,
   geometric path diagnostics and complete-versus-kNN distance checks.
 

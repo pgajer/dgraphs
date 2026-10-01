@@ -337,6 +337,70 @@ falling coverage alone is not evidence of additional shortcuts.
 The first-seed distance-agreement table likewise establishes only what was
 checked in that realization. It is not a guarantee for subsequent datasets.
 
+## Complete-graph distances without storing the graph
+
+`backend = "implicit"` retains the complete-graph estimator but computes edge
+costs during dense Dijkstra searches. It avoids quadratic adjacency storage.
+Selecting source vertices (pivots) also avoids an all-pairs output matrix;
+every observation can still occur inside a minimizing path.
+
+```{r implicit-pivots}
+X <- circles[[1]]
+pivots <- c(1L, 14L, 27L, 40L, 53L, 66L, 79L, 92L)
+pivot.distances <- fermat.distances(points = X, p = 2,
+    backend = "implicit", sources = pivots)
+stopifnot(isTRUE(all.equal(pivot.distances,
+                          reference[[1]][[2]][pivots, , drop = FALSE])))
+dim(pivot.distances)
+# Rectangular queries preserve the supplied row and column order.
+fermat.distances(points = X, backend = "implicit", sources = pivots[1:2],
+                targets = c(25L, 50L, 75L))
+```
+
+With h sources, n observations and d coordinates, worst-case work is
+O(h n² d), plus an O(n² d) numeric-range check. Memory is O(n d + h n)
+for source-to-all queries. Requesting all sources still produces an n-by-n
+matrix. `max.workspace.bytes` checks an estimate of input, output and native
+scratch storage; it is not a cap on total R process memory. This backend trades
+repeated edge evaluation for less storage; it does not promise subquadratic
+search time or approximate the missing distances.
+
+### Sparse metric MDS with consistent Fermat targets
+
+The teaching helper below constructs local symmetric kNN pairs and pivot
+interactions. Both receive **complete-graph Fermat distances**. In particular,
+a local pair's target can be smaller than its powered direct-edge length.
+The helper uses nearest-pivot regions and half-distance region counts for
+asymmetric long-range weights, with unit endpoint multiplicities for local
+pairs, following the weighting construction used by grip's sparse mode.
+Pivots here are fixed observation indices, not graph-distance random samples.
+
+```{r fermat-constraints}
+source(system.file("examples", "fermat-sparse-mds.R", package = "dgraphs"))
+constraints <- fermat.mds.constraints(X, pivots, k = 4, p = 2)
+stopifnot(max(abs(constraints$targets -
+                 reference[[1]][[2]][constraints$pairs])) < 1e-10)
+c(retained = nrow(constraints$pairs), all.pairs = choose(nrow(X), 2))
+```
+
+With a grip version supporting explicit `constraints`, fit these targets as
+follows. Sparse fitting approximates the embedding objective; the supplied
+Fermat targets themselves are exact sample distances, up to arithmetic.
+
+```{r sparse-fermat-fit, eval=FALSE}
+fit <- grip::metric.mds(n = nrow(X), approximation = "sparse",
+                       constraints = constraints, seed = 1, max.iter = 100)
+plot(fit$coords, asp = 1, pch = 16)
+```
+
+The helper is a readable teaching implementation, not a fast neighbor-search
+API. Its local targets require additional source searches with early stopping;
+worst-case preparation can still be cubic in n. It never allocates an all-pairs
+distance matrix. Inverse-squared MDS weights require positive targets, so
+consolidate coincident observations first; the Fermat distance function itself
+continues to support them. Evaluate embedding fidelity on independent pairs,
+not only the constraints used for fitting.
+
 ## What the theory does and does not establish
 
 Groisman, Jonckheere and Sapienza define the unrooted complete-graph estimator
@@ -359,10 +423,10 @@ should distinguish recovering ordinary geometry from deliberately changing
 distances through sampling density. Neither a visually appealing path nor a
 connected graph establishes the continuum theorem's assumptions.
 
-Complete-graph construction and all-pairs output both require quadratic
-storage. Both coordinate modes currently evaluate all Euclidean pairs; kNN
-restriction reduces the stored graph, not that neighbor-search work. Start
-with small reference examples. Positive lengths that overflow or underflow
+The explicit complete-graph backend and all-pairs output require quadratic
+storage. The implicit backend avoids adjacency storage. Both coordinate graph
+constructions still evaluate all Euclidean pairs; kNN restriction reduces the
+stored graph, not that neighbor-search work. Start with small reference examples. Positive lengths that overflow or underflow
 to zero after powering are rejected; rescale the coordinates if necessary.
 
 ## References

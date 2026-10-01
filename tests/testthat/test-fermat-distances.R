@@ -64,3 +64,58 @@ test_that("invalid inputs and numeric range failures are explicit", {
     expect_error(fermat.distances(points=matrix(c(0,1e-200),ncol=1)), "underflow")
     expect_error(fermat.distances(dgraph(list(2L,c(1L,3L),2L),list(1e308,c(1e308,1e308),1e308)),p=1), "path-cost overflow")
 })
+
+test_that('implicit complete searches agree with explicit reference and selected queries', {
+    set.seed(910)
+    for (X in list(matrix(runif(42),ncol=3), matrix(c(0,0,1,3),ncol=1),
+                   matrix(c(0,1e-100,3e-100),ncol=1))) {
+        rownames(X) <- paste0('v',seq_len(nrow(X)))
+        for (p in c(1,1.5,2,3)) {
+            full <- fermat.distances(points=X,p=p)
+            implicit <- fermat.distances(points=X,p=p,backend='implicit')
+            expect_equal(implicit,full,tolerance=1e-12)
+            pivots <- c(nrow(X),1L)
+            expect_equal(fermat.distances(points=X,p=p,backend='implicit',sources=pivots),full[pivots,,drop=FALSE])
+            expect_equal(fermat.distances(points=X,p=p,backend='implicit',sources=pivots,targets=c(2,1)),full[pivots,c(2,1),drop=FALSE])
+            expect_equal(fermat.distances(points=X,p=p,backend='implicit',vertices=pivots,rooted=TRUE),full[pivots,pivots]^(1/p))
+        }
+    }
+    expect_equal(fermat.distances(points=matrix(0:2,ncol=1),backend='implicit',sources=1,targets=3)[1,1],2)
+    expect_equal(dim(fermat.distances(points=matrix(0:2,ncol=1),backend='implicit',sources=integer())),c(0L,3L))
+    expect_equal(dim(fermat.distances(points=matrix(0:2,ncol=1),backend='implicit',sources=1,targets=integer())),c(1L,0L))
+    expect_equal(fermat.distances(points=matrix(0,1,1),backend='implicit'),matrix(0,1,1))
+})
+
+test_that('implicit controls and numerical limits fail explicitly', {
+    X <- matrix(0:3,ncol=1)
+    f <- function(...) fermat.distances(points=X,backend='implicit',...)
+    expect_error(f(sources=c(1,1)),'unique')
+    expect_error(f(sources=NA),'unique')
+    expect_error(f(sources=5),'unique')
+    expect_error(f(sources=1,targets=c(1,1)),'unique')
+    expect_error(f(targets=1),'requires sources')
+    expect_error(f(sources=1,vertices=2),'cannot accompany')
+    expect_error(f(max.workspace.bytes=1),'workspace')
+    expect_error(f(max.workspace.bytes=Inf),'positive and finite')
+    expect_error(fermat.distances(points=X,sources=1),'implicit')
+    expect_error(f(graph.type='sknn',k=1),'complete coordinate')
+    for (v in c(1e200,1e-200))
+        expect_error(fermat.distances(points=matrix(c(0,v),ncol=1),backend='implicit'),'overflow|underflow')
+    expect_error(fermat.distances(points=matrix(c(0,1e154,2e154),ncol=1),backend='implicit',sources=1,targets=1),'overflow')
+})
+
+test_that('teaching constraints use complete Fermat targets, including local pairs', {
+    source(system.file('examples','fermat-sparse-mds.R',package='dgraphs'),local=TRUE)
+    set.seed(331)
+    X <- matrix(runif(24),ncol=2)
+    cst <- fermat.mds.constraints(X,c(1,5,9),k=3)
+    D <- fermat.distances(points=X)
+    expect_equal(cst$targets,unname(D[cst$pairs]),tolerance=1e-12)
+    expect_true(all(cst$count_i+cst$count_j>0))
+    expect_false(anyDuplicated(data.frame(cst$pairs))>0)
+    # Even local direct edges can be more expensive than their Fermat targets.
+    X <- matrix(0:2,ncol=1)
+    cst <- fermat.mds.constraints(X,1,k=2)
+    expect_equal(cst$targets[cst$pairs[,1]==1 & cst$pairs[,2]==3],2)
+    expect_error(fermat.mds.constraints(matrix(c(0,0,1),ncol=1),3,k=1),'duplicate')
+})

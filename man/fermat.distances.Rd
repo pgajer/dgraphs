@@ -12,7 +12,11 @@ fermat.distances(
   stage = "final",
   points = NULL,
   graph.type = NULL,
-  k = NULL
+  k = NULL,
+  backend = "explicit",
+  sources = NULL,
+  targets = NULL,
+  max.workspace.bytes = 512 * 1024^2
 )
 }
 \arguments{
@@ -38,9 +42,25 @@ Cannot accompany \code{graph}.}
 
 \item{k}{Required for \code{graph.type = "sknn"}, with \verb{1 <= k < n}.
 Not accepted for complete or supplied graphs.}
+
+\item{backend}{Complete-graph coordinate backend: \code{"explicit"} (the
+default reference) or \code{"implicit"} (evaluate edges on demand without
+storing adjacency). Explicitly supplied only for complete coordinate input.}
+
+\item{sources}{Optional unique source indices for rectangular queries with
+\code{backend = "implicit"}. For pivot-to-all distances, supply the pivot ids.
+Cannot accompany \code{vertices}; every point remains a possible transit vertex.}
+
+\item{targets}{Optional unique target indices with \code{sources}; defaults to
+all observations. Row and column order follow \code{sources} and \code{targets}.}
+
+\item{max.workspace.bytes}{Positive finite workspace allowance for the
+implicit backend (default 512 MiB). The estimate includes coordinates,
+output and linear native scratch, not total R process memory or R copies.}
 }
 \value{
-Numeric square distance matrix in requested vertex order. Unreachable
+Numeric square distance matrix, or a source-by-target matrix when
+\code{sources} is supplied, in requested order. Unreachable
 pairs are \code{Inf}. Zero-length edges are retained; duplicate points have zero
 distance. Point row names or graph adjacency names label the matrix.
 }
@@ -65,11 +85,14 @@ restriction under its stated assumptions. It does not certify arbitrary
 fixed \code{k}, pruned graphs, or arbitrary supplied lengths. This function
 applies neither sample-size normalization nor an estimated limit constant.
 
-Both coordinate constructions evaluate all Euclidean pairs. The complete
-graph stores quadratic adjacency; all-pairs output is also quadratic.
-Selected-vertex queries reduce output and shortest-path work, but not
-complete-graph construction. This reference implementation is intended for
-manageable datasets. Distances are computed in floating-point arithmetic.
+Both coordinate constructions evaluate all Euclidean pairs. Explicit
+complete graphs store quadratic adjacency. The implicit backend uses dense
+Dijkstra searches with linear scratch and no graph restriction: with h
+sources, n observations and d coordinates its worst-case time is O(h\emph{n^2}d).
+A global numeric-range check takes O(n^2\emph{d) time. Pivot-to-all output uses
+O(h}n) storage; full all-pairs output is still quadratic. Select pivots
+outside this function; no automatic pivot sampling or distance approximation
+is performed. Distances are computed in floating-point arithmetic.
 Overflow, positive powered lengths underflowing to zero, and a conservative
 upper bound on simple-path cost exceeding the numeric range cause errors;
 rescale base lengths before retrying. Multiplying lengths by \code{a > 0}

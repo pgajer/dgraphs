@@ -11,6 +11,21 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// fermat_implicit_cpp
+Rcpp::NumericMatrix fermat_implicit_cpp(Rcpp::NumericMatrix x, double p, Rcpp::IntegerVector sources, Rcpp::IntegerVector targets, double budget);
+RcppExport SEXP _dgraphs_fermat_implicit_cpp(SEXP xSEXP, SEXP pSEXP, SEXP sourcesSEXP, SEXP targetsSEXP, SEXP budgetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type sources(sourcesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type targets(targetsSEXP);
+    Rcpp::traits::input_parameter< double >::type budget(budgetSEXP);
+    rcpp_result_gen = Rcpp::wrap(fermat_implicit_cpp(x, p, sources, targets, budget));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_quadform_geodesics_method
 Rcpp::List rcpp_quadform_geodesics_method(Rcpp::NumericMatrix A, Rcpp::NumericVector from, Rcpp::NumericVector to, Rcpp::List domain, std::string method, Rcpp::List control);
 RcppExport SEXP _dgraphs_rcpp_quadform_geodesics_method(SEXP ASEXP, SEXP fromSEXP, SEXP toSEXP, SEXP domainSEXP, SEXP methodSEXP, SEXP controlSEXP) {

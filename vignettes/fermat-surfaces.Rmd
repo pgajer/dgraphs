@@ -1,0 +1,174 @@
+---
+title: "Fermat distances and their supporting graphs on surfaces"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Fermat distances and their supporting graphs on surfaces}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse=TRUE,comment='#>',fig.width=7,fig.height=5,warning=FALSE,message=FALSE)
+available <- all(vapply(c('grip','igraph','plotly'),requireNamespace,logical(1),quietly=TRUE)) &&
+  'distance.matrix' %in% names(formals(grip::metric.mds))
+available <- available && file.exists(system.file('examples','fermat-surfaces.R',package='dgraphs')) &&
+  'return.graph' %in% names(formals(dgraphs::fermat.distances)) &&
+  'distance.matrix' %in% names(formals(grip::metric.mds))
+knitr::opts_chunk$set(eval=available)
+```
+
+```{r dependencies,echo=FALSE,eval=TRUE,results='asis'}
+if(!available) cat('This executable example requires development versions of dgraphs and grip with the direct distance and supporting-graph APIs, plus igraph and plotly. Install these dependencies to render the calculated examples.\n')
+```
+
+Fermat distances allow paths through every observation. A symmetric nearest-neighbor
+graph is an optional restriction, not part of the complete-graph estimator. This
+example asks how that restriction changes distances on an area-uniform paraboloid,
+an area-uniform saddle, and an arc-length-uniform helix. The companion grip vignette
+focuses on embedding the same distances into three dimensions.
+
+## Generate the observations
+
+The quadratic surfaces are $(u,v,u^2+v^2)$ (index zero) and
+$(u,v,u^2-v^2)$ (index one), over the unit disk. Index counts negative eigenvalues
+of the quadratic form. We reuse the existing dgraphs area sampler:
+
+```{r sampler}
+library(dgraphs)
+geometry <- synthetic.quadform(2, 3, forms=list(diag(c(1,-1))))
+sampling <- synthetic.sampling.quadform.lab('disk',extent=1,mode='area')
+sample <- sample.synthetic.geometry(geometry,sampling,n=150,seed=4101)
+X <- sample$predictors
+```
+
+The sampler weights parameter-space proposals by
+$\sqrt{1+\|2Au\|^2}$, the area element for $(u,u^TAu)$, where $u$ is a
+two-dimensional parameter and $A$ is its quadratic-form matrix. This is uniform
+on surface area, not on the parameter disk. The helix is
+$(\cos t,\sin t,0.2t)$ for $0\leq t\leq4\pi$; uniform $t$ is uniform arc length
+because its speed is the constant $\sqrt{1+0.2^2}$.
+
+## Distances and the path graph
+
+For observation indices $i,j$ and exponent $p\geq1$, we compute
+\[
+D_p(i,j)=\min_{\pi:i\leadsto j}\sum_{(a,b)\in\pi}\|X_a-X_b\|^p.
+\]
+The minimum ranges over paths through the observed points, including direct edges.
+The distance is unrooted, so its units are length to power $p$.
+
+```{r distances}
+result <- fermat.distances(points=X,p=2,backend='implicit',rooted=FALSE,
+                          return.graph=TRUE)
+D <- result$distances
+graph <- result$graph
+head(graph.edges(graph))
+result$metadata
+```
+
+The returned graph is the union of one selected shortest-path tree per source.
+Its edges carry the powered ambient step lengths. With every source requested,
+its shortest-path distances preserve the full matrix. With only landmark sources,
+only landmark-to-sample preservation is guaranteed. Ties may admit other valid
+unions, and the union need not be sparse: at $p=1$, direct Euclidean edges usually
+remain necessary.
+
+A Fermat symmetric kNN graph has different edges: they summarize Fermat paths to
+the $k$ nearest neighbors, then take the union of directed neighbor selections.
+
+```{r sknn}
+g <- create.fermat.sknn.graph(X,k=5,p=2,rooted=FALSE)
+```
+
+## Compare with surface geodesics
+
+The shared example uses powers 1--4 and k values 3--10. Numerical references on
+80 reproducibly selected pairs use the existing quadratic-surface geodesic solver:
+Clairaut's method for the paraboloid and geodesic shooting for the saddle. Twelve
+pairs also use another continuous solver with tighter tolerances. These are
+numerical references, not certified globally shortest paths. Helix references
+are exact arc lengths $\sqrt{1.04}|t_i-t_j|$.
+
+We compare estimates $d_r$ with reference distances $g_r$ on valid pairs $r$:
+\[
+a=\frac{\sum_r d_rg_r}{\sum_r d_r^2},\qquad
+E=\sqrt{\frac{\sum_r(ad_r-g_r)^2}{\sum_r g_r^2}}.
+\]
+The fitted global scale $a$ makes powers comparable; $E=0$ means proportional
+agreement. It does not establish equality in physical units. Spearman correlation
+measures rank agreement. For graph restriction error we compare graph distances
+with $D_p$ using the same formula with $a=1$, on all pairs in the largest component.
+Disconnected graphs are not repaired, and retained sample counts are reported.
+If a retained component contains no reference pair, its geodesic error is undefined
+and omitted from the corresponding curve.
+
+```{r shared, include=FALSE}
+source(system.file('examples','fermat-surfaces.R',package='dgraphs'))
+cache.root <- Sys.getenv('FERMAT_SURFACE_RESULTS')
+results <- lapply(c('paraboloid','saddle','helix'),function(shape) {
+  path <- file.path(cache.root,paste0(shape,'_4101.rds'))
+  if(nzchar(cache.root) && file.exists(path)) return(readRDS(path))
+  s <- fermat.surface.sample(shape,150L,4101L)
+  fermat.surface.experiment(s,fermat.surface.reference(s))
+})
+metrics <- do.call(rbind,lapply(results,`[[`,'records'))
+```
+
+```{r distance-table, echo=FALSE}
+knitr::kable(metrics[metrics$k==0,c('shape','p','n','distance_scale',
+ 'distance_nrmse','distance_spearman')],digits=3,
+ col.names=c('Example','p','Samples','Scale','Scaled error','Rank correlation'))
+```
+
+Table 1. Complete-graph Fermat distances compared with the surface or curve
+reference. Each row uses the same reference pairs within its example; these are
+finite-sample comparisons, not estimates of an asymptotic convergence rate.
+
+```{r graph-error, echo=FALSE}
+old <- par(mfrow=c(1,3),mar=c(4,4,2,1))
+for(shape in unique(metrics$shape)) {
+ z<-metrics[metrics$shape==shape & metrics$k>0,]
+ plot(range(z$k),c(0,1.3*max(c(0,z$restriction_nrmse),na.rm=TRUE)),type='n',xlab='Neighbors k',
+      ylab='Graph restriction error',main=shape)
+ for(p in 1:4){q<-z[z$p==p,];lines(q$k,q$restriction_nrmse,col=p,pch=p,type='b')}
+ legend('topright',legend=paste('p =',1:4),col=1:4,lty=1,pch=1:4,bty='n',cex=.7)
+}
+par(old)
+```
+
+**Figure 1.** Distance change caused by retaining only symmetric Fermat kNN edges.
+Zero means that the restricted graph preserves the dense Fermat distances on the
+retained component. The corresponding component counts and retained sample counts
+are available below; a small error on a small component would not demonstrate
+whole-sample preservation.
+
+```{r coverage, echo=FALSE}
+z<-metrics[metrics$components>1,]
+knitr::kable(aggregate(cbind(retained,components)~shape+p,z,range))
+```
+
+The table summarizes ranges among disconnected k values within each example and
+power. Complete coverage is 150 samples; restricting a disconnected graph can
+leave far fewer samples even when its within-component distance error is small.
+
+## Inspect supporting edges in three dimensions
+
+The following view uses dense-target SGD metric MDS from grip. The gray patch is
+the underlying surface; colored points are the embedding after one global
+similarity alignment for display, and thin blue segments are supporting path
+edges. Gray points identify the original observations. Similarity alignment uses
+translation, rotation/reflection and uniform scale, not a deformation of the fit.
+
+```{r overlay, echo=FALSE}
+fermat.surface.overlay(results[[2]],p=2,k=0)
+```
+
+**Figure 2.** Saddle embedding and complete-graph Fermat supporting paths. Drag to
+rotate. The legend states how many edges are shown; a deterministic display subset
+is used above 1,800 edges. The saved graph contains every selected edge.
+
+Intrinsic distances measure travel along a surface. Euclidean distances in a
+three-dimensional embedding measure straight chords, so geometric recovery of the
+original surface is not implied by a good distance fit. In particular, exact
+helix arc lengths embed on a straight line. See the grip companion for the full
+embedding comparison and additional overlays.

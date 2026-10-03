@@ -477,6 +477,8 @@ create.sknn.graph <- function(X,
         result$pruned_edge_stats <- global.pruning$pruned_edge_stats
     }
     result <- .add.graph.lifecycle.branches(
+        # The native result already contains exact repair for this case.
+        raw.repaired = if (isTRUE(connect.components) && identical(prune.method, "none")) result else NULL,
         result = result,
         X = X,
         k = as.integer(k),

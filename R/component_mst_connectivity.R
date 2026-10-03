@@ -386,15 +386,19 @@
                                           threshold.percentile = 0,
                                           prune.tau = 1.05,
                                           prune.local.k = NULL,
-                                          with.pruned.edge.stats = FALSE) {
-    raw.repaired <- .repair.graph.lifecycle.stage(
+                                          with.pruned.edge.stats = FALSE,
+                                          raw.repaired = NULL) {
+    if (is.null(raw.repaired)) raw.repaired <- .repair.graph.lifecycle.stage(
         X, raw.adj.list, raw.length.list, k, connect.method,
         bridge.k, bridge.k.max, bridge.growth
     )
-    pruned.repaired <- .repair.graph.lifecycle.stage(
-        X, pruned.adj.list, pruned.length.list, k, connect.method,
-        bridge.k, bridge.k.max, bridge.growth
-    )
+    colnames(raw.repaired$mst_edge_matrix) <- c("from", "to")
+    # Identical unpruned stages need the same repaired graph only once.
+    pruned.repaired <- if (identical(prune.method, "none")) raw.repaired else
+        .repair.graph.lifecycle.stage(
+            X, pruned.adj.list, pruned.length.list, k, connect.method,
+            bridge.k, bridge.k.max, bridge.growth
+        )
     repaired.pruning <- .prune.graph.by.method(
         X = X,
         adj.list = raw.repaired$adj_list,

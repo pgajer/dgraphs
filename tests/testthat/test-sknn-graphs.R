@@ -56,3 +56,22 @@ test_that("create.sknn.graphs validates series-specific controls", {
     expect_error(create.sknn.graphs(X, k.values = c(1, 1)), "strictly increasing")
     expect_error(create.sknn.graphs(X, k.values = 2, neighbor.method = "exact"), "requires neighbor.method = 'ann'")
 })
+
+test_that("unpruned repaired lifecycle reuses native repair", {
+    set.seed(24)
+    X <- rbind(matrix(rnorm(30), 10, 3), matrix(rnorm(30) + 20, 10, 3))
+    # The full reference path performs the R component repair independently.
+    reference <- create.sknn.graph(X, k = 1, prune.edges = FALSE,
+                                  connect.components = FALSE)
+    testthat::local_mocked_bindings(
+        .repair.graph.lifecycle.stage = function(...) stop("redundant R repair"),
+        .package = "dgraphs")
+    actual <- create.sknn.graph(X, k = 1, prune.edges = FALSE,
+                               connect.components = TRUE)
+    for (stage in c("raw.repaired", "pruned.repaired", "repaired.pruned")) {
+        expect_equal(graph.adjacency(actual, stage), graph.adjacency(reference, stage))
+        expect_equal(graph.lengths(actual, stage), graph.lengths(reference, stage))
+    }
+    expect_equal(unname(actual$metadata$raw_repaired_mst_edge_matrix),
+                 unname(reference$metadata$raw_repaired_mst_edge_matrix))
+})

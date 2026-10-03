@@ -10,6 +10,7 @@ OBJECTS = \
 	RcppExports.o \
 	fermat_implicit.o \
 	fermat_knn.o \
+	linf_simplex.o \
 	quadform_geodesics_solver.o \
 	quadform_geodesics_solver_rcpp.o \
 	quadform_geodesics_methods.o \

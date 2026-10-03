@@ -1,5 +1,9 @@
 # dgraphs (development version)
 
+- Added `linf.simplex.distances()` for intrinsic Euclidean-length distances
+  on the max-normalized compositional simplex, including intermediate-face
+  paths, source/target blocks, pair queries, and optional returned paths.
+
 - Added an article on Fermat distance recovery across sample size and curvature,
   with compact executable examples, a frozen synthetic benchmark, and separate
   reproduction scripts for the numerical reference searches.

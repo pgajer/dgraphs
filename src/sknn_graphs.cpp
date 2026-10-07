@@ -434,6 +434,46 @@ void add_component_mst_edges(std::map<std::uint64_t, edge_value_t>& edges,
     }
 }
 
+// Prim on the implicit graph of initial components. Only the best entering
+// edge per component is retained; no vertex- or component-distance table.
+std::size_t add_component_mst_streaming(std::map<std::uint64_t, edge_value_t>& edges,
+    const double* X, int n, int p, const std::vector<int>& comp, int c,
+    std::vector<mst_edge_t>& added) {
+    std::vector<std::vector<int>> members(c);
+    for (int i=0; i<n; ++i) members[comp[i]].push_back(i);
+    std::vector<bool> visited(c, false);
+    std::vector<mst_edge_t> best(c, {-1,-1,std::numeric_limits<double>::infinity()});
+    auto less = [](const mst_edge_t& a, const mst_edge_t& b) {
+        if (a.weight != b.weight) return a.weight < b.weight;
+        if (a.u != b.u) return a.u < b.u;
+        return a.v < b.v;
+    };
+    int current = comp[0];
+    std::size_t evaluated = 0;
+    for (int step=0; step<c; ++step) {
+        visited[current] = true;
+        for (int i : members[current]) {
+            R_CheckUserInterrupt();
+            for (int j=0; j<n; ++j) if (!visited[comp[j]]) {
+                const double d = euclidean_distance(X,n,p,i,j);
+                if (!std::isfinite(d)) Rf_error("Nonfinite Euclidean bridge length.");
+                ++evaluated;
+                const mst_edge_t candidate{std::min(i,j),std::max(i,j),d};
+                if (less(candidate,best[comp[j]])) best[comp[j]] = candidate;
+            }
+        }
+        if (step+1 == c) break;
+        int next=-1;
+        for (int k=0; k<c; ++k) if (!visited[k] &&
+            (next<0 || less(best[k],best[next]))) next=k;
+        const auto edge = best[next];
+        add_edge(edges,edge.u,edge.v,edge.weight);
+        added.push_back(edge);
+        current=next;
+    }
+    return evaluated;
+}
+
 bool try_component_mst_from_bridge_knn(std::map<std::uint64_t, edge_value_t>& edges,
                                        const double* X,
                                        int n,
@@ -750,14 +790,17 @@ extern "C" SEXP S_create_sknn_graph(SEXP s_X,
 
     std::vector<mst_edge_t> added_edges;
     bool bridge_exact_fallback_used = false;
+    std::size_t bridge_distance_evaluations = 0;
     std::string bridge_method = "none";
     int bridge_k_used = NA_INTEGER;
     if (connect_components && n_components_before > 1) {
         if (connect_method == 0) {
             if (D.empty()) {
-                D = pairwise_distances(X, n, p);
+                bridge_distance_evaluations = add_component_mst_streaming(
+                    edges,X,n,p,component_before,n_components_before,added_edges);
+            } else {
+                add_component_mst_edges(edges, D, n, component_before, n_components_before, added_edges);
             }
-            add_component_mst_edges(edges, D, n, component_before, n_components_before, added_edges);
             bridge_method = "exact";
         } else if (connect_method == 1) {
             if (D.empty()) {
@@ -785,10 +828,11 @@ extern "C" SEXP S_create_sknn_graph(SEXP s_X,
                 }
                 if (current_k >= bridge_k_max) {
                     if (D.empty()) {
-                        D = pairwise_distances(X, n, p);
+                        bridge_distance_evaluations = add_component_mst_streaming(
+                            edges,X,n,p,component_before,n_components_before,added_edges);
+                    } else {
+                        add_component_mst_edges(edges,D,n,component_before,n_components_before,added_edges);
                     }
-                    add_component_mst_edges(edges, D, n, component_before,
-                                            n_components_before, added_edges);
                     bridge_method = "ann_then_exact";
                     bridge_exact_fallback_used = true;
                     bridge_k_used = current_k;
@@ -818,8 +862,8 @@ extern "C" SEXP S_create_sknn_graph(SEXP s_X,
         });
     }
 
-    SEXP result = PROTECT(Rf_allocVector(VECSXP, 35));
-    SEXP names = PROTECT(Rf_allocVector(STRSXP, 35));
+    SEXP result = PROTECT(Rf_allocVector(VECSXP, 37));
+    SEXP names = PROTECT(Rf_allocVector(STRSXP, 37));
     const char* name_values[] = {
         "adj_list", "weight_list", "edge_matrix", "edge_weight",
         "knn_index", "n_vertices", "n_edges", "k",
@@ -832,11 +876,14 @@ extern "C" SEXP S_create_sknn_graph(SEXP s_X,
         "bridge_k_used", "bridge_exact_fallback_used",
         "prune_edges", "prune_method", "prune_tau", "prune_local_k",
         "with_pruned_edge_stats", "n_edges_before_pruning",
-        "n_edges_after_pruning", "n_pruned_edges", "pruned_edge_stats"
+        "n_edges_after_pruning", "n_pruned_edges", "pruned_edge_stats",
+        "dense_distance_matrix_allocated", "bridge_distance_evaluations"
     };
-    for (int i = 0; i < 35; ++i) {
+    for (int i = 0; i < 37; ++i) {
         SET_STRING_ELT(names, i, Rf_mkChar(name_values[i]));
     }
+    SET_VECTOR_ELT(result, 35, Rf_ScalarLogical(!D.empty()));
+    SET_VECTOR_ELT(result, 36, Rf_ScalarReal(static_cast<double>(bridge_distance_evaluations)));
     Rf_setAttrib(result, R_NamesSymbol, names);
     UNPROTECT(1);
 

@@ -24,7 +24,8 @@ create.sknn.graph(
   bridge.k = NULL,
   bridge.k.max = NULL,
   bridge.growth = 2,
-  input.type = c("observations", "distances")
+  input.type = c("observations", "distances"),
+  search.data = NULL
 )
 }
 \arguments{
@@ -102,6 +103,12 @@ factor for bridge candidate neighborhoods.}
 
 \item{input.type}{Input interpretation. Defaults to \code{"observations"} for
 backward compatibility; symmetry never triggers automatic detection.}
+
+\item{search.data}{Optional finite numeric matrix with one row per observation,
+used only for ANN neighbor ranking (for example unwhitened PCA scores).
+Coincident search rows are allowed and remain separate vertices.
+Edge lengths and connectivity repair always use \code{X}. Only observation
+input with \code{neighbor.method = "ann"} supports this argument.}
 }
 \value{
 A \code{dgraph} object. Use \code{\link[=graph.adjacency]{graph.adjacency()}}, \code{\link[=graph.lengths]{graph.lengths()}},
@@ -140,7 +147,11 @@ spanning tree of this component graph. This adds exactly \code{m - 1} bridge
 edges when the original sKNN graph has \code{m} connected components.
 \code{connect.method = "component.mst.ann"} uses ANN nearest-neighbor bridge
 candidates first and automatically falls back to exact component MST when
-the sparse candidate graph does not connect all components. The alternative
+the sparse candidate graph does not connect all components. With observation
+input and ANN neighbor search, exact component repair streams distances
+through Prim's algorithm without a full distance matrix; worst-case distance
+work is still quadratic. This does not apply to \code{global.mst}, pruning, or
+the \code{exact} neighbor backend, which may allocate dense distances. The alternative
 \code{connect.method = "global.mst"} unions the sKNN graph with the full
 Euclidean MST on the data points.
 

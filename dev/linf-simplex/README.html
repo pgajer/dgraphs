@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Intrinsic max-simplex geodesics</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Intrinsic max-simplex geodesics</h1>
+</header>
+<h1
+id="exact-euclidean-length-geodesics-on-the-max-normalized-simplex">Exact
+Euclidean-length geodesics on the max-normalized simplex</h1>
+<p><code>linf.simplex.distances()</code> maps each nonzero nonnegative
+row to <code>u = x / max(x)</code>. It computes intrinsic
+<strong>Euclidean</strong> length on the union of faces
+<code>u_i = 1</code>, with all coordinates in <code>[0,1]</code>. It is
+not an L-infinity length metric, a nearest-neighbor graph, or a
+sample-density approximation. It supports dense matrices, source/target
+blocks, explicit pairs, and returned piecewise-linear paths. Coordinates
+absent from both samples can be omitted from the search, while still
+being present in returned paths.</p>
+<h2 id="derivation">Derivation</h2>
+<p>Write the endpoint deficits as <code>a = 1-u</code>,
+<code>b = 1-v</code>. The surface is the union of coordinate-zero faces
+of the nonnegative orthant, truncated at coordinate one. A shortest path
+need not revisit a face: replace the subpath between two visits by its
+straight chord inside that convex face. Thus we need only consider face
+sequences with distinct indices.</p>
+<p>For a sequence <code>f_0,...,f_r</code>, with <code>a[f_0]=0</code>
+and <code>b[f_r]=0</code>, unfolding across successive right-angle faces
+gives a Euclidean endpoint separation whose square is</p>
+<pre><code>L^2 = ||u-v||_2^2 + 2 C
+C = sum_{k=0}^{r-1} a[f_{k+1}] (b[f_k] + b[f_{k+1}]).</code></pre>
+<p>Every path with that sequence has length at least this unfolded
+separation. Minimizing C is a nonnegative directed shortest-path problem
+on face indices, with edge cost <code>w(i,j) = a[j]*(b[i]+b[j])</code>,
+zero-cost initial labels at faces with <code>a[i]=0</code>, and terminal
+faces with <code>b[j]=0</code>.</p>
+<p>The lower bound is attained by a minimum-cost sequence. Its unfolded
+crossing times are <code>t_k = a[f_k]/(a[f_k]+b[f_{k-1}])</code>. If two
+successive times were out of order, then
+<code>a[f_k]*b[f_k] &gt; a[f_{k+1}]*b[f_{k-1}]</code>. Removing face
+<code>f_k</code> would decrease C, because the cost difference is</p>
+<pre><code>a[f_k]*b[f_{k-1}] + a[f_k]*b[f_k]
+  + a[f_{k+1}]*b[f_k] - a[f_{k+1}]*b[f_{k-1}] &gt; 0.</code></pre>
+<p>This contradicts minimality. Hence the unfolded straight segment
+crosses faces in the required order. On a visited coordinate, the
+refolded deficit falls linearly to zero, stays zero on that face, then
+rises linearly to its terminal value. Other coordinates interpolate
+linearly. Every coordinate therefore remains between zero and the larger
+endpoint deficit, at most one. This constructs a feasible path attaining
+the bound inside the truncated orthant, proving global optimality (in
+exact arithmetic).</p>
+<p>Of initial faces only the one with smallest b can improve costs; of
+terminal faces only the one with smallest a matters. Their direct
+sequence supplies an upper bound at most one for C. An intermediate node
+with <code>a[i]*b[i] &gt;= best</code> cannot improve it. In particular,
+a feature zero in both original samples has <code>a[i]=b[i]=1</code> and
+may be omitted. A shared endpoint face gives the ordinary Euclidean
+chord immediately.</p>
+<p>The C++ implementation uses double precision, deterministic
+index-order ties, and Dijkstra search with those pruning rules. No
+nearest-face shortcut or restriction to two or three faces is imposed.
+Runtime per pair is quadratic in the union of nonzero features in the
+worst case; source blocks avoid all-pairs output storage.</p>
+<h2 id="checks">Checks</h2>
+<p><code>tests/testthat/test-linf-simplex.R</code> checks known
+two-feature distances, same-face chords, an intermediate-face shortcut,
+independent constrained path optimization in three features, returned
+endpoint coordinates, surface membership along every segment, ordered
+crossing times, path lengths, triangle inequalities, symmetry,
+rescaling, block and pair queries, and invalid inputs. The source/target
+API is also used in the comb-V3V4-tx batch; that application and its
+full-data timings are separate from package tests.</p>
+</body>
+</html>

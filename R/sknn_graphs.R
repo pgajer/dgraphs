@@ -1,3 +1,13 @@
+.validate.sknn.search.data <- function(X) {
+    # Projection can collapse distinct original vertices. Retain those ties.
+    if (!(is.matrix(X) || is.data.frame(X))) stop("search.data must be a numeric matrix.",call.=FALSE)
+    X <- as.matrix(X)
+    if (!is.numeric(X) || ncol(X)<1L || any(!is.finite(X)))
+        stop("search.data must have finite numeric coordinates.",call.=FALSE)
+    storage.mode(X) <- "double"
+    X
+}
+
 #' Compute a Symmetric k-Nearest Neighbor Graph
 #'
 #' @description
@@ -32,7 +42,11 @@
 #' edges when the original sKNN graph has `m` connected components.
 #' `connect.method = "component.mst.ann"` uses ANN nearest-neighbor bridge
 #' candidates first and automatically falls back to exact component MST when
-#' the sparse candidate graph does not connect all components. The alternative
+#' the sparse candidate graph does not connect all components. With observation
+#' input and ANN neighbor search, exact component repair streams distances
+#' through Prim's algorithm without a full distance matrix; worst-case distance
+#' work is still quadratic. This does not apply to `global.mst`, pruning, or
+#' the `exact` neighbor backend, which may allocate dense distances. The alternative
 #' `connect.method = "global.mst"` unions the sKNN graph with the full
 #' Euclidean MST on the data points.
 #'
@@ -97,6 +111,11 @@
 #'   non-self neighbor indices. It must have `nrow(X)` rows and at least `k`
 #'   columns. This is supported only with `neighbor.method = "ann"` and is
 #'   primarily useful when constructing several graphs from one cached search.
+#' @param search.data Optional finite numeric matrix with one row per observation,
+#'   used only for ANN neighbor ranking (for example unwhitened PCA scores).
+#'   Coincident search rows are allowed and remain separate vertices.
+#'   Edge lengths and connectivity repair always use `X`. Only observation
+#'   input with `neighbor.method = "ann"` supports this argument.
 #' @param graph.detail Character scalar. `"full"` returns the complete graph
 #'   lifecycle object. `"minimal"` skips lifecycle branch construction and is
 #'   allowed only with `prune.method = "none"`, `prune.edges = FALSE`, and
@@ -142,9 +161,11 @@ create.sknn.graph <- function(X,
                               bridge.k = NULL,
                               bridge.k.max = NULL,
                               bridge.growth = 2,
-                              input.type = c("observations", "distances")) {
+                              input.type = c("observations", "distances"),
+                              search.data = NULL) {
     input.type <- match.arg(input.type)
     if (identical(input.type, "distances")) {
+        if (!is.null(search.data)) stop("search.data requires observation input.", call. = FALSE)
         D <- .validate.sknn.distances(X)
         return(.create.sknn.distance.graph(
             D, k, prune.edges = prune.edges, prune.method = prune.method,
@@ -214,6 +235,12 @@ create.sknn.graph <- function(X,
     connect.method <- match.arg(connect.method)
     edge.weight <- match.arg(edge.weight)
     neighbor.method <- match.arg(neighbor.method)
+    search.X <- X
+    if (!is.null(search.data)) {
+        if (neighbor.method != "ann") stop("search.data requires neighbor.method = 'ann'.", call. = FALSE)
+        search.X <- .validate.sknn.search.data(search.data)
+        if (nrow(search.X) != n) stop("search.data must have nrow(X) rows.", call. = FALSE)
+    }
     graph.detail <- match.arg(graph.detail)
     if (!is.numeric(ann.eps) || length(ann.eps) != 1L || !is.finite(ann.eps) ||
         ann.eps < 0) {
@@ -285,7 +312,7 @@ create.sknn.graph <- function(X,
     if (identical(neighbor.method, "ann") && !nrow(knn.index)) {
         raw.knn <- .Call(
             "S_kNN",
-            X,
+            search.X,
             as.integer(k + 1L),
             PACKAGE = "dgraphs"
         )$indices
@@ -340,6 +367,8 @@ create.sknn.graph <- function(X,
         as.logical(with.pruned.edge.stats),
         PACKAGE = "dgraphs"
     )
+    result$search_dimension <- ncol(search.X)
+    result$search_data_supplied <- !is.null(search.data)
     if (identical(graph.detail, "minimal")) {
         result$raw_adj_list <- result$adj_list
         result$raw_weight_list <- result$weight_list
@@ -591,10 +620,12 @@ create.sknn.graphs <- function(X, k.values, ..., input.type = c("observations", 
         args$neighbor.method <- NULL
     }
 
+    search.X <- if (is.null(args$search.data)) X else .validate.sknn.search.data(args$search.data)
+    if (nrow(search.X) != n) stop("search.data must have nrow(X) rows.", call. = FALSE)
     max.k <- max(k.values)
     raw.knn <- .Call(
         "S_kNN",
-        X,
+        search.X,
         as.integer(max.k + 1L),
         PACKAGE = "dgraphs"
     )$indices

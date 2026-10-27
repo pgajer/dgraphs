@@ -217,7 +217,7 @@ quad.gallery <- function(views, id) {
             "#B64036"))
         ivue::plot3D.plain(v$X, col = ivue::map.colors(v$values, scale)$colors, point.size = 4,
             axes = FALSE, aspect = "equal", layers = layers, camera = ivue::camera.zup(elevation = 25,
-                turn = -125, zoom = 0.53), height = 450, background.color = "#FAFCFD")
+                turn = -125, zoom = 0.53), height = 450, background.color = "#FAFCFD", controls = FALSE)
     })
     widget <- widgets[[1]]
     widget$elementId <- paste0(id, "-view")
@@ -261,7 +261,7 @@ ivue::plot3D.cont(
   surface$predictors, values = surface$predictors[, 3],
   legend.title = "Height", aspect = "equal",
   layers = list(ivue::layer3D.axes(labels = c("x", "y", "z"))),
-  camera = ivue::camera.zup(elevation = 25, turn = -125, zoom = 0.53)
+  camera = ivue::camera.zup(elevation = 25, turn = -125, zoom = 0.53), controls = FALSE
 )
 ```
 

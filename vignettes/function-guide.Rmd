@@ -169,7 +169,11 @@ source plus those neighbors. Equal distances are resolved by vertex index,
 including coincident observations. Coordinate ANN search uses an exact
 fallback when its boundary candidates are tied. The specialized
 `knn.metric = "linf.simplex"` search currently evaluates all candidates to
-honor the same tie rule, with quadratic distance-evaluation cost.
+honor the same tie rule, with quadratic distance-evaluation cost. It shares
+`linf.simplex.distances()`'s general shortest-path solver, including paths
+through intermediate faces. Legacy endpoint-face simplex caches are rejected
+and must be rebuilt; Euclidean caches remain compatible. Search uses row-wise
+working memory rather than storing an all-pairs distance matrix.
 
 ```{r intersection-convention}
 X.line <- matrix(c(0, 1, 3, 6), ncol = 1)

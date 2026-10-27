@@ -66,13 +66,17 @@ exceeds this threshold, capped by \code{pca.dim}.}
 
 \item{knn.metric}{Character scalar specifying the geometry used for kNN search.
 \code{"euclidean"} uses ordinary ambient Euclidean distance.
-\code{"linf.simplex"} uses the unfolded intrinsic metric on the
+\code{"linf.simplex"} uses the intrinsic Euclidean path metric on the
 \eqn{L^\infty}-simplex and requires rows of \code{X} to be
-\eqn{L^\infty}-normalized.}
+\eqn{L^\infty}-normalized.
+
+Paths may use intermediate faces. Search evaluates every candidate using
+the same solver as \code{linf.simplex.distances()}, with row-wise memory.
+Simplex caches from the older endpoint-face algorithm are rejected.}
 
 \item{linf.tol}{Positive numeric tolerance used only when
-\code{knn.metric = "linf.simplex"} to identify active simplex faces and
-validate that \code{max(row) = 1}.
+\code{knn.metric = "linf.simplex"} to validate normalized inputs. Tiny negative entries are clamped to zero;
+admitted rows are divided by their maximum; active faces are exact maxima.
 
 Native graph construction is serial.}
 

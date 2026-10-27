@@ -44,9 +44,9 @@ cost over face sequences using Dijkstra's algorithm. It does not restrict
 paths to the endpoint faces. Computation uses double precision.
 
 With deficits a = 1 - u and b = 1 - v, a face sequence contributes
-squared distance sum((u-v)^2) + 2 C, where C is the sum of
-a\link{j} * (b\link{i} + b\link{j}) over successive faces i,j. Start faces have a\link{i}=0;
-end faces have b\link{j}=0. A minimum-cost sequence has ordered unfolding
+squared distance \code{sum((u-v)^2) + 2 * C}, where C is the sum of
+\code{a[j] * (b[i] + b[j])} over successive faces i,j. Start faces have \code{a[i]=0};
+end faces have \code{b[j]=0}. A minimum-cost sequence has ordered unfolding
 crossings and therefore realizes a path on the simplex.
 
 Work per pair is quadratic in the number of features present in either

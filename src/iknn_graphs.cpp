@@ -1520,6 +1520,7 @@ namespace {
 
 constexpr char k_knn_cache_magic[8] = {'G', 'F', 'L', 'K', 'N', 'N', '0', '1'};
 constexpr std::uint32_t k_knn_cache_version = 3U;
+constexpr std::uint32_t k_simplex_knn_cache_version = 4U;
 constexpr std::uint32_t k_knn_cache_endian_marker = 0x01020304U;
 std::atomic<std::uint64_t> g_knn_cache_tmp_counter(0U);
 
@@ -1588,8 +1589,8 @@ knn_cache_load_status_t read_knn_cache_file(
         out_reason = "cache magic mismatch";
         return knn_cache_load_status_t::invalid;
     }
-    if (header.version != k_knn_cache_version) {
-        out_reason = "cache version mismatch";
+    if (header.version != (expected_metric_id == 1 ? k_simplex_knn_cache_version : k_knn_cache_version)) {
+        out_reason = "cache version mismatch for requested metric";
         return knn_cache_load_status_t::invalid;
     }
     if (header.endian_marker != k_knn_cache_endian_marker) {
@@ -1697,7 +1698,7 @@ void write_knn_cache_file_atomic(
     const std::string tmp_path = make_knn_cache_tmp_path(cache_path);
     knn_cache_header_t header{};
     std::memcpy(header.magic, k_knn_cache_magic, sizeof(k_knn_cache_magic));
-    header.version = k_knn_cache_version;
+    header.version = metric_id == 1 ? k_simplex_knn_cache_version : k_knn_cache_version;
     header.endian_marker = k_knn_cache_endian_marker;
     header.n_points = static_cast<std::uint64_t>(knn_results.n_points);
     header.n_features = static_cast<std::uint64_t>(n_features);

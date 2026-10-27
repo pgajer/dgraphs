@@ -1,3 +1,13 @@
+# Development
+
+- Correct intrinsic simplex kNN search to allow intermediate faces, sharing the
+  general shortest-path solver. The old endpoint-face distance/search code is
+  removed. Every candidate is evaluated; row-wise search avoids a dense distance
+  matrix. Distances and neighbor order can change where intermediate faces help.
+- Reject old simplex neighbor-cache version 3 (new version 4); Euclidean cache
+  version 3 is unchanged. Admitted near-normalized rows are normalized exactly,
+  and negative roundoff within linf.tol is clamped to zero before distance search.
+
 # dgraphs (development version)
 
 - Added `linf.simplex.distances()` for intrinsic Euclidean-length distances

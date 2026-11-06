@@ -49,6 +49,11 @@ jobs:
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
+      - name: Use the primary CRAN source mirror
+        shell: Rscript {0}
+        run: |
+          cat('\nlocal({ r <- getOption("repos"); r["CRAN"] <- "https://cran.r-project.org"; options(repos = r) })\n',
+              file = path.expand("~/.Rprofile"), append = TRUE)
       - uses: r-hub/actions/setup-deps@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
@@ -90,6 +95,11 @@ jobs:
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
+      - name: Use the primary CRAN source mirror
+        shell: Rscript {0}
+        run: |
+          cat('\nlocal({ r <- getOption("repos"); r["CRAN"] <- "https://cran.r-project.org"; options(repos = r) })\n',
+              file = path.expand("~/.Rprofile"), append = TRUE)
       - uses: r-hub/actions/setup-deps@v1
         with:
           job-config: ${{ matrix.config.job-config }}

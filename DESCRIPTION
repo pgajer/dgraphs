@@ -55,7 +55,7 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0
 NeedsCompilation: yes
-Packaged: 2026-11-06 22:11:11 UTC; pgajer
+Packaged: 2026-11-06 22:27:53 UTC; pgajer
 Author: Pawel Gajer [aut, cre],
   Sunil Arya [ctb] (ANN library),
   David M. Mount [ctb] (ANN library),

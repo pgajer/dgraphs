@@ -2,6 +2,7 @@
 dgraphs_document_figure <- function(path, width = 1000L) {
     if (length(path) != 1L) return(vapply(path, dgraphs_document_figure,
         character(1), width = width, USE.NAMES = FALSE))
+    path <- normalizePath(path, mustWork = TRUE)
     if (!identical(Sys.getenv("DGRAPHS_STATIC_VIGNETTES", "true"), "true"))
         return(path)
     image <- png::readPNG(path)

@@ -1,0 +1,153 @@
+body {
+  background: #f7f5ef;
+}
+
+.dg-root {
+  min-height: 100vh;
+}
+
+.dg-appbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dg-brand {
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.dg-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.55rem;
+  padding: 0 0.6rem;
+  border: 1px solid #d6d3c8;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  color: #475569;
+  background: #fffdf7;
+}
+
+.dg-chip-ok {
+  color: #0f766e;
+  border-color: rgba(15, 118, 110, 0.35);
+}
+
+.dg-chip-warn {
+  color: #92400e;
+  border-color: rgba(180, 83, 9, 0.35);
+}
+
+.dg-sidebar {
+  background: #eeece2;
+}
+
+.dg-panel {
+  margin: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid #d6d3c8;
+  border-radius: 0.55rem;
+  background: #fffdf7;
+}
+
+.dg-panel h4 {
+  margin: 0 0 0.65rem;
+  font-size: 0.95rem;
+}
+
+.dg-wide {
+  width: 100%;
+}
+
+.dg-control-row {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 0.72fr) minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: center;
+  margin-bottom: 0.45rem;
+}
+
+.dg-control-row label {
+  margin: 0;
+  color: #475569;
+  font-weight: 650;
+  font-size: 0.8rem;
+}
+
+.dg-status {
+  margin-bottom: 0.65rem;
+  font-size: 0.82rem;
+  color: #17252a;
+}
+
+.dg-muted {
+  color: #64748b;
+  font-size: 0.86rem;
+}
+
+.dg-main {
+  padding: 0.9rem;
+}
+
+.dg-heading {
+  padding: 0 0.2rem 0.55rem;
+}
+
+.dg-heading h3 {
+  font-size: 1rem;
+  margin: 0 0 0.15rem;
+}
+
+.dg-plot-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.dg-plot-panel {
+  min-width: 0;
+  border: 1px solid #d6d3c8;
+  border-radius: 0.55rem;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.dg-empty {
+  min-height: 55vh;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: 2rem;
+  color: #475569;
+}
+
+.dg-empty h3 {
+  color: #17252a;
+}
+
+.dg-table-wrap {
+  max-height: 54vh;
+  overflow: auto;
+  border: 1px solid #e2dece;
+  border-radius: 0.45rem;
+  background: #ffffff;
+}
+
+.dg-table {
+  margin: 0;
+  font-size: 0.78rem;
+}
+
+.dg-table th {
+  position: sticky;
+  top: 0;
+  background: #f3f1e8;
+  z-index: 1;
+}
+
+@media (max-width: 1000px) {
+  .dg-plot-grid {
+    grid-template-columns: 1fr;
+  }
+}

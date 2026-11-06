@@ -1,0 +1,4 @@
+The graph explorer component in R/ and www/ originated in dggraphui.
+Copyright Pawel Gajer. Distributed under GNU GPL version 3 or later.
+See https://www.gnu.org/licenses/gpl-3.0.html or R.home("share/licenses/GPL-3").
+These notices do not change the licenses of other dgraphs components.

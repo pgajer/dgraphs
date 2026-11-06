@@ -1,0 +1,11 @@
+list(experiment = "fermat_surfaces_best_of_six_01_oct_2026", 
+    results_date = "2026-10-01", sample_seed = 4101L, samples_per_shape = 150L, 
+    reference_pairs_per_shape = 1000L, mds_backend = "sgd", mds_epochs = 300L, 
+    source_md5 = c(`results/metrics_extended.csv` = "449cc95ca5a23beae600bebcba490afe", 
+    `results/chord_summary.csv` = "c287d0bd10f200ff874534fbece83586", 
+    `results/chord_reference_audit.csv` = "4b5ad27dd6d89f2dfb839c4b0edaa44d", 
+    `results/solver_comparison.csv` = "b1620dfa21c855032a08c8b7d59b529f", 
+    `results/overlays/saddle_p2_k0.html` = "f98b739d0d74330e2adc5a1e67e30dcc", 
+    validation.json = "8f2c54bf25d82769d68c0b23021135d8"), scope = "Single-seed vignette; the complete research experiment has two seeds and 216 conditions.", 
+    overlay = "Saved p=2 complete-target saddle display; similarity Procrustes alignment retained unchanged.", 
+    note = "Frozen synthetic results. Rendering only formats tables, plots saved scores and displays saved widget data. Teaching examples are not executed.")

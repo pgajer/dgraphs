@@ -1,0 +1,64 @@
+This package includes the following external libraries:
+
+Geodesic (https://github.com/mojocorp/geodesic)
+License: MIT
+Copyright (c) 2008 Danil Kirsanov
+Pinned upstream commit: 7b08bfb03c444819a31f216cb1e0a3fb9528f806
+The license is retained in inst/licenses/Geodesic-MIT.txt. The six headers
+under src/vendor/geodesic retain upstream notices. dgraphs adaptations add
+owned interval allocations, resource/interrupt hooks, exception-based invariant
+checks, silent diagnostics and typed interval copies. See that directory's
+README.md for the source and modification record.
+
+The quadform_geodesics R and C++ source units were developed in geosmooth
+by Pawel Gajer's project and are distributed here under the package's MIT
+license with the copyright holder's authorization (2026-09-11). This does
+not change the licenses of earlier geosmooth distributions or the external
+libraries listed below.
+
+ANN - Approximate Nearest Neighbor Library
+(https://www.cs.umd.edu/~mount/ANN/)
+License: LGPL-2.1-or-later
+Copyright (c) 1997-2010 University of Maryland, Sunil Arya, and David M. Mount
+The upstream copyright and license notice is included in
+inst/licenses/ANN-Copyright-Notice.txt.
+dgraphs modifies ANN's point allocation and error handler (2026-09-03):
+allocation is exception-safe and errors throw C++ exceptions rather than
+returning silently or terminating the process. These modifications retain
+ANN's LGPL-2.1-or-later license.
+
+Spectra (https://spectralib.org/)
+License: MPL-2.0
+Copyright (c) 2016-2024 Yixuan Qiu and contributors
+The included source files retain their MPL-2.0 notices and link to the license
+text at https://mozilla.org/MPL/2.0/.
+
+Individual Spectra linear-algebra headers also retain copyright notices for
+Gael Guennebaud and Jitse Niesen. Eigensolver headers contributed by the
+Netherlands eScience Center retain that organization's copyright notices.
+
+The Spectra contribution inst/include/Spectra/contrib/LOBPCGSolver.h is
+Copyright Anna Araslanova and Yixuan Qiu and is distributed under the MIT
+license stated in that source file.
+
+The reusable synthetic geometry and sampling R source units, Geometry Lab
+application, and maintained quadratic-surface reference tools were developed
+in Pawel Gajer's geosmooth project and migrated on 2026-09-11. Distribution of
+project-owned material here is under the package's MIT license under the
+recorded copyright-holder authorization, to the extent the holder has the
+necessary rights. This does not relicense earlier geosmooth distributions or
+third-party material. Existing third-party notices remain applicable.
+
+Graph Reconstruction Explorer
+The application sources and stylesheet under inst/shiny/graph-explorer
+were moved from dggraphui on 2026-09-15. They retain their original
+GPL (>= 3) license; see that component's LICENSE. The original author is
+Pawel Gajer. No third-party notices have been removed.
+
+Optional internal IAN backend (inst/ian/backend): IAN by Luciano Dyballa
+(BSD-3-Clause), NumPy-derived ordering/arithmetic (BSD-3-Clause), Clarabel.cpp
+(Apache-2.0), Clarabel.rs 0.11.1 (Apache-2.0), nlohmann JSON (MIT). Full upstream
+notices are retained in that directory and JSON header. The pinned source and
+adapter changes are recorded in backend/provenance.json. The optional build
+uses additional Cargo dependencies with notices in their downloaded crates;
+this source package distributes neither those crates nor a compiled module.

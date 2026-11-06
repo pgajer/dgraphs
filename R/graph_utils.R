@@ -1,0 +1,581 @@
+utils::globalVariables("all.edge.lengths")
+
+#' Compare Two Adjacency Lists
+#'
+#' @param adj.list1 First adjacency list.
+#' @param adj.list2 Second adjacency list.
+#' @param verbose Logical; print the indices of vertices with different
+#'   neighbor sets. Defaults to `FALSE`.
+#'
+#' @return `TRUE` when each vertex has the same neighbor set in both lists,
+#'   ignoring order; otherwise `FALSE`.
+#'
+#' @examples
+#' graph <- list(c(2L, 3L), 1L, 1L)
+#' compare.adj.lists(graph, list(c(3L, 2L), 1L, 1L))
+#'
+#' @export compare.adj.lists
+#' @usage compare.adj.lists(adj.list1, adj.list2, verbose = FALSE)
+compare.adj.lists <- function(adj.list1, adj.list2, verbose = FALSE) {
+    if (length(adj.list1) != length(adj.list2)) {
+        return(FALSE)
+    }
+
+    vertices.with.different.neighbors <- c()
+    for (i in seq_along(adj.list1)) {
+        if (!setequal(adj.list1[[i]], adj.list2[[i]])) {
+            vertices.with.different.neighbors <- c(vertices.with.different.neighbors, i)
+        }
+    }
+
+    if (length(vertices.with.different.neighbors) == 0) {
+        return(TRUE)
+    } else {
+        if (isTRUE(verbose)) {
+            cat("FALSE: Vertices with neighbor sets not the same: ")
+            cat(vertices.with.different.neighbors)
+            cat("\n")
+        }
+        return(FALSE)
+    }
+}
+
+#' Convert a Directed Adjacency List to an Undirected Adjacency List
+#'
+#' @param adj.list Directed adjacency list.
+#'
+#' @return An adjacency list with reciprocal edges added and duplicate
+#'   neighbors removed.
+#'
+#' @examples
+#' directed <- list(2L, integer(0), 1L)
+#' convert.to.undirected(directed)
+#'
+#' @export
+convert.to.undirected <- function(adj.list) {
+    adj.list <- .dgraphs.validate.adj.list(adj.list, allow.empty = TRUE)
+    out <- adj.list
+    for (i in seq_along(adj.list)) for (j in adj.list[[i]]) out[[j]] <- c(out[[j]], i)
+    lapply(out, function(v) sort(unique(as.integer(v))))
+}
+
+#' Remove Self-Loops from an Adjacency List
+#'
+#' @param adj.list Adjacency list.
+#'
+#' @return The adjacency list with entries equal to their vertex index removed.
+#'
+#' @examples
+#' rm.self.loops(list(c(1L, 2L), c(1L, 2L)))
+#'
+#' @export
+rm.self.loops <- function(adj.list) {
+    for (vertex in seq_along(adj.list)) {
+        adj.list[[vertex]] <- adj.list[[vertex]][adj.list[[vertex]] != vertex]
+    }
+
+    return(adj.list)
+}
+
+#' Weighted Graph Distance Between Graphs with Identical Vertex Sets
+#'
+#' @param adj.list1 First graph adjacency list.
+#' @param length.list1 First graph edge weights.
+#' @param adj.list2 Second graph adjacency list.
+#' @param length.list2 Second graph edge weights.
+#' @param calculate.normalized.deviation Logical; if `TRUE`, normalize the L1
+#'   distance-matrix deviation.
+#'
+#' @return Numeric distance-matrix deviation.
+#'
+#' @examples
+#' graph <- list(2L, c(1L, 3L), 2L)
+#' weights1 <- list(1, c(1, 1), 1)
+#' weights2 <- list(1, c(1, 2), 2)
+#' identical.vertex.set.weighted.graph.similarity(
+#'   graph, weights1, graph, weights2
+#' )
+#'
+#' @export
+identical.vertex.set.weighted.graph.similarity <- function(adj.list1,
+                                                           length.list1,
+                                                           adj.list2,
+                                                           length.list2,
+                                                           calculate.normalized.deviation = FALSE) {
+
+    graph1.obj <- convert.adjacency.to.edge.matrix(adj.list1, length.list1)
+    graph2.obj <- convert.adjacency.to.edge.matrix(adj.list2, length.list2)
+
+    graph1 <- igraph::graph_from_edgelist(graph1.obj$edge.matrix, directed = FALSE)
+    graph2 <- igraph::graph_from_edgelist(graph2.obj$edge.matrix, directed = FALSE)
+
+    igraph::E(graph1)$weight <- graph1.obj$weights
+    igraph::E(graph2)$weight <- graph2.obj$weights
+
+    D1 <- igraph::distances(graph1, weights = igraph::E(graph1)$weight)
+    D2 <- igraph::distances(graph2, weights = igraph::E(graph2)$weight)
+
+    deviation <- sum(abs(D1 - D2))
+
+    if (calculate.normalized.deviation) {
+        max.distance.graph1 <- max(D1[is.finite(D1)])
+        max.distance.graph2 <- max(D2[is.finite(D2)])
+
+        max.distance <- max(max.distance.graph1, max.distance.graph2)
+
+        n <- igraph::vcount(graph1)
+        max.deviation <- n * n * max.distance
+        deviation <- deviation / max.deviation
+    }
+
+    return(deviation)
+}
+
+#' Compute Edge Difference Between Two Graphs
+#'
+#' @param adj.list1 First adjacency list.
+#' @param adj.list2 Second adjacency list.
+#'
+#' @return A list containing neighbors present in `graph1` but not `graph2` for
+#'   each vertex.
+#'
+#' @examples
+#' graph1 <- list(c(2L, 3L), 1L, 1L)
+#' graph2 <- list(2L, 1L, integer(0))
+#' edge.diff(graph1, graph2)
+#'
+#' @export
+edge.diff <- function(adj.list1, adj.list2) {
+    if (!is.list(adj.list1) || !is.list(adj.list2)) {
+        stop("Both inputs must be lists representing graph adjacency lists.")
+    }
+
+    if (length(adj.list1) != length(adj.list2)) {
+        stop("The two graphs must have the same number of vertices.")
+    }
+
+    result <- vector("list", length(adj.list1))
+
+    for (i in seq_along(adj.list1)) {
+        result[[i]] <- setdiff(adj.list1[[i]], adj.list2[[i]])
+    }
+
+    return(result)
+}
+
+#' Extract an Induced Subgraph
+#'
+#' @param graph A `dgraph`.
+#' @param vertices Unique vertex indices, in the desired output order.
+#' @param stage Stored stage to extract.
+#' @return A `dgraph` with compact indices and aligned lengths and attributes.
+#'   `metadata$original.vertices` maps its vertices back to the original graph.
+#' @examples
+#' graph <- create.graph("chain", 4)
+#' sub <- create.subgraph(graph, vertices = c(4, 3))
+#' graph.edges(sub)
+#' sub$metadata$original.vertices
+#' @export
+create.subgraph <- function(graph, vertices, stage = "final") {
+    s <- .dgraph.get.stage(graph, stage)
+    if (!is.numeric(vertices) || anyNA(vertices) || any(vertices != floor(vertices)) ||
+        any(!vertices %in% seq_len(graph.order(graph))) || anyDuplicated(vertices))
+        stop("vertices must be distinct valid vertex indices.")
+    vertices <- as.integer(vertices)
+    selected <- lapply(vertices, function(i) which(s$adj.list[[i]] %in% vertices))
+    adj <- lapply(seq_along(vertices), function(i)
+        match(s$adj.list[[vertices[i]]][selected[[i]]], vertices))
+    subset.values <- function(values) lapply(seq_along(vertices), function(i)
+        values[[vertices[i]]][selected[[i]]])
+    out <- dgraph(adj, if (!is.null(s$length.list)) subset.values(s$length.list),
+                  lapply(s$edge.attributes, subset.values))
+    original <- graph$metadata$original.vertices
+    out$metadata$original.vertices <- if (is.null(original)) vertices else original[vertices]
+    out
+}
+
+#' Count Edges in an Undirected Adjacency List
+#'
+#' @param adj.list Adjacency list for an undirected graph.
+#'
+#' @return Number of undirected edges.
+#'
+#' @examples
+#' count.edges(list(c(2L, 3L), 1L, 1L))
+#'
+#' @export
+count.edges <- function(adj.list) {
+    n.edges <- 0
+    for (i in seq_along(adj.list)) {
+        nbrs <- adj.list[[i]]
+        n.edges <- n.edges + length(nbrs)
+    }
+
+    return(n.edges / 2)
+}
+
+#' Extract Edge Lengths Along a Graph Path
+#'
+#' @param traj Numeric or integer vector of consecutive graph vertices.
+#' @param adj.list Adjacency list.
+#' @param length.list Edge-length list aligned with `adj.list`.
+#' @param add.quantiles Logical; if `TRUE`, add edge-length empirical
+#'   quantiles.
+#'
+#' @return Data frame with consecutive vertex pairs and their edge lengths.
+#'
+#' @examples
+#' graph <- list(2L, c(1L, 3L), 2L)
+#' lengths <- list(1, c(1, 2), 2)
+#' extract.trajectory.edge.lengths(c(1, 2, 3), graph, lengths)
+#'
+#' @export
+extract.trajectory.edge.lengths <- function(traj,
+                                            adj.list,
+                                            length.list,
+                                            add.quantiles = FALSE) {
+
+    if (!is.numeric(traj) && !is.integer(traj)) {
+        stop("traj must be a numeric or integer vector")
+    }
+
+    if (length(traj) < 2) {
+        stop("traj must contain at least 2 vertices to form an edge")
+    }
+
+    if (!is.list(adj.list) || !is.list(length.list)) {
+        stop("Both adj.list and length.list must be lists")
+    }
+
+    if (length(adj.list) != length(length.list)) {
+        stop("adj.list and length.list must have the same length")
+    }
+
+    n.edges <- length(traj) - 1
+    first.vertex <- integer(n.edges)
+    second.vertex <- integer(n.edges)
+    edge.length <- numeric(n.edges)
+
+    for (i in seq_len(n.edges)) {
+        v1 <- traj[i]
+        v2 <- traj[i + 1]
+
+        if (v1 < 1 || v1 > length(adj.list)) {
+            stop(sprintf("Vertex %d (position %d in trajectory) is out of bounds", v1, i))
+        }
+        if (v2 < 1 || v2 > length(adj.list)) {
+            stop(sprintf("Vertex %d (position %d in trajectory) is out of bounds", v2, i + 1))
+        }
+
+        pos <- match(v2, adj.list[[v1]])
+
+        if (!is.na(pos)) {
+            edge.length[i] <- length.list[[v1]][pos]
+        } else {
+            pos <- match(v1, adj.list[[v2]])
+
+            if (!is.na(pos)) {
+                edge.length[i] <- length.list[[v2]][pos]
+            } else {
+                stop(sprintf("Edge (%d, %d) not found in graph at trajectory position %d",
+                             v1, v2, i))
+            }
+        }
+
+        first.vertex[i] <- v1
+        second.vertex[i] <- v2
+    }
+
+    result <- data.frame(
+        first.vertex = first.vertex,
+        second.vertex = second.vertex,
+        edge.length = edge.length,
+        stringsAsFactors = FALSE
+    )
+
+    if (add.quantiles) {
+        if (is.null(all.edge.lengths)) {
+            all.edge.lengths <- graph.edges(dgraph(adj.list, length.list))$length
+        }
+        result$edge.quantile <- stats::ecdf(all.edge.lengths)(result$edge.length)
+    }
+
+    return(result)
+}
+
+#' Convert an Adjacency List to an Adjacency Matrix
+#'
+#' @param adj.list Adjacency list.
+#' @param weight.list Optional edge-weight list aligned with `adj.list`.
+#' @param mode Either `"undirected"` or `"directed"`.
+#' @param remove.self.loops Logical; if `TRUE`, remove diagonal entries.
+#'
+#' @return Numeric adjacency matrix.
+#'
+#' @examples
+#' graph <- list(c(2L, 3L), 1L, 1L)
+#' weights <- list(c(1, 2), 1, 2)
+#' convert.adjacency.list.to.adjacency.matrix(graph, weights)
+#'
+#' @export
+convert.adjacency.list.to.adjacency.matrix <- function(adj.list,
+                                                       weight.list = NULL,
+                                                       mode = "undirected",
+                                                       remove.self.loops = TRUE) {
+
+    if (!is.list(adj.list)) {
+        stop("adj.list must be a list")
+    }
+
+    n <- length(adj.list)
+
+    if (n == 0) {
+        stop("adj.list cannot be empty")
+    }
+
+    if (!is.null(weight.list)) {
+        if (!is.list(weight.list)) {
+            stop("weight.list must be a list")
+        }
+
+        if (length(weight.list) != n) {
+            stop("weight.list must have the same length as adj.list")
+        }
+
+        for (i in seq_len(n)) {
+            if (length(adj.list[[i]]) != length(weight.list[[i]])) {
+                stop(sprintf(
+                    "Length mismatch at vertex %d: adj.list has %d neighbors but weight.list has %d weights",
+                    i, length(adj.list[[i]]), length(weight.list[[i]])
+                ))
+            }
+        }
+    }
+
+    mode <- match.arg(mode, choices = c("undirected", "directed"))
+
+    adj.matrix <- matrix(0, nrow = n, ncol = n)
+
+    if (mode == "undirected" && !is.null(weight.list)) {
+        edge.count <- matrix(0, nrow = n, ncol = n)
+    }
+
+    for (i in seq_len(n)) {
+        neighbors <- adj.list[[i]]
+
+        if (length(neighbors) == 0) {
+            next
+        }
+
+        if (any(neighbors < 1) || any(neighbors > n)) {
+            invalid.idx <- neighbors[neighbors < 1 | neighbors > n]
+            stop(sprintf(
+                "Invalid vertex indices in adj.list[[%d]]: %s (valid range is 1 to %d)",
+                i, paste(invalid.idx, collapse = ", "), n
+            ))
+        }
+
+        if (remove.self.loops) {
+            keep.idx <- neighbors != i
+            neighbors <- neighbors[keep.idx]
+
+            if (!is.null(weight.list)) {
+                weight.list[[i]] <- weight.list[[i]][keep.idx]
+            }
+        }
+
+        if (length(neighbors) == 0) {
+            next
+        }
+
+        if (is.null(weight.list)) {
+            adj.matrix[i, neighbors] <- 1
+
+            if (mode == "undirected") {
+                adj.matrix[neighbors, i] <- 1
+            }
+        } else {
+            weights <- weight.list[[i]]
+
+            if (mode == "directed") {
+                adj.matrix[i, neighbors] <- weights
+            } else {
+                adj.matrix[i, neighbors] <- adj.matrix[i, neighbors] + weights
+                edge.count[i, neighbors] <- edge.count[i, neighbors] + 1
+
+                for (j in seq_along(neighbors)) {
+                    neighbor <- neighbors[j]
+                    weight <- weights[j]
+                    adj.matrix[neighbor, i] <- adj.matrix[neighbor, i] + weight
+                    edge.count[neighbor, i] <- edge.count[neighbor, i] + 1
+                }
+            }
+        }
+    }
+
+    if (mode == "undirected" && !is.null(weight.list)) {
+        edge.count[edge.count == 0] <- 1
+        adj.matrix <- adj.matrix / edge.count
+    }
+
+    if (remove.self.loops) {
+        diag(adj.matrix) <- 0
+    }
+
+    return(adj.matrix)
+}
+
+#' Geodesic Disk in a Weighted Graph
+#'
+#' @param adj.list Adjacency list.
+#' @param length.list Edge-length list aligned with `adj.list`.
+#' @param center.vertex Center vertex.
+#' @param radius Optional geodesic radius.
+#' @param n Optional target number of reachable vertices.
+#'
+#' @return List with `vertices`, effective `radius`, and aligned `dists`.
+#'
+#' @examples
+#' graph <- list(2L, c(1L, 3L), 2L)
+#' weights <- list(1, c(1, 2), 2)
+#' geodesic.disk(graph, weights, center.vertex = 2, radius = 2)
+#'
+#' @export
+geodesic.disk <- function(adj.list,
+                          length.list,
+                          center.vertex,
+                          radius = NULL,
+                          n = NULL) {
+
+    if (!is.list(adj.list) || !is.list(length.list)) {
+        stop("adj.list and length.list must be lists.")
+    }
+    if (length(adj.list) != length(length.list)) {
+        stop("adj.list and length.list must have the same length.")
+    }
+
+    n.vertices <- length(adj.list)
+
+    if (!is.numeric(center.vertex) || length(center.vertex) != 1L || is.na(center.vertex)) {
+        stop("center.vertex must be a single non-NA integer (1-based).")
+    }
+    center.vertex <- as.integer(center.vertex)
+    if (center.vertex < 1L || center.vertex > n.vertices) {
+        stop(sprintf("center.vertex must be in [1, %d].", n.vertices))
+    }
+
+    if (is.null(radius) && is.null(n)) {
+        stop("Exactly one of radius or n must be provided (cannot both be NULL).")
+    }
+    if (!is.null(radius) && !is.null(n)) {
+        stop("Exactly one of radius or n must be provided (cannot both be non-NULL).")
+    }
+
+    if (!is.null(radius)) {
+        if (!is.numeric(radius) || length(radius) != 1L || is.na(radius)) {
+            stop("radius must be a single non-NA numeric value.")
+        }
+        radius <- as.numeric(radius)
+        if (radius < 0) stop("radius must be nonnegative.")
+    }
+
+    if (!is.null(n)) {
+        if (!is.numeric(n) || length(n) != 1L || is.na(n)) {
+            stop("n must be a single non-NA integer value.")
+        }
+        n <- as.integer(n)
+        if (n < 1L) stop("n must be >= 1.")
+    }
+
+    for (v in seq_len(n.vertices)) {
+        if (length(adj.list[[v]]) != length(length.list[[v]])) {
+            stop(sprintf("Mismatch at vertex %d: adj.list[[%d]] and length.list[[%d]] differ in length.",
+                         v, v, v))
+        }
+        if (length(adj.list[[v]]) > 0L) {
+            nbrs <- as.integer(adj.list[[v]])
+            if (any(nbrs < 1L | nbrs > n.vertices)) {
+                stop(sprintf("adj.list[[%d]] contains out-of-range vertex indices.", v))
+            }
+        }
+        if (length(length.list[[v]]) > 0L) {
+            ww <- as.numeric(length.list[[v]])
+            if (any(!is.finite(ww))) stop(sprintf("Non-finite edge weight at vertex %d.", v))
+            if (any(ww < 0)) stop(sprintf("Negative edge weight at vertex %d (unsupported).", v))
+        }
+    }
+
+    from <- integer(0L)
+    to <- integer(0L)
+    wts <- numeric(0L)
+
+    for (v in seq_len(n.vertices)) {
+        nbrs <- as.integer(adj.list[[v]])
+        if (length(nbrs) == 0L) next
+        ww <- as.numeric(length.list[[v]])
+
+        keep <- which(nbrs > v)
+        if (length(keep) > 0L) {
+            from <- c(from, rep.int(v, length(keep)))
+            to <- c(to, nbrs[keep])
+            wts <- c(wts, ww[keep])
+        }
+    }
+
+    edge.df <- data.frame(from = from, to = to, weight = wts)
+
+    g <- igraph::graph_from_data_frame(edge.df, directed = FALSE,
+                                       vertices = seq_len(n.vertices))
+    if (nrow(edge.df) > 0L) {
+        igraph::E(g)$weight <- edge.df$weight
+        d <- as.numeric(igraph::distances(g,
+                                          v = center.vertex,
+                                          to = igraph::V(g),
+                                          weights = igraph::E(g)$weight)[1, ])
+    } else {
+        d <- rep.int(Inf, n.vertices)
+        d[center.vertex] <- 0
+    }
+
+    d.ok <- is.finite(d)
+
+    build.out <- function(idx, radius.used) {
+        in.disk <- which(idx)
+        dists <- as.numeric(d[idx])
+        o <- order(dists)
+        in.disk <- in.disk[o]
+        dists <- dists[o]
+        names(dists) <- as.character(in.disk)
+
+        list(vertices = as.integer(in.disk),
+             radius = as.numeric(radius.used),
+             dists = dists)
+    }
+
+    if (!is.null(radius)) {
+        radius.used <- radius
+        idx <- d.ok & (d <= radius.used)
+        return(build.out(idx, radius.used))
+    }
+
+    d.reach <- d[d.ok]
+    if (length(d.reach) == 0L) {
+        dists <- 0
+        names(dists) <- as.character(center.vertex)
+        return(list(vertices = as.integer(center.vertex),
+                    radius = 0,
+                    dists = dists))
+    }
+
+    d.sorted <- sort(d.reach)
+
+    if (n > length(d.sorted)) {
+        radius.used <- max(d.sorted)
+        idx <- d.ok
+        return(build.out(idx, radius.used))
+    }
+
+    radius.used <- d.sorted[n]
+    idx <- d.ok & (d <= radius.used)
+    build.out(idx, radius.used)
+}

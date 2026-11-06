@@ -1,0 +1,69 @@
+Package: dgraphs
+Title: Data-Derived Graph Construction Utilities
+Version: 0.4.0
+Authors@R: c(
+    person("Pawel", "Gajer", role = c("aut", "cre"),
+           email = "pgajer@gmail.com"),
+    person("Sunil", "Arya", role = "ctb",
+           comment = "ANN library"),
+    person("David M.", "Mount", role = "ctb",
+           comment = "ANN library"),
+    person("University of Maryland", role = "cph",
+           comment = "ANN library"),
+    person("Yixuan", "Qiu", role = c("ctb", "cph"),
+           comment = "Spectra library"),
+    person("Anna", "Araslanova", role = c("ctb", "cph"),
+           comment = "Spectra LOBPCG solver"),
+    person("Gael", "Guennebaud", role = c("ctb", "cph"),
+           comment = "Spectra linear algebra routines"),
+    person("Jitse", "Niesen", role = c("ctb", "cph"),
+           comment = "Spectra linear algebra routines"),
+    person("Netherlands eScience Center", role = c("ctb", "cph"),
+           comment = "Spectra eigensolver routines"),
+    person("Danil", "Kirsanov", role = c("ctb", "cph"),
+           comment = "Polyhedral geodesic library")
+    )
+Description: Constructs data-derived graphs from numerical observations using
+    mutual, shared-neighbor, intersection, geodesic, radius, adaptive-radius,
+    minimum-spanning-tree completion, Fermat-distance, and optional iterated
+    adaptive neighborhood methods. Provides graph conversion, pruning,
+    diagnostics, spectral embedding, endpoint detection, and path utilities,
+    including intrinsic Euclidean distances on the max-normalized compositional
+    simplex. Includes reproducible synthetic geometries, point sampling, and an
+    optional interactive graph explorer. The graph constructions include methods
+    described by Jarvis and Patrick (1973) <doi:10.1109/T-C.1973.223640>,
+    Brito et al. (1997)
+    <doi:10.1016/S0167-7152(96)00213-1>, Berry and Sauer (2019)
+    <doi:10.3934/fods.2019001>, and Gower and Ross (1969)
+    <doi:10.2307/2346439>.
+License: MIT + file LICENSE
+Copyright: file inst/COPYRIGHTS
+URL: https://pgajer.github.io/dgraphs/,
+        https://github.com/pgajer/dgraphs
+BugReports: https://github.com/pgajer/dgraphs/issues
+Encoding: UTF-8
+Language: en-US
+Roxygen: list(markdown = TRUE)
+SystemRequirements: C++17
+Depends: R (>= 4.1.0)
+Imports: FNN, igraph (>= 2.2.0), nloptr, parallel, stats, Rcpp
+LinkingTo: BH, nloptr, Rcpp, RcppEigen
+Suggests: shiny, bslib, plotly, png, grip, digest, geometry, htmltools,
+        htmlwidgets, ivue (>= 0.1.0), knitr, Matrix, rmarkdown, rgl,
+        testthat (>= 3.0.0), withr
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0
+NeedsCompilation: yes
+Packaged: 2026-11-06 22:11:11 UTC; pgajer
+Author: Pawel Gajer [aut, cre],
+  Sunil Arya [ctb] (ANN library),
+  David M. Mount [ctb] (ANN library),
+  University of Maryland [cph] (ANN library),
+  Yixuan Qiu [ctb, cph] (Spectra library),
+  Anna Araslanova [ctb, cph] (Spectra LOBPCG solver),
+  Gael Guennebaud [ctb, cph] (Spectra linear algebra routines),
+  Jitse Niesen [ctb, cph] (Spectra linear algebra routines),
+  Netherlands eScience Center [ctb, cph] (Spectra eigensolver routines),
+  Danil Kirsanov [ctb, cph] (Polyhedral geodesic library)
+Maintainer: Pawel Gajer <pgajer@gmail.com>

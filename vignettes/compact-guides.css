@@ -1,0 +1,4 @@
+/* Give multi-panel scientific figures their intended reading width. */
+body {
+  max-width: 1000px;
+}

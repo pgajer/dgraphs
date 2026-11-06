@@ -1,0 +1,113 @@
+---
+title: "IAN graphs: setup and interpreting results"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{IAN graphs: setup and interpreting results}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+IAN starts with a Gabriel graph, estimates local neighborhood scales, and prunes
+edges. `create.ian.graph()` preserves connectivity by default by retaining proposed
+edges whose removal would disconnect the current graph. It also retains the
+initial Gabriel graph and useful numerical and pruning diagnostics.
+
+## Build the optional backend once
+
+The initial supported target is macOS arm64. Setup needs Python 3, Apple's C++
+compiler/SDK, and native arm64 Cargo/Rust (Rust at least 1.77). The package installs
+pinned backend sources; its ordinary installation does not build Rust or download
+a toolchain. These setup commands run explicitly:
+
+```{r setup-backend, eval=FALSE}
+library(dgraphs)
+backend <- build.ian.backend("ian-build")
+```
+
+Use a new build directory. Logs and source identities remain there. Save the
+returned module path for later sessions, and rebuild after changing the R runtime
+or backend sources. The graph function uses this module directly; it does not
+launch a separate solver process. With cached dependencies, `offline=TRUE` avoids
+Cargo network access. If the default toolchain targets Intel Mac, specify matching
+native `cargo` and `rustc` executable paths. See `help("build.ian.backend")`.
+
+## Construct and inspect a graph
+
+```{r graph-example, eval=FALSE}
+X <- rbind(c(0, 0), c(1, 0), c(2, 0), c(0, 0))
+fit <- create.ian.graph(X, backend = backend,
+    specimen.ids = c("alpha", "beta", "gamma", "delta"),
+    participant.ids = c("p1", "p1", "p2", "p3"))
+if (!fit$complete) stop(fit$error$message)
+graph.edges(fit$initial_graph)
+graph.edges(fit$final_graph)
+fit$mapping$member_to_profile
+fit$scales
+fit$affinity
+fit$diagnostics$connectivity$protected.edges
+fit$diagnostics$connectivity$history
+```
+
+Input rows are specimens. Exact duplicate feature rows become one graph vertex;
+the example has four specimens and three vertices, in first-occurrence order.
+Repeated participant IDs remain labels and do not cause profile merging. Mapping
+indices and graph vertices are one-based. Full raw traces retain explicitly
+labeled zero-based native indices.
+
+When distances are omitted, the function uses Euclidean distances computed by R.
+An optional `distances` matrix or `dist` object supplies unsquared distances in the
+same row order as `X`. Duplicate feature profiles must have identical distance
+rows. Coordinates remain required for duplicate identification. Named supplied
+distances must match the specimen IDs. Feature transformation and distance choice
+are part of the user's scientific model; no microbiome-specific preprocessing is
+automatically selected.
+
+Graph edge lengths retain input distance units. The affinity matrix contains
+similarities and is returned separately; it is not a matrix of metric edge lengths.
+The protected-edge table contains encountered bridges whose pruning conditions
+were deliberately not tested. It is neither a list of every bridge nor a claim
+that those edges would otherwise have passed pruning criteria.
+
+## Numerical behavior and incomplete results
+
+The default `numerical.policy="IAN evaluated-LP retry-power 0.1"` permits one fresh
+normalized retry after an eligible rejected solver return. That retry must pass
+strict solver success and the unchanged original-unit numerical checks. Both
+attempts remain in `diagnostics$solver_history`.
+
+To select the earlier strict numerical and reference pruning behavior:
+
+```{r reference-example, eval=FALSE}
+reference <- create.ian.graph(X, backend = backend,
+    numerical.policy = "IAN evaluated-LP 1.0",
+    preserve.connectivity = FALSE)
+```
+
+Reference pruning can disconnect a graph. Numerical policy and connectivity are
+independent options; these defaults select already-qualified implementations.
+They do not establish that retained connections improve biological interpretation
+or prediction.
+
+Invalid arguments or an unavailable module raise an R error. Numerical refusal,
+solve-budget exhaustion or interruption at an engine event return
+`complete=FALSE`, a structured `error`, no `final_graph`, and whatever initial or
+last-valid graph and diagnostics are available. A last-valid graph is partial,
+not an accepted final output. Always check `complete` before proceeding. Interrupts
+do not preempt a running solver or every initialization loop. Memory exhaustion or
+operating-system termination need not return a recoverable result. R restart is
+not provided by this interface.
+
+## Resources and qualification
+
+There is no fixed experimental row cap. One dense n-by-n double matrix uses
+`8*n*n` bytes before overhead; several arrays and conversion copies coexist.
+Original specimen count matters because distances precede duplicate collapse.
+Gabriel construction has cubic worst-case work. `diagnostics="summary"` is the
+default; full traces retain additional dense solve data and can be much larger.
+
+Accepted preceding qualification covers seven 1,000-profile geometries in both
+pruning modes and two 2,000-profile connected examples through native/R paths on
+Mac arm64 R-devel. The conditional 5,000-profile run was not executed because its
+prospective memory gate failed. These sizes describe tested examples, not a
+universal capacity promise. Public-interface qualification is documented in the
+project's versioned records; support on other operating systems is not established.

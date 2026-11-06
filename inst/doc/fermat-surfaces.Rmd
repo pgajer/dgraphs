@@ -1,0 +1,327 @@
+---
+title: "Fermat distances and their supporting graphs on surfaces"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Fermat distances and their supporting graphs on surfaces}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse=TRUE,comment='#>',fig.width=7,fig.height=5,
+                     warning=FALSE,message=FALSE)
+# Prefer the current source tree; otherwise use the installed package assets.
+asset <- function(...) {
+  local <- file.path('..','inst',...)
+  if(file.exists(local)) return(local)
+  system.file(...,package='dgraphs',mustWork=TRUE)
+}
+source(asset('doc-tools','fermat-surfaces-snapshot.R'),local=TRUE)
+snapshot <- fermat_surfaces_snapshot(asset('extdata','fermat-surfaces','snapshot.rds'))
+metrics <- snapshot$metrics
+```
+
+
+Fermat distances allow paths through every observation. A symmetric nearest-neighbor
+graph is an optional restriction, not part of the complete-graph estimator. This
+example asks how that restriction changes distances on an area-uniform paraboloid,
+an area-uniform saddle, and an arc-length-uniform helix. The companion grip vignette
+focuses on embedding the same distances into three dimensions.
+
+This vignette renders the bundled October 1, 2026 results for sample seed 4101:
+150 observations per shape and 1,000 evaluated pairs per shape. All tables and
+the figures use these saved results. Building this document does not
+run sampling, distance construction, reference-path searches or MDS optimization.
+The teaching code below is shown without execution. The original fits used SGD
+and stopped at 300 epochs; that budget is not a convergence certificate.
+
+## Generate the observations
+
+The quadratic surfaces are $(u,v,u^2+v^2)$ (index zero) and
+$(u,v,u^2-v^2)$ (index one), over the unit disk. Index counts negative eigenvalues
+of the quadratic form. We reuse the existing dgraphs area sampler:
+
+```{r sampler, eval=FALSE}
+library(dgraphs)
+geometry <- synthetic.quadform(2, 3, forms=list(diag(c(1,-1))))
+sampling <- synthetic.sampling.quadform.lab('disk',extent=1,mode='area')
+sample <- sample.synthetic.geometry(geometry,sampling,n=150,seed=4101)
+X <- sample$predictors
+```
+
+The sampler weights parameter-space proposals by
+$\sqrt{1+\|2Au\|^2}$, the area element for $(u,u^TAu)$, where $u$ is a
+two-dimensional parameter and $A$ is its quadratic-form matrix. This is uniform
+on surface area, not on the parameter disk. The helix is
+$(\cos t,\sin t,0.2t)$ for $0\leq t\leq4\pi$; uniform $t$ is uniform arc length
+because its speed is the constant $\sqrt{1+0.2^2}$.
+
+## Distances and the path graph
+
+For observation indices $i,j$ and exponent $p\geq1$, we compute
+\[
+D_p(i,j)=\min_{\pi:i\leadsto j}\sum_{(a,b)\in\pi}\|X_a-X_b\|^p.
+\]
+The minimum ranges over paths through the observed points, including direct edges.
+The distance is unrooted, so its units are length to power $p$.
+
+```{r distances, eval=FALSE}
+result <- fermat.distances(points=X,p=2,backend='implicit',rooted=FALSE,
+                          return.graph=TRUE)
+D <- result$distances
+graph <- result$graph
+head(graph.edges(graph))
+result$metadata
+```
+
+The returned graph is the union of one selected shortest-path tree per source.
+Its edges carry the powered ambient step lengths. With every source requested,
+its shortest-path distances preserve the full matrix. With only landmark sources,
+only landmark-to-sample preservation is guaranteed. Ties may admit other valid
+unions, and the union need not be sparse: at $p=1$, direct Euclidean edges usually
+remain necessary.
+
+A Fermat symmetric kNN graph has different edges: they summarize Fermat paths to
+the $k$ nearest neighbors, then take the union of directed neighbor selections.
+
+```{r sknn, eval=FALSE}
+g <- create.fermat.sknn.graph(X,k=5,p=2,rooted=FALSE)
+```
+
+## Compare with surface geodesics
+
+The shared example uses powers 1--4 and k values 3--10. Numerical references on
+1,000 reproducibly selected pairs use `best_of_six` in the existing
+`quadform_geodesics()` interface on both surfaces. The paraboloid also uses
+`paraboloid_clairaut` on the same 1,000 pairs. Best-of-six selects the shortest
+usable result from six refinement searches, each with 64 rounds. These are
+numerical references, not certified globally shortest paths. Helix references
+are exact arc lengths $\sqrt{1.04}|t_i-t_j|$.
+
+We compare estimates $d_r$ with reference distances $g_r$ on valid pairs $r$:
+\[
+a=\frac{\sum_r d_rg_r}{\sum_r d_r^2},\qquad
+E=\sqrt{\frac{\sum_r(ad_r-g_r)^2}{\sum_r g_r^2}}.
+\]
+The fitted global scale $a$ makes powers comparable; $E=0$ means proportional
+agreement. It does not establish equality in physical units. Spearman correlation
+measures rank agreement. For graph restriction error we compare graph distances
+with $D_p$ using the same formula with $a=1$, on all pairs in the largest component.
+Disconnected graphs are not repaired, and retained sample counts are reported.
+If a retained component contains no reference pair, its geodesic error is undefined
+and omitted from the corresponding curve.
+
+
+```{r distance-table, echo=FALSE}
+knitr::kable(metrics[metrics$k==0,c('shape','p','n','distance_scale',
+ 'distance_nrmse','distance_spearman')],digits=3,row.names=FALSE,
+ col.names=c('Example','p','Samples','Scale','Scaled error','Rank correlation'))
+```
+
+Table 1. Complete-graph Fermat distances compared with the surface or curve
+reference. Each row uses the same reference pairs within its example; these are
+finite-sample comparisons, not estimates of an asymptotic convergence rate.
+
+```{r graph-error, echo=FALSE}
+old <- par(mfrow=c(1,3),mar=c(4,4,2,1))
+for(shape in unique(metrics$shape)) {
+ z<-metrics[metrics$shape==shape & metrics$k>0,]
+ plot(range(z$k),c(0,1.3*max(c(0,z$restriction_nrmse),na.rm=TRUE)),type='n',xlab='Neighbors k',
+      ylab='Graph restriction error',main=shape)
+ for(p in 1:4){q<-z[z$p==p,];lines(q$k,q$restriction_nrmse,col=p,pch=p,type='b')}
+ legend('topright',legend=paste('p =',1:4),col=1:4,lty=1,pch=1:4,bty='n',cex=.7)
+}
+par(old)
+```
+
+**Figure 1.** Distance change caused by retaining only symmetric Fermat kNN edges.
+Zero means that the restricted graph preserves the dense Fermat distances on the
+retained component. The corresponding component counts and retained sample counts
+are available below; a small error on a small component would not demonstrate
+whole-sample preservation.
+
+```{r coverage, echo=FALSE}
+z<-metrics[metrics$components>1,]
+coverage <- do.call(rbind,lapply(split(z,list(z$shape,z$p),drop=TRUE),function(q) {
+ data.frame(Example=q$shape[1],p=q$p[1],
+            Retained=paste(range(q$retained),collapse='–'),
+            Components=paste(range(q$components),collapse='–'))
+}))
+knitr::kable(coverage,row.names=FALSE,
+ col.names=c('Example','p','Retained samples: min–max','Components: min–max'))
+```
+
+The table summarizes ranges among disconnected k values within each example and
+power. Complete coverage is 150 samples; restricting a disconnected graph can
+leave far fewer samples even when its within-component distance error is small.
+
+## Inspect supporting edges in three dimensions
+
+The following view uses dense-target SGD metric MDS from grip. The gray patch is
+the underlying surface; colored points are the embedding after one global
+least-squares similarity Procrustes alignment for display, and thin blue segments are supporting path
+edges. Gray points identify the original observations. Plot titles report the root mean
+squared Euclidean alignment residual per retained sample, in target-coordinate
+units; zero means exact overlap. Similarity alignment uses
+translation, rotation/reflection and uniform scale, not a deformation of the fit.
+
+```{r overlay, echo=FALSE, fig.alt="Saved saddle observations, aligned MDS coordinates and Fermat path edges shown in an orthographic view with equal coordinate units."}
+if (identical(Sys.getenv('DGRAPHS_STATIC_VIGNETTES','true'),'true')) {
+  fermat_surfaces_saved_plot(snapshot)
+} else {
+  fermat_surfaces_saved_widget(snapshot)
+}
+```
+
+**Figure 2.** Saddle embedding and complete-graph Fermat supporting paths. The
+installed guide shows a static projection; interactive builds can be rotated.
+The legend states how many edges are shown; a deterministic display subset
+is used above 1,800 edges. The saved graph contains every selected edge.
+
+Intrinsic distances measure travel along a surface. Euclidean distances in a
+three-dimensional embedding measure straight chords, so geometric recovery of the
+original surface is not implied by a good distance fit. In particular, exact
+helix arc lengths embed on a straight line. See the grip companion for the full
+embedding comparison and additional overlays.
+
+
+## Chord lengths before and after scaling
+
+At p=1, complete-graph Fermat distances equal ambient Euclidean chord lengths.
+A 3D MDS fit can therefore reproduce the sampled shape without reproducing its
+intrinsic distances. The earlier distance score fits a global scale; it is not
+the discrepancy of the original chord lengths.
+
+For each of the same evaluated pairs, write $c_r$ for the chord and $g_r$ for
+the intrinsic reference. The following table reports $E(c,g;1)$ and
+$E(c,g;a)$ with $a=\sum c_rg_r/\sum c_r^2$, together with the median and maximum
+ratio $g_r/c_r$. Errors are dimensionless and zero means agreement. The ratio
+is one for equal lengths; 1.3 means the geodesic is 30% longer than its chord.
+These are the 1,000 evaluated pairs for seed 4101, not all sample pairs.
+
+```{r chord-audit,echo=FALSE}
+z <- snapshot$chords
+z <- z[match(c('paraboloid','saddle','helix'),z$shape),]
+knitr::kable(z[,c('shape','pairs','scale','raw_nrmse','scaled_nrmse',
+                  'median_ratio','max_ratio')],digits=4,row.names=FALSE,
+ col.names=c('Example','Pairs','Scale','Raw error','Scaled error','Median ratio','Maximum ratio'))
+```
+
+Scaling reduces chord underestimation on these patches, but does not make chords
+intrinsic distances. Larger discrepancies remain for individual endpoint pairs.
+On the helix, accurately preserving arc lengths unfolds the curve into a line;
+matching the original coil is a different objective.
+
+Independent solver checks are attempts, not guaranteed successes. Candidate
+lengths and close agreement where both solvers succeed do not certify global
+minimality. The table below makes the successful comparison count explicit. The saddle check
+covers the original 80 pairs, not all 1,000 evaluation pairs.
+
+```{r reference-success,echo=FALSE}
+z <- snapshot$checks
+z <- z[match(c('paraboloid','saddle','helix'),z$shape),]
+z$method <- c('Clairaut (same 1,000 pairs)','Original shooting check (80 pairs)','Analytic identity')
+knitr::kable(z[,c('shape','attempted','finite','failed','method')],row.names=FALSE,
+ col.names=c('Example','Attempted','Finite','Failed','Check'))
+```
+
+## Paraboloid reference-method comparison
+
+Best-of-six and Clairaut evaluate the same 1,000 pairs. Positive signed relative
+difference $(b_r-h_r)/h_r$ means the best-of-six candidate $b_r$ is longer than
+the Clairaut candidate $h_r$. Neither is assumed globally certified.
+
+```{r clairaut-comparison,echo=FALSE}
+z <- snapshot$comparisons
+ok <- is.finite(z$best)&is.finite(z$other)&z$other>0
+delta <- z$relative_difference[ok]
+knitr::kable(data.frame(Pairs=sum(ok),Median.signed=median(delta),
+ Maximum.absolute=max(abs(delta))),digits=6)
+z <- metrics[metrics$shape=='paraboloid' & metrics$k==0,]
+knitr::kable(z[,c('p','distance_nrmse','clairaut_distance_nrmse')],digits=5,row.names=FALSE,
+ col.names=c('p','Best of six','Clairaut'))
+```
+
+The second table compares scaled Fermat-distance errors under each reference.
+It uses identical targets and endpoint pairs, isolating reference-method effects.
+
+## Follow-up: sampling density, intermediate powers and stronger curvature
+
+The dedicated package article [Fermat distances: sampling density, curvature, and geodesic recovery](fermat-density-curvature.html) develops this comparison with the full sample-size curves, coverage, and reference-solver checks.
+
+A separate distance-only experiment varied total sample size from 150 to 2,400,
+with five repetitions, on paraboloids and saddles with coefficients 1, 2 and 4,
+and an area-uniform Swiss roll. It reused the existing quadform area sampler.
+For each surface, 64 fixed sampled endpoints supplied 500 calibration pairs and
+1,000 different evaluation pairs. Additional path-support points varied across
+repetitions and were nested across sample sizes. All observations could be used
+by the complete-graph paths; this was not a landmark approximation.
+
+Errors below are percentages: the square root of the ratio of summed squared
+distance residuals to summed squared reference distances. Each method's single
+multiplicative scale was fitted on calibration pairs only. Values are means over
+five repetitions conditional on the fixed endpoints; they are new measurements,
+not replacements for the original 150-point fits above. No MDS error enters them.
+
+| Surface | Power p | Error at n=150 (%) | Error at n=2,400 (%) | Ambient error (%) |
+|---|---:|---:|---:|---:|
+| Paraboloid, coefficient 1 | 1.25 | 3.73 | 1.82 | 8.51 |
+| Paraboloid, coefficient 1 | 2 | 11.72 | 5.67 | 8.51 |
+| Saddle, coefficient 1 | 1.25 | 4.55 | 1.75 | 8.74 |
+| Saddle, coefficient 1 | 2 | 14.27 | 5.58 | 8.74 |
+| Saddle, coefficient 4 | 1.5 | 14.82 | 2.55 | 28.32 |
+| Swiss roll | 3 | 42.33 | 7.70 | 55.84 |
+
+Ambient error is constant because the endpoints are fixed. These results expose
+both a sample-size effect and a limitation of the original integer-only power
+grid: p=1.25 already beats ambient chords on the new mild-surface samples at
+n=150. Larger powers are needed to suppress shortcuts on the rolled surface.
+The displayed powers illustrate these effects; they are not universal tuning
+recommendations.
+
+Ordinary Euclidean kNN graph distances were more accurate on these uniform
+examples at the larger sample size. For k=20 and n=2,400, errors were 0.62%,
+0.49% and 0.35% on the mild paraboloid, mild saddle and Swiss roll. This separates
+recovering ordinary geodesics from deliberately imposing a density-weighted
+geometry.
+
+References used best-of-six on quadforms and analytic distances on the roll,
+with Clairaut sensitivity checks on every paraboloid pair. For the steepest
+paraboloid, p=1.25 at n=2,400 had 4.82% error against best-of-six but 2.05% against
+Clairaut. Reference-method disagreement therefore matters for this harder
+surface. Increasing the quadform coefficient changes its curvature profile and
+area; it does not multiply curvature uniformly over the patch. The complete
+experiment, pair definitions, coverage and uncertainty are recorded in the
+research experiment `fermat_density_curvature_01_oct_2026`.
+
+
+## Saved evidence and rebuilding
+
+The installed `extdata/fermat-surfaces/snapshot.rds` contains the 108 seed-4101
+conditions, chord summaries, independent-reference counts, 1,000 paraboloid
+solver comparisons and the saved saddle Plotly traces and layout. Its provenance
+records the source-file checksums, evaluation date and original solver budget.
+The separate density-and-curvature follow-up above retains its original results.
+
+```{r snapshot-provenance}
+snapshot$provenance[c('experiment','results_date','sample_seed',
+                      'samples_per_shape','reference_pairs_per_shape',
+                      'mds_backend','mds_epochs')]
+```
+
+The rendering helper only reads and validates this snapshot, formats its tables,
+plots saved error values and displays saved widget data. It does not call the
+experiment helper in `inst/examples/fermat-surfaces.R`. Missing or invalid saved
+results stop the build rather than launching experiments or silently omitting
+calculated sections. The historical `FERMAT_SURFACE_RESULTS` and
+`FERMAT_SURFACE_HELPER` environment variables are not used by vignette builds.
+The sampling and graph-construction snippets remain teaching examples; their
+original graph-object console output is not reconstructed from missing caches.
+
+For maintainers, `dev/import-fermat-surfaces-results.R` imports a completed
+best-of-six experiment into the bundled snapshot; it never runs the experiment.
+`make preview-fermat-surfaces` validates the saved evidence and renders this
+vignette. Normal package and pkgdown builds use the same maintained source and
+bundled snapshot. Set `DGRAPHS_STATIC_VIGNETTES=false` to include the saved
+interactive figure with Plotly; the default static projection uses the same
+coordinates and paths. Grip and numerical experiment caches are not needed.

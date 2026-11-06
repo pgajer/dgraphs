@@ -1,0 +1,156 @@
+test_that("complete reference agrees with analytic and independent graph calculations", {
+    X <- cbind(c(0, 1, 2), 0)
+    expected <- matrix(c(0, 1, 2, 1, 0, 1, 2, 1, 0), 3)
+    expect_equal(fermat.distances(points = X), expected)
+    expect_equal(fermat.distances(points = X, rooted = TRUE), sqrt(expected))
+    set.seed(710)
+    X <- matrix(runif(30), ncol = 2)
+    D <- as.matrix(dist(X))
+    expect_equal(fermat.distances(points = X, p = 1), unname(D), tolerance = 1e-12)
+    g <- igraph::make_full_graph(nrow(X), directed = FALSE)
+    e <- igraph::as_edgelist(g, names = FALSE)
+    w <- D[e]^2.5
+    reference <- unname(igraph::distances(g, weights = w))
+    expect_equal(fermat.distances(points = X, p = 2.5), reference)
+    expect_equal(fermat.distances(points = X, p = 2.5, graph.type = "sknn", k = nrow(X)-1), reference)
+    expect_equal(fermat.distances(points = 3*X, p = 2.5), 3^2.5 * reference)
+})
+
+test_that("restriction can change the answer and disconnect pairs", {
+    X <- matrix(c(0, 1, 10, 11), ncol = 1)
+    complete <- fermat.distances(points = X)
+    restricted <- fermat.distances(points = X, graph.type = "sknn", k = 1)
+    expect_true(is.finite(complete[1, 4]))
+    expect_identical(restricted[1, 4], Inf)
+    expect_true(all(restricted >= complete - 1e-12))
+    square <- rbind(c(0,0), c(1,0), c(1,1), c(0,1))
+    expect_equal(fermat.distances(points = square, p = 1)[1,3], sqrt(2))
+    expect_equal(fermat.distances(points = square, p = 1, graph.type = "sknn", k = 2)[1,3], 2)
+})
+
+test_that("graph input retains zero edges, isolated vertices, labels and transit vertices", {
+    g <- dgraph(list(a=2L, b=c(1L,3L), c=2L, d=integer()),
+                list(0, c(0,2), 2, numeric()))
+    expect_equal(fermat.distances(g, p=1), graph.geodesic.distances(g))
+    expect_equal(unname(fermat.distances(g, vertices=c(3,1))), matrix(c(0,4,4,0),2))
+    expect_equal(rownames(fermat.distances(g, vertices=c(3,1))), c("c","a"))
+    expect_equal(fermat.distances(g)[1,2], 0)
+    expect_identical(fermat.distances(g)[1,4], Inf)
+    expect_equal(dim(fermat.distances(g, vertices=integer())), c(0L,0L))
+    X <- matrix(c(0,0,1), ncol=1, dimnames=list(c("a","b","c"),NULL))
+    expect_equal(fermat.distances(points=X)[1,2], 0)
+    expect_equal(fermat.distances(points=X, graph.type="sknn", k=2), fermat.distances(points=X))
+    expect_equal(unname(fermat.distances(points=matrix(0,1,1))), matrix(0,1,1))
+    g$stages$initial <- g$stages$final
+    expect_equal(fermat.distances(g, stage="initial"), fermat.distances(g))
+})
+
+test_that("invalid inputs and numeric range failures are explicit", {
+    X <- matrix(0:2, ncol=1)
+    g <- dgraph(list(2L,1L),list(1,1))
+    for (p in list(NA, Inf, 0.5, c(1,2), "2")) expect_error(fermat.distances(points=X,p=p), "'p'")
+    expect_error(fermat.distances(points=X,rooted=1), "rooted")
+    expect_error(fermat.distances(), "exactly one")
+    expect_error(fermat.distances(g,points=X), "exactly one")
+    expect_error(fermat.distances(g,k=1), "Construction")
+    expect_error(fermat.distances(points=X,k=1), "only accepted")
+    expect_error(fermat.distances(points=X,graph.type="sknn"), "k")
+    expect_error(fermat.distances(points=X,graph.type="sknn",k=3), "less than")
+    expect_error(fermat.distances(points=X,stage="initial"), "final")
+    expect_error(fermat.distances(points=matrix(NA,1,1)), "finite numeric")
+    expect_error(fermat.distances(points=X,vertices=c(1,1)), "unique")
+    expect_error(fermat.distances(dgraph(list(2L,1L))), "base edge lengths")
+    expect_error(fermat.distances(points=matrix(c(0,1e200),ncol=1)), "overflow")
+    expect_error(fermat.distances(points=matrix(c(0,1e-200),ncol=1)), "underflow")
+    expect_error(fermat.distances(dgraph(list(2L,c(1L,3L),2L),list(1e308,c(1e308,1e308),1e308)),p=1), "path-cost overflow")
+})
+
+test_that('implicit complete searches agree with explicit reference and selected queries', {
+    set.seed(910)
+    for (X in list(matrix(runif(42),ncol=3), matrix(c(0,0,1,3),ncol=1),
+                   matrix(c(0,1e-100,3e-100),ncol=1))) {
+        rownames(X) <- paste0('v',seq_len(nrow(X)))
+        for (p in c(1,1.5,2,3)) {
+            full <- fermat.distances(points=X,p=p)
+            implicit <- fermat.distances(points=X,p=p,backend='implicit')
+            expect_equal(implicit,full,tolerance=1e-12)
+            pivots <- c(nrow(X),1L)
+            expect_equal(fermat.distances(points=X,p=p,backend='implicit',sources=pivots),full[pivots,,drop=FALSE])
+            expect_equal(fermat.distances(points=X,p=p,backend='implicit',sources=pivots,targets=c(2,1)),full[pivots,c(2,1),drop=FALSE])
+            expect_equal(fermat.distances(points=X,p=p,backend='implicit',vertices=pivots,rooted=TRUE),full[pivots,pivots]^(1/p))
+        }
+    }
+    expect_equal(fermat.distances(points=matrix(0:2,ncol=1),backend='implicit',sources=1,targets=3)[1,1],2)
+    expect_equal(dim(fermat.distances(points=matrix(0:2,ncol=1),backend='implicit',sources=integer())),c(0L,3L))
+    expect_equal(dim(fermat.distances(points=matrix(0:2,ncol=1),backend='implicit',sources=1,targets=integer())),c(1L,0L))
+    expect_equal(fermat.distances(points=matrix(0,1,1),backend='implicit'),matrix(0,1,1))
+})
+
+test_that('implicit controls and numerical limits fail explicitly', {
+    X <- matrix(0:3,ncol=1)
+    f <- function(...) fermat.distances(points=X,backend='implicit',...)
+    expect_error(f(sources=c(1,1)),'unique')
+    expect_error(f(sources=NA),'unique')
+    expect_error(f(sources=5),'unique')
+    expect_error(f(sources=1,targets=c(1,1)),'unique')
+    expect_error(f(targets=1),'requires sources')
+    expect_error(f(sources=1,vertices=2),'cannot accompany')
+    expect_error(f(max.workspace.bytes=1),'workspace')
+    expect_error(f(max.workspace.bytes=Inf),'positive and finite')
+    expect_error(fermat.distances(points=X,sources=1),'implicit')
+    expect_error(f(graph.type='sknn',k=1),'complete coordinate')
+    for (v in c(1e200,1e-200))
+        expect_error(fermat.distances(points=matrix(c(0,v),ncol=1),backend='implicit'),'overflow|underflow')
+    expect_error(fermat.distances(points=matrix(c(0,1e154,2e154),ncol=1),backend='implicit',sources=1,targets=1),'overflow')
+})
+
+test_that('teaching constraints use complete Fermat targets, including local pairs', {
+    source(system.file('examples','fermat-sparse-mds.R',package='dgraphs'),local=TRUE)
+    set.seed(331)
+    X <- matrix(runif(24),ncol=2)
+    cst <- fermat.mds.constraints(X,c(1,5,9),k=3)
+    D <- fermat.distances(points=X)
+    expect_equal(cst$targets,unname(D[cst$pairs]),tolerance=1e-12)
+    expect_true(all(cst$count_i+cst$count_j>0))
+    expect_false(anyDuplicated(data.frame(cst$pairs))>0)
+    # Even local direct edges can be more expensive than their Fermat targets.
+    X <- matrix(0:2,ncol=1)
+    cst <- fermat.mds.constraints(X,1,k=2)
+    expect_equal(cst$targets[cst$pairs[,1]==1 & cst$pairs[,2]==3],2)
+    expect_error(fermat.mds.constraints(matrix(c(0,0,1),ncol=1),3,k=1),'duplicate')
+})
+
+test_that("selected Fermat path graphs preserve requested distances", {
+    set.seed(173)
+    X <- rbind(matrix(runif(24),12,2),c(0,0),c(0,0))
+    rownames(X) <- paste0("sample",seq_len(nrow(X)))
+    for (p in c(1,2,3,4)) {
+        result <- fermat.distances(points=X,p=p,backend="implicit",return.graph=TRUE)
+        expect_equal(result$distances,fermat.distances(points=X,p=p),tolerance=1e-12)
+        expect_equal(graph.geodesic.distances(result$graph), result$distances,tolerance=1e-12)
+        expect_identical(result$metadata$coverage,"all_pairs")
+        partial <- fermat.distances(points=X,p=p,backend="implicit",
+            sources=c(14,1),targets=c(5,13),rooted=TRUE,return.graph=TRUE)
+        expect_equal(graph.geodesic.distances(partial$graph)[c(14,1),c(5,13)],
+            partial$distances^p,tolerance=1e-12)
+        expect_identical(partial$metadata$coverage,"requested_pairs")
+        expect_equal(partial,fermat.distances(points=X,p=p,backend="implicit",
+            sources=c(14,1),targets=c(5,13),rooted=TRUE,return.graph=TRUE))
+    }
+    empty <- fermat.distances(points=X,backend="implicit",sources=integer(),return.graph=TRUE)
+    expect_equal(dim(empty$distances),c(0L,14L))
+    expect_equal(length(graph.adjacency(empty$graph)),14)
+    expect_true(all(lengths(graph.adjacency(empty$graph))==0))
+    singleton <- fermat.distances(points=matrix(0,1,1),return.graph=TRUE)
+    expect_equal(singleton$distances,matrix(0,1,1))
+    expect_error(fermat.distances(points=X,return.graph=NA),"return.graph")
+})
+
+test_that("graph-restricted path union retains unreachable pairs", {
+    g <- dgraph(list(2L,c(1L,3L),2L,integer()),list(0,c(0,2),2,numeric()))
+    result <- fermat.distances(g,return.graph=TRUE)
+    expect_equal(result$distances,fermat.distances(g))
+    expect_equal(graph.geodesic.distances(result$graph),result$distances)
+    expect_equal(fermat.distances(g,vertices=integer(),return.graph=TRUE)$distances,
+        matrix(numeric(),0,0))
+})

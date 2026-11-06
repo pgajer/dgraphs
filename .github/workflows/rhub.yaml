@@ -11,6 +11,10 @@ on:
         description: "A comma-separated list of R-hub platforms to use."
         type: string
         default: "linux,windows,macos"
+      r_version:
+        description: "Optional R version for non-container checks."
+        type: string
+        default: ""
       name:
         description: "Optional run name."
         type: string
@@ -79,7 +83,9 @@ jobs:
     needs: setup
     if: ${{ needs.setup.outputs.platforms != '[]' }}
     runs-on: ${{ matrix.config.os }}
-    name: ${{ matrix.config.label }}
+    name: ${{ matrix.config.os }} (R-${{ github.event.inputs.r_version || 'devel' }})
+    env:
+      PKG_USE_BIOCONDUCTOR: "false"
     strategy:
       fail-fast: false
       matrix:
@@ -89,7 +95,7 @@ jobs:
       - uses: r-hub/actions/checkout@v1
       - uses: r-hub/actions/setup-r@v1
         with:
-          job-config: ${{ matrix.config.job-config }}
+          job-config: ${{ github.event.inputs.r_version && format('{{"r-version":"{0}"}}', github.event.inputs.r_version) || matrix.config.job-config }}
           token: ${{ secrets.RHUB_TOKEN }}
       - uses: r-hub/actions/platform-info@v1
         with:
@@ -102,6 +108,7 @@ jobs:
               file = path.expand("~/.Rprofile"), append = TRUE)
       - uses: r-hub/actions/setup-deps@v1
         with:
+          pak-version: stable
           job-config: ${{ matrix.config.job-config }}
           token: ${{ secrets.RHUB_TOKEN }}
       - uses: r-hub/actions/run-check@v1
